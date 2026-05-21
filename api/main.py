@@ -25,5 +25,5 @@ app.include_router(claims.router, tags=["claims"])
 
 
 @app.get("/health")
-async def health() -> dict:
+async def health() -> dict[str, str]:
     return {"status": "ok", "version": "0.1.0"}

@@ -43,14 +43,17 @@ async def extract_claims_from_text(text: str) -> list[dict[str, Any]]:
         ],
     )
 
-    raw = message.content[0].text.strip()
+    first_block = message.content[0]
+    if not isinstance(first_block, anthropic.types.TextBlock):
+        raise ValueError(f"Unexpected content block type from Claude API: {type(first_block)}")
+    raw: str = first_block.text.strip()
 
     # Strip markdown code fences if present
     if raw.startswith("```"):
         raw = raw.split("\n", 1)[1]
         raw = raw.rsplit("```", 1)[0]
 
-    claims = json.loads(raw)
+    claims: list[dict[str, Any]] = json.loads(raw)
 
     # Validate and clamp konfidenz
     for claim in claims:

@@ -9,7 +9,7 @@ from api.main import app
 
 
 @pytest.fixture
-def sample_text():
+def sample_text() -> str:
     return (
         "Inflation entsteht, wenn zu viel Geld zu wenigen Gütern gegenübersteht. "
         "Die Zentralbank erhöht deshalb die Zinsen, um die Nachfrage zu dämpfen."
@@ -17,7 +17,7 @@ def sample_text():
 
 
 @pytest.mark.asyncio
-async def test_extract_claims_returns_200(sample_text):
+async def test_extract_claims_returns_200(sample_text: str) -> None:
     mock_claims = [
         {
             "text": "Inflation entsteht wenn zu viel Geld zu wenigen Gütern gegenübersteht",
@@ -50,7 +50,7 @@ async def test_extract_claims_returns_200(sample_text):
 
 
 @pytest.mark.asyncio
-async def test_extract_claims_empty_text_returns_422():
+async def test_extract_claims_empty_text_returns_422() -> None:
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         response = await client.post(
             "/extract-claims",
@@ -61,7 +61,7 @@ async def test_extract_claims_empty_text_returns_422():
 
 
 @pytest.mark.asyncio
-async def test_extract_claims_missing_text_returns_422():
+async def test_extract_claims_missing_text_returns_422() -> None:
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         response = await client.post("/extract-claims", json={})
 
@@ -69,7 +69,7 @@ async def test_extract_claims_missing_text_returns_422():
 
 
 @pytest.mark.asyncio
-async def test_extract_claims_response_shape(sample_text):
+async def test_extract_claims_response_shape(sample_text: str) -> None:
     mock_claims = [
         {
             "text": "Zinserhöhungen dämpfen die Nachfrage",
