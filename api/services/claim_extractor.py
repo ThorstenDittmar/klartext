@@ -1,20 +1,26 @@
 """Claude API integration for claim extraction from narrative text."""
 
-import os
 import json
+import os
 from typing import Any
 
 import anthropic
 
+_CLAIM_TYPEN = (
+    "empirischer_claim | kausaler_claim | definitorischer_claim"
+    " | normativer_claim | prognostischer_claim | kontrafaktischer_claim"
+    " | methodischer_claim | unsicherheitsclaim"
+)
 
-SYSTEM_PROMPT = """Du bist ein Experte für epistemische Analyse narrativer Texte.
+SYSTEM_PROMPT = f"""Du bist ein Experte für epistemische Analyse narrativer Texte.
 
 Deine Aufgabe: Extrahiere vorläufige Claims aus dem gegebenen Text.
-Ein Claim ist eine behauptete Aussage – empirisch, kausal, normativ, prognostisch oder definitorisch.
+Ein Claim ist eine behauptete Aussage –
+empirisch, kausal, normativ, prognostisch oder definitorisch.
 
 Antworte ausschließlich mit einem JSON-Array. Jeder Eintrag hat:
 - "text": Die extrahierte Aussage (vollständiger Satz, max. 200 Zeichen)
-- "typ": Einer von: empirischer_claim | kausaler_claim | definitorischer_claim | normativer_claim | prognostischer_claim | kontrafaktischer_claim | methodischer_claim | unsicherheitsclaim
+- "typ": Einer von: {_CLAIM_TYPEN}
 - "konfidenz": Float zwischen 0.0 und 1.0
 
 Extrahiere nur Claims die explizit oder klar implizit im Text vorhanden sind.

@@ -1,8 +1,9 @@
 """Tests for POST /extract-claims endpoint."""
 
-import pytest
-from httpx import AsyncClient, ASGITransport
 from unittest.mock import AsyncMock, patch
+
+import pytest
+from httpx import ASGITransport, AsyncClient
 
 from api.main import app
 
@@ -35,9 +36,7 @@ async def test_extract_claims_returns_200(sample_text):
         new_callable=AsyncMock,
         return_value=mock_claims,
     ):
-        async with AsyncClient(
-            transport=ASGITransport(app=app), base_url="http://test"
-        ) as client:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
             response = await client.post(
                 "/extract-claims",
                 json={"text": sample_text},
@@ -52,9 +51,7 @@ async def test_extract_claims_returns_200(sample_text):
 
 @pytest.mark.asyncio
 async def test_extract_claims_empty_text_returns_422():
-    async with AsyncClient(
-        transport=ASGITransport(app=app), base_url="http://test"
-    ) as client:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         response = await client.post(
             "/extract-claims",
             json={"text": ""},
@@ -65,9 +62,7 @@ async def test_extract_claims_empty_text_returns_422():
 
 @pytest.mark.asyncio
 async def test_extract_claims_missing_text_returns_422():
-    async with AsyncClient(
-        transport=ASGITransport(app=app), base_url="http://test"
-    ) as client:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         response = await client.post("/extract-claims", json={})
 
     assert response.status_code == 422
@@ -88,9 +83,7 @@ async def test_extract_claims_response_shape(sample_text):
         new_callable=AsyncMock,
         return_value=mock_claims,
     ):
-        async with AsyncClient(
-            transport=ASGITransport(app=app), base_url="http://test"
-        ) as client:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
             response = await client.post(
                 "/extract-claims",
                 json={"text": sample_text},
