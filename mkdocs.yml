@@ -31,6 +31,7 @@ theme:
     - navigation.expand
     - navigation.path
     - navigation.top
+    - toc.integrate
     - search.highlight
     - search.suggest
     - content.code.copy
