@@ -1,0 +1,89 @@
+site_name: klartext.jetzt – Spezifikation
+site_description: Narrative Epistemik – Eine Autorenumgebung für transparente, kausal konsistente und narrativ vermittelbare Wirkmodelle
+site_url: https://thorstendittmar.github.io/klartext/
+repo_url: https://github.com/ThorstenDittmar/klartext
+repo_name: ThorstenDittmar/klartext
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  language: de
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: deep purple
+      toggle:
+        icon: material/brightness-7
+        name: Dunkelmodus
+    - scheme: slate
+      primary: indigo
+      accent: deep purple
+      toggle:
+        icon: material/brightness-4
+        name: Hellmodus
+  font:
+    text: Inter
+    code: JetBrains Mono
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.path
+    - navigation.top
+    - search.highlight
+    - search.suggest
+    - content.code.copy
+    - content.action.edit
+
+plugins:
+  - search:
+      lang: de
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - toc:
+      permalink: true
+  - tables
+  - attr_list
+  - md_in_html
+
+nav:
+  - Übersicht: index.md
+  - Konzept:
+    - "1. Executive Summary": kap-01-executive-summary.md
+    - "2. Problemdefinition": kap-02-problemdefinition.md
+    - "3. Kognitionswissenschaftliche Grundlage": kap-03-kognition.md
+    - "4. Projektvision": kap-04-vision.md
+    - "5. Autorenumgebung als Kernprodukt": kap-05-autorenumgebung.md
+  - Architektur:
+    - "6. Systemarchitektur": kap-06-systemarchitektur.md
+    - "7. Formale Wirkmodelle": kap-07-wirkmodelle.md
+    - "8. Wirkmodell, Axiomraum und Narrativ": kap-08-verbindung.md
+    - "9. Epistemischer Transparenzbericht": kap-09-transparenzbericht.md
+    - "10. Perspektivpluralismus": kap-10-perspektivpluralismus.md
+  - Produkt:
+    - "11. Leserperspektive": kap-11-leser.md
+    - "12. Medienneutrale Distribution": kap-12-distribution.md
+    - "13. Folgeprojekte": kap-13-folgeprojekte.md
+    - "14. Technologische Einordnung": kap-14-technologie.md
+    - "15. Roadmap": kap-15-roadmap.md
+    - "16. Gesellschaftliche Relevanz": kap-16-relevanz.md
+    - "17. Schlussbemerkung": kap-17-schluss.md
+    - "18. Wissenschaftliche Bezugspunkte": kap-18-wissenschaft.md
+  - Umsetzung:
+    - "19. Umsetzung & Technik": kap-19-umsetzung.md
+    - "20. Literaten-Workflow": kap-20-literaten-workflow.md
+    - "21. Wirkmodell-Autor-Workflow": kap-21-wirkmodell-workflow.md
+    - "22. Leser-Workflow": kap-22-leser-workflow.md
+    - "23. Community & Trust Network": kap-23-community.md
+    - "24. Technisches Datenmodell": kap-24-datenmodell.md
+  - Appendix:
+    - "Appendix A: Offene Punkte": appendix-a.md

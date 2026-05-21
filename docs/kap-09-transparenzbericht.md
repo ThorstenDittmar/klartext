@@ -1,0 +1,6 @@
+# 9. Der epistemische Transparenzbericht: Annahmen, Kausalitäten und Modellbindungen
+
+!!! note "Status"
+    Diese Seite wird aus dem Whitepaper V0.24 übernommen. Inhalt folgt.
+
+<!-- TODO: Inhalt aus Whitepaper-Kapitel übertragen -->
