@@ -11,3 +11,7 @@ class DomainError(KlartextError):
 
 class ServiceError(KlartextError):
     """Raised by services when business rules are violated."""
+
+
+class RepositoryError(KlartextError):
+    """Raised by repositories when data access fails."""

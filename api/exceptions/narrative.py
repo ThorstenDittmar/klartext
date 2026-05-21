@@ -1,6 +1,6 @@
-"""Exception classes for the narrative domain and import service."""
+"""Exception classes for the narrative domain, import service and repository."""
 
-from api.exceptions.base import DomainError, ServiceError
+from api.exceptions.base import DomainError, RepositoryError, ServiceError
 
 
 class SceneValidationError(DomainError):
@@ -17,3 +17,11 @@ class NarrativeFileNotFoundError(ServiceError):
 
 class NarrativeParseError(ServiceError):
     """Raised when the narrative file exists but contains no parseable scenes."""
+
+
+class NarrativeNotFoundError(RepositoryError):
+    """Raised when a Narrative cannot be found by the given ID."""
+
+
+class NarrativePersistenceError(RepositoryError):
+    """Raised when saving or loading a Narrative fails due to a database error."""

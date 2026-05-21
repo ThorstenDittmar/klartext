@@ -1,6 +1,6 @@
-"""Exception classes for the claim domain and extraction service."""
+"""Exception classes for the claim domain, extraction service and repository."""
 
-from api.exceptions.base import DomainError, ServiceError
+from api.exceptions.base import DomainError, RepositoryError, ServiceError
 
 
 class ClaimValidationError(DomainError):
@@ -9,3 +9,7 @@ class ClaimValidationError(DomainError):
 
 class ClaimExtractionError(ServiceError):
     """Raised when claim extraction fails or yields no results."""
+
+
+class ClaimPersistenceError(RepositoryError):
+    """Raised when saving or loading Claims fails due to a database error."""

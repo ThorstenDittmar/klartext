@@ -1,9 +1,11 @@
 """klartext.jetzt – FastAPI application entry point."""
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
-from api.routers import claims
+from api.exceptions.narrative import NarrativeFileNotFoundError, NarrativeNotFoundError
+from api.routers import claims, narratives
 
 app = FastAPI(
     title="klartext.jetzt API",
@@ -21,7 +23,34 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+# ---------------------------------------------------------------------------
+# Exception handlers
+# ---------------------------------------------------------------------------
+
+
+@app.exception_handler(NarrativeNotFoundError)
+async def handle_narrative_not_found(
+    request: Request, exc: NarrativeNotFoundError
+) -> JSONResponse:
+    """Translates NarrativeNotFoundError into a 404 response."""
+    return JSONResponse(status_code=404, content={"error": str(exc)})
+
+
+@app.exception_handler(NarrativeFileNotFoundError)
+async def handle_narrative_file_not_found(
+    request: Request, exc: NarrativeFileNotFoundError
+) -> JSONResponse:
+    """Translates NarrativeFileNotFoundError into a 404 response."""
+    return JSONResponse(status_code=404, content={"error": str(exc)})
+
+
+# ---------------------------------------------------------------------------
+# Routers
+# ---------------------------------------------------------------------------
+
 app.include_router(claims.router, tags=["claims"])
+app.include_router(narratives.router, tags=["narratives"])
 
 
 @app.get("/health")
