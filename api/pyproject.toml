@@ -2,6 +2,8 @@
 asyncio_mode = "auto"
 testpaths = ["tests"]
 pythonpath = ["..", "."]
+markers = ["integration: calls external services (deselect with '-m not integration')"]
+addopts = "-m 'not integration'"
 
 [tool.ruff]
 target-version = "py312"

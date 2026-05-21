@@ -1,41 +1,32 @@
 """Router for claim extraction endpoints."""
 
-from fastapi import APIRouter
-from pydantic import BaseModel, field_validator
+from __future__ import annotations
 
-from api.services import claim_extractor
+from fastapi import APIRouter, Depends
+
+from api.dependencies import get_claim_extractor_service
+from api.models.narrative import Scene
+from api.schemas.claims import ClaimResponse, ExtractClaimsRequest, ExtractClaimsResponse
+from api.services.claim_extractor_service import ClaimExtractorService
 
 router = APIRouter()
 
 
-class ExtractClaimsRequest(BaseModel):
-    text: str
-
-    @field_validator("text")
-    @classmethod
-    def text_not_empty(cls, v: str) -> str:
-        if not v.strip():
-            raise ValueError("text must not be empty")
-        return v
-
-
-class Claim(BaseModel):
-    text: str
-    typ: str
-    konfidenz: float
-
-
-class ExtractClaimsResponse(BaseModel):
-    claims: list[Claim]
-
-
 @router.post("/extract-claims", response_model=ExtractClaimsResponse)
-async def extract_claims(request: ExtractClaimsRequest) -> ExtractClaimsResponse:
-    """Extract preliminary claims from narrative text.
+async def extract_claims(
+    request: ExtractClaimsRequest,
+    service: ClaimExtractorService = Depends(get_claim_extractor_service),
+) -> ExtractClaimsResponse:
+    """Extracts preliminary claims from narrative text.
 
     Claims are provisional – the author must confirm, reject, or reformulate them.
     See Kap. 6.3.1 (Konsistenzschicht) and Kap. 20.2.2 (Claim-Extraktion).
     """
-    raw_claims = await claim_extractor.extract_claims_from_text(request.text)
-    claims = [Claim(**c) for c in raw_claims]
-    return ExtractClaimsResponse(claims=claims)
+    scene = Scene.create(title="Unnamed", text=request.text, position=1)
+    claims = await service.extract_from_scene(scene)
+    return ExtractClaimsResponse(
+        claims=[
+            ClaimResponse(text=c.text, typ=c.typ.value, confidence=c.confidence)
+            for c in claims
+        ]
+    )
