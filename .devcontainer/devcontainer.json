@@ -1,0 +1,51 @@
+{
+  "name": "klartext.jetzt",
+  "image": "mcr.microsoft.com/devcontainers/python:3.12",
+
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": { "version": "20" },
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+
+  "onCreateCommand": "pip install -r api/requirements-dev.txt && npm --prefix frontend install",
+
+  "postStartCommand": "pip install -r docs/requirements.txt",
+
+  "forwardPorts": [5173, 8000, 54321, 54323],
+  "portsAttributes": {
+    "5173":  { "label": "Frontend (Vite)",      "onAutoForward": "notify" },
+    "8000":  { "label": "API (FastAPI)",         "onAutoForward": "notify" },
+    "54321": { "label": "Supabase API",          "onAutoForward": "silent" },
+    "54323": { "label": "Supabase Studio",       "onAutoForward": "notify" }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "charliermarsh.ruff",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss",
+        "mtxr.sqltools",
+        "mtxr.sqltools-driver-pg",
+        "GitHub.copilot"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "[python]": {
+          "editor.defaultFormatter": "charliermarsh.ruff"
+        },
+        "ruff.enable": true
+      }
+    }
+  },
+
+  "remoteEnv": {
+    "ANTHROPIC_API_KEY": "${localEnv:ANTHROPIC_API_KEY}"
+  }
+}
