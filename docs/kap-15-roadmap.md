@@ -1,14 +1,17 @@
 # 15. Roadmap
 
-Eine mögliche Entwicklung kann in vier Phasen erfolgen.
-### Phase 1: Autorenumgebung und Wirkmodell-/Axiomraum-Editor
-In der ersten Phase wird ein Werkzeug entwickelt, mit dem Fachleute Axiome, Begriffe und Kausalbeziehungen formulieren können. Parallel entsteht ein narrativer Editor für Autorinnen und Autoren. Ziel ist ein erster funktionsfähiger Prototyp für ein begrenztes Themenfeld.
-> ↗ Querverweis: Literaten-Workflow als Grundlage Phase 1 – vgl. Kap. 20
-> ↗ Querverweis: Wirkmodell-Autor-Workflow als Grundlage Phase 1 – vgl. Kap. 21
-### Phase 2: KI-gestützte Konsistenzprüfung
-In der zweiten Phase wird die LLM-basierte Analyse integriert. Das System prüft narrative Texte gegen den Axiomraum, markiert Konflikte, erkennt implizite Annahmen und erzeugt erste Transparenzberichte.
-### Phase 3: Leserumgebung und Vergleichsfunktionen
-In der dritten Phase entsteht eine Umgebung, in der Leser Geschichten konsumieren und die zugrundeliegenden Axiomräume untersuchen können. Zentrale Funktion ist der Vergleich konkurrierender Narrative und Modelle.
-### Phase 4: Multiformat-Distribution und Folgeanwendungen
-In der vierten Phase werden Schnittstellen zu externen Formaten geschaffen: E-Books, Videos, Lernmodule, Social-Media-Clips, politische Analysen und Simulationen.
-Diese Roadmap erlaubt eine schrittweise Entwicklung. Das Projekt muss nicht sofort alle Visionen erfüllen. Der erste entscheidende Schritt ist die funktionierende Verbindung von Wirkmodell, Axiomraum, Narrativ und KI-gestützter Konsistenzprüfung.
+Die Implementierung folgt einem Drei-Phasen-Modell mit TDD-Ansatz. Details zu Scope, Stack und Test-Strategie finden sich in Kap. 19.
+
+**Phase 1 – Technischer Durchstich**
+
+Ziel: Technische Machbarkeit beweisen. Alle Kernfunktionalitäten werden mit minimalem Funktionsumfang berührt: Nutzer-Authentifizierung, minimaler Wirkmodell-Editor, Narrativ-Editor, KI-Claim-Extraktion via Claude API, minimaler Transparenzbericht, Leseansicht. Stack: Supabase (PostgreSQL + Auth), FastAPI + Python, React + TypeScript, Vercel.
+
+**Phase 2 – Funktionsfähiger Prototyp**
+
+Ziel: Einen guten Eindruck des Gesamtsystems vermitteln. Vollständige Workflows für alle drei Nutzerrollen, Gateway-Logik, Gegenrede, Recycling, minimale Community, Trust Network. Scope und Stack können durch Erkenntnisse aus Phase 1 angepasst werden.
+
+**Phase 3 – Erste produktionsreife Version**
+
+Ziel: Öffentlich deploybare Version. Performance, Skalierbarkeit, Sicherheit, vollständiger Präsentationsmodus, Admin-Workflows, Mobile-Optimierung, erste öffentliche Beta. Scope wird nach Phase 2 finalisiert.
+
+↗ Querverweis: Vollständige Beschreibung aller drei Phasen, TDD-Ansatz und Stack – vgl. Kap. 19

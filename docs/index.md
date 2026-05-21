@@ -1,6 +1,6 @@
 # klartext.jetzt – Narrative Epistemik
 
-**Projektskizze / Whitepaper V0.24**
+**Projektskizze / Whitepaper V0.25**
 
 Eine Autorenumgebung für transparente, kausal konsistente und narrativ vermittelbare Wirkmodelle.
 
@@ -40,5 +40,5 @@ klartext/
 
 ## Kapitelübersicht
 
-Diese Dokumentation folgt der Struktur des Whitepapers V0.24.
+Diese Dokumentation folgt der Struktur des Whitepapers V0.25.
 Navigiere über die Tabs oben oder die Seitenleiste links.
