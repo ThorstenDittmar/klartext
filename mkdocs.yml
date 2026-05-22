@@ -86,6 +86,8 @@ nav:
     - "22. Leser-Workflow": kap-22-leser-workflow.md
     - "23. Community & Trust Network": kap-23-community.md
     - "24. Technisches Datenmodell": kap-24-datenmodell.md
+  - Beispiele:
+    - "Wirkmodell-Prüfbericht (Klartext-Geschichte)": pruefbericht-klartext.html
   - Appendix:
     - "Offene Punkte (GitHub Issues)": appendix-a.md
     - Architekturentscheidungen:
