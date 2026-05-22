@@ -111,6 +111,43 @@ async def test_list_causal_models_returns_200() -> None:
 
 
 # ---------------------------------------------------------------------------
+# Tests — GET /causal-models/{id}
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_get_causal_model_returns_200() -> None:
+    """Expects 200 when a CausalModel is found."""
+    app.dependency_overrides[get_causal_model_service] = lambda: FakeCausalModelService()
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.get("/causal-models/cm-001")
+    app.dependency_overrides.clear()
+    assert response.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_get_causal_model_returns_title_and_axioms() -> None:
+    """Expects the response to contain the title and axioms list."""
+    app.dependency_overrides[get_causal_model_service] = lambda: FakeCausalModelService()
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.get("/causal-models/cm-001")
+    app.dependency_overrides.clear()
+    body = response.json()
+    assert body["title"] == "Klartext Wirkmodell"
+    assert len(body["axioms"]) == 1
+
+
+@pytest.mark.asyncio
+async def test_get_causal_model_returns_404_for_unknown_id() -> None:
+    """Expects 404 when the CausalModel does not exist."""
+    app.dependency_overrides[get_causal_model_service] = lambda: FakeCausalModelService()
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.get("/causal-models/unknown")
+    app.dependency_overrides.clear()
+    assert response.status_code == 404
+
+
+# ---------------------------------------------------------------------------
 # Tests — POST /causal-models/{id}/axioms
 # ---------------------------------------------------------------------------
 
@@ -139,6 +176,32 @@ async def test_add_axiom_returns_404_for_unknown_causal_model() -> None:
         )
     app.dependency_overrides.clear()
     assert response.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_add_axiom_returns_422_for_empty_label() -> None:
+    """Expects 422 when the label is empty."""
+    app.dependency_overrides[get_causal_model_service] = lambda: FakeCausalModelService()
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.post(
+            "/causal-models/cm-001/axioms",
+            json={"label": "", "description": "Eine Annahme."},
+        )
+    app.dependency_overrides.clear()
+    assert response.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_add_axiom_returns_422_for_empty_description() -> None:
+    """Expects 422 when the description is empty."""
+    app.dependency_overrides[get_causal_model_service] = lambda: FakeCausalModelService()
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.post(
+            "/causal-models/cm-001/axioms",
+            json={"label": "A-01", "description": ""},
+        )
+    app.dependency_overrides.clear()
+    assert response.status_code == 422
 
 
 # ---------------------------------------------------------------------------
@@ -198,3 +261,16 @@ async def test_check_consistency_returns_404_for_unknown_causal_model() -> None:
         )
     app.dependency_overrides.clear()
     assert response.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_check_consistency_returns_422_for_empty_scene_text() -> None:
+    """Expects 422 when the scene_text is empty."""
+    app.dependency_overrides[get_causal_model_service] = lambda: FakeCausalModelService()
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.post(
+            "/causal-models/cm-001/check-consistency",
+            json={"scene_text": ""},
+        )
+    app.dependency_overrides.clear()
+    assert response.status_code == 422

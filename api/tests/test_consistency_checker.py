@@ -134,6 +134,33 @@ async def test_claude_checker_returns_consistent_result_for_consistent_scene() -
 
 
 @pytest.mark.asyncio
+async def test_claude_checker_strips_markdown_code_fences_from_response() -> None:
+    """Expects ClaudeConsistencyChecker to handle responses wrapped in markdown code fences."""
+    import json
+    from unittest.mock import AsyncMock, MagicMock
+
+    import anthropic
+
+    from api.providers.claude_consistency_checker import ClaudeConsistencyChecker
+
+    raw_json = json.dumps({"consistent": True, "conflicts": []})
+    fenced_response = f"```json\n{raw_json}\n```"
+
+    mock_response = MagicMock()
+    mock_response.content = [MagicMock(text=fenced_response)]
+
+    mock_client = MagicMock(spec=anthropic.AsyncAnthropic)
+    mock_client.messages = MagicMock()
+    mock_client.messages.create = AsyncMock(return_value=mock_response)
+
+    checker = ClaudeConsistencyChecker(client=mock_client)
+
+    result = await checker.check("Eine Szene.", [AxiomMother.interest_rate()])
+
+    assert result.consistent is True
+
+
+@pytest.mark.asyncio
 async def test_claude_checker_returns_conflict_for_conflicting_scene() -> None:
     """Expects ClaudeConsistencyChecker to parse conflicts from the API response."""
     import json

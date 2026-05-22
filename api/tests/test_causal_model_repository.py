@@ -103,6 +103,25 @@ async def test_causal_model_repository_find_by_id_raises_for_unknown_id() -> Non
         await repo.find_by_id("00000000-0000-0000-0000-000000000000")
 
 
+@pytest.mark.asyncio
+async def test_causal_model_repository_add_axiom_raises_for_unknown_id() -> None:
+    """Expects CausalModelNotFoundError when adding an Axiom to a non-existent CausalModel."""
+    repo = FakeCausalModelRepository()
+
+    with pytest.raises(CausalModelNotFoundError):
+        await repo.add_axiom("00000000-0000-0000-0000-000000000000", AxiomMother.interest_rate())
+
+
+@pytest.mark.asyncio
+async def test_causal_model_repository_list_all_returns_empty_list_when_empty() -> None:
+    """Expects list_all to return an empty list when no CausalModels have been saved."""
+    repo = FakeCausalModelRepository()
+
+    result = await repo.list_all()
+
+    assert result == []
+
+
 # ---------------------------------------------------------------------------
 # Integration
 # ---------------------------------------------------------------------------

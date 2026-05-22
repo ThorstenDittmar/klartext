@@ -56,6 +56,12 @@ def test_axiom_create_raises_for_empty_description() -> None:
         Axiom.create(label="A-01", description="")
 
 
+def test_axiom_create_raises_for_whitespace_only_description() -> None:
+    """Expects AxiomValidationError when the description is whitespace only."""
+    with pytest.raises(AxiomValidationError):
+        Axiom.create(label="A-01", description="   ")
+
+
 def test_axiom_from_record_reconstructs_axiom() -> None:
     """Expects from_record to reconstruct a persisted Axiom with its ID."""
     record = {
