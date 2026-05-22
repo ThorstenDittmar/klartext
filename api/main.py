@@ -1,15 +1,17 @@
 """klartext.jetzt – FastAPI application entry point."""
 
-from fastapi import FastAPI, Request
+from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+from api.dependencies import get_health_checker
 from api.exceptions.narrative import (
     NarrativeFileNotFoundError,
     NarrativeNotFoundError,
     SceneNotFoundError,
 )
 from api.routers import claims, narratives
+from api.services.health_service import HealthChecker, HealthStatus
 
 app = FastAPI(
     title="klartext.jetzt API",
@@ -66,5 +68,24 @@ app.include_router(narratives.router, tags=["narratives"])
 
 
 @app.get("/health")
-async def health() -> dict[str, str]:
-    return {"status": "ok", "version": "0.1.0"}
+async def health(checker: HealthChecker = Depends(get_health_checker)) -> dict[str, object]:
+    """Returns the health status of the API and all infrastructure dependencies.
+
+    Always returns HTTP 200. The caller must inspect the 'status' field:
+    - 'ok'       — all checks passed
+    - 'degraded' — one or more checks failed (details in 'checks')
+    """
+    db_result = await checker.check_database()
+    anthropic_result = await checker.check_anthropic()
+
+    checks = {
+        db_result.name: db_result.to_dict(),
+        anthropic_result.name: anthropic_result.to_dict(),
+    }
+    overall = (
+        HealthStatus.OK
+        if all(r.status == HealthStatus.OK for r in [db_result, anthropic_result])
+        else HealthStatus.DEGRADED
+    )
+
+    return {"status": overall.value, "version": "0.1.0", "checks": checks}

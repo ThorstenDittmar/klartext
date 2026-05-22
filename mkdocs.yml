@@ -87,7 +87,9 @@ nav:
     - "22. Leser-Workflow": kap-22-leser-workflow.md
     - "23. Community & Trust Network": kap-23-community.md
     - "24. Technisches Datenmodell": kap-24-datenmodell.md
+  - "Developer Guide": developer-guide.md
   - Appendix:
     - "Offene Punkte (GitHub Issues)": appendix-a.md
     - Architekturentscheidungen:
       - "ADR 0001: Detektor-Qualitätsprüfung": adr/0001-detector-quality-testing.md
+      - "ADR 0002: Testdaten Object Mother": adr/0002-test-data-object-mother.md

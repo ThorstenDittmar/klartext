@@ -22,3 +22,4 @@ Alle offenen Punkte aus dem Whitepaper V0.24 sind als GitHub Issues erfasst und 
 Grundlegende Architekturentscheidungen werden als ADRs dokumentiert:
 
 - [ADR 0001: Inhaltliche Qualitätsprüfung der Detektoren](adr/0001-detector-quality-testing.md)
+- [ADR 0002: Testdaten-Management via Object Mother](adr/0002-test-data-object-mother.md)

@@ -6,6 +6,7 @@ is chosen. Tests override these via app.dependency_overrides.
 DI chain:
   get_supabase_client ─┬─► get_narrative_repository ─► get_narrative_service
                        └─► get_claim_repository
+                       └─► get_health_checker
   get_narrative_import_service ────────────────────────► get_narrative_service
   (standalone) ────────────────────────────────────────► get_claim_extractor_service
 """
@@ -25,6 +26,7 @@ from api.repositories.narrative_repository import NarrativeRepository
 from api.repositories.supabase_claim_repository import SupabaseClaimRepository
 from api.repositories.supabase_narrative_repository import SupabaseNarrativeRepository
 from api.services.claim_extractor_service import ClaimExtractorService
+from api.services.health_service import HealthChecker, SupabaseHealthChecker
 from api.services.narrative_import_service import NarrativeImportService
 from api.services.narrative_service import NarrativeService
 
@@ -65,6 +67,13 @@ async def get_narrative_service(
 ) -> NarrativeService:
     """Wires NarrativeImportService and NarrativeRepository into NarrativeService."""
     return NarrativeService(import_service=import_service, repository=repository)
+
+
+async def get_health_checker(
+    client: AsyncClient = Depends(get_supabase_client),
+) -> HealthChecker:
+    """Wires SupabaseHealthChecker with the injected Supabase client."""
+    return SupabaseHealthChecker(supabase_client=client)
 
 
 def get_claim_extractor_service() -> ClaimExtractorService:

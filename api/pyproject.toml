@@ -1,3 +1,11 @@
+[project]
+name = "klartext-api"
+version = "0.1.0"
+requires-python = ">=3.12"
+
+[project.scripts]
+klartext = "api.cli:app"
+
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]

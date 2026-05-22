@@ -1,0 +1,56 @@
+name: Setup Smoke Test
+
+# Verifies that setup.sh works on a completely fresh environment —
+# the same starting point a new developer or a Codespace would have.
+
+on:
+  push:
+    paths:
+      - "setup.sh"
+      - "api/requirements*.txt"
+      - "api/pyproject.toml"
+      - "frontend/package*.json"
+      - ".github/workflows/setup-smoke-test.yml"
+  pull_request:
+    paths:
+      - "setup.sh"
+      - "api/requirements*.txt"
+      - "api/pyproject.toml"
+      - "frontend/package*.json"
+      - ".github/workflows/setup-smoke-test.yml"
+  workflow_dispatch:
+
+jobs:
+  smoke-test:
+    name: Fresh environment bootstrap
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Verify Supabase CLI is NOT pre-installed
+        run: "! command -v supabase"
+
+      - name: Run setup.sh
+        # Skip supabase start — Docker-in-Docker is not available in GitHub Actions.
+        # We verify that setup.sh installs the CLI and all dependencies correctly.
+        # The supabase start step is covered by the integration tests in the Codespace.
+        env:
+          SKIP_SUPABASE_START: "true"
+        run: bash setup.sh
+
+      - name: Verify klartext CLI is available
+        run: api/.venv/bin/klartext --help
+
+      - name: Verify unit tests pass
+        run: |
+          cd api
+          .venv/bin/python -m pytest tests/ -m "not integration" -q

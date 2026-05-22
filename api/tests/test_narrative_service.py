@@ -4,23 +4,23 @@ NarrativeService orchestrates two collaborators:
   1. NarrativeImportService – reads a file from disk and parses it.
   2. NarrativeRepository – persists and retrieves Narratives.
 
-Tests inject a FakeNarrativeParser (so no Markdown parsing happens) and a
-FakeNarrativeRepository (so no database is involved).
+Tests inject a FakeNarrativeParser (no Markdown parsing) and the shared
+FakeNarrativeRepository (no database involved).
 """
 
 from __future__ import annotations
 
-import uuid
 from pathlib import Path
 
 import pytest
 
 from api.exceptions.narrative import NarrativeFileNotFoundError, NarrativeNotFoundError
-from api.models.narrative import Narrative, Scene
+from api.models.narrative import Scene
 from api.parsers.narrative_parser import NarrativeParser
 from api.repositories.narrative_repository import NarrativeRepository
 from api.services.narrative_import_service import NarrativeImportService
 from api.services.narrative_service import NarrativeService
+from tests.fakes.fake_narrative_repository import FakeNarrativeRepository
 
 FIXTURE_PATH = (
     Path(__file__).parent
@@ -45,37 +45,6 @@ class FakeNarrativeParser(NarrativeParser):
             Scene.create(title="Szene 1", text="Fake text.", position=1),
             Scene.create(title="Szene 2", text="Auch fake.", position=2),
         ]
-
-
-class FakeNarrativeRepository(NarrativeRepository):
-    """In-memory NarrativeRepository for unit tests."""
-
-    def __init__(self) -> None:
-        self._store: dict[str, Narrative] = {}
-
-    async def save(self, narrative: Narrative) -> Narrative:
-        """Stores the narrative with a generated ID."""
-        narrative_id = str(uuid.uuid4())
-        saved = Narrative(id=narrative_id, title=narrative.title)
-        for scene in narrative.scenes:
-            saved.add_scene(
-                Scene(
-                    id=str(uuid.uuid4()),
-                    title=scene.title,
-                    text=scene.text,
-                    position=scene.position,
-                )
-            )
-        self._store[narrative_id] = saved
-        return saved
-
-    async def find_by_id(self, narrative_id: str) -> Narrative:
-        if narrative_id not in self._store:
-            raise NarrativeNotFoundError(f"Narrative not found: {narrative_id}")
-        return self._store[narrative_id]
-
-    async def list_all(self) -> list[Narrative]:
-        return [Narrative(id=n.id, title=n.title) for n in self._store.values()]
 
 
 def make_service(

@@ -120,6 +120,38 @@ def test_create_user_rejects_duplicate_email(): ...
 def test_change_email_raises_error_for_invalid_format(): ...
 ```
 
+## Infrastructure as Code
+All essential operations are scripted — no manual steps in terminals, dashboards, or GUIs.
+
+**CLI (typer):**
+- All essential infrastructure commands are encapsulated: `klartext start`, `klartext clean`, `klartext testdata`, etc.
+- Initial bootstrap only via `setup.sh` (before Python is available)
+- New developers get a fully working environment with a single command
+
+**Synchronized updates:**
+- Every installation or framework update must update both the CLI scripts AND the health checks
+- Never update one without the other
+
+**Version control:**
+- All scripts and health checks live in GitHub
+- Commit messages explain the *why*, not the *what*
+
+**Principles:**
+- Database schema via migration files — never manual SQL in the Supabase dashboard
+- Environment variables via `.env.example` as template
+- Deployment via scripts or CI/CD pipeline
+- Supabase configuration (RLS, Storage, Edge Functions) as code
+
+### Definition of Done — Infrastructure tasks
+
+Before closing any infrastructure-related task, verify each item:
+
+- [ ] `bash setup.sh` completes without errors on a simulated fresh environment (no manually pre-installed extras)
+- [ ] The developer documentation describes exactly what the scripts do — no more, no less
+- [ ] Every new environment variable is added to `.env.example` AND documented in `developer-guide.md`
+- [ ] `klartext health` reflects the current infrastructure state (new dependencies → new health check)
+- [ ] The CI smoke-test workflow passes (`setup-smoke-test.yml`)
+
 ## Comments
 - Every non-trivial method gets a docstring
 - Methods describe what they do
