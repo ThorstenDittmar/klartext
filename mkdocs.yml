@@ -58,6 +58,7 @@ markdown_extensions:
 
 nav:
   - Übersicht: index.md
+  - "Aktueller Prüfbericht ↗": pruefbericht-klartext.html
   - Konzept:
     - "1. Executive Summary": kap-01-executive-summary.md
     - "2. Problemdefinition": kap-02-problemdefinition.md
@@ -86,8 +87,6 @@ nav:
     - "22. Leser-Workflow": kap-22-leser-workflow.md
     - "23. Community & Trust Network": kap-23-community.md
     - "24. Technisches Datenmodell": kap-24-datenmodell.md
-  - Beispiele:
-    - "Wirkmodell-Prüfbericht (Klartext-Geschichte)": pruefbericht-klartext.html
   - Appendix:
     - "Offene Punkte (GitHub Issues)": appendix-a.md
     - Architekturentscheidungen:

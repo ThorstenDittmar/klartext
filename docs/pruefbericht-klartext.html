@@ -75,15 +75,23 @@
 
   .header-back {
     font-size: 0.72rem;
-    color: #5a6070;
+    color: #a0a8b8;
     text-decoration: none;
     display: flex;
     align-items: center;
     gap: 0.4rem;
-    transition: color 0.15s;
+    transition: all 0.15s;
     white-space: nowrap;
+    padding: 0.35rem 0.85rem;
+    border: 1px solid #2a3040;
+    border-radius: 20px;
+    background: transparent;
   }
-  .header-back:hover { color: var(--wm-color); }
+  .header-back:hover {
+    color: #e8e4da;
+    border-color: var(--wm-color);
+    background: var(--wm-bg);
+  }
 
   .header-badges {
     display: flex;
@@ -508,7 +516,7 @@
     <h1>Wirkmodell-Prüfbericht · Klartext</h1>
     <p>Kognitionswissenschaftliches Wirkmodell (Kap. 18) × Geschichte · Automatisch generiert</p>
   </div>
-  <a href="index.html" class="header-back">← klartext.jetzt Dokumentation</a>
+  <a href="." class="header-back">← Dokumentation</a>
   <div class="header-badges">
     <span class="badge wm">Wirkmodell</span>
     <span class="badge match">Konsistent</span>
