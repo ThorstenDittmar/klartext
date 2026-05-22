@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/kap-02-problemdefinition/">
+        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/developer-guide/">
       
       
-        <link rel="prev" href="../kap-01-executive-summary/">
+        <link rel="prev" href="../kap-24-datenmodell/">
       
       
-        <link rel="next" href="../kap-03-kognition/">
+        <link rel="next" href="../appendix-a/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>2. Problemdefinition - klartext.jetzt – Spezifikation</title>
+        <title>Developer Guide - klartext.jetzt – Spezifikation</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#2-problemdefinition-epistemische-krise-statt-informationskrise" class="md-skip">
+        <a href="#developer-guide" class="md-skip">
           Zum Inhalt
         </a>
       
@@ -114,7 +114,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              2. Problemdefinition
+              Developer Guide
             
           </span>
         </div>
@@ -257,12 +257,10 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
+      <li class="md-tabs__item">
         <a href="../kap-01-executive-summary/" class="md-tabs__link">
           
   
@@ -339,9 +337,11 @@
   
   
   
+    
   
-    <li class="md-tabs__item">
-      <a href="../developer-guide/" class="md-tabs__link">
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
         
   
   
@@ -485,31 +485,28 @@
       
   
   
-    
   
   
-  
     
     
     
     
-      
-        
-        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
             
   
   
@@ -527,7 +524,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -570,19 +567,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../kap-02-problemdefinition/" class="md-nav__link">
         
   
   
@@ -598,7 +586,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -1414,10 +1401,37 @@
       
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../developer-guide/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Developer Guide
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1433,6 +1447,220 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Inhaltsverzeichnis">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Inhaltsverzeichnis
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#local-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Local setup
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#environment-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Environment variables
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Environment variables">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#apienv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        api/.env
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frontendenvlocal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        frontend/.env.local
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI commands
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API endpoints
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="API endpoints">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#health-check-response" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Health check response
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#database" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Database
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#github-codespaces" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GitHub Codespaces
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GitHub Codespaces">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#first-time-setup-in-a-codespace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        First-time setup in a Codespace
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-secrets-to-a-codespace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding secrets to a Codespace
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#running-integration-tests-in-a-codespace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Running integration tests in a Codespace
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cicd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CI/CD
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1662,46 +1890,6 @@
   
 
 
-  <nav class="md-path" aria-label="Navigation" >
-    <ol class="md-path__list">
-      
-        
-  
-  
-    <li class="md-path__item">
-      <a href=".." class="md-path__link">
-        
-  <span class="md-ellipsis">
-    Übersicht
-  </span>
-
-      </a>
-    </li>
-  
-
-      
-      
-        
-  
-  
-    
-    
-      <li class="md-path__item">
-        <a href="../kap-01-executive-summary/" class="md-path__link">
-          
-  <span class="md-ellipsis">
-    Konzept
-  </span>
-
-        </a>
-      </li>
-    
-  
-
-      
-    </ol>
-  </nav>
-
               
               <article class="md-content__inner md-typeset">
                 
@@ -1709,7 +1897,7 @@
 
 
   
-    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/kap-02-problemdefinition.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/developer-guide.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1717,19 +1905,353 @@
   
 
 
-<h1 id="2-problemdefinition-epistemische-krise-statt-informationskrise">2. Problemdefinition: Epistemische Krise statt Informationskrise<a class="headerlink" href="#2-problemdefinition-epistemische-krise-statt-informationskrise" title="Permanent link">&para;</a></h1>
-<p>Die Gegenwart ist nicht primär durch Informationsmangel geprägt. In nahezu allen gesellschaftlich relevanten Bereichen existiert eine große Menge an Daten, Studien, Expertisen, Medienberichten, Analysen und Kommentaren. Bürgerinnen und Bürger können auf Informationen zu Inflation, Klimawandel, Migration, Pandemien, Energieversorgung, militärischen Konflikten oder sozialer Ungleichheit zugreifen. Dennoch führt dieser Informationsreichtum nicht automatisch zu besserem Verständnis.
-Im Gegenteil: Je komplexer die Themen werden, desto schwieriger wird es, Aussagen einzuordnen. Menschen begegnen widersprüchlichen Behauptungen, konkurrierenden Expertisen und stark emotionalisierten Deutungen. Unterschiedliche Akteure berufen sich auf Wissenschaft, Evidenz oder Fakten, gelangen aber zu entgegengesetzten Schlussfolgerungen. Für Außenstehende bleibt häufig unklar, ob der Konflikt aus unterschiedlichen Daten, unterschiedlichen Interpretationen, unterschiedlichen Werturteilen oder unterschiedlichen Grundannahmen entsteht.
-Ein Beispiel aus der Wirtschaftspolitik verdeutlicht dies. Die Aussage, Inflation könne durch Zinserhöhungen bekämpft werden, wirkt zunächst wie eine fachliche Aussage. Tatsächlich beruht sie jedoch auf einem bestimmten Kausalmodell: Geldpolitik beeinflusst Kreditvergabe, Investitionsverhalten, Nachfrage und Preisentwicklung. Dieses Modell kann plausibel sein, setzt aber weitere Annahmen voraus, etwa über das Verhalten von Marktteilnehmern, die Struktur der Inflation, die Rolle von Angebotsschocks, die Stabilität des Finanzsystems und die zeitliche Verzögerung geldpolitischer Effekte.
-Eine andere Position könnte argumentieren, Inflation sei in einem konkreten historischen Fall primär durch Energiepreise, Lieferketten oder geopolitische Verwerfungen verursacht. Daraus ergäben sich andere politische Schlussfolgerungen. Beide Positionen können intern kohärent sein, aber auf unterschiedlichen Axiomräumen beruhen.
-Ähnliche Strukturen finden sich in Klimadebatten, Gesundheitskommunikation, Sicherheitsfragen, Technologiepolitik oder sozialpolitischen Konflikten. Gesellschaftliche Positionen bestehen selten nur aus einzelnen Fakten. Sie bestehen aus Bündeln von Annahmen, Kausalitätsmodellen, Gewichtungen, Prioritäten und normativen Setzungen.
-Das Problem öffentlicher Kommunikation liegt daher häufig nicht darin, dass Menschen zu wenig Informationen erhalten. Das Problem liegt darin, dass die modellhaften Voraussetzungen dieser Informationen nicht explizit sichtbar werden. Aussagen erscheinen als fertige Schlussfolgerungen, obwohl ihre Gültigkeit von Annahmen abhängt, die nicht immer genannt werden.
-Diese Intransparenz erzeugt mehrere Folgeprobleme:
-Erstens wird es schwer, Positionen rational zu vergleichen. Wenn zwei Narrative unterschiedliche Schlussfolgerungen ziehen, aber ihre zugrundeliegenden Annahmen nicht offenlegen, bleibt unklar, worin der eigentliche Unterschied besteht.
-Zweitens begünstigt dies Polarisierung. Menschen identifizieren sich mit Deutungen, ohne deren innere Struktur zu prüfen.
-Drittens erschwert es Bildung und Wissenschaftskommunikation. Komplexe Inhalte werden entweder stark vereinfacht oder bleiben abstrakt und schwer zugänglich.
-Viertens entsteht ein Vertrauensproblem. Wenn wissenschaftliche Aussagen als politische Botschaften erscheinen, ohne ihre Voraussetzungen offenzulegen, sinkt die Nachvollziehbarkeit.
-Das hier vorgeschlagene Projekt adressiert diese Situation durch einen strukturellen Ansatz. Es schafft eine Umgebung, in der Annahmen, Kausalitäten und narrative Darstellung nicht zufällig nebeneinanderstehen, sondern explizit miteinander verbunden werden.</p>
+<h1 id="developer-guide">Developer Guide<a class="headerlink" href="#developer-guide" title="Permanent link">&para;</a></h1>
+<p>This guide covers everything you need to get klartext.jetzt running locally, understand the project structure, and work effectively in a GitHub Codespace.</p>
+<hr />
+<h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Version</th>
+<th>Install</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Python</td>
+<td>3.12+</td>
+<td><a href="https://python.org">python.org</a></td>
+<td>Required</td>
+</tr>
+<tr>
+<td>Node.js</td>
+<td>20+</td>
+<td><a href="https://nodejs.org">nodejs.org</a></td>
+<td>Required</td>
+</tr>
+<tr>
+<td>Supabase CLI</td>
+<td>latest</td>
+<td><a href="https://supabase.com/docs/guides/cli">supabase.com/docs/guides/cli</a></td>
+<td>Installed automatically by <code>setup.sh</code> if missing</td>
+</tr>
+<tr>
+<td>GitHub CLI</td>
+<td>latest</td>
+<td><a href="https://cli.github.com">cli.github.com</a></td>
+<td>Optional — needed for Codespace management</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="local-setup">Local setup<a class="headerlink" href="#local-setup" title="Permanent link">&para;</a></h2>
+<p>Clone the repo and run the bootstrap script once:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/ThorstenDittmar/klartext.git
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">cd</span><span class="w"> </span>klartext
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>bash<span class="w"> </span>setup.sh
+</code></pre></div>
+<p><code>setup.sh</code> will:</p>
+<ol>
+<li>Check all prerequisites</li>
+<li>Create <code>api/.venv</code> and install Python dependencies</li>
+<li>Install the <code>klartext</code> CLI command (<code>pip install -e api/</code>)</li>
+<li>Run <code>npm install</code> for the frontend</li>
+<li>Start the local Supabase stack (<code>supabase start</code>)</li>
+</ol>
+<p>After <code>supabase start</code> prints the connection details, copy the values into <code>api/.env</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># api/.env</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nv">ANTHROPIC_API_KEY</span><span class="o">=</span>sk-ant-...
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="nv">SUPABASE_URL</span><span class="o">=</span>http://127.0.0.1:54321
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="nv">SUPABASE_SERVICE_ROLE_KEY</span><span class="o">=</span>sb_secret_...
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="nv">ENVIRONMENT</span><span class="o">=</span>development
+</code></pre></div>
+<hr />
+<h2 id="environment-variables">Environment variables<a class="headerlink" href="#environment-variables" title="Permanent link">&para;</a></h2>
+<h3 id="apienv"><code>api/.env</code><a class="headerlink" href="#apienv" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Description</th>
+<th>Where to find it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ANTHROPIC_API_KEY</code></td>
+<td>Anthropic API key for Claude</td>
+<td><a href="https://console.anthropic.com">console.anthropic.com</a> → API Keys</td>
+</tr>
+<tr>
+<td><code>SUPABASE_URL</code></td>
+<td>Local Supabase API URL</td>
+<td>Printed by <code>supabase start</code></td>
+</tr>
+<tr>
+<td><code>SUPABASE_SERVICE_ROLE_KEY</code></td>
+<td>Supabase service role key (bypasses RLS)</td>
+<td>Printed by <code>supabase start</code></td>
+</tr>
+<tr>
+<td><code>ENVIRONMENT</code></td>
+<td><code>development</code> or <code>production</code></td>
+<td>Set manually</td>
+</tr>
+</tbody>
+</table>
+<h3 id="frontendenvlocal"><code>frontend/.env.local</code><a class="headerlink" href="#frontendenvlocal" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>VITE_SUPABASE_URL</code></td>
+<td>Same as <code>SUPABASE_URL</code> above</td>
+</tr>
+<tr>
+<td><code>VITE_SUPABASE_ANON_KEY</code></td>
+<td>Anon key printed by <code>supabase start</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="cli-commands">CLI commands<a class="headerlink" href="#cli-commands" title="Permanent link">&para;</a></h2>
+<p>After setup, the <code>klartext</code> command is available in your virtual environment:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">source</span><span class="w"> </span>api/.venv/bin/activate
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>klartext start</code></td>
+<td>Start the FastAPI server with auto-reload at <code>http://localhost:8000</code></td>
+</tr>
+<tr>
+<td><code>klartext test</code></td>
+<td>Run unit tests (excludes integration tests)</td>
+</tr>
+<tr>
+<td><code>klartext test --all</code></td>
+<td>Run unit + integration tests (requires running Supabase + API keys)</td>
+</tr>
+<tr>
+<td><code>klartext test -v</code></td>
+<td>Run unit tests with verbose output</td>
+</tr>
+<tr>
+<td><code>klartext health</code></td>
+<td>Call <code>/health</code> and print per-dependency status</td>
+</tr>
+<tr>
+<td><code>klartext testdata</code></td>
+<td>Seed the database with a consistent test dataset (requires running API + Supabase)</td>
+</tr>
+<tr>
+<td><code>klartext db reset</code></td>
+<td>Reset local database and re-apply all migrations</td>
+</tr>
+<tr>
+<td><code>klartext db status</code></td>
+<td>Show status of the local Supabase instance</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="api-endpoints">API endpoints<a class="headerlink" href="#api-endpoints" title="Permanent link">&para;</a></h2>
+<p>The interactive API docs are available at <code>http://localhost:8000/docs</code> when the server is running.</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET</code></td>
+<td><code>/health</code></td>
+<td>Infrastructure health check</td>
+</tr>
+<tr>
+<td><code>GET</code></td>
+<td><code>/docs</code></td>
+<td>Interactive Swagger UI</td>
+</tr>
+<tr>
+<td><code>POST</code></td>
+<td><code>/narratives/import</code></td>
+<td>Import a narrative from a Markdown file</td>
+</tr>
+<tr>
+<td><code>GET</code></td>
+<td><code>/narratives</code></td>
+<td>List all narratives</td>
+</tr>
+<tr>
+<td><code>GET</code></td>
+<td><code>/narratives/{id}</code></td>
+<td>Get a narrative with its scenes</td>
+</tr>
+<tr>
+<td><code>POST</code></td>
+<td><code>/narratives/{id}/scenes/{scene_id}/extract-claims</code></td>
+<td>Extract claims from a scene</td>
+</tr>
+<tr>
+<td><code>GET</code></td>
+<td><code>/narratives/{id}/scenes/{scene_id}/claims</code></td>
+<td>List claims for a scene</td>
+</tr>
+<tr>
+<td><code>POST</code></td>
+<td><code>/claims/extract</code></td>
+<td>Extract claims from raw text</td>
+</tr>
+</tbody>
+</table>
+<h3 id="health-check-response">Health check response<a class="headerlink" href="#health-check-response" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ok&quot;</span><span class="p">,</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0.1.0&quot;</span><span class="p">,</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span><span class="nt">&quot;checks&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="nt">&quot;database&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ok&quot;</span><span class="w"> </span><span class="p">},</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">    </span><span class="nt">&quot;anthropic&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ok&quot;</span><span class="w"> </span><span class="p">}</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="p">}</span>
+</code></pre></div>
+<p><code>status</code> is <code>"ok"</code> when all checks pass, <code>"degraded"</code> when one or more fail. HTTP status is always <code>200</code> — read the body to detect degradation.</p>
+<hr />
+<h2 id="database">Database<a class="headerlink" href="#database" title="Permanent link">&para;</a></h2>
+<p>Schema is managed via migration files in <code>supabase/migrations/</code>. Never run SQL manually in the Supabase dashboard.</p>
+<table>
+<thead>
+<tr>
+<th>Migration</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>20260521000001_initial_schema.sql</code></td>
+<td>Core tables: users, narratives, Wirkmodelle, RLS policies</td>
+</tr>
+<tr>
+<td><code>20260521000002_claims_table.sql</code></td>
+<td>Claims table with FK to narrative_einheiten</td>
+</tr>
+</tbody>
+</table>
+<p>To apply new changes:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Create a new migration (Supabase generates the timestamp)</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>supabase<span class="w"> </span>migration<span class="w"> </span>new<span class="w"> </span>my_change_description
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># Reset (drops and recreates the local DB, re-applies all migrations)</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>klartext<span class="w"> </span>db<span class="w"> </span>reset
+</code></pre></div>
+<hr />
+<h2 id="testing">Testing<a class="headerlink" href="#testing" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>klartext<span class="w"> </span><span class="nb">test</span><span class="w">          </span><span class="c1"># unit tests only (fast, no external services)</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>klartext<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--all<span class="w">    </span><span class="c1"># includes integration tests (needs Supabase + API keys)</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>klartext<span class="w"> </span><span class="nb">test</span><span class="w"> </span>-v<span class="w">       </span><span class="c1"># verbose output</span>
+</code></pre></div>
+<p>The test suite follows four layers, always written before implementation:</p>
+<ol>
+<li><strong>Domain</strong> — pure unit tests, no mocks</li>
+<li><strong>Services</strong> — unit tests with fake repositories</li>
+<li><strong>Repositories</strong> — <code>@pytest.mark.integration</code> tests against real Supabase</li>
+<li><strong>Routers</strong> — API tests via FastAPI <code>TestClient</code></li>
+</ol>
+<p>Integration tests are excluded from the default run (<code>pytest.ini</code> sets <code>-m 'not integration'</code>).</p>
+<hr />
+<h2 id="github-codespaces">GitHub Codespaces<a class="headerlink" href="#github-codespaces" title="Permanent link">&para;</a></h2>
+<p>The repository works out of the box in a GitHub Codespace.</p>
+<h3 id="first-time-setup-in-a-codespace">First-time setup in a Codespace<a class="headerlink" href="#first-time-setup-in-a-codespace" title="Permanent link">&para;</a></h3>
+<p>The Codespace already has the repository cloned. Run the bootstrap script — it installs the Supabase CLI automatically if missing:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>bash<span class="w"> </span>setup.sh
+</code></pre></div>
+<p>Then fill in <code>api/.env</code> with the values printed by <code>supabase start</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>nano<span class="w"> </span>api/.env
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="c1"># SUPABASE_URL=http://127.0.0.1:54321</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="c1"># SUPABASE_SERVICE_ROLE_KEY=sb_secret_...</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># ANTHROPIC_API_KEY=sk-ant-...   ← see section below</span>
+</code></pre></div>
+<h3 id="adding-secrets-to-a-codespace">Adding secrets to a Codespace<a class="headerlink" href="#adding-secrets-to-a-codespace" title="Permanent link">&para;</a></h3>
+<p>Set the <code>ANTHROPIC_API_KEY</code> as a Codespace secret so it is available automatically:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>gh<span class="w"> </span>secret<span class="w"> </span><span class="nb">set</span><span class="w"> </span>ANTHROPIC_API_KEY<span class="w"> </span>--app<span class="w"> </span>codespaces<span class="w"> </span>--repo<span class="w"> </span>ThorstenDittmar/klartext
+</code></pre></div>
+<p>Then restart the Codespace for the secret to take effect. Alternatively, export it for the current session:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">ANTHROPIC_API_KEY</span><span class="o">=</span>sk-ant-...
+</code></pre></div>
+<h3 id="running-integration-tests-in-a-codespace">Running integration tests in a Codespace<a class="headerlink" href="#running-integration-tests-in-a-codespace" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nb">cd</span><span class="w"> </span>api
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="nv">SUPABASE_URL</span><span class="o">=</span>http://127.0.0.1:54321<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="nv">SUPABASE_SERVICE_ROLE_KEY</span><span class="o">=</span>sb_secret_...<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>python3<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>tests/<span class="w"> </span>-m<span class="w"> </span>integration<span class="w"> </span>-v
+</code></pre></div>
+<hr />
+<h2 id="cicd">CI/CD<a class="headerlink" href="#cicd" title="Permanent link">&para;</a></h2>
+<p>GitHub Actions workflows run on every push and pull request:</p>
+<table>
+<thead>
+<tr>
+<th>Workflow</th>
+<th>Trigger</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>lint.yml</code></td>
+<td>push / PR</td>
+<td><code>ruff check</code>, <code>ruff format --check</code>, <code>mypy</code> on API; <code>eslint</code>, <code>tsc</code> on frontend</td>
+</tr>
+<tr>
+<td><code>test.yml</code></td>
+<td>push / PR</td>
+<td>Unit tests (no Supabase required)</td>
+</tr>
+<tr>
+<td><code>deploy-docs.yml</code></td>
+<td>push to <code>main</code> (docs/** changed)</td>
+<td>Builds and deploys MkDocs to GitHub Pages</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>klartext/
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>├── api/                   # Python 3.12 + FastAPI
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>│   ├── routers/           # HTTP routing only
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>│   ├── services/          # Business logic (OOP)
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>│   ├── repositories/      # Data access (Supabase adapters)
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>│   ├── models/            # Domain objects
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>│   ├── schemas/           # Pydantic request/response shapes
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>│   ├── exceptions/        # Exception hierarchy per layer
+<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>│   ├── providers/         # AI provider adapters (Claude)
+<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>│   ├── parsers/           # Input parsers (Markdown)
+<a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>│   ├── cli.py             # typer CLI
+<a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a>│   └── main.py            # FastAPI app entry point
+<a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a>├── frontend/              # React 18 + TypeScript + Vite
+<a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a>├── supabase/
+<a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a>│   ├── migrations/        # SQL migration files (source of truth)
+<a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a>│   └── config.toml        # Supabase project config
+<a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a>├── docs/                  # MkDocs Material — specification + developer docs
+<a id="__codelineno-11-18" name="__codelineno-11-18" href="#__codelineno-11-18"></a>├── setup.sh               # One-shot bootstrap script
+<a id="__codelineno-11-19" name="__codelineno-11-19" href="#__codelineno-11-19"></a>└── .github/workflows/     # CI/CD pipelines
+</code></pre></div>
+<p>See <a href="../CLAUDE.md"><code>CLAUDE.md</code></a> for the full coding standards.</p>
 
 
 

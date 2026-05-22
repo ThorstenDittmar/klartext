@@ -10,31 +10,29 @@
       
       
       
-        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/kap-02-problemdefinition/">
+        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/adr/0002-test-data-object-mother/">
       
       
-        <link rel="prev" href="../kap-01-executive-summary/">
+        <link rel="prev" href="../0001-detector-quality-testing/">
       
-      
-        <link rel="next" href="../kap-03-kognition/">
       
       
         
       
       
-      <link rel="icon" href="../assets/images/favicon.png">
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
-        <title>2. Problemdefinition - klartext.jetzt – Spezifikation</title>
+        <title>ADR 0002: Testdaten Object Mother - klartext.jetzt – Spezifikation</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -53,7 +51,7 @@
       
     
     
-    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -78,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#2-problemdefinition-epistemische-krise-statt-informationskrise" class="md-skip">
+        <a href="#adr-0002-test-data-management-via-object-mother" class="md-skip">
           Zum Inhalt
         </a>
       
@@ -94,7 +92,7 @@
 
 <header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Kopfzeile">
-    <a href=".." title="klartext.jetzt – Spezifikation" class="md-header__button md-logo" aria-label="klartext.jetzt – Spezifikation" data-md-component="logo">
+    <a href="../.." title="klartext.jetzt – Spezifikation" class="md-header__button md-logo" aria-label="klartext.jetzt – Spezifikation" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -114,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              2. Problemdefinition
+              ADR 0002: Testdaten Object Mother
             
           </span>
         </div>
@@ -221,7 +219,7 @@
   
   
     <li class="md-tabs__item">
-      <a href=".." class="md-tabs__link">
+      <a href="../.." class="md-tabs__link">
         
   
   
@@ -240,7 +238,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../pruefbericht-klartext.html" class="md-tabs__link">
+      <a href="../../pruefbericht-klartext.html" class="md-tabs__link">
         
   
   
@@ -257,13 +255,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../kap-01-executive-summary/" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../kap-01-executive-summary/" class="md-tabs__link">
           
   
   
@@ -283,7 +279,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../kap-06-systemarchitektur/" class="md-tabs__link">
+        <a href="../../kap-06-systemarchitektur/" class="md-tabs__link">
           
   
   
@@ -303,7 +299,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../kap-11-leser/" class="md-tabs__link">
+        <a href="../../kap-11-leser/" class="md-tabs__link">
           
   
   
@@ -323,7 +319,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../kap-19-umsetzung/" class="md-tabs__link">
+        <a href="../../kap-19-umsetzung/" class="md-tabs__link">
           
   
   
@@ -341,7 +337,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../developer-guide/" class="md-tabs__link">
+      <a href="../../developer-guide/" class="md-tabs__link">
         
   
   
@@ -358,11 +354,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../appendix-a/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../appendix-a/" class="md-tabs__link">
           
   
   
@@ -404,7 +402,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="klartext.jetzt – Spezifikation" class="md-nav__button md-logo" aria-label="klartext.jetzt – Spezifikation" data-md-component="logo">
+    <a href="../.." title="klartext.jetzt – Spezifikation" class="md-nav__button md-logo" aria-label="klartext.jetzt – Spezifikation" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -434,7 +432,7 @@
   
   
     <li class="md-nav__item">
-      <a href=".." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         
   
   
@@ -461,7 +459,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../pruefbericht-klartext.html" class="md-nav__link">
+      <a href="../../pruefbericht-klartext.html" class="md-nav__link">
         
   
   
@@ -485,31 +483,28 @@
       
   
   
-    
   
   
-  
     
     
     
     
-      
-        
-        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
             
   
   
@@ -527,7 +522,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -545,7 +540,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kap-01-executive-summary/" class="md-nav__link">
+      <a href="../../kap-01-executive-summary/" class="md-nav__link">
         
   
   
@@ -570,19 +565,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../kap-02-problemdefinition/" class="md-nav__link">
         
   
   
@@ -598,7 +584,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -611,7 +596,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kap-03-kognition/" class="md-nav__link">
+      <a href="../../kap-03-kognition/" class="md-nav__link">
         
   
   
@@ -639,7 +624,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kap-04-vision/" class="md-nav__link">
+      <a href="../../kap-04-vision/" class="md-nav__link">
         
   
   
@@ -667,7 +652,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kap-05-autorenumgebung/" class="md-nav__link">
+      <a href="../../kap-05-autorenumgebung/" class="md-nav__link">
         
   
   
@@ -756,7 +741,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kap-06-systemarchitektur/" class="md-nav__link">
+      <a href="../../kap-06-systemarchitektur/" class="md-nav__link">
         
   
   
@@ -784,7 +769,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kap-07-wirkmodelle/" class="md-nav__link">
+      <a href="../../kap-07-wirkmodelle/" class="md-nav__link">
         
   
   
@@ -812,7 +797,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kap-08-verbindung/" class="md-nav__link">
+      <a href="../../kap-08-verbindung/" class="md-nav__link">
         
   
   
@@ -840,7 +825,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kap-09-transparenzbericht/" class="md-nav__link">
+      <a href="../../kap-09-transparenzbericht/" class="md-nav__link">
         
   
   
@@ -868,7 +853,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kap-10-perspektivpluralismus/" class="md-nav__link">
+      <a href="../../kap-10-perspektivpluralismus/" class="md-nav__link">
         
   
   
@@ -957,7 +942,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kap-11-leser/" class="md-nav__link">
+      <a href="../../kap-11-leser/" class="md-nav__link">
         
   
   
@@ -985,7 +970,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kap-12-distribution/" class="md-nav__link">
+      <a href="../../kap-12-distribution/" class="md-nav__link">
         
   
   
@@ -1013,7 +998,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kap-13-folgeprojekte/" class="md-nav__link">
+      <a href="../../kap-13-folgeprojekte/" class="md-nav__link">
         
   
   
@@ -1041,7 +1026,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kap-14-technologie/" class="md-nav__link">
+      <a href="../../kap-14-technologie/" class="md-nav__link">
         
   
   
@@ -1069,7 +1054,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kap-15-roadmap/" class="md-nav__link">
+      <a href="../../kap-15-roadmap/" class="md-nav__link">
         
   
   
@@ -1097,7 +1082,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kap-16-relevanz/" class="md-nav__link">
+      <a href="../../kap-16-relevanz/" class="md-nav__link">
         
   
   
@@ -1125,7 +1110,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kap-17-schluss/" class="md-nav__link">
+      <a href="../../kap-17-schluss/" class="md-nav__link">
         
   
   
@@ -1153,7 +1138,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kap-18-wissenschaft/" class="md-nav__link">
+      <a href="../../kap-18-wissenschaft/" class="md-nav__link">
         
   
   
@@ -1242,7 +1227,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kap-19-umsetzung/" class="md-nav__link">
+      <a href="../../kap-19-umsetzung/" class="md-nav__link">
         
   
   
@@ -1270,7 +1255,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kap-20-literaten-workflow/" class="md-nav__link">
+      <a href="../../kap-20-literaten-workflow/" class="md-nav__link">
         
   
   
@@ -1298,7 +1283,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kap-21-wirkmodell-workflow/" class="md-nav__link">
+      <a href="../../kap-21-wirkmodell-workflow/" class="md-nav__link">
         
   
   
@@ -1326,7 +1311,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kap-22-leser-workflow/" class="md-nav__link">
+      <a href="../../kap-22-leser-workflow/" class="md-nav__link">
         
   
   
@@ -1354,7 +1339,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kap-23-community/" class="md-nav__link">
+      <a href="../../kap-23-community/" class="md-nav__link">
         
   
   
@@ -1382,7 +1367,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kap-24-datenmodell/" class="md-nav__link">
+      <a href="../../kap-24-datenmodell/" class="md-nav__link">
         
   
   
@@ -1417,7 +1402,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../developer-guide/" class="md-nav__link">
+      <a href="../../developer-guide/" class="md-nav__link">
         
   
   
@@ -1441,28 +1426,31 @@
       
   
   
+    
   
   
+  
     
     
     
     
+      
+        
+        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
         
           
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
-        
-          
-          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
             
   
   
@@ -1480,7 +1468,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1498,7 +1486,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../appendix-a/" class="md-nav__link">
+      <a href="../../appendix-a/" class="md-nav__link">
         
   
   
@@ -1523,28 +1511,31 @@
                 
   
   
+    
   
   
+  
     
     
     
     
       
       
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
         
           
+          
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8_2" >
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_2" checked>
         
           
-          <label class="md-nav__link" for="__nav_8_2" id="__nav_8_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_8_2" id="__nav_8_2_label" tabindex="">
             
   
   
@@ -1562,7 +1553,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_8_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1580,7 +1571,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../adr/0001-detector-quality-testing/" class="md-nav__link">
+      <a href="../0001-detector-quality-testing/" class="md-nav__link">
         
   
   
@@ -1605,10 +1596,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../adr/0002-test-data-object-mother/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADR 0002: Testdaten Object Mother
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1624,6 +1642,81 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Inhaltsverzeichnis">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Inhaltsverzeichnis
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#kontext" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kontext
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#entscheidung" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entscheidung
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#begrundung" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Begründung
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#konsequenzen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Konsequenzen
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verwandte-entscheidungen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verwandte Entscheidungen
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1669,7 +1762,7 @@
   
   
     <li class="md-path__item">
-      <a href=".." class="md-path__link">
+      <a href="../.." class="md-path__link">
         
   <span class="md-ellipsis">
     Übersicht
@@ -1687,10 +1780,28 @@
     
     
       <li class="md-path__item">
-        <a href="../kap-01-executive-summary/" class="md-path__link">
+        <a href="../../appendix-a/" class="md-path__link">
           
   <span class="md-ellipsis">
-    Konzept
+    Appendix
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../0001-detector-quality-testing/" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Architekturentscheidungen
   </span>
 
         </a>
@@ -1709,7 +1820,7 @@
 
 
   
-    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/kap-02-problemdefinition.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/adr/0002-test-data-object-mother.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1717,19 +1828,73 @@
   
 
 
-<h1 id="2-problemdefinition-epistemische-krise-statt-informationskrise">2. Problemdefinition: Epistemische Krise statt Informationskrise<a class="headerlink" href="#2-problemdefinition-epistemische-krise-statt-informationskrise" title="Permanent link">&para;</a></h1>
-<p>Die Gegenwart ist nicht primär durch Informationsmangel geprägt. In nahezu allen gesellschaftlich relevanten Bereichen existiert eine große Menge an Daten, Studien, Expertisen, Medienberichten, Analysen und Kommentaren. Bürgerinnen und Bürger können auf Informationen zu Inflation, Klimawandel, Migration, Pandemien, Energieversorgung, militärischen Konflikten oder sozialer Ungleichheit zugreifen. Dennoch führt dieser Informationsreichtum nicht automatisch zu besserem Verständnis.
-Im Gegenteil: Je komplexer die Themen werden, desto schwieriger wird es, Aussagen einzuordnen. Menschen begegnen widersprüchlichen Behauptungen, konkurrierenden Expertisen und stark emotionalisierten Deutungen. Unterschiedliche Akteure berufen sich auf Wissenschaft, Evidenz oder Fakten, gelangen aber zu entgegengesetzten Schlussfolgerungen. Für Außenstehende bleibt häufig unklar, ob der Konflikt aus unterschiedlichen Daten, unterschiedlichen Interpretationen, unterschiedlichen Werturteilen oder unterschiedlichen Grundannahmen entsteht.
-Ein Beispiel aus der Wirtschaftspolitik verdeutlicht dies. Die Aussage, Inflation könne durch Zinserhöhungen bekämpft werden, wirkt zunächst wie eine fachliche Aussage. Tatsächlich beruht sie jedoch auf einem bestimmten Kausalmodell: Geldpolitik beeinflusst Kreditvergabe, Investitionsverhalten, Nachfrage und Preisentwicklung. Dieses Modell kann plausibel sein, setzt aber weitere Annahmen voraus, etwa über das Verhalten von Marktteilnehmern, die Struktur der Inflation, die Rolle von Angebotsschocks, die Stabilität des Finanzsystems und die zeitliche Verzögerung geldpolitischer Effekte.
-Eine andere Position könnte argumentieren, Inflation sei in einem konkreten historischen Fall primär durch Energiepreise, Lieferketten oder geopolitische Verwerfungen verursacht. Daraus ergäben sich andere politische Schlussfolgerungen. Beide Positionen können intern kohärent sein, aber auf unterschiedlichen Axiomräumen beruhen.
-Ähnliche Strukturen finden sich in Klimadebatten, Gesundheitskommunikation, Sicherheitsfragen, Technologiepolitik oder sozialpolitischen Konflikten. Gesellschaftliche Positionen bestehen selten nur aus einzelnen Fakten. Sie bestehen aus Bündeln von Annahmen, Kausalitätsmodellen, Gewichtungen, Prioritäten und normativen Setzungen.
-Das Problem öffentlicher Kommunikation liegt daher häufig nicht darin, dass Menschen zu wenig Informationen erhalten. Das Problem liegt darin, dass die modellhaften Voraussetzungen dieser Informationen nicht explizit sichtbar werden. Aussagen erscheinen als fertige Schlussfolgerungen, obwohl ihre Gültigkeit von Annahmen abhängt, die nicht immer genannt werden.
-Diese Intransparenz erzeugt mehrere Folgeprobleme:
-Erstens wird es schwer, Positionen rational zu vergleichen. Wenn zwei Narrative unterschiedliche Schlussfolgerungen ziehen, aber ihre zugrundeliegenden Annahmen nicht offenlegen, bleibt unklar, worin der eigentliche Unterschied besteht.
-Zweitens begünstigt dies Polarisierung. Menschen identifizieren sich mit Deutungen, ohne deren innere Struktur zu prüfen.
-Drittens erschwert es Bildung und Wissenschaftskommunikation. Komplexe Inhalte werden entweder stark vereinfacht oder bleiben abstrakt und schwer zugänglich.
-Viertens entsteht ein Vertrauensproblem. Wenn wissenschaftliche Aussagen als politische Botschaften erscheinen, ohne ihre Voraussetzungen offenzulegen, sinkt die Nachvollziehbarkeit.
-Das hier vorgeschlagene Projekt adressiert diese Situation durch einen strukturellen Ansatz. Es schafft eine Umgebung, in der Annahmen, Kausalitäten und narrative Darstellung nicht zufällig nebeneinanderstehen, sondern explizit miteinander verbunden werden.</p>
+<h1 id="adr-0002-test-data-management-via-object-mother">ADR 0002: Test Data Management via Object Mother<a class="headerlink" href="#adr-0002-test-data-management-via-object-mother" title="Permanent link">&para;</a></h1>
+<p><strong>Status:</strong> Accepted<br />
+<strong>Datum:</strong> 2026-05-22<br />
+<strong>Autoren:</strong> Thorsten Dittmar</p>
+<hr />
+<h2 id="kontext">Kontext<a class="headerlink" href="#kontext" title="Permanent link">&para;</a></h2>
+<p>klartext.jetzt arbeitet mit komplexen Domänenobjekten (<code>Narrative</code>, <code>Scene</code>, <code>Claim</code>, später <code>Wirkmodell</code>, <code>Modellelement</code> u.a.). Tests auf allen vier Ebenen (Domain, Service, Repository, Router) benötigen reproduzierbare, aussagekräftige Testdaten.</p>
+<p>Zwei Standardansätze wurden evaluiert:</p>
+<p><strong>1. Externe Fixture-Dateien</strong> (JSON, YAML, SQL)<br />
+Daten liegen als Dateien vor und werden direkt in die Datenbank geladen oder an die Klasse übergeben. Bekannt aus Django-Fixtures und SQL-Seed-Skripten.</p>
+<p><strong>2. <code>factory_boy</code></strong><br />
+Die in der Python-Community verbreitetste Library für Testdatengenerierung. Inspiriert von FactoryBot (Ruby). Bietet Sequences, Traits, Sub-Factories und direkte ORM-Integration.</p>
+<hr />
+<h2 id="entscheidung">Entscheidung<a class="headerlink" href="#entscheidung" title="Permanent link">&para;</a></h2>
+<p>Wir verwenden das <strong>Object Mother</strong>-Muster: dedizierte Klassen in <code>tests/mothers/</code>, eine pro Domänenentität, mit benannten Factory-Methoden für typische Testszenarien.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>tests/
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  mothers/
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    narrative_mother.py   ← NarrativeMother
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    claim_mother.py       ← ClaimMother
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    scene_mother.py       ← SceneMother
+</code></pre></div>
+<p>Jede Mother-Klasse bietet mindestens drei Methoden:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">NarrativeMother</span><span class="p">:</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="nd">@staticmethod</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">minimal</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Narrative</span><span class="p">:</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Simplest valid narrative — for tests that don&#39;t care about structure.&quot;&quot;&quot;</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="nd">@staticmethod</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">complete</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Narrative</span><span class="p">:</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Fully populated narrative — for serialisation and mapping tests.&quot;&quot;&quot;</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>    <span class="nd">@staticmethod</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">collection</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Narrative</span><span class="p">]:</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;A varied set of narratives — for list, filter and pagination tests.&quot;&quot;&quot;</span>
+</code></pre></div>
+<p>Pytest-Fixtures in <code>conftest.py</code> wrappen die Mothers für Scope-Management und Teardown:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">minimal_narrative</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Narrative</span><span class="p">:</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="k">return</span> <span class="n">NarrativeMother</span><span class="o">.</span><span class="n">minimal</span><span class="p">()</span>
+</code></pre></div>
+<p>Externe Dateien in <code>tests/fixtures/</code> bleiben erhalten — ausschließlich für inhärent dateibasierte Testdaten (Markdown-Narrative, gemockte Claude-API-Antworten).</p>
+<hr />
+<h2 id="begrundung">Begründung<a class="headerlink" href="#begrundung" title="Permanent link">&para;</a></h2>
+<p><strong>Gegen externe Fixture-Dateien als primären Ansatz:</strong><br />
+Feldnamen-Änderungen an Domänenobjekten brechen Fixture-Dateien still — kein Compiler, kein Typchecker schlägt an. Bei einem aktiv wachsenden Datenmodell ist das ein hohes Risiko.</p>
+<p><strong>Gegen <code>factory_boy</code>:</strong><br />
+<code>factory_boy</code> ist primär für ORM-gestützte Modelle optimiert (Django, SQLAlchemy). Klartext.jetzt verwendet bewusst keinen ORM — Domänenobjekte sind pure Python-Klassen, der Datenbankzugriff läuft über Repository-Klassen mit expliziten <code>from_record()</code>-Methoden. Der zentrale Vorteil von <code>factory_boy</code> (ORM-Integration) entfällt damit. Eine externe Dependency einzuführen, deren Hauptvorteil man nicht nutzt, ist nicht gerechtfertigt.</p>
+<p><strong>Für Object Mother:</strong>
+- Passt zur OOP-Architektur des Projekts (Klassen, keine losen Funktionen)
+- Typsicher — Refactorings an Domänenobjekten erzeugen sofort Compilerfehler
+- Kein zusätzlicher Dependency
+- Selbstdokumentierend: <code>NarrativeMother.complete()</code> beschreibt den Testfall
+- Äquivalent zum Smalltalk-Protokoll <code>examples</code>/<code>explain</code> auf Klassenseite — aber als separate Testklasse, damit Produktionscode sauber bleibt</p>
+<hr />
+<h2 id="konsequenzen">Konsequenzen<a class="headerlink" href="#konsequenzen" title="Permanent link">&para;</a></h2>
+<p><strong>Positiv:</strong>
+- Testdaten sind typsicher und refactoring-resistent
+- Klarer Ort für alle Testdaten-Konstruktion
+- Kein neues Dependency</p>
+<p><strong>Negativ / offen:</strong>
+- Sequences (eindeutige Werte über mehrere Objekte hinweg) müssen manuell implementiert werden, wenn nötig
+- Bei Einführung eines ORM wäre ein Wechsel zu <code>factory_boy</code> sinnvoll — dann ADR überarbeiten</p>
+<hr />
+<h2 id="verwandte-entscheidungen">Verwandte Entscheidungen<a class="headerlink" href="#verwandte-entscheidungen" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../0001-detector-quality-testing/">ADR 0001: Inhaltliche Qualitätsprüfung der Detektoren</a></li>
+</ul>
 
 
 
@@ -1785,10 +1950,10 @@ Das hier vorgeschlagene Projekt adressiert diese Situation durch einen strukture
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.path", "navigation.top", "toc.integrate", "search.highlight", "search.suggest", "content.code.copy", "content.action.edit"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "In Zwischenablage kopiert", "clipboard.copy": "In Zwischenablage kopieren", "search.result.more.one": "1 weiteres Suchergebnis auf dieser Seite", "search.result.more.other": "# weitere Suchergebnisse auf dieser Seite", "search.result.none": "Keine Suchergebnisse", "search.result.one": "1 Suchergebnis", "search.result.other": "# Suchergebnisse", "search.result.placeholder": "Suchbegriff eingeben", "search.result.term.missing": "Es fehlt", "select.version": "Version ausw\u00e4hlen"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.path", "navigation.top", "toc.integrate", "search.highlight", "search.suggest", "content.code.copy", "content.action.edit"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "In Zwischenablage kopiert", "clipboard.copy": "In Zwischenablage kopieren", "search.result.more.one": "1 weiteres Suchergebnis auf dieser Seite", "search.result.more.other": "# weitere Suchergebnisse auf dieser Seite", "search.result.none": "Keine Suchergebnisse", "search.result.one": "1 Suchergebnis", "search.result.other": "# Suchergebnisse", "search.result.placeholder": "Suchbegriff eingeben", "search.result.term.missing": "Es fehlt", "select.version": "Version ausw\u00e4hlen"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>
