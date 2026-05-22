@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Klartext – Wirkmodell-Prüfbericht</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
+
+  :root {
+    --bg: #f5f3ef;
+    --surface: #ffffff;
+    --surface2: #f0ede8;
+    --border: #ddd8d0;
+    --text: #1a1814;
+    --muted: #7a7268;
+    --bright: #0f0d0a;
+
+    --wm-color: #5c6bc0;
+    --story-color: #ff7b4a;
+    --match-color: #4adf8a;
+    --mismatch-color: #ff4a6e;
+    --gap-color: #ffc04a;
+    --implicit-color: #c04aff;
+
+    --wm-bg: rgba(92,107,192,0.08);
+    --story-bg: rgba(255,123,74,0.08);
+    --match-bg: rgba(74,223,138,0.12);
+    --mismatch-bg: rgba(255,74,110,0.10);
+    --gap-bg: rgba(255,192,74,0.12);
+    --implicit-bg: rgba(192,74,255,0.10);
+
+    --wm-border: rgba(92,107,192,0.4);
+    --story-border: rgba(255,123,74,0.4);
+    --match-border: rgba(74,223,138,0.4);
+    --mismatch-border: rgba(255,74,110,0.4);
+    --gap-border: rgba(255,192,74,0.4);
+    --implicit-border: rgba(192,74,255,0.4);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  header {
+    background: #1a1e2a;
+    border-bottom: 1px solid #2a3040;
+    padding: 1.5rem 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .header-left h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    color: #e8e4da;
+    font-weight: 400;
+  }
+
+  .header-left p {
+    font-size: 0.75rem;
+    color: #5a6070;
+    margin-top: 0.2rem;
+  }
+
+  .header-back {
+    font-size: 0.72rem;
+    color: #5a6070;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: color 0.15s;
+    white-space: nowrap;
+  }
+  .header-back:hover { color: var(--wm-color); }
+
+  .header-badges {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.7rem;
+    border-radius: 20px;
+    border: 1px solid;
+    font-weight: 500;
+  }
+
+  .badge.wm     { color: var(--wm-color);       border-color: var(--wm-border);       background: var(--wm-bg); }
+  .badge.story  { color: var(--story-color);     border-color: var(--story-border);    background: var(--story-bg); }
+  .badge.match  { color: var(--match-color);     border-color: var(--match-border);    background: var(--match-bg); }
+  .badge.mismatch { color: var(--mismatch-color); border-color: var(--mismatch-border); background: var(--mismatch-bg); }
+  .badge.gap    { color: var(--gap-color);       border-color: var(--gap-border);      background: var(--gap-bg); }
+  .badge.implicit { color: var(--implicit-color); border-color: var(--implicit-border); background: var(--implicit-bg); }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 420px 1fr;
+    min-height: calc(100vh - 80px);
+  }
+
+  /* LEFT PANEL */
+  .panel {
+    background: #1a1e2a;
+    border-right: 1px solid #2a3040;
+    padding: 1.5rem;
+    overflow-y: auto;
+    position: sticky;
+    top: 0;
+    height: calc(100vh - 80px);
+  }
+
+  .panel-block {
+    margin-bottom: 2rem;
+  }
+
+  .panel-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #5a6070;
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #2a3040;
+  }
+
+  /* WIRKMODELL AXIOME */
+  .wm-axiom {
+    background: #1e2535;
+    border: 1px solid #2a3040;
+    border-left: 3px solid var(--wm-color);
+    border-radius: 4px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .wm-axiom-id {
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--wm-color);
+    margin-bottom: 0.2rem;
+    opacity: 0.7;
+  }
+
+  .wm-axiom-title {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: #e8e4da;
+    margin-bottom: 0.2rem;
+    line-height: 1.35;
+  }
+
+  .wm-axiom-src {
+    font-size: 0.7rem;
+    color: #5a6070;
+    font-style: italic;
+  }
+
+  /* FINDINGS */
+  .finding {
+    background: #1e2535;
+    border: 1px solid #2a3040;
+    border-radius: 4px;
+    padding: 0.9rem 1rem;
+    margin-bottom: 0.6rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    border-left: 3px solid transparent;
+  }
+
+  .finding:hover { background: #232a38; }
+  .finding.active { background: #232a38; }
+
+  .finding.match    { border-left-color: var(--match-color); }
+  .finding.mismatch { border-left-color: var(--mismatch-color); }
+  .finding.gap      { border-left-color: var(--gap-color); }
+  .finding.implicit { border-left-color: var(--implicit-color); }
+
+  .finding-type {
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+  }
+  .finding.match    .finding-type { color: var(--match-color); }
+  .finding.mismatch .finding-type { color: var(--mismatch-color); }
+  .finding.gap      .finding-type { color: var(--gap-color); }
+  .finding.implicit .finding-type { color: var(--implicit-color); }
+
+  .finding-title {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: #e8e4da;
+    margin-bottom: 0.25rem;
+    line-height: 1.35;
+  }
+
+  .finding-axiom {
+    font-size: 0.68rem;
+    color: var(--wm-color);
+    margin-bottom: 0.25rem;
+    opacity: 0.8;
+  }
+
+  .finding-desc {
+    font-size: 0.75rem;
+    color: #7a8090;
+    line-height: 1.5;
+  }
+
+  .finding-scene {
+    font-size: 0.65rem;
+    color: #9a9080;
+    margin-top: 0.35rem;
+    font-style: italic;
+  }
+
+  /* SCORE */
+  .score-bar {
+    background: #1e2535;
+    border: 1px solid #2a3040;
+    border-radius: 6px;
+    padding: 1rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .score-label {
+    font-size: 0.72rem;
+    color: #5a6070;
+    margin-bottom: 0.5rem;
+  }
+
+  .score-track {
+    height: 6px;
+    background: #2a3040;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 0.3rem;
+  }
+
+  .score-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 1s ease;
+  }
+
+  .score-val {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--bright);
+  }
+
+  /* LEGEND */
+  .legend {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.75rem;
+    color: #7a8090;
+    cursor: pointer;
+    padding: 0.3rem 0.5rem;
+    border-radius: 3px;
+    transition: background 0.15s;
+  }
+
+  .legend-item:hover { background: #1e2535; }
+  .legend-item.active { background: #1e2535; color: #c0bdb5; }
+
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* RIGHT: CONTENT */
+  .content {
+    overflow-y: auto;
+  }
+
+  /* TOP: WIRKMODELL OVERVIEW */
+  .wm-section {
+    background: #eeeae3;
+    border-bottom: 1px solid var(--border);
+    padding: 2rem 2.5rem;
+  }
+
+  .wm-section h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    color: var(--bright);
+    font-weight: 400;
+    margin-bottom: 0.4rem;
+  }
+
+  .wm-section p {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-bottom: 1.2rem;
+    max-width: 700px;
+  }
+
+  .axiom-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 0.8rem;
+  }
+
+  .axiom-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-top: 2px solid var(--wm-color);
+    border-radius: 4px;
+    padding: 0.9rem 1rem;
+  }
+
+  .axiom-card-id {
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--wm-color);
+    opacity: 0.7;
+    margin-bottom: 0.3rem;
+  }
+
+  .axiom-card-title {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--bright);
+    margin-bottom: 0.3rem;
+    line-height: 1.35;
+  }
+
+  .axiom-card-desc {
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .axiom-card-src {
+    font-size: 0.68rem;
+    color: #7a9aba;
+    margin-top: 0.5rem;
+    font-style: italic;
+  }
+
+  /* STORY SECTION */
+  .story-section {
+    padding: 2rem 2.5rem;
+    max-width: 820px;
+  }
+
+  .story-section h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    color: var(--bright);
+    font-weight: 400;
+    margin-bottom: 1.5rem;
+  }
+
+  .scene {
+    margin-bottom: 2.5rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .scene:last-child { border-bottom: none; }
+
+  .scene-title {
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+
+  .scene p {
+    margin-bottom: 0.85rem;
+    color: var(--text);
+    font-size: 0.95rem;
+    line-height: 1.75;
+  }
+
+  /* MARKS */
+  mark {
+    background: transparent;
+    border-radius: 2px;
+    cursor: pointer;
+    padding: 1px 2px;
+    transition: all 0.15s;
+    border-bottom: 2px solid transparent;
+  }
+
+  mark.match    { background: var(--match-bg);    border-bottom-color: var(--match-border); }
+  mark.mismatch { background: var(--mismatch-bg); border-bottom-color: var(--mismatch-border); }
+  mark.gap      { background: var(--gap-bg);      border-bottom-color: var(--gap-border); }
+  mark.implicit { background: var(--implicit-bg); border-bottom-color: var(--implicit-border); }
+
+  mark:hover, mark.highlighted { filter: brightness(2); }
+
+  /* TOOLTIP */
+  .tooltip {
+    display: none;
+    position: fixed;
+    background: #1a1814;
+    border: 1px solid #333;
+    color: var(--text);
+    padding: 0.9rem 1.1rem;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    max-width: 320px;
+    line-height: 1.55;
+    z-index: 200;
+    pointer-events: none;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  }
+
+  .tooltip.visible { display: block; }
+
+  .tooltip-type {
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+  }
+
+  .tooltip-axiom {
+    font-size: 0.7rem;
+    color: var(--wm-color);
+    margin-bottom: 0.3rem;
+    opacity: 0.8;
+  }
+
+  .tooltip-title {
+    font-weight: 600;
+    color: var(--bright);
+    margin-bottom: 0.3rem;
+    font-size: 0.82rem;
+  }
+
+  .tooltip-desc { color: var(--muted); font-size: 0.76rem; }
+
+  /* SUMMARY */
+  .summary-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+    padding: 1.2rem 1.5rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+
+  .summary-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  .summary-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.3rem;
+    line-height: 1;
+  }
+
+  .summary-num.match    { color: var(--match-color); }
+  .summary-num.mismatch { color: var(--mismatch-color); }
+  .summary-num.gap      { color: var(--gap-color); }
+  .summary-num.implicit { color: var(--implicit-color); }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .panel { position: static; height: auto; }
+    .story-section { padding: 1.5rem; }
+    .wm-section { padding: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <h1>Wirkmodell-Prüfbericht · Klartext</h1>
+    <p>Kognitionswissenschaftliches Wirkmodell (Kap. 18) × Geschichte · Automatisch generiert</p>
+  </div>
+  <a href="index.html" class="header-back">← klartext.jetzt Dokumentation</a>
+  <div class="header-badges">
+    <span class="badge wm">Wirkmodell</span>
+    <span class="badge match">Konsistent</span>
+    <span class="badge mismatch">Widerspruch</span>
+    <span class="badge gap">Lücke</span>
+    <span class="badge implicit">Implizit</span>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- LEFT PANEL -->
+  <aside class="panel">
+
+    <div class="panel-block">
+      <div class="panel-label">Klarheitsprofil</div>
+      <div class="score-bar">
+        <div class="score-label">Wirkmodell-Abdeckung</div>
+        <div class="score-track"><div class="score-fill" style="width:55%;background:var(--wm-color)"></div></div>
+        <div class="score-val">mittel · 55 %</div>
+      </div>
+      <div class="score-bar">
+        <div class="score-label">Narrative Konsistenz</div>
+        <div class="score-track"><div class="score-fill" style="width:72%;background:var(--match-color)"></div></div>
+        <div class="score-val">hoch · 72 %</div>
+      </div>
+      <div class="score-bar">
+        <div class="score-label">Kausale Explizitheit</div>
+        <div class="score-track"><div class="score-fill" style="width:30%;background:var(--gap-color)"></div></div>
+        <div class="score-val">niedrig · 30 %</div>
+      </div>
+      <div class="score-bar">
+        <div class="score-label">Unaufgelöste Lücken</div>
+        <div class="score-track"><div class="score-fill" style="width:60%;background:var(--mismatch-color)"></div></div>
+        <div class="score-val">mittel · 4 offen</div>
+      </div>
+    </div>
+
+    <div class="panel-block">
+      <div class="panel-label">Filter</div>
+      <div class="legend">
+        <div class="legend-item active" onclick="filterType('all',this)">
+          <div class="legend-dot" style="background:var(--muted)"></div>Alle Befunde
+        </div>
+        <div class="legend-item" onclick="filterType('match',this)">
+          <div class="legend-dot" style="background:var(--match-color)"></div>Konsistent mit Wirkmodell
+        </div>
+        <div class="legend-item" onclick="filterType('mismatch',this)">
+          <div class="legend-dot" style="background:var(--mismatch-color)"></div>Widerspruch / Überdehnung
+        </div>
+        <div class="legend-item" onclick="filterType('gap',this)">
+          <div class="legend-dot" style="background:var(--gap-color)"></div>Lücke im Wirkmodell
+        </div>
+        <div class="legend-item" onclick="filterType('implicit',this)">
+          <div class="legend-dot" style="background:var(--implicit-color)"></div>Implizite Erweiterung
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-block">
+      <div class="panel-label">Befunde</div>
+      <div id="findings-list">
+
+        <div class="finding match" data-mark="m1" onclick="jumpTo('m1',this)">
+          <div class="finding-type">Konsistent</div>
+          <div class="finding-axiom">WM-A: Episodisches Gedächtnis (Tulving)</div>
+          <div class="finding-title">Geschichte als Träger von Faktenwissen</div>
+          <div class="finding-desc">Die Gründungsszene ist ein episodisches Ereignis. Das Wirkmodell behauptet, dass episodische Einbettung abstrakte Inhalte besser zugänglich macht. Die Geschichte tut genau das.</div>
+          <div class="finding-scene">Szene 1</div>
+        </div>
+
+        <div class="finding match" data-mark="m2" onclick="jumpTo('m2',this)">
+          <div class="finding-type">Konsistent</div>
+          <div class="finding-axiom">WM-B: Verarbeitungstiefe (Craik/Lockhart)</div>
+          <div class="finding-title">Emotionale Situierung erhöht Verarbeitungstiefe</div>
+          <div class="finding-desc">Knut und Thomas verarbeiten dasselbe Thema (Arbeit, Transformation, Transparenz) über konkrete persönliche Situationen. Das entspricht dem Levels-of-Processing-Prinzip: tiefere Verarbeitung durch Bedeutungsverknüpfung.</div>
+          <div class="finding-scene">Szene 12, 15</div>
+        </div>
+
+        <div class="finding match" data-mark="m3" onclick="jumpTo('m3',this)">
+          <div class="finding-type">Konsistent</div>
+          <div class="finding-axiom">WM-C: Elaborative Kodierung (Craik/Tulving)</div>
+          <div class="finding-title">Axiomraum-Überarbeitung als elaborative Kodierung</div>
+          <div class="finding-desc">Thomas überarbeitet seinen Axiomraum nach dem Gespräch mit Knut – er verknüpft sein abstraktes Modell mit einer konkreten Perspektive. Das ist elaborative Kodierung in Reinform: neue Information wird mit vorhandenem Wissen verknüpft und dadurch vertieft.</div>
+          <div class="finding-scene">Szene 15</div>
+        </div>
+
+        <div class="finding match" data-mark="m4" onclick="jumpTo('m4',this)">
+          <div class="finding-type">Konsistent</div>
+          <div class="finding-axiom">WM-E: Bruner – Narrative als Denkmodus</div>
+          <div class="finding-title">Elena als Verkörperung des narrativen Denkens</div>
+          <div class="finding-desc">Elena denkt nicht in Axiomen, sondern in Figuren, Konflikten und Situationen. Die Geschichte zeigt, dass ihre Szene etwas sichtbar macht, was kein formales Axiom hätte sagen können. Das entspricht Bruners Argument, dass narrative und paradigmatische Kognition komplementär sind.</div>
+          <div class="finding-scene">Szene 6</div>
+        </div>
+
+        <div class="finding mismatch" data-mark="mm1" onclick="jumpTo('mm1',this)">
+          <div class="finding-type">Widerspruch / Überdehnung</div>
+          <div class="finding-axiom">WM-A: Episodisches Gedächtnis (Tulving)</div>
+          <div class="finding-title">Vom individuellen Gedächtnis zum gesellschaftlichen Diskurs</div>
+          <div class="finding-desc">Tulvings Theorie beschreibt individuelles Gedächtnis und Lernen. Die Geschichte überträgt diese Logik auf gesellschaftliche Diskursqualität: wenn Menschen Dinge narrativ verarbeiten, wird der Diskurs besser. Diese Übertragung vom Individuum auf die gesellschaftliche Ebene ist ein nicht begründeter Sprung – im Wirkmodell nicht vorgesehen.</div>
+          <div class="finding-scene">Szene 2, 11</div>
+        </div>
+
+        <div class="finding mismatch" data-mark="mm2" onclick="jumpTo('mm2',this)">
+          <div class="finding-type">Widerspruch / Überdehnung</div>
+          <div class="finding-axiom">WM-F: Mental Models Theory</div>
+          <div class="finding-title">Mentale Modelle als kollektive Axiomräume</div>
+          <div class="finding-desc">Die Mental Models Theory beschreibt wie Individuen kausale Strukturen intern repräsentieren. Das Projekt überträgt dieses Prinzip auf formale, geteilte Axiomräume. Die Geschichte setzt voraus, dass formalisierte Axiomräume mit individuellen mentalen Modellen kompatibel sind – eine Annahme, die im Wirkmodell nicht gestützt wird.</div>
+          <div class="finding-scene">Szene 4, 7</div>
+        </div>
+
+        <div class="finding mismatch" data-mark="mm3" onclick="jumpTo('mm3',this)">
+          <div class="finding-type">Widerspruch / Überdehnung</div>
+          <div class="finding-axiom">WM-B: Verarbeitungstiefe (Craik/Lockhart)</div>
+          <div class="finding-title">Tiefe Verarbeitung ≠ veränderte Überzeugung</div>
+          <div class="finding-desc">Das Levels-of-Processing-Modell erklärt besseres Erinnern, nicht Überzeugungsänderung. Die Geschichte setzt implizit voraus, dass tiefere Verarbeitung zu epistemischer Offenheit führt. Das ist eine Überdehnung: man kann etwas tief verarbeiten und trotzdem bei seiner Überzeugung bleiben.</div>
+          <div class="finding-scene">Szene 14, 15</div>
+        </div>
+
+        <div class="finding gap" data-mark="ga1" onclick="jumpTo('ga1',this)">
+          <div class="finding-type">Lücke im Wirkmodell</div>
+          <div class="finding-axiom">WM-D: Encoding Specificity</div>
+          <div class="finding-title">Kein Mechanismus für Transferleistung</div>
+          <div class="finding-desc">Das Encoding Specificity Principle besagt, dass Kontext den Abruf erleichtert – aber nur in ähnlichen Kontexten. Die Geschichte setzt voraus, dass Verständnis aus Narrativen auf neue politische Situationen übertragen wird. Dieser Transfer ist im Wirkmodell nicht modelliert und kognitionswissenschaftlich nicht trivial.</div>
+          <div class="finding-scene">Szene 9, 11</div>
+        </div>
+
+        <div class="finding gap" data-mark="ga2" onclick="jumpTo('ga2',this)">
+          <div class="finding-type">Lücke im Wirkmodell</div>
+          <div class="finding-axiom">WM-G: Narrative Cognition / Science Communication</div>
+          <div class="finding-title">Narrative Verzerrung bleibt strukturell unbehandelt</div>
+          <div class="finding-desc">Kapitel 18 nennt das Risiko narrativer Verzerrung als Begründung für Transparenz. Aber das Wirkmodell enthält keinen Mechanismus, der beschreibt, wie Transparenzberichte narrative Verzerrung tatsächlich korrigieren. Die Geschichte setzt voraus, dass Sichtbarkeit Wirkung hat – ohne diesen Wirkpfad zu modellieren.</div>
+          <div class="finding-scene">Szene 8, 11</div>
+        </div>
+
+        <div class="finding gap" data-mark="ga3" onclick="jumpTo('ga3',this)">
+          <div class="finding-type">Lücke im Wirkmodell</div>
+          <div class="finding-axiom">WM-H: Explainable AI / Human-AI Collaboration</div>
+          <div class="finding-title">KI-Interaktion bleibt kognitionswissenschaftlich unmodelliert</div>
+          <div class="finding-desc">Kapitel 18 erwähnt Explainable AI als Bezugspunkt, aber das Wirkmodell beschreibt nicht, wie Menschen mit KI-generierten Transparenzberichten kognitiv umgehen. Versteht ein Nutzer eine KI-Markierung anders als eine menschliche? Erzeugt sie Vertrauen oder Abwehr? Diese Fragen sind im Wirkmodell offen.</div>
+          <div class="finding-scene">Szene 5, 6</div>
+        </div>
+
+        <div class="finding implicit" data-mark="im1" onclick="jumpTo('im1',this)">
+          <div class="finding-type">Implizite Erweiterung</div>
+          <div class="finding-axiom">Nicht im Wirkmodell</div>
+          <div class="finding-title">Soziale Interaktion als Aktivator kognitiver Prozesse</div>
+          <div class="finding-desc">Die Geschichte fügt dem Wirkmodell ein Element hinzu, das dort nicht steht: persönliche Begegnung zwischen Knut und Thomas als Voraussetzung für echte epistemische Öffnung. Das ist eine sozialpsychologische Annahme, die über das kognitionswissenschaftliche Wirkmodell hinausgeht – und die plausibel ist, aber explizit gemacht werden müsste.</div>
+          <div class="finding-scene">Szene 13, 14, 15</div>
+        </div>
+
+        <div class="finding implicit" data-mark="im2" onclick="jumpTo('im2',this)">
+          <div class="finding-type">Implizite Erweiterung</div>
+          <div class="finding-axiom">Nicht im Wirkmodell</div>
+          <div class="finding-title">Demut als kognitive Voraussetzung</div>
+          <div class="finding-desc">Das Wirkmodell beschreibt kognitive Mechanismen. Die Geschichte fügt eine normative Bedingung hinzu: epistemische Offenheit setzt demokratische Demut voraus. Das ist keine kognitionswissenschaftliche, sondern eine politisch-philosophische Annahme. Sie ist zentral für die Geschichte – aber im Wirkmodell nicht verankert.</div>
+          <div class="finding-scene">Szene 3</div>
+        </div>
+
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- RIGHT CONTENT -->
+  <div class="content">
+
+    <!-- WIRKMODELL SECTION -->
+    <div class="wm-section">
+      <h2>Wirkmodell · Kapitel 18 (Projektskizze)</h2>
+      <p>Die folgenden Axiome aus den wissenschaftlichen Bezugspunkten bilden das Wirkmodell, gegen das die Geschichte geprüft wird. Alle Axiome stammen aus Kapitel 18 der Projektskizze.</p>
+
+      <div class="axiom-grid">
+        <div class="axiom-card">
+          <div class="axiom-card-id">WM-A</div>
+          <div class="axiom-card-title">Episodisches Gedächtnis ist zugänglicher als semantisches</div>
+          <div class="axiom-card-desc">Menschen verarbeiten und erinnern Ereignisse, Situationen und soziale Kontexte besser als abstrakte Fakten und Regeln.</div>
+          <div class="axiom-card-src">Endel Tulving · episodisches vs. semantisches Gedächtnis</div>
+        </div>
+        <div class="axiom-card">
+          <div class="axiom-card-id">WM-B</div>
+          <div class="axiom-card-title">Tiefere Verarbeitung verbessert Behalten und Verstehen</div>
+          <div class="axiom-card-desc">Informationen, die bedeutungsvoll verarbeitet und mit vorhandenem Wissen verknüpft werden, werden besser behalten als oberflächlich verarbeitete.</div>
+          <div class="axiom-card-src">Craik &amp; Lockhart · Levels of Processing</div>
+        </div>
+        <div class="axiom-card">
+          <div class="axiom-card-id">WM-C</div>
+          <div class="axiom-card-title">Elaborative Kodierung vertieft Verständnis</div>
+          <div class="axiom-card-desc">Neue Information wird besser integriert, wenn sie mit semantisch verwandten Inhalten verknüpft wird – sie wird dann bedeutungsvoller kodiert.</div>
+          <div class="axiom-card-src">Craik &amp; Tulving · elaborative Kodierung</div>
+        </div>
+        <div class="axiom-card">
+          <div class="axiom-card-id">WM-D</div>
+          <div class="axiom-card-title">Kontext erleichtert den Wissensabruf</div>
+          <div class="axiom-card-desc">Informationen werden besser abgerufen, wenn der Abrufkontext dem Lernkontext ähnelt. Narrative bieten solche Abrufstrukturen.</div>
+          <div class="axiom-card-src">Encoding Specificity Principle</div>
+        </div>
+        <div class="axiom-card">
+          <div class="axiom-card-id">WM-E</div>
+          <div class="axiom-card-title">Narrative sind ein eigenständiger kognitiver Modus</div>
+          <div class="axiom-card-desc">Menschen denken nicht nur paradigmatisch (logisch-analytisch), sondern auch narrativ. Beide Modi sind komplementär und nicht ineinander überführbar.</div>
+          <div class="axiom-card-src">Jerome Bruner · narrative Formen des Denkens</div>
+        </div>
+        <div class="axiom-card">
+          <div class="axiom-card-id">WM-F</div>
+          <div class="axiom-card-title">Menschen verarbeiten Kausalität über mentale Modelle</div>
+          <div class="axiom-card-desc">Kausale Zusammenhänge werden intern als strukturierte Repräsentationen modelliert, nicht als isolierte Fakten gespeichert.</div>
+          <div class="axiom-card-src">Mental Models Theory · Johnson-Laird</div>
+        </div>
+        <div class="axiom-card">
+          <div class="axiom-card-id">WM-G</div>
+          <div class="axiom-card-title">Narrative können Verständnis fördern oder verzerren</div>
+          <div class="axiom-card-desc">Narrative erleichtern Verarbeitung, können aber auch kausale Zusammenhänge suggerieren, die nicht explizit belegt sind. Deshalb braucht narratives Wissen Transparenz.</div>
+          <div class="axiom-card-src">Narrative Cognition / Science Communication</div>
+        </div>
+        <div class="axiom-card">
+          <div class="axiom-card-id">WM-H</div>
+          <div class="axiom-card-title">KI kann Transparenz über Wissensstrukturen unterstützen</div>
+          <div class="axiom-card-desc">KI-Systeme können eingesetzt werden, um implizite Strukturen in Texten sichtbar zu machen und menschliche Entscheidungen zu unterstützen.</div>
+          <div class="axiom-card-src">Explainable AI / Human-AI Collaboration</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STORY SECTION -->
+    <div class="story-section">
+      <h2>Geschichte · Geprüfte Textstellen</h2>
+
+      <div class="summary-row">
+        <div class="summary-item">
+          <span class="summary-num match">4</span>
+          <span>Konsistent</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-num mismatch">3</span>
+          <span>Widerspruch / Überdehnung</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-num gap">3</span>
+          <span>Lücken im Wirkmodell</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-num implicit">2</span>
+          <span>Implizite Erweiterungen</span>
+        </div>
+      </div>
+
+      <div class="scene">
+        <div class="scene-title">Szene 1 · Der Ausgangspunkt</div>
+        <p>Der Abend, an dem sie aufgehört hatten, miteinander zu reden, war kein besonderer Abend gewesen.</p>
+        <p><mark class="match" id="m1" data-finding="m1" data-type="match" data-axiom="WM-A: Episodisches Gedächtnis (Tulving)" data-title="Geschichte als Träger von Faktenwissen" data-desc="Die Gründungsszene ist ein konkretes episodisches Ereignis. Das Wirkmodell sagt: episodische Einbettung macht abstrakte Inhalte zugänglicher."
+            onmouseenter="showTooltip(event,this)" onmouseleave="hideTooltip()" onclick="highlightFinding('m1')"
+            >Es war ein Dienstag im Februar 2022, irgendwo zwischen dem dritten Lockdown und der Debatte über die Impfpflicht, und Mara hatte einfach ihren Laptop zugeklappt und gesagt: „Ich kann nicht mehr." Nicht zu jemandem. Einfach so.</mark></p>
+        <p>Jonas hatte es gehört. Er saß ihr gegenüber am Küchentisch, zwischen zwei leeren Kaffeetassen und einem Stapel Ausdrucke, die niemand mehr las. Er hatte nichts geantwortet.</p>
+        <p><mark class="mismatch" id="mm1" data-finding="mm1" data-type="mismatch" data-axiom="WM-A: Episodisches Gedächtnis (Tulving)" data-title="Vom individuellen Gedächtnis zum gesellschaftlichen Diskurs" data-desc="Tulving beschreibt individuelles Gedächtnis. Die Geschichte überträgt die Logik auf gesellschaftliche Diskursqualität – ein nicht begründeter Sprung."
+            onmouseenter="showTooltip(event,this)" onmouseleave="hideTooltip()" onclick="highlightFinding('mm1')"
+            >„Weißt du was mich am meisten stört?", sagte Mara nach einer Weile. „Nicht dass die alle anderer Meinung sind. Sondern dass ich nicht mehr weiß, warum."</mark></p>
+        <p>Jonas sah sie an.</p>
+        <p>„Früher konnte ich das noch nachvollziehen", sagte sie. „Auch wenn ich anderer Meinung war. Ich konnte sagen – okay, der denkt so, weil er das erlebt hat, weil er das glaubt, weil ihm das wichtig ist. Jetzt ist da nur noch... Lärm."</p>
+      </div>
+
+      <div class="scene">
+        <div class="scene-title">Szene 2 · Die Diagnose</div>
+        <p>Tarek hatte sie beide kennengelernt über einen dieser Abende, die niemand wirklich geplant hatte.</p>
+        <p>Sie hatten sich über irgendetwas gestritten – er erinnerte sich nicht mehr worüber – und danach weitergetrunken, weil der Streit gut gewesen war. Nicht laut. Gut. Das war selten geworden.</p>
+        <p>Tarek grinste. „Nö. Beim Sport weiß man wenigstens woran man ist." Er tippte auf den Bildschirm. „Hier nicht. Die reden seit zwanzig Minuten, und niemand hat auch nur einmal gesagt, was er eigentlich voraussetzt."</p>
+        <p><mark class="gap" id="ga2" data-finding="ga2" data-type="gap" data-axiom="WM-G: Narrative Cognition / Science Communication" data-title="Narrative Verzerrung bleibt strukturell unbehandelt" data-desc="Das Wirkmodell nennt narrative Verzerrung als Risiko, modelliert aber nicht, wie Transparenz sie korrigiert."
+            onmouseenter="showTooltip(event,this)" onmouseleave="hideTooltip()" onclick="highlightFinding('ga2')"
+            >Tarek zuckte die Schultern. „Noch nichts. Aber ich glaube, das ist das eigentliche Problem. Nicht die falschen Meinungen. Die unsichtbaren Annahmen dahinter."</mark></p>
+      </div>
+
+      <div class="scene">
+        <div class="scene-title">Szene 3 · Der Konsens</div>
+        <p>Die Idee brauchte vier Monate, um einen Namen zu bekommen, und fast ebenso lange, um das Team fast auseinanderzureißen.</p>
+        <p><mark class="implicit" id="im2" data-finding="im2" data-type="implicit" data-axiom="Nicht im Wirkmodell" data-title="Demut als kognitive Voraussetzung" data-desc="Das Wirkmodell beschreibt kognitive Mechanismen. Die Geschichte fügt eine normative Bedingung hinzu: epistemische Offenheit setzt demokratische Demut voraus."
+            onmouseenter="showTooltip(event,this)" onmouseleave="hideTooltip()" onclick="highlightFinding('im2')"
+            >Jonas setzte sich. Er griff nach seinem Kaffeebecher, obwohl er längst leer war. „Ich bin nicht überzeugt", sagte er. „Aber ich höre weiter zu."</mark></p>
+        <p>Das war der Konsens. Kein Triumph, kein Handschlag. Nur ein Mann mit einem leeren Kaffeebecher, der beschlossen hatte, noch nicht aufzustehen.</p>
+      </div>
+
+      <div class="scene">
+        <div class="scene-title">Szene 4 · Der erste Test</div>
+        <p>Das System hatte drei Dinge markiert. Erstens eine Kausalbeziehung, die im Text als selbstverständlich behandelt wurde – Steuersenkungen führen zu Wachstum – ohne dass eine Bedingung genannt wurde.</p>
+        <p><mark class="mismatch" id="mm2" data-finding="mm2" data-type="mismatch" data-axiom="WM-F: Mental Models Theory" data-title="Mentale Modelle als kollektive Axiomräume" data-desc="Die Mental Models Theory beschreibt individuelle Repräsentationen. Die Geschichte überträgt das auf formale geteilte Axiomräume – eine unbegründete Übertragung."
+            onmouseenter="showTooltip(event,this)" onmouseleave="hideTooltip()" onclick="highlightFinding('mm2')"
+            >„Das Interessante", sagte Tarek langsam, „ist nicht dass das falsch ist. Vielleicht stimmt das sogar. Aber es steht nirgendwo. Es wird einfach vorausgesetzt. Wer das liest und nicht selbst Ökonom ist, hat keine Chance das zu sehen."</mark></p>
+        <p>Es war seine Partei. Niemand sagte etwas.</p>
+        <p>„Na gut", sagte Jonas schließlich. „Dann fangen wir da an."</p>
+      </div>
+
+      <div class="scene">
+        <div class="scene-title">Szene 5 · Der Winter</div>
+        <p>Es gab eine Phase, die keiner von ihnen später gerne beschrieb.</p>
+        <p>„Es denkt wie ein Akademiker", sagte Mara. „Es erkennt die komplizierten Sachen und übersieht die einfachen."</p>
+        <p><mark class="gap" id="ga3" data-finding="ga3" data-type="gap" data-axiom="WM-H: Explainable AI / Human-AI Collaboration" data-title="KI-Interaktion bleibt kognitionswissenschaftlich unmodelliert" data-desc="Das Wirkmodell erwähnt Explainable AI, modelliert aber nicht, wie Menschen mit KI-Transparenzberichten kognitiv umgehen."
+            onmouseenter="showTooltip(event,this)" onmouseleave="hideTooltip()" onclick="highlightFinding('ga3')"
+            >„Weil die einfachen Sachen im Training nie als Problem markiert waren", sagte Tarek. „Für das Modell ist 'Wachstum ist gut' kein Axiom. Das ist Hintergrundstrahlung."</mark></p>
+        <p>„Weil sie kein Ego hat", sagte Tarek. „Wenn ich deinem Bruder sage, dass das eine Annahme ist, greife ich ihn an. Das Ding da greift niemanden an. Es sagt nur: hier steht etwas, was nicht ausgesprochen wurde."</p>
+        <p>Jonas dachte darüber nach. „Das ist entweder sehr klug oder sehr naiv."</p>
+        <p>„Wahrscheinlich beides", sagte Priya.</p>
+      </div>
+
+      <div class="scene">
+        <div class="scene-title">Szene 6 · Elena und der narrative Modus</div>
+        <p>Elena Kovač hatte drei Romane geschrieben, von denen einer einen Preis gewonnen hatte, den niemand kannte. Sie schrieb über Menschen in Situationen, aus denen es keinen guten Ausweg gab.</p>
+        <p><mark class="match" id="m4" data-finding="m4" data-type="match" data-axiom="WM-E: Bruner – Narrative als Denkmodus" data-title="Elena als Verkörperung des narrativen Denkens" data-desc="Elena denkt in Figuren und Konflikten, nicht in Axiomen. Ihre Szene macht etwas sichtbar, was kein formales Axiom hätte sagen können. Entspricht Bruners komplementären Denkmodi."
+            onmouseenter="showTooltip(event,this)" onmouseleave="hideTooltip()" onclick="highlightFinding('m4')"
+            >Das System hatte zwei Dinge markiert. Erstens: Die Szene setzte voraus, dass wirtschaftliche Abhängigkeit und ökologische Überzeugung grundsätzlich unvereinbar sind. Zweitens: Der Konflikt zwischen Mutter und Tochter funktionierte narrativ nur, wenn keine Lösung möglich war. Das war eine dramaturgische Entscheidung – aber sie hatte eine politische Implikation.</mark></p>
+        <p>„Nicht weil es falsch ist", sagte Elena. „Sondern weil es stimmt. Ich habe das so geschrieben. Bewusst. Aber ich hätte nicht gesagt, dass das eine politische Aussage ist. Ich hätte gesagt, das ist einfach wie Menschen sind."</p>
+        <p>Elena dachte nach. „Jetzt weiß ich, dass das eine Annahme ist. Keine Ahnung ob ich sie ändern will. Aber ich weiß es."</p>
+      </div>
+
+      <div class="scene">
+        <div class="scene-title">Szenen 9–11 · Öffentlicher Auftritt</div>
+        <p>Der erste öffentliche Auftritt war kein Auftritt.</p>
+        <p><mark class="gap" id="ga1" data-finding="ga1" data-type="gap" data-axiom="WM-D: Encoding Specificity" data-title="Kein Mechanismus für Transferleistung" data-desc="Das Encoding Specificity Principle erklärt Abruf in ähnlichen Kontexten. Die Geschichte setzt voraus, dass narratives Verständnis auf neue politische Situationen übertragen wird – dieser Transfer ist nicht modelliert."
+            onmouseenter="showTooltip(event,this)" onmouseleave="hideTooltip()" onclick="highlightFinding('ga1')"
+            >Thomas schrieb: „Ich versuche meinen Schülern seit Jahren beizubringen, dass eine Meinung und eine Annahme verschiedene Dinge sind. Ich habe dafür noch kein Werkzeug gefunden. Vielleicht ist das hier eines."</mark></p>
+        <p>Eine Wissenschaftsjournalistin beschrieb klartext.jetzt als Faktenchecker. Das war das Problem. Elena schrieb den Korrekturbrief: „Wir prüfen nicht ob jemand recht hat. Wir fragen, ob jemand sagt was er meint."</p>
+      </div>
+
+      <div class="scene">
+        <div class="scene-title">Szenen 12–15 · Knut, Thomas und die Frage der Skalierung</div>
+        <p>Knut schrieb: „Bei uns haben sie das 2019 auch gesagt. Als die Elektrolinie kam und die Hälfte der Schicht nicht wusste ob sie in zwei Jahren noch einen Job hat. Die haben von nichts gewusst. Dabei stand das seit Jahren in jedem Geschäftsbericht."</p>
+        <p><mark class="match" id="m2" data-finding="m2" data-type="match" data-axiom="WM-B: Verarbeitungstiefe (Craik/Lockhart)" data-title="Emotionale Situierung erhöht Verarbeitungstiefe" data-desc="Knut und Thomas verarbeiten abstrakte Themen über persönliche Erfahrungen – das entspricht dem Levels-of-Processing-Prinzip."
+            onmouseenter="showTooltip(event,this)" onmouseleave="hideTooltip()" onclick="highlightFinding('m2')"
+            >Sie hatten drei Wochen lang geschrieben, erst über die Plattform, dann per Mail, dann irgendwann per Telefon. Thomas überarbeitete seinen Axiomraum: „Knut hat mich darauf hingewiesen dass das aus seiner Perspektive anders aussieht. Er hat recht. Ich lasse das erstmal offen."</mark></p>
+        <p><mark class="implicit" id="im1" data-finding="im1" data-type="implicit" data-axiom="Nicht im Wirkmodell" data-title="Soziale Interaktion als Aktivator kognitiver Prozesse" data-desc="Die Geschichte setzt persönliche Begegnung als Voraussetzung für epistemische Öffnung. Das ist eine sozialpsychologische Annahme, die über das kognitionswissenschaftliche Wirkmodell hinausgeht."
+            onmouseenter="showTooltip(event,this)" onmouseleave="hideTooltip()" onclick="highlightFinding('im1')"
+            >„Das ist kein Tech-Problem mehr", sagte Tarek. „Nein", sagte Mara. „Das war es nie wirklich." Ich glaube wir müssen anfangen, Menschen wie ihn und den Berufsschullehrer aus Leipzig zusammenzubringen. Nicht online. Persönlich.</mark></p>
+        <p><mark class="match" id="m3" data-finding="m3" data-type="match" data-axiom="WM-C: Elaborative Kodierung (Craik/Tulving)" data-title="Axiomraum-Überarbeitung als elaborative Kodierung" data-desc="Thomas verknüpft sein abstraktes Modell mit Knuts konkreter Perspektive. Neue Information wird mit vorhandenem Wissen bedeutungsvoll verknüpft – das ist elaborative Kodierung."
+            onmouseenter="showTooltip(event,this)" onmouseleave="hideTooltip()" onclick="highlightFinding('m3')"
+            >Er antwortete nach einem Tag: „Ich hätte nicht gedacht dass aus meiner Szene das werden kann. Ich glaube ich muss nochmal von vorne anfangen mit dem Axiomraum. Nicht weil er falsch ist. Sondern weil ich jetzt mehr sehe."</mark></p>
+        <p><mark class="mismatch" id="mm3" data-finding="mm3" data-type="mismatch" data-axiom="WM-B: Verarbeitungstiefe (Craik/Lockhart)" data-title="Tiefe Verarbeitung ≠ veränderte Überzeugung" data-desc="Levels of Processing erklärt besseres Erinnern, nicht Überzeugungsänderung. Die Geschichte setzt voraus, dass tiefere Verarbeitung zu epistemischer Offenheit führt – das ist eine Überdehnung."
+            onmouseenter="showTooltip(event,this)" onmouseleave="hideTooltip()" onclick="highlightFinding('mm3')"
+            >„Weißt du was mich am meisten überrascht?", sagte Jonas. „Dass es funktioniert. Nicht das System. Das wussten wir. Sondern dass die Menschen mitmachen. Dass sie sich wirklich einlassen."</mark></p>
+        <p>„Vielleicht wollten die meisten Leute das immer", sagte Mara. „Vielleicht hat es nur keiner gefragt."</p>
+        <p>Er griff nach seinem Stift und strich den letzten Punkt auf seiner Liste durch.</p>
+        <p>Mara sah ihn an. „Was stand da?"</p>
+        <p>Jonas drehte das Blatt um, sodass sie es lesen konnte.</p>
+        <p>Es stand: <em>Ob die Menschen wirklich wollen, was wir ihnen anbieten.</em></p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="tooltip" id="tooltip">
+  <div class="tooltip-type" id="tooltip-type"></div>
+  <div class="tooltip-axiom" id="tooltip-axiom"></div>
+  <div class="tooltip-title" id="tooltip-title"></div>
+  <div class="tooltip-desc" id="tooltip-desc"></div>
+</div>
+
+<script>
+  const typeLabels = {
+    match:    'Konsistent mit Wirkmodell',
+    mismatch: 'Widerspruch / Überdehnung',
+    gap:      'Lücke im Wirkmodell',
+    implicit: 'Implizite Erweiterung'
+  };
+
+  const typeColors = {
+    match:    'var(--match-color)',
+    mismatch: 'var(--mismatch-color)',
+    gap:      'var(--gap-color)',
+    implicit: 'var(--implicit-color)'
+  };
+
+  function showTooltip(e, el) {
+    const t = document.getElementById('tooltip');
+    const type = el.dataset.type;
+    document.getElementById('tooltip-type').textContent = typeLabels[type] || type;
+    document.getElementById('tooltip-type').style.color = typeColors[type];
+    document.getElementById('tooltip-axiom').textContent = el.dataset.axiom || '';
+    document.getElementById('tooltip-title').textContent = el.dataset.title || '';
+    document.getElementById('tooltip-desc').textContent = el.dataset.desc || '';
+    t.classList.add('visible');
+    moveTooltip(e);
+  }
+
+  function moveTooltip(e) {
+    const t = document.getElementById('tooltip');
+    let x = e.clientX + 18;
+    let y = e.clientY - 10;
+    if (x + 340 > window.innerWidth) x = e.clientX - 350;
+    if (y + 150 > window.innerHeight) y = e.clientY - 160;
+    t.style.left = x + 'px';
+    t.style.top = y + 'px';
+  }
+
+  function hideTooltip() {
+    document.getElementById('tooltip').classList.remove('visible');
+  }
+
+  function jumpTo(id, el) {
+    document.querySelectorAll('.finding').forEach(f => f.classList.remove('active'));
+    el.classList.add('active');
+    const mark = document.getElementById(id);
+    if (mark) {
+      document.querySelectorAll('mark').forEach(m => m.classList.remove('highlighted'));
+      mark.classList.add('highlighted');
+      mark.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+
+  function highlightFinding(id) {
+    const finding = document.querySelector(`[data-mark="${id}"]`);
+    if (finding) {
+      document.querySelectorAll('.finding').forEach(f => f.classList.remove('active'));
+      finding.classList.add('active');
+      finding.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    document.querySelectorAll('mark').forEach(m => m.classList.remove('highlighted'));
+    const mark = document.getElementById(id);
+    if (mark) mark.classList.add('highlighted');
+  }
+
+  function filterType(type, el) {
+    document.querySelectorAll('.legend-item').forEach(l => l.classList.remove('active'));
+    el.classList.add('active');
+    document.querySelectorAll('.finding').forEach(f => {
+      f.style.display = (type === 'all' || f.classList.contains(type)) ? '' : 'none';
+    });
+    document.querySelectorAll('mark').forEach(m => {
+      m.style.opacity = (type === 'all' || m.classList.contains(type)) ? '1' : '0.15';
+    });
+  }
+
+  document.addEventListener('mousemove', e => {
+    if (document.getElementById('tooltip').classList.contains('visible')) moveTooltip(e);
+  });
+</script>
+
+</body>
+</html>
