@@ -153,15 +153,13 @@ def testdata(
         raise typer.Exit(1)
 
     async def seed() -> None:
+        from api.seeddata import FIXTURE_PATH, SEED_CLAIMS
+
         async with httpx.AsyncClient(base_url=url, timeout=30) as client:
             # 1. Import narrative
             typer.echo("  → Importing Klartext narrative…")
-            fixture_path = (
-                "api/tests/fixtures/"
-                "klartext-eine-geschichte-ueber-eine-geschichte/narrative.md"
-            )
             response = await client.post(
-                "/narratives/import", json={"path": fixture_path}
+                "/narratives/import", json={"path": str(FIXTURE_PATH)}
             )
             if response.status_code != 201:
                 typer.secho(
@@ -180,7 +178,6 @@ def testdata(
             )
 
             # 2. Extract claims for the first three scenes
-            from api.seeddata import SEED_CLAIMS
 
             for seed in SEED_CLAIMS:
                 if seed.scene_index >= len(scenes):
