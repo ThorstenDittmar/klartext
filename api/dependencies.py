@@ -7,7 +7,9 @@ DI chain:
   get_supabase_client ─┬─► get_narrative_repository ─► get_narrative_service
                        └─► get_claim_repository
                        └─► get_health_checker
+                       └─► get_wirkmodell_repository ─► get_wirkmodell_service
   get_narrative_import_service ────────────────────────► get_narrative_service
+  get_konsistenz_checker ──────────────────────────────► get_wirkmodell_service
   (standalone) ────────────────────────────────────────► get_claim_extractor_service
 """
 
@@ -25,10 +27,15 @@ from api.repositories.claim_repository import ClaimRepository
 from api.repositories.narrative_repository import NarrativeRepository
 from api.repositories.supabase_claim_repository import SupabaseClaimRepository
 from api.repositories.supabase_narrative_repository import SupabaseNarrativeRepository
+from api.providers.claude_konsistenz_checker import ClaudeKonsistenzChecker
+from api.providers.konsistenz_checker import KonsistenzChecker
+from api.repositories.wirkmodell_repository import WirkmodellRepository
+from api.repositories.supabase_wirkmodell_repository import SupabaseWirkmodellRepository
 from api.services.claim_extractor_service import ClaimExtractorService
 from api.services.health_service import HealthChecker, SupabaseHealthChecker
 from api.services.narrative_import_service import NarrativeImportService
 from api.services.narrative_service import NarrativeService
+from api.services.wirkmodell_service import WirkmodellService
 
 
 async def get_supabase_client() -> AsyncClient:
@@ -81,3 +88,24 @@ def get_claim_extractor_service() -> ClaimExtractorService:
     client = anthropic.AsyncAnthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
     provider = ClaudeClaimExtractionProvider(client=client)
     return ClaimExtractorService(provider=provider)
+
+
+async def get_wirkmodell_repository(
+    client: AsyncClient = Depends(get_supabase_client),
+) -> WirkmodellRepository:
+    """Wires SupabaseWirkmodellRepository with the injected Supabase client."""
+    return SupabaseWirkmodellRepository(client=client)
+
+
+def get_konsistenz_checker() -> KonsistenzChecker:
+    """Wires ClaudeKonsistenzChecker with an Anthropic async client."""
+    client = anthropic.AsyncAnthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+    return ClaudeKonsistenzChecker(client=client)
+
+
+async def get_wirkmodell_service(
+    repository: WirkmodellRepository = Depends(get_wirkmodell_repository),
+    checker: KonsistenzChecker = Depends(get_konsistenz_checker),
+) -> WirkmodellService:
+    """Wires WirkmodellRepository and KonsistenzChecker into WirkmodellService."""
+    return WirkmodellService(repository=repository, konsistenz_checker=checker)

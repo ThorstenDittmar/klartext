@@ -10,7 +10,9 @@ from api.exceptions.narrative import (
     NarrativeNotFoundError,
     SceneNotFoundError,
 )
+from api.exceptions.wirkmodell import WirkmodellNotFoundError
 from api.routers import claims, narratives
+from api.routers.wirkmodelle import router as wirkmodelle_router
 from api.services.health_service import HealthChecker, HealthStatus
 
 app = FastAPI(
@@ -59,12 +61,21 @@ async def handle_scene_not_found(
     return JSONResponse(status_code=404, content={"error": str(exc)})
 
 
+@app.exception_handler(WirkmodellNotFoundError)
+async def handle_wirkmodell_not_found(
+    request: Request, exc: WirkmodellNotFoundError
+) -> JSONResponse:
+    """Translates WirkmodellNotFoundError into a 404 response."""
+    return JSONResponse(status_code=404, content={"error": str(exc)})
+
+
 # ---------------------------------------------------------------------------
 # Routers
 # ---------------------------------------------------------------------------
 
 app.include_router(claims.router, tags=["claims"])
 app.include_router(narratives.router, tags=["narratives"])
+app.include_router(wirkmodelle_router, tags=["wirkmodelle"])
 
 
 @app.get("/health")
