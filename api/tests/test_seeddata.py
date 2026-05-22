@@ -6,7 +6,6 @@ These tests catch regressions when domain object invariants change.
 
 from __future__ import annotations
 
-from api.models.claim import Claim
 from api.models.narrative import Narrative
 from api.seeddata import SEED_CLAIMS, build_simple_narrative
 
@@ -56,18 +55,3 @@ def test_seed_claims_covers_first_three_scenes() -> None:
     assert indices == {0, 1, 2}
 
 
-def test_seed_claims_all_contain_valid_claims() -> None:
-    """Expects every claim in SEED_CLAIMS to be a valid Claim instance."""
-    for seed in SEED_CLAIMS:
-        assert len(seed.claims) > 0
-        for claim in seed.claims:
-            assert isinstance(claim, Claim)
-            assert claim.text.strip() != ""
-            assert 0.0 <= claim.confidence <= 1.0
-
-
-def test_seed_claims_have_varied_types() -> None:
-    """Expects SEED_CLAIMS to contain more than one distinct claim type."""
-    all_types = {claim.typ for seed in SEED_CLAIMS for claim in seed.claims}
-
-    assert len(all_types) > 1

@@ -153,7 +153,7 @@ def testdata(
         raise typer.Exit(1)
 
     async def seed() -> None:
-        from api.seeddata import FIXTURE_PATH, SEED_CLAIMS
+        from api.seeddata import FIXTURE_PATH, SEED_CAUSAL_MODEL, SEED_CLAIMS
 
         async with httpx.AsyncClient(base_url=url, timeout=30) as client:
             # 1. Import narrative
@@ -198,6 +198,45 @@ def testdata(
                     typer.secho(
                         f"  ⚠  Scene '{scene['title']}': extraction failed "
                         f"({extract_response.status_code})",
+                        fg=typer.colors.YELLOW,
+                    )
+
+            # 3. Create causal model
+            typer.echo("  → Creating causal model…")
+            model_response = await client.post(
+                "/causal-models",
+                json={"title": SEED_CAUSAL_MODEL.title},
+            )
+            if model_response.status_code != 201:
+                typer.secho(
+                    f"  ✗  Causal model creation failed: "
+                    f"{model_response.status_code} {model_response.text}",
+                    fg=typer.colors.RED,
+                )
+                raise typer.Exit(1)
+
+            model = model_response.json()
+            model_id = model["id"]
+            typer.secho(
+                f"  ✓  Causal model created: {model['title']} (id={model_id})",
+                fg=typer.colors.GREEN,
+            )
+
+            # 4. Add axioms to the causal model
+            for axiom in SEED_CAUSAL_MODEL.axioms:
+                axiom_response = await client.post(
+                    f"/causal-models/{model_id}/axioms",
+                    json={"label": axiom.label, "description": axiom.description},
+                )
+                if axiom_response.status_code == 201:
+                    typer.secho(
+                        f"  ✓  Axiom added: {axiom.label}",
+                        fg=typer.colors.GREEN,
+                    )
+                else:
+                    typer.secho(
+                        f"  ⚠  Axiom '{axiom.label}' failed "
+                        f"({axiom_response.status_code})",
                         fg=typer.colors.YELLOW,
                     )
 

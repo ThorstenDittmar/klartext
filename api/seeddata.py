@@ -13,7 +13,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
-from api.models.claim import Claim, ClaimType
 from api.models.narrative import Narrative, Scene
 
 
@@ -32,60 +31,73 @@ FIXTURE_PATH = (
 
 @dataclass
 class SeedClaims:
-    """Pre-defined claims for each scene of the Klartext narrative."""
+    """Identifies which scenes should have claims extracted via the API."""
 
     scene_index: int
-    claims: list[Claim]
 
 
 SEED_CLAIMS: list[SeedClaims] = [
-    SeedClaims(
-        scene_index=0,
-        claims=[
-            Claim.create(
-                text="Öffentliche Debatten sind zunehmend von Lärm geprägt, nicht von Argumenten.",
-                typ=ClaimType.EMPIRICAL,
-                confidence=0.8,
-            ),
-            Claim.create(
-                text=(
-                    "Die Fähigkeit, die Perspektive anderer nachzuvollziehen, "
-                    "nimmt in polarisierten Gesellschaften ab."
-                ),
-                typ=ClaimType.CAUSAL,
-                confidence=0.75,
-            ),
-        ],
-    ),
-    SeedClaims(
-        scene_index=1,
-        claims=[
-            Claim.create(
-                text="Interdisziplinäre Hintergründe fördern die Qualität von Debatten.",
-                typ=ClaimType.NORMATIVE,
-                confidence=0.7,
-            ),
-        ],
-    ),
-    SeedClaims(
-        scene_index=2,
-        claims=[
-            Claim.create(
-                text=(
-                    "Transparente Wirkmodelle ermöglichen es, Meinungsverschiedenheiten "
-                    "auf ihre Grundannahmen zurückzuführen."
-                ),
-                typ=ClaimType.CAUSAL,
-                confidence=0.85,
-            ),
-            Claim.create(
-                text="Kausal konsistente Narrative sind seltener als normativ aufgeladene.",
-                typ=ClaimType.EMPIRICAL,
-                confidence=0.65,
-            ),
-        ],
-    ),
+    SeedClaims(scene_index=0),
+    SeedClaims(scene_index=1),
+    SeedClaims(scene_index=2),
 ]
+
+
+# ---------------------------------------------------------------------------
+# Causal model seed data
+# ---------------------------------------------------------------------------
+
+
+@dataclass
+class SeedAxiom:
+    """A single axiom for the causal model seed data."""
+
+    label: str
+    description: str
+
+
+@dataclass
+class SeedCausalModel:
+    """Pre-defined causal model with axioms for the Klartext narrative."""
+
+    title: str
+    axioms: list[SeedAxiom]
+
+
+SEED_CAUSAL_MODEL = SeedCausalModel(
+    title="Wirkmodell: Zinserhöhungen und gesellschaftliche Folgen",
+    axioms=[
+        SeedAxiom(
+            label="Zinserhöhungen senken die Inflation",
+            description=(
+                "Höhere Leitzinsen verteuern Kredite und dämpfen damit Konsum und "
+                "Investitionen, was den Preisauftrieb reduziert."
+            ),
+        ),
+        SeedAxiom(
+            label="Zentralbankentscheidungen beeinflussen das institutionelle Vertrauen",
+            description=(
+                "Wie die EZB Entscheidungen kommuniziert und begründet, wirkt sich "
+                "direkt darauf aus, wie viel Vertrauen die Bevölkerung in die Institution hat."
+            ),
+        ),
+        SeedAxiom(
+            label="Verlässliche Geldpolitik stabilisiert Erwartungen",
+            description=(
+                "Wenn Zentralbanken konsistent und transparent handeln, können "
+                "Unternehmen und Haushalte besser planen — das reduziert Unsicherheit."
+            ),
+        ),
+        SeedAxiom(
+            label="Zinserhöhungen erhöhen die Kreditkosten für Haushalte",
+            description=(
+                "Steigende Leitzinsen schlagen sich in höheren Hypotheken- und "
+                "Konsumkreditzinsen nieder, was die finanzielle Belastung vieler "
+                "Haushalte direkt erhöht."
+            ),
+        ),
+    ],
+)
 
 
 def build_simple_narrative() -> Narrative:
