@@ -1,53 +1,24 @@
-# Appendix A: Offene Punkte und To-dos
+# Appendix A: Offene Punkte
 
-Diese Liste enthält alle offenen Punkte aus dem Whitepaper V0.24.
+Alle offenen Punkte aus dem Whitepaper V0.24 sind als GitHub Issues erfasst und werden dort verwaltet.
 
-## Datenmodell
+## Issues nach Kategorie
 
-- [ ] Performance-Tests mit realistischen Datenvolumina; Entscheidung Graphdatenbank vs. PostgreSQL
-- [ ] Maximale JSONB-Snapshot-Größe und Kompressionsstrategien für große Wirkmodellverbünde
-- [ ] Caching-Strategie für Systemakzeptanz, Katalog und Transparenzberichte
-- [ ] Volltext-Sucharchitektur (PostgreSQL tsvector vs. Elasticsearch)
-- [ ] Garbage Collector: Datenbankschema für Referenz-Tracking verwaister Modellelemente
+| Kategorie | GitHub-Label | Issues |
+|---|---|---|
+| Datenmodell | [`data-model`](https://github.com/ThorstenDittmar/klartext/issues?q=label%3Adata-model+is%3Aopen) | #1 – #5 |
+| Konsistenzprüfung | [`consistency-check`](https://github.com/ThorstenDittmar/klartext/issues?q=label%3Aconsistency-check+is%3Aopen) | #6 – #7 |
+| Community & Trust Network | [`community`](https://github.com/ThorstenDittmar/klartext/issues?q=label%3Acommunity+is%3Aopen) | #8 – #12 |
+| UI & UX | [`ui-ux`](https://github.com/ThorstenDittmar/klartext/issues?q=label%3Aui-ux+is%3Aopen) | #13 – #17 |
+| Technisch & API | [`api`](https://github.com/ThorstenDittmar/klartext/issues?q=label%3Aapi+is%3Aopen) | #18 – #22 |
+| Kollaboration & Rechte | [`collaboration`](https://github.com/ThorstenDittmar/klartext/issues?q=label%3Acollaboration+is%3Aopen) | #23 – #27 |
+| Empfehlungsalgorithmus | [`recommendation`](https://github.com/ThorstenDittmar/klartext/issues?q=label%3Arecommendation+is%3Aopen) | #28 – #29 |
+| Detektor-Qualität | [`detector-quality`](https://github.com/ThorstenDittmar/klartext/issues?q=label%3Adetector-quality+is%3Aopen) | #30 |
 
-## Konsistenzprüfung
+→ [Alle offenen Issues](https://github.com/ThorstenDittmar/klartext/issues?q=is%3Aopen+is%3Aissue)
 
-- [ ] Konsistenzprüfung axiomatischer Elemente: System soll erkennen wenn ein axiomatisch gesetztes Element durch Modelllogik verändert wird
-- [ ] Technische Spezifikation der Werkzeuge für Wirkmodell-Einzug, Axiom-Mapping und Szenen-Diff
+## Architekturentscheidungen (ADRs)
 
-## Community & Trust Network
+Grundlegende Architekturentscheidungen werden als ADRs dokumentiert:
 
-- [ ] Systemakzeptanz-Gewichtung: Relative Gewichte der drei Quellen
-- [ ] Trust Network Skalierung: EigenTrust+ bei sehr großen Nutzerzahlen
-- [ ] Spam- und Bot-Schutz im Akzeptanz-System
-- [ ] Moderationslogik: Präzise Abgrenzung klar/unklar vs. wahr/unwahr
-- [ ] Profildeaktivierung: Umgang mit Werken bei Account-Löschung
-
-## UI & UX
-
-- [ ] Präsentationsmodus: Kamera-Stream-Integration und Flag-Synchronisation für Zuschauer
-- [ ] Farbkodierung der Zensurkategorien: Genaue Farbwahl und Accessibility
-- [ ] Leser-Onboarding: Vollständige Spezifikation der Personalisierungsoptionen
-- [ ] Barrierefreiheit: Schriftgröße, Kontrast, Screenreader, Vorlesefunktion
-- [ ] Weitere View-Typen: Matrixansicht, Netzwerkkarte, Prüfprofil-Ansicht
-
-## Technisch & API
-
-- [ ] API-Kontrakte: Schnittstellen Autoren-/Konsistenz-/Leserumgebung
-- [ ] Rollensystem und Authentifizierung: Vollständiges Rollenmodell
-- [ ] Domänenontologien: SNOMED, MeSH, ENVO als Standardreferenzrahmen
-- [ ] Notification-System: Drei Abonnementstufen; Broadcast-Logik bei Wirkmodell-Änderungen
-- [ ] Logging: Protokollierung unter Berücksichtigung Rechtsraum-Logik
-
-## Kollaboration & Rechte
-
-- [ ] Kollaborations-Konfliktlösung: Uneinige gleichberechtigte Autoren bei Freigabeentscheidung
-- [ ] Verbund-Governance: Rechte bei Änderungen in Verbundstrukturen
-- [ ] Urheberrecht beim Import: Fair Use, Open Access, Lizenztypen
-- [ ] Recycling-Benachrichtigungen: Wann wird der Originalautor informiert?
-- [ ] Recycling-Ketten: Wie werden mehrstufige Ketten navigierbar dargestellt?
-
-## Empfehlungsalgorithmus
-
-- [ ] Gewichtungskriterien und Transparenz der Katalogsortierung
-- [ ] Community-Validierung: Voting-Mechanismus; Governance für Status „akzeptiert"
+- [ADR 0001: Inhaltliche Qualitätsprüfung der Detektoren](adr/0001-detector-quality-testing.md)
