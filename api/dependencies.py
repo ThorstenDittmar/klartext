@@ -7,9 +7,9 @@ DI chain:
   get_supabase_client ─┬─► get_narrative_repository ─► get_narrative_service
                        └─► get_claim_repository
                        └─► get_health_checker
-                       └─► get_wirkmodell_repository ─► get_wirkmodell_service
+                       └─► get_causal_model_repository ─► get_causal_model_service
   get_narrative_import_service ────────────────────────► get_narrative_service
-  get_konsistenz_checker ──────────────────────────────► get_wirkmodell_service
+  get_consistency_checker ─────────────────────────────► get_causal_model_service
   (standalone) ────────────────────────────────────────► get_claim_extractor_service
 """
 
@@ -23,19 +23,19 @@ from supabase import AsyncClient, acreate_client
 
 from api.parsers.markdown_narrative_parser import MarkdownNarrativeParser
 from api.providers.claude_claim_extraction_provider import ClaudeClaimExtractionProvider
+from api.providers.claude_consistency_checker import ClaudeConsistencyChecker
+from api.providers.consistency_checker import ConsistencyChecker
+from api.repositories.causal_model_repository import CausalModelRepository
 from api.repositories.claim_repository import ClaimRepository
 from api.repositories.narrative_repository import NarrativeRepository
+from api.repositories.supabase_causal_model_repository import SupabaseCausalModelRepository
 from api.repositories.supabase_claim_repository import SupabaseClaimRepository
 from api.repositories.supabase_narrative_repository import SupabaseNarrativeRepository
-from api.providers.claude_konsistenz_checker import ClaudeKonsistenzChecker
-from api.providers.konsistenz_checker import KonsistenzChecker
-from api.repositories.wirkmodell_repository import WirkmodellRepository
-from api.repositories.supabase_wirkmodell_repository import SupabaseWirkmodellRepository
+from api.services.causal_model_service import CausalModelService
 from api.services.claim_extractor_service import ClaimExtractorService
 from api.services.health_service import HealthChecker, SupabaseHealthChecker
 from api.services.narrative_import_service import NarrativeImportService
 from api.services.narrative_service import NarrativeService
-from api.services.wirkmodell_service import WirkmodellService
 
 
 async def get_supabase_client() -> AsyncClient:
@@ -90,22 +90,22 @@ def get_claim_extractor_service() -> ClaimExtractorService:
     return ClaimExtractorService(provider=provider)
 
 
-async def get_wirkmodell_repository(
+async def get_causal_model_repository(
     client: AsyncClient = Depends(get_supabase_client),
-) -> WirkmodellRepository:
-    """Wires SupabaseWirkmodellRepository with the injected Supabase client."""
-    return SupabaseWirkmodellRepository(client=client)
+) -> CausalModelRepository:
+    """Wires SupabaseCausalModelRepository with the injected Supabase client."""
+    return SupabaseCausalModelRepository(client=client)
 
 
-def get_konsistenz_checker() -> KonsistenzChecker:
-    """Wires ClaudeKonsistenzChecker with an Anthropic async client."""
+def get_consistency_checker() -> ConsistencyChecker:
+    """Wires ClaudeConsistencyChecker with an Anthropic async client."""
     client = anthropic.AsyncAnthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
-    return ClaudeKonsistenzChecker(client=client)
+    return ClaudeConsistencyChecker(client=client)
 
 
-async def get_wirkmodell_service(
-    repository: WirkmodellRepository = Depends(get_wirkmodell_repository),
-    checker: KonsistenzChecker = Depends(get_konsistenz_checker),
-) -> WirkmodellService:
-    """Wires WirkmodellRepository and KonsistenzChecker into WirkmodellService."""
-    return WirkmodellService(repository=repository, konsistenz_checker=checker)
+async def get_causal_model_service(
+    repository: CausalModelRepository = Depends(get_causal_model_repository),
+    checker: ConsistencyChecker = Depends(get_consistency_checker),
+) -> CausalModelService:
+    """Wires CausalModelRepository and ConsistencyChecker into CausalModelService."""
+    return CausalModelService(repository=repository, consistency_checker=checker)
