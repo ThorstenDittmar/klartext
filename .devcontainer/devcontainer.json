@@ -8,7 +8,7 @@
     "ghcr.io/devcontainers/features/docker-in-docker:2": {}
   },
 
-  "onCreateCommand": "pip install -r api/requirements-dev.txt && npm --prefix frontend install",
+  "onCreateCommand": "pip install -e 'api/.[dev]' && npm --prefix frontend install && npm install -g @anthropic-ai/claude-code",
 
   "postStartCommand": "pip install -r docs/requirements.txt",
 
@@ -31,7 +31,8 @@
         "bradlc.vscode-tailwindcss",
         "mtxr.sqltools",
         "mtxr.sqltools-driver-pg",
-        "GitHub.copilot"
+        "GitHub.copilot",
+        "anthropic.claude-code"
       ],
       "settings": {
         "python.defaultInterpreterPath": "/usr/local/bin/python",

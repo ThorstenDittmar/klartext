@@ -45,6 +45,14 @@ fi
 SUPABASE_VERSION=$(supabase --version)
 info "Supabase CLI $SUPABASE_VERSION"
 
+if ! command -v claude >/dev/null 2>&1; then
+    info "Claude Code not found — installing via npm…"
+    command -v npm >/dev/null 2>&1 || error "npm is required to install Claude Code"
+    npm install -g @anthropic-ai/claude-code --silent
+fi
+CLAUDE_VERSION=$(claude --version)
+info "Claude Code $CLAUDE_VERSION"
+
 success "All prerequisites found"
 
 # ---------------------------------------------------------------------------
