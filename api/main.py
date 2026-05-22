@@ -4,7 +4,11 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from api.exceptions.narrative import NarrativeFileNotFoundError, NarrativeNotFoundError
+from api.exceptions.narrative import (
+    NarrativeFileNotFoundError,
+    NarrativeNotFoundError,
+    SceneNotFoundError,
+)
 from api.routers import claims, narratives
 
 app = FastAPI(
@@ -42,6 +46,14 @@ async def handle_narrative_file_not_found(
     request: Request, exc: NarrativeFileNotFoundError
 ) -> JSONResponse:
     """Translates NarrativeFileNotFoundError into a 404 response."""
+    return JSONResponse(status_code=404, content={"error": str(exc)})
+
+
+@app.exception_handler(SceneNotFoundError)
+async def handle_scene_not_found(
+    request: Request, exc: SceneNotFoundError
+) -> JSONResponse:
+    """Translates SceneNotFoundError into a 404 response."""
     return JSONResponse(status_code=404, content={"error": str(exc)})
 
 

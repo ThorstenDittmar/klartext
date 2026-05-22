@@ -19,6 +19,10 @@ class NarrativeParseError(ServiceError):
     """Raised when the narrative file exists but contains no parseable scenes."""
 
 
+class SceneNotFoundError(ServiceError):
+    """Raised when a Scene with the given ID is not part of the requested Narrative."""
+
+
 class NarrativeNotFoundError(RepositoryError):
     """Raised when a Narrative cannot be found by the given ID."""
 
