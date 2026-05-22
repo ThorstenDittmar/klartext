@@ -65,35 +65,38 @@ class SeedCausalModel:
 
 
 SEED_CAUSAL_MODEL = SeedCausalModel(
-    title="Wirkmodell: Zinserhöhungen und gesellschaftliche Folgen",
+    title="Wirkmodell: Warum öffentliche Debatten scheitern",
     axioms=[
         SeedAxiom(
-            label="Zinserhöhungen senken die Inflation",
+            label="Unsichtbare Annahmen verhindern Verständigung",
             description=(
-                "Höhere Leitzinsen verteuern Kredite und dämpfen damit Konsum und "
-                "Investitionen, was den Preisauftrieb reduziert."
+                "Wenn Debattenteilnehmer ihre Grundannahmen nicht offenlegen, reden sie "
+                "aneinander vorbei — nicht weil ihre Positionen unvereinbar sind, sondern "
+                "weil niemand weiß, wo der andere wirklich steht."
             ),
         ),
         SeedAxiom(
-            label="Zentralbankentscheidungen beeinflussen das institutionelle Vertrauen",
+            label="Explizite Prämissen machen Kritik möglich",
             description=(
-                "Wie die EZB Entscheidungen kommuniziert und begründet, wirkt sich "
-                "direkt darauf aus, wie viel Vertrauen die Bevölkerung in die Institution hat."
+                "Wer seine kausalen Annahmen benennt, ermöglicht es anderen, sachlich zu "
+                "widersprechen. Ohne sichtbare Prämissen bleibt nur der Austausch von "
+                "Behauptungen — nicht von Argumenten."
             ),
         ),
         SeedAxiom(
-            label="Verlässliche Geldpolitik stabilisiert Erwartungen",
+            label="Inklusion aller Stimmen schafft Legitimität",
             description=(
-                "Wenn Zentralbanken konsistent und transparent handeln, können "
-                "Unternehmen und Haushalte besser planen — das reduziert Unsicherheit."
+                "Eine Plattform, die auch unbequeme Positionen zulässt, gewinnt "
+                "gesellschaftliche Glaubwürdigkeit. Wer nur unter Gleichgesinnten debattiert, "
+                "verändert nichts."
             ),
         ),
         SeedAxiom(
-            label="Zinserhöhungen erhöhen die Kreditkosten für Haushalte",
+            label="Regelbrüche werden durch Transparenz sichtbar",
             description=(
-                "Steigende Leitzinsen schlagen sich in höheren Hypotheken- und "
-                "Konsumkreditzinsen nieder, was die finanzielle Belastung vieler "
-                "Haushalte direkt erhöht."
+                "Wer in einem transparenten System strategisch lügt oder Prämissen "
+                "verschleiert, macht das für alle sichtbar. Transparenz ist deshalb kein "
+                "Risiko — sondern der wirksamste Schutz gegen Missbrauch."
             ),
         ),
     ],
