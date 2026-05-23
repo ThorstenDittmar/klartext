@@ -8,7 +8,7 @@
     "ghcr.io/devcontainers/features/docker-in-docker:2": { "moby": "false" }
   },
 
-  "onCreateCommand": "pip install -e 'api/.[dev]' && npm --prefix frontend install && npm install -g @anthropic-ai/claude-code",
+  "onCreateCommand": "pip install -e 'api/.[dev]' && npm --prefix frontend install && npm install -g supabase @anthropic-ai/claude-code",
 
   "postStartCommand": "pip install -r docs/requirements.txt",
 
