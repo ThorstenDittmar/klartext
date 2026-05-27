@@ -314,6 +314,19 @@ async def test_narratives_create_returns_422_for_empty_title() -> None:
     assert response.status_code == 422
 
 
+@pytest.mark.asyncio
+async def test_narratives_create_returns_422_for_whitespace_only_title() -> None:
+    """Expects 422 when the title field contains only whitespace."""
+    override_with(FakeNarrativeService())
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.post("/narratives", json={"title": "   "})
+    finally:
+        clear_overrides()
+
+    assert response.status_code == 422
+
+
 # ---------------------------------------------------------------------------
 # POST /narratives/{id}/scenes – happy path
 # ---------------------------------------------------------------------------
@@ -368,6 +381,54 @@ async def test_narratives_add_scene_returns_422_for_empty_title() -> None:
             response = await client.post(
                 f"/narratives/{SAVED_NARRATIVE_ID}/scenes",
                 json={"title": "", "text": "Ein Text."},
+            )
+    finally:
+        clear_overrides()
+
+    assert response.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_narratives_add_scene_returns_422_for_whitespace_only_title() -> None:
+    """Expects 422 when the title field contains only whitespace."""
+    override_with(FakeNarrativeService())
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.post(
+                f"/narratives/{SAVED_NARRATIVE_ID}/scenes",
+                json={"title": "   ", "text": "Ein Text."},
+            )
+    finally:
+        clear_overrides()
+
+    assert response.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_narratives_add_scene_returns_422_for_empty_text() -> None:
+    """Expects 422 when the text field is empty."""
+    override_with(FakeNarrativeService())
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.post(
+                f"/narratives/{SAVED_NARRATIVE_ID}/scenes",
+                json={"title": "Szene 1", "text": ""},
+            )
+    finally:
+        clear_overrides()
+
+    assert response.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_narratives_add_scene_returns_422_for_whitespace_only_text() -> None:
+    """Expects 422 when the text field contains only whitespace."""
+    override_with(FakeNarrativeService())
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.post(
+                f"/narratives/{SAVED_NARRATIVE_ID}/scenes",
+                json={"title": "Szene 1", "text": "   "},
             )
     finally:
         clear_overrides()

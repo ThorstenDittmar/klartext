@@ -185,6 +185,17 @@ async def test_narrative_service_create_raises_for_empty_title() -> None:
         await service.create("")
 
 
+@pytest.mark.asyncio
+async def test_narrative_service_create_raises_for_whitespace_only_title() -> None:
+    """Expects NarrativeValidationError when the title contains only whitespace."""
+    from api.exceptions.narrative import NarrativeValidationError
+
+    service = make_service()
+
+    with pytest.raises(NarrativeValidationError):
+        await service.create("   ")
+
+
 # ---------------------------------------------------------------------------
 # add_scene
 # ---------------------------------------------------------------------------
@@ -235,3 +246,51 @@ async def test_narrative_service_add_scene_raises_for_unknown_narrative_id() -> 
 
     with pytest.raises(NarrativeNotFoundError):
         await service.add_scene("00000000-0000-0000-0000-000000000000", "Szene", "Text.")
+
+
+@pytest.mark.asyncio
+async def test_narrative_service_add_scene_raises_for_empty_title() -> None:
+    """Expects SceneValidationError when the scene title is empty."""
+    from api.exceptions.narrative import SceneValidationError
+
+    service = make_service()
+    narrative = await service.create("Mein Narrativ")
+
+    with pytest.raises(SceneValidationError):
+        await service.add_scene(narrative.id, "", "Ein Text.")  # type: ignore[arg-type]
+
+
+@pytest.mark.asyncio
+async def test_narrative_service_add_scene_raises_for_whitespace_only_title() -> None:
+    """Expects SceneValidationError when the scene title contains only whitespace."""
+    from api.exceptions.narrative import SceneValidationError
+
+    service = make_service()
+    narrative = await service.create("Mein Narrativ")
+
+    with pytest.raises(SceneValidationError):
+        await service.add_scene(narrative.id, "   ", "Ein Text.")  # type: ignore[arg-type]
+
+
+@pytest.mark.asyncio
+async def test_narrative_service_add_scene_raises_for_empty_text() -> None:
+    """Expects SceneValidationError when the scene text is empty."""
+    from api.exceptions.narrative import SceneValidationError
+
+    service = make_service()
+    narrative = await service.create("Mein Narrativ")
+
+    with pytest.raises(SceneValidationError):
+        await service.add_scene(narrative.id, "Szene 1", "")  # type: ignore[arg-type]
+
+
+@pytest.mark.asyncio
+async def test_narrative_service_add_scene_raises_for_whitespace_only_text() -> None:
+    """Expects SceneValidationError when the scene text contains only whitespace."""
+    from api.exceptions.narrative import SceneValidationError
+
+    service = make_service()
+    narrative = await service.create("Mein Narrativ")
+
+    with pytest.raises(SceneValidationError):
+        await service.add_scene(narrative.id, "Szene 1", "   ")  # type: ignore[arg-type]
