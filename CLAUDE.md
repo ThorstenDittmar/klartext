@@ -29,6 +29,14 @@ api/
 - **Schema**: defines what goes in and out (Pydantic)
 - **Domain object**: knows its own invariants and how to change itself
 
+### Health Subendpoints
+
+Every new service router gets a `GET /<resource>/health` endpoint:
+- Returns HTTP 200 with at least `{"status": "ok"}`
+- No authentication required (publicly accessible)
+- Checked in infrastructure tests
+- Add it first when creating a new router, before any other endpoints
+
 ## Object-Oriented Programming
 - Backend code is consistently object-oriented
 - Business logic lives in classes, not loose functions
@@ -53,6 +61,30 @@ def from_record(cls, record: dict) -> "X": ...          # reconstruct from datab
 - No automatic dirty tracking
 - Always save explicitly via repository: `find → change → save`
 - The repository does not know how to construct domain objects — that belongs to the domain class
+
+## Repository Logging
+
+Every repository method logs as its **first action**, before any database call:
+
+```python
+class UserRepository:
+    logger = logging.getLogger(__name__)
+
+    def find_by_id(self, user_id: str) -> User | None:
+        """Find user by ID."""
+        self.logger.debug("UserRepository.find_by_id: user_id=%s", user_id)
+        # ... database call
+
+    def save(self, user: User) -> None:
+        """Persist a user."""
+        self.logger.info("UserRepository.save: user_id=%s", user.id)
+        # ... database call
+```
+
+- `debug` for reads, `info` for writes (create, update, delete)
+- Log message format: `ClassName.method_name: param=value`
+- Log sensitive fields never (no passwords, tokens, PII)
+- Fake repositories log too — it helps debug service-layer tests
 
 ## Dependency Injection
 - Wire dependencies in `dependencies.py` via FastAPI `Depends()`
