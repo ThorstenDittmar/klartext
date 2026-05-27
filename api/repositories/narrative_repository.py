@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
-from api.models.narrative import Narrative
+from api.models.narrative import Narrative, Scene
 
 
 class NarrativeRepository(ABC):
@@ -35,5 +35,14 @@ class NarrativeRepository(ABC):
         """Returns all persisted Narratives, without loading their Scenes.
 
         Returns an empty list when no Narratives have been saved yet.
+        Raises NarrativePersistenceError on database failure.
+        """
+
+    @abstractmethod
+    async def add_scene(self, narrative_id: str, scene: Scene) -> Scene:
+        """Persists a new Scene and appends it to the Narrative with the given ID.
+
+        Returns the Scene with an assigned ID.
+        Raises NarrativeNotFoundError if no Narrative exists for that ID.
         Raises NarrativePersistenceError on database failure.
         """

@@ -137,3 +137,101 @@ async def test_narrative_service_find_by_id_raises_for_unknown_id() -> None:
 
     with pytest.raises(NarrativeNotFoundError):
         await service.find_by_id("00000000-0000-0000-0000-000000000000")
+
+
+# ---------------------------------------------------------------------------
+# create
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_narrative_service_create_returns_narrative_with_id() -> None:
+    """Expects create to return a Narrative with a non-None ID after saving."""
+    service = make_service()
+
+    narrative = await service.create("Mein Narrativ")
+
+    assert narrative.id is not None
+
+
+@pytest.mark.asyncio
+async def test_narrative_service_create_returns_narrative_with_correct_title() -> None:
+    """Expects the returned Narrative to carry the title that was passed in."""
+    service = make_service()
+
+    narrative = await service.create("Mein Narrativ")
+
+    assert narrative.title == "Mein Narrativ"
+
+
+@pytest.mark.asyncio
+async def test_narrative_service_create_returns_empty_narrative() -> None:
+    """Expects the new Narrative to have no scenes."""
+    service = make_service()
+
+    narrative = await service.create("Mein Narrativ")
+
+    assert narrative.scenes == []
+
+
+@pytest.mark.asyncio
+async def test_narrative_service_create_raises_for_empty_title() -> None:
+    """Expects NarrativeValidationError when an empty title is provided."""
+    from api.exceptions.narrative import NarrativeValidationError
+
+    service = make_service()
+
+    with pytest.raises(NarrativeValidationError):
+        await service.create("")
+
+
+# ---------------------------------------------------------------------------
+# add_scene
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_narrative_service_add_scene_returns_scene_with_id() -> None:
+    """Expects add_scene to return a Scene with a non-None ID."""
+    service = make_service()
+    narrative = await service.create("Mein Narrativ")
+
+    scene = await service.add_scene(narrative.id, "Szene 1", "Ein kurzer Text.")  # type: ignore[arg-type]
+
+    assert scene.id is not None
+
+
+@pytest.mark.asyncio
+async def test_narrative_service_add_scene_returns_scene_with_correct_title_and_text() -> None:
+    """Expects the returned Scene to carry the title and text that were passed in."""
+    service = make_service()
+    narrative = await service.create("Mein Narrativ")
+
+    scene = await service.add_scene(narrative.id, "Szene 1", "Ein kurzer Text.")  # type: ignore[arg-type]
+
+    assert scene.title == "Szene 1"
+    assert scene.text == "Ein kurzer Text."
+
+
+@pytest.mark.asyncio
+async def test_narrative_service_add_scene_assigns_sequential_positions() -> None:
+    """Expects scenes added in sequence to receive positions 1, 2, 3."""
+    service = make_service()
+    narrative = await service.create("Mein Narrativ")
+
+    s1 = await service.add_scene(narrative.id, "Szene 1", "Text 1.")  # type: ignore[arg-type]
+    s2 = await service.add_scene(narrative.id, "Szene 2", "Text 2.")  # type: ignore[arg-type]
+    s3 = await service.add_scene(narrative.id, "Szene 3", "Text 3.")  # type: ignore[arg-type]
+
+    assert s1.position == 1
+    assert s2.position == 2
+    assert s3.position == 3
+
+
+@pytest.mark.asyncio
+async def test_narrative_service_add_scene_raises_for_unknown_narrative_id() -> None:
+    """Expects NarrativeNotFoundError when the narrative does not exist."""
+    service = make_service()
+
+    with pytest.raises(NarrativeNotFoundError):
+        await service.add_scene("00000000-0000-0000-0000-000000000000", "Szene", "Text.")

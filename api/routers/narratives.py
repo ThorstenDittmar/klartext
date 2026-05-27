@@ -1,4 +1,4 @@
-"""Router: endpoints for importing and retrieving Narratives and their Claims."""
+"""Router: endpoints for creating, importing and retrieving Narratives and their Claims."""
 
 from __future__ import annotations
 
@@ -13,10 +13,12 @@ from api.dependencies import (
 )
 from api.exceptions.narrative import SceneNotFoundError
 from api.models.claim import Claim
-from api.models.narrative import Narrative
+from api.models.narrative import Narrative, Scene
 from api.repositories.claim_repository import ClaimRepository
 from api.schemas.claims import ClaimResponse, ExtractClaimsResponse
 from api.schemas.narratives import (
+    CreateNarrativeRequest,
+    CreateSceneRequest,
     ImportNarrativeRequest,
     NarrativeResponse,
     NarrativeSummaryResponse,
@@ -59,9 +61,29 @@ def _to_claim_response(claim: Claim) -> ClaimResponse:
     )
 
 
+def _to_scene_response(scene: Scene) -> SceneResponse:
+    """Converts a Scene domain object into a SceneResponse schema."""
+    return SceneResponse(
+        id=scene.id,  # type: ignore[arg-type]
+        title=scene.title,
+        text=scene.text,
+        position=scene.position,
+    )
+
+
 # ---------------------------------------------------------------------------
 # Narrative endpoints
 # ---------------------------------------------------------------------------
+
+
+@router.post("", status_code=status.HTTP_201_CREATED, response_model=NarrativeResponse)
+async def create_narrative(
+    request: CreateNarrativeRequest,
+    service: NarrativeService = Depends(get_narrative_service),
+) -> NarrativeResponse:
+    """Creates a new empty Narrative with the given title."""
+    narrative = await service.create(request.title)
+    return _to_narrative_response(narrative)
 
 
 @router.post(
@@ -98,6 +120,21 @@ async def get_narrative(
     """Returns the Narrative with the given ID, including its Scenes."""
     narrative = await service.find_by_id(narrative_id)
     return _to_narrative_response(narrative)
+
+
+@router.post(
+    "/{narrative_id}/scenes",
+    status_code=status.HTTP_201_CREATED,
+    response_model=SceneResponse,
+)
+async def add_scene(
+    narrative_id: str,
+    request: CreateSceneRequest,
+    service: NarrativeService = Depends(get_narrative_service),
+) -> SceneResponse:
+    """Adds a new Scene to the Narrative with the given ID."""
+    scene = await service.add_scene(narrative_id, request.title, request.text)
+    return _to_scene_response(scene)
 
 
 # ---------------------------------------------------------------------------

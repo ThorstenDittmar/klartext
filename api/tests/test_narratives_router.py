@@ -38,6 +38,9 @@ def make_saved_narrative() -> Narrative:
     return narrative
 
 
+SAVED_SCENE_2_ID = "cccc-3333"
+
+
 class FakeNarrativeService:
     """Returns preset responses without hitting the file system or database."""
 
@@ -46,10 +49,25 @@ class FakeNarrativeService:
         *,
         raise_on_import: Exception | None = None,
         raise_on_find: Exception | None = None,
+        raise_on_create: Exception | None = None,
+        raise_on_add_scene: Exception | None = None,
     ) -> None:
         self._raise_on_import = raise_on_import
         self._raise_on_find = raise_on_find
+        self._raise_on_create = raise_on_create
+        self._raise_on_add_scene = raise_on_add_scene
         self._saved: list[Narrative] = [make_saved_narrative()]
+
+    async def create(self, title: str) -> Narrative:
+        if self._raise_on_create:
+            raise self._raise_on_create
+        narrative = Narrative(id=SAVED_NARRATIVE_ID, title=title)
+        return narrative
+
+    async def add_scene(self, narrative_id: str, title: str, text: str) -> Scene:
+        if self._raise_on_add_scene:
+            raise self._raise_on_add_scene
+        return Scene(id=SAVED_SCENE_2_ID, title=title, text=text, position=2)
 
     async def import_from_file(self, path: Path) -> Narrative:
         if self._raise_on_import:
@@ -238,6 +256,135 @@ async def test_narratives_get_by_id_returns_404_for_unknown_id() -> None:
     try:
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
             response = await client.get("/narratives/unknown-id")
+    finally:
+        clear_overrides()
+
+    assert response.status_code == 404
+
+
+# ---------------------------------------------------------------------------
+# POST /narratives – happy path
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_narratives_create_returns_201() -> None:
+    """Expects 201 when a valid title is provided."""
+    override_with(FakeNarrativeService())
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.post("/narratives", json={"title": "Mein Narrativ"})
+    finally:
+        clear_overrides()
+
+    assert response.status_code == 201
+
+
+@pytest.mark.asyncio
+async def test_narratives_create_response_contains_id_and_title() -> None:
+    """Expects the response to include the narrative id and title."""
+    override_with(FakeNarrativeService())
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.post("/narratives", json={"title": "Mein Narrativ"})
+    finally:
+        clear_overrides()
+
+    data = response.json()
+    assert data["id"] == SAVED_NARRATIVE_ID
+    assert data["title"] == "Mein Narrativ"
+    assert data["scenes"] == []
+
+
+# ---------------------------------------------------------------------------
+# POST /narratives – error cases
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_narratives_create_returns_422_for_empty_title() -> None:
+    """Expects 422 when the title field is an empty string."""
+    override_with(FakeNarrativeService())
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.post("/narratives", json={"title": ""})
+    finally:
+        clear_overrides()
+
+    assert response.status_code == 422
+
+
+# ---------------------------------------------------------------------------
+# POST /narratives/{id}/scenes – happy path
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_narratives_add_scene_returns_201() -> None:
+    """Expects 201 when a valid scene is added to an existing narrative."""
+    override_with(FakeNarrativeService())
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.post(
+                f"/narratives/{SAVED_NARRATIVE_ID}/scenes",
+                json={"title": "Szene 2", "text": "Ein weiterer Text."},
+            )
+    finally:
+        clear_overrides()
+
+    assert response.status_code == 201
+
+
+@pytest.mark.asyncio
+async def test_narratives_add_scene_response_contains_id_title_and_text() -> None:
+    """Expects the response to include the scene id, title, text and position."""
+    override_with(FakeNarrativeService())
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.post(
+                f"/narratives/{SAVED_NARRATIVE_ID}/scenes",
+                json={"title": "Szene 2", "text": "Ein weiterer Text."},
+            )
+    finally:
+        clear_overrides()
+
+    data = response.json()
+    assert data["id"] == SAVED_SCENE_2_ID
+    assert data["title"] == "Szene 2"
+    assert data["text"] == "Ein weiterer Text."
+
+
+# ---------------------------------------------------------------------------
+# POST /narratives/{id}/scenes – error cases
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_narratives_add_scene_returns_422_for_empty_title() -> None:
+    """Expects 422 when the title field is empty."""
+    override_with(FakeNarrativeService())
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.post(
+                f"/narratives/{SAVED_NARRATIVE_ID}/scenes",
+                json={"title": "", "text": "Ein Text."},
+            )
+    finally:
+        clear_overrides()
+
+    assert response.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_narratives_add_scene_returns_404_for_unknown_narrative() -> None:
+    """Expects 404 when the service raises NarrativeNotFoundError."""
+    override_with(FakeNarrativeService(raise_on_add_scene=NarrativeNotFoundError("Not found.")))
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.post(
+                "/narratives/unknown-id/scenes",
+                json={"title": "Szene", "text": "Text."},
+            )
     finally:
         clear_overrides()
 

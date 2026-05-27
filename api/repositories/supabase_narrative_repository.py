@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import logging
+
 from supabase import AsyncClient
 
 from api.exceptions.narrative import NarrativeNotFoundError, NarrativePersistenceError
@@ -22,6 +24,8 @@ class SupabaseNarrativeRepository(NarrativeRepository):
       narrative_einheiten.inhalt → Scene.text
     """
 
+    logger = logging.getLogger(__name__)
+
     def __init__(self, client: AsyncClient) -> None:
         self._client = client
 
@@ -30,6 +34,7 @@ class SupabaseNarrativeRepository(NarrativeRepository):
 
         Raises NarrativePersistenceError on database failure.
         """
+        self.logger.info("SupabaseNarrativeRepository.save: title=%s", narrative.title)
         try:
             narrative_result = (
                 await self._client.table(_NARRATIVE_TABLE)
@@ -90,6 +95,7 @@ class SupabaseNarrativeRepository(NarrativeRepository):
         Raises NarrativeNotFoundError if no row exists for the given ID.
         Raises NarrativePersistenceError on database failure.
         """
+        self.logger.debug("SupabaseNarrativeRepository.find_by_id: narrative_id=%s", narrative_id)
         try:
             narrative_result = (
                 await self._client.table(_NARRATIVE_TABLE)
@@ -141,6 +147,7 @@ class SupabaseNarrativeRepository(NarrativeRepository):
 
         Raises NarrativePersistenceError on database failure.
         """
+        self.logger.debug("SupabaseNarrativeRepository.list_all")
         try:
             result = (
                 await self._client.table(_NARRATIVE_TABLE)
@@ -155,3 +162,53 @@ class SupabaseNarrativeRepository(NarrativeRepository):
             Narrative.from_record({"id": row["id"], "title": row["titel"]})
             for row in result.data
         ]
+
+    async def add_scene(self, narrative_id: str, scene: Scene) -> Scene:
+        """Inserts a new Scene row for the given Narrative. Returns the Scene with an assigned ID.
+
+        Raises NarrativeNotFoundError if no Narrative exists for the given ID.
+        Raises NarrativePersistenceError on database failure.
+        """
+        self.logger.info(
+            "SupabaseNarrativeRepository.add_scene: narrative_id=%s, title=%s",
+            narrative_id,
+            scene.title,
+        )
+        # Verify the narrative exists before inserting the scene.
+        narrative_result = await self._client.table(_NARRATIVE_TABLE).select("id").eq("id", narrative_id).execute()
+        if not narrative_result.data:
+            raise NarrativeNotFoundError(f"Narrative not found: {narrative_id}")
+
+        try:
+            scene_result = (
+                await self._client.table(_SCENE_TABLE)
+                .insert(
+                    {
+                        "narrativ_id": narrative_id,
+                        "typ": _SCENE_TYPE,
+                        "titel": scene.title,
+                        "inhalt": scene.text,
+                        "position": scene.position,
+                    }
+                )
+                .execute()
+            )
+        except Exception as e:
+            raise NarrativePersistenceError(
+                f"Failed to add scene '{scene.title}' to narrative {narrative_id}: {e}"
+            ) from e
+
+        if not scene_result.data:
+            raise NarrativePersistenceError(
+                f"Add scene returned no data for '{scene.title}'."
+            )
+
+        row = scene_result.data[0]
+        return Scene.from_record(
+            {
+                "id": row["id"],
+                "title": row["titel"],
+                "text": row["inhalt"],
+                "position": row["position"],
+            }
+        )

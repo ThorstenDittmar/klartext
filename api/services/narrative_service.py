@@ -1,18 +1,20 @@
-"""Service: orchestrates narrative import and retrieval."""
+"""Service: orchestrates narrative creation, import, and retrieval."""
 
 from __future__ import annotations
 
 from pathlib import Path
 
-from api.models.narrative import Narrative
+from api.models.narrative import Narrative, Scene
 from api.repositories.narrative_repository import NarrativeRepository
 from api.services.narrative_import_service import NarrativeImportService
 
 
 class NarrativeService:
-    """Coordinates file import and database persistence for Narratives.
+    """Coordinates creation, file import, and database persistence for Narratives.
 
     Responsibilities:
+    - Creates new empty Narratives via create().
+    - Adds Scenes to existing Narratives via add_scene().
     - Delegates file reading and parsing to NarrativeImportService.
     - Delegates persistence to NarrativeRepository.
     - Provides find_by_id and list_all for read access.
@@ -25,6 +27,30 @@ class NarrativeService:
     ) -> None:
         self._import_service = import_service
         self._repository = repository
+
+    async def create(self, title: str) -> Narrative:
+        """Creates and persists a new empty Narrative with the given title.
+
+        Returns the saved Narrative with an assigned ID and no scenes.
+        Raises NarrativeValidationError if the title is empty.
+        Raises NarrativePersistenceError on database failure.
+        """
+        narrative = Narrative.create(title)
+        return await self._repository.save(narrative)
+
+    async def add_scene(self, narrative_id: str, title: str, text: str) -> Scene:
+        """Adds a new Scene to the Narrative with the given ID.
+
+        The position is assigned automatically as the next sequential number.
+        Returns the saved Scene with an assigned ID.
+        Raises NarrativeNotFoundError if no Narrative exists for that ID.
+        Raises SceneValidationError if title or text is empty.
+        Raises NarrativePersistenceError on database failure.
+        """
+        narrative = await self._repository.find_by_id(narrative_id)
+        position = len(narrative.scenes) + 1
+        scene = Scene.create(title=title, text=text, position=position)
+        return await self._repository.add_scene(narrative_id, scene)
 
     async def import_from_file(self, path: Path) -> Narrative:
         """Reads, parses and persists a Narrative from the given file path.
