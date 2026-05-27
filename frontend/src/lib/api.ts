@@ -40,6 +40,12 @@ export interface NarrativeSummary {
   title: string;
 }
 
+export interface Claim {
+  text: string;
+  typ: string;
+  confidence: number;
+}
+
 export interface ConsistencyConflict {
   axiom_label: string;
   description: string;
@@ -84,5 +90,12 @@ export const api = {
         method: "POST",
         body: JSON.stringify({ title, text }),
       }),
+    extractClaims: (narrativeId: string, sceneId: string) =>
+      request<{ claims: Claim[] }>(
+        `/narratives/${narrativeId}/scenes/${sceneId}/extract-claims`,
+        { method: "POST" }
+      ),
+    getSceneClaims: (narrativeId: string, sceneId: string) =>
+      request<Claim[]>(`/narratives/${narrativeId}/scenes/${sceneId}/claims`),
   },
 };

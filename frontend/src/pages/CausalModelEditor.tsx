@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { api, CausalModel } from "../lib/api";
 
-export default function WirkmodellEditor() {
+export default function CausalModelEditor() {
   const [models, setModels] = useState<CausalModel[]>([]);
   const [selected, setSelected] = useState<CausalModel | null>(null);
   const [newTitle, setNewTitle] = useState("");
