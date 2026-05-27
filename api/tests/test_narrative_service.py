@@ -43,7 +43,7 @@ class FakeNarrativeParser(NarrativeParser):
     def parse(self, content: str) -> list[Scene]:
         return [
             Scene.create(title="Scene 1", text="Fake text.", position=1),
-            Scene.create(title="Scene 2", text="Auch fake.", position=2),
+            Scene.create(title="Scene 2", text="Also fake.", position=2),
         ]
 
 

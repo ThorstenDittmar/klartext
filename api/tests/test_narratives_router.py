@@ -26,12 +26,12 @@ SAVED_SCENE_ID = "bbbb-2222"
 
 
 def make_saved_narrative() -> Narrative:
-    narrative = Narrative(id=SAVED_NARRATIVE_ID, title="Klartext")
+    narrative = Narrative(id=SAVED_NARRATIVE_ID, title="A Test Narrative")
     narrative.add_scene(
         Scene(
             id=SAVED_SCENE_ID,
             title="Scene 1",
-            text="Ein kurzer Text.",
+            text="A short text.",
             position=1,
         )
     )
@@ -132,7 +132,7 @@ async def test_narratives_import_response_contains_id_and_title() -> None:
 
     data = response.json()
     assert data["id"] == SAVED_NARRATIVE_ID
-    assert data["title"] == "Klartext"
+    assert data["title"] == "A Test Narrative"
 
 
 @pytest.mark.asyncio
@@ -222,7 +222,7 @@ async def test_narratives_list_response_contains_narrative_summary() -> None:
 
     item = response.json()[0]
     assert item["id"] == SAVED_NARRATIVE_ID
-    assert item["title"] == "Klartext"
+    assert item["title"] == "A Test Narrative"
     assert "scenes" not in item
 
 
