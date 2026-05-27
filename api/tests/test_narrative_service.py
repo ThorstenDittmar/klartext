@@ -42,8 +42,8 @@ class FakeNarrativeParser(NarrativeParser):
 
     def parse(self, content: str) -> list[Scene]:
         return [
-            Scene.create(title="Szene 1", text="Fake text.", position=1),
-            Scene.create(title="Szene 2", text="Auch fake.", position=2),
+            Scene.create(title="Scene 1", text="Fake text.", position=1),
+            Scene.create(title="Scene 2", text="Auch fake.", position=2),
         ]
 
 
@@ -149,7 +149,7 @@ async def test_narrative_service_create_returns_narrative_with_id() -> None:
     """Expects create to return a Narrative with a non-None ID after saving."""
     service = make_service()
 
-    narrative = await service.create("Mein Narrativ")
+    narrative = await service.create("My Narrative")
 
     assert narrative.id is not None
 
@@ -159,9 +159,9 @@ async def test_narrative_service_create_returns_narrative_with_correct_title() -
     """Expects the returned Narrative to carry the title that was passed in."""
     service = make_service()
 
-    narrative = await service.create("Mein Narrativ")
+    narrative = await service.create("My Narrative")
 
-    assert narrative.title == "Mein Narrativ"
+    assert narrative.title == "My Narrative"
 
 
 @pytest.mark.asyncio
@@ -169,7 +169,7 @@ async def test_narrative_service_create_returns_empty_narrative() -> None:
     """Expects the new Narrative to have no scenes."""
     service = make_service()
 
-    narrative = await service.create("Mein Narrativ")
+    narrative = await service.create("My Narrative")
 
     assert narrative.scenes == []
 
@@ -205,9 +205,9 @@ async def test_narrative_service_create_raises_for_whitespace_only_title() -> No
 async def test_narrative_service_add_scene_returns_scene_with_id() -> None:
     """Expects add_scene to return a Scene with a non-None ID."""
     service = make_service()
-    narrative = await service.create("Mein Narrativ")
+    narrative = await service.create("My Narrative")
 
-    scene = await service.add_scene(narrative.id, "Szene 1", "Ein kurzer Text.")  # type: ignore[arg-type]
+    scene = await service.add_scene(narrative.id, "Scene 1", "A short text.")  # type: ignore[arg-type]
 
     assert scene.id is not None
 
@@ -216,23 +216,23 @@ async def test_narrative_service_add_scene_returns_scene_with_id() -> None:
 async def test_narrative_service_add_scene_returns_scene_with_correct_title_and_text() -> None:
     """Expects the returned Scene to carry the title and text that were passed in."""
     service = make_service()
-    narrative = await service.create("Mein Narrativ")
+    narrative = await service.create("My Narrative")
 
-    scene = await service.add_scene(narrative.id, "Szene 1", "Ein kurzer Text.")  # type: ignore[arg-type]
+    scene = await service.add_scene(narrative.id, "Scene 1", "A short text.")  # type: ignore[arg-type]
 
-    assert scene.title == "Szene 1"
-    assert scene.text == "Ein kurzer Text."
+    assert scene.title == "Scene 1"
+    assert scene.text == "A short text."
 
 
 @pytest.mark.asyncio
 async def test_narrative_service_add_scene_assigns_sequential_positions() -> None:
     """Expects scenes added in sequence to receive positions 1, 2, 3."""
     service = make_service()
-    narrative = await service.create("Mein Narrativ")
+    narrative = await service.create("My Narrative")
 
-    s1 = await service.add_scene(narrative.id, "Szene 1", "Text 1.")  # type: ignore[arg-type]
-    s2 = await service.add_scene(narrative.id, "Szene 2", "Text 2.")  # type: ignore[arg-type]
-    s3 = await service.add_scene(narrative.id, "Szene 3", "Text 3.")  # type: ignore[arg-type]
+    s1 = await service.add_scene(narrative.id, "Scene 1", "Text for scene 1.")  # type: ignore[arg-type]
+    s2 = await service.add_scene(narrative.id, "Scene 2", "Text for scene 2.")  # type: ignore[arg-type]
+    s3 = await service.add_scene(narrative.id, "Scene 3", "Text for scene 3.")  # type: ignore[arg-type]
 
     assert s1.position == 1
     assert s2.position == 2
@@ -254,10 +254,10 @@ async def test_narrative_service_add_scene_raises_for_empty_title() -> None:
     from api.exceptions.narrative import SceneValidationError
 
     service = make_service()
-    narrative = await service.create("Mein Narrativ")
+    narrative = await service.create("My Narrative")
 
     with pytest.raises(SceneValidationError):
-        await service.add_scene(narrative.id, "", "Ein Text.")  # type: ignore[arg-type]
+        await service.add_scene(narrative.id, "", "A text.")  # type: ignore[arg-type]
 
 
 @pytest.mark.asyncio
@@ -266,10 +266,10 @@ async def test_narrative_service_add_scene_raises_for_whitespace_only_title() ->
     from api.exceptions.narrative import SceneValidationError
 
     service = make_service()
-    narrative = await service.create("Mein Narrativ")
+    narrative = await service.create("My Narrative")
 
     with pytest.raises(SceneValidationError):
-        await service.add_scene(narrative.id, "   ", "Ein Text.")  # type: ignore[arg-type]
+        await service.add_scene(narrative.id, "   ", "A text.")  # type: ignore[arg-type]
 
 
 @pytest.mark.asyncio
@@ -278,10 +278,10 @@ async def test_narrative_service_add_scene_raises_for_empty_text() -> None:
     from api.exceptions.narrative import SceneValidationError
 
     service = make_service()
-    narrative = await service.create("Mein Narrativ")
+    narrative = await service.create("My Narrative")
 
     with pytest.raises(SceneValidationError):
-        await service.add_scene(narrative.id, "Szene 1", "")  # type: ignore[arg-type]
+        await service.add_scene(narrative.id, "Scene 1", "")  # type: ignore[arg-type]
 
 
 @pytest.mark.asyncio
@@ -290,7 +290,7 @@ async def test_narrative_service_add_scene_raises_for_whitespace_only_text() -> 
     from api.exceptions.narrative import SceneValidationError
 
     service = make_service()
-    narrative = await service.create("Mein Narrativ")
+    narrative = await service.create("My Narrative")
 
     with pytest.raises(SceneValidationError):
-        await service.add_scene(narrative.id, "Szene 1", "   ")  # type: ignore[arg-type]
+        await service.add_scene(narrative.id, "Scene 1", "   ")  # type: ignore[arg-type]

@@ -30,7 +30,7 @@ def make_saved_narrative() -> Narrative:
     narrative.add_scene(
         Scene(
             id=SAVED_SCENE_ID,
-            title="Szene 1",
+            title="Scene 1",
             text="Ein kurzer Text.",
             position=1,
         )
@@ -273,7 +273,7 @@ async def test_narratives_create_returns_201() -> None:
     override_with(FakeNarrativeService())
     try:
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
-            response = await client.post("/narratives", json={"title": "Mein Narrativ"})
+            response = await client.post("/narratives", json={"title": "My Narrative"})
     finally:
         clear_overrides()
 
@@ -286,13 +286,13 @@ async def test_narratives_create_response_contains_id_and_title() -> None:
     override_with(FakeNarrativeService())
     try:
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
-            response = await client.post("/narratives", json={"title": "Mein Narrativ"})
+            response = await client.post("/narratives", json={"title": "My Narrative"})
     finally:
         clear_overrides()
 
     data = response.json()
     assert data["id"] == SAVED_NARRATIVE_ID
-    assert data["title"] == "Mein Narrativ"
+    assert data["title"] == "My Narrative"
     assert data["scenes"] == []
 
 
@@ -340,7 +340,7 @@ async def test_narratives_add_scene_returns_201() -> None:
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
             response = await client.post(
                 f"/narratives/{SAVED_NARRATIVE_ID}/scenes",
-                json={"title": "Szene 2", "text": "Ein weiterer Text."},
+                json={"title": "Scene 2", "text": "Another text."},
             )
     finally:
         clear_overrides()
@@ -356,15 +356,15 @@ async def test_narratives_add_scene_response_contains_id_title_and_text() -> Non
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
             response = await client.post(
                 f"/narratives/{SAVED_NARRATIVE_ID}/scenes",
-                json={"title": "Szene 2", "text": "Ein weiterer Text."},
+                json={"title": "Scene 2", "text": "Another text."},
             )
     finally:
         clear_overrides()
 
     data = response.json()
     assert data["id"] == SAVED_SCENE_2_ID
-    assert data["title"] == "Szene 2"
-    assert data["text"] == "Ein weiterer Text."
+    assert data["title"] == "Scene 2"
+    assert data["text"] == "Another text."
 
 
 # ---------------------------------------------------------------------------
@@ -380,7 +380,7 @@ async def test_narratives_add_scene_returns_422_for_empty_title() -> None:
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
             response = await client.post(
                 f"/narratives/{SAVED_NARRATIVE_ID}/scenes",
-                json={"title": "", "text": "Ein Text."},
+                json={"title": "", "text": "A text."},
             )
     finally:
         clear_overrides()
@@ -396,7 +396,7 @@ async def test_narratives_add_scene_returns_422_for_whitespace_only_title() -> N
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
             response = await client.post(
                 f"/narratives/{SAVED_NARRATIVE_ID}/scenes",
-                json={"title": "   ", "text": "Ein Text."},
+                json={"title": "   ", "text": "A text."},
             )
     finally:
         clear_overrides()
@@ -412,7 +412,7 @@ async def test_narratives_add_scene_returns_422_for_empty_text() -> None:
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
             response = await client.post(
                 f"/narratives/{SAVED_NARRATIVE_ID}/scenes",
-                json={"title": "Szene 1", "text": ""},
+                json={"title": "Scene 1", "text": ""},
             )
     finally:
         clear_overrides()
@@ -428,7 +428,7 @@ async def test_narratives_add_scene_returns_422_for_whitespace_only_text() -> No
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
             response = await client.post(
                 f"/narratives/{SAVED_NARRATIVE_ID}/scenes",
-                json={"title": "Szene 1", "text": "   "},
+                json={"title": "Scene 1", "text": "   "},
             )
     finally:
         clear_overrides()
@@ -444,7 +444,7 @@ async def test_narratives_add_scene_returns_404_for_unknown_narrative() -> None:
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
             response = await client.post(
                 "/narratives/unknown-id/scenes",
-                json={"title": "Szene", "text": "Text."},
+                json={"title": "Scene", "text": "Text."},
             )
     finally:
         clear_overrides()

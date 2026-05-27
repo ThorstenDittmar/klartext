@@ -40,15 +40,7 @@ def _to_narrative_response(narrative: Narrative) -> NarrativeResponse:
     return NarrativeResponse(
         id=narrative.id,  # type: ignore[arg-type]
         title=narrative.title,
-        scenes=[
-            SceneResponse(
-                id=scene.id,  # type: ignore[arg-type]
-                title=scene.title,
-                text=scene.text,
-                position=scene.position,
-            )
-            for scene in narrative.scenes
-        ],
+        scenes=[_to_scene_response(scene) for scene in narrative.scenes],
     )
 
 

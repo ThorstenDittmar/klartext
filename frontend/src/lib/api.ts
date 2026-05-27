@@ -74,5 +74,15 @@ export const api = {
   narratives: {
     list: () => request<NarrativeSummary[]>("/narratives"),
     get: (id: string) => request<Narrative>(`/narratives/${id}`),
+    create: (title: string) =>
+      request<Narrative>("/narratives", {
+        method: "POST",
+        body: JSON.stringify({ title }),
+      }),
+    addScene: (narrativeId: string, title: string, text: string) =>
+      request<Scene>(`/narratives/${narrativeId}/scenes`, {
+        method: "POST",
+        body: JSON.stringify({ title, text }),
+      }),
   },
 };

@@ -1,4 +1,4 @@
-"""Pydantic schemas for the narrative import and retrieval endpoints."""
+"""Pydantic schemas for all narrative endpoints (create, import, retrieval)."""
 
 from __future__ import annotations
 
