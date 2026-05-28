@@ -19,16 +19,16 @@ from api.models.narrative import Actor, ActorType, Narrative, Scene
 
 def test_scene_create_stores_title_and_text() -> None:
     """Expects title, text, and position to be accessible after creation."""
-    scene = Scene.create(title="Szene 1", text="Es war einmal.", position=1)
+    scene = Scene.create(title="Scene 1", text="A short text.", position=1)
 
-    assert scene.title == "Szene 1"
-    assert scene.text == "Es war einmal."
+    assert scene.title == "Scene 1"
+    assert scene.text == "A short text."
     assert scene.position == 1
 
 
 def test_scene_has_no_id_before_persistence() -> None:
     """Expects id to be None until the repository assigns one on first save."""
-    scene = Scene.create(title="Szene 1", text="Es war einmal.", position=1)
+    scene = Scene.create(title="Scene 1", text="A short text.", position=1)
 
     assert scene.id is None
 
@@ -36,36 +36,36 @@ def test_scene_has_no_id_before_persistence() -> None:
 def test_scene_create_raises_for_empty_text() -> None:
     """Expects a SceneValidationError because a Scene without text has no content."""
     with pytest.raises(SceneValidationError):
-        Scene.create(title="Szene 1", text="", position=1)
+        Scene.create(title="Scene 1", text="", position=1)
 
 
 def test_scene_create_raises_for_whitespace_only_text() -> None:
     """Expects a SceneValidationError because whitespace-only text is equivalent to empty."""
     with pytest.raises(SceneValidationError):
-        Scene.create(title="Szene 1", text="   ", position=1)
+        Scene.create(title="Scene 1", text="   ", position=1)
 
 
 def test_scene_create_raises_for_empty_title() -> None:
     """Expects a SceneValidationError because a Scene without a title cannot be addressed."""
     with pytest.raises(SceneValidationError):
-        Scene.create(title="", text="Es war einmal.", position=1)
+        Scene.create(title="", text="A short text.", position=1)
 
 
 def test_scene_create_raises_for_whitespace_only_title() -> None:
     """Expects a SceneValidationError because a whitespace-only title is equivalent to empty."""
     with pytest.raises(SceneValidationError):
-        Scene.create(title="   ", text="Es war einmal.", position=1)
+        Scene.create(title="   ", text="A short text.", position=1)
 
 
 def test_scene_from_record_reconstructs_scene() -> None:
     """Expects all fields – including the persisted id – to be restored from the database record."""
-    record = {"id": "abc-123", "title": "Szene 1", "text": "Es war einmal.", "position": 1}
+    record = {"id": "abc-123", "title": "Scene 1", "text": "A short text.", "position": 1}
 
     scene = Scene.from_record(record)
 
     assert scene.id == "abc-123"
-    assert scene.title == "Szene 1"
-    assert scene.text == "Es war einmal."
+    assert scene.title == "Scene 1"
+    assert scene.text == "A short text."
     assert scene.position == 1
 
 
@@ -86,22 +86,22 @@ def test_narrative_create_raises_for_whitespace_only_title() -> None:
 
 def test_narrative_create_starts_with_no_scenes() -> None:
     """Expects a new Narrative to be an empty container – scenes are added explicitly."""
-    narrative = Narrative.create(title="Mein Roman")
+    narrative = Narrative.create(title="A Novel")
 
     assert narrative.scenes == []
-    assert narrative.title == "Mein Roman"
+    assert narrative.title == "A Novel"
 
 
 def test_narrative_has_no_id_before_persistence() -> None:
     """Expects id to be None until the repository assigns one on first save."""
-    narrative = Narrative.create(title="Mein Roman")
+    narrative = Narrative.create(title="A Novel")
 
     assert narrative.id is None
 
 
 def test_narrative_add_scene_appends_scene() -> None:
     """Expects add_scene() to make the scene accessible via the scenes property."""
-    narrative = Narrative.create(title="Mein Roman")
+    narrative = Narrative.create(title="A Novel")
     scene = Scene.create(title="Szene 1", text="Es war einmal.", position=1)
 
     narrative.add_scene(scene)
@@ -112,9 +112,9 @@ def test_narrative_add_scene_appends_scene() -> None:
 
 def test_narrative_add_scene_preserves_order() -> None:
     """Expects scenes to appear in the order they were added – position is meaningful."""
-    narrative = Narrative.create(title="Mein Roman")
-    narrative.add_scene(Scene.create(title="Szene 1", text="Erster Text.", position=1))
-    narrative.add_scene(Scene.create(title="Szene 2", text="Zweiter Text.", position=2))
+    narrative = Narrative.create(title="A Novel")
+    narrative.add_scene(Scene.create(title="Scene 1", text="First text.", position=1))
+    narrative.add_scene(Scene.create(title="Scene 2", text="Second text.", position=2))
 
     assert narrative.scenes[0].position == 1
     assert narrative.scenes[1].position == 2
@@ -122,12 +122,12 @@ def test_narrative_add_scene_preserves_order() -> None:
 
 def test_narrative_from_record_reconstructs_narrative() -> None:
     """Expects id and title to be restored from the database record."""
-    record = {"id": "xyz-456", "title": "Mein Roman"}
+    record = {"id": "xyz-456", "title": "A Novel"}
 
     narrative = Narrative.from_record(record)
 
     assert narrative.id == "xyz-456"
-    assert narrative.title == "Mein Roman"
+    assert narrative.title == "A Novel"
 
 
 # --- Actor ---
@@ -211,6 +211,14 @@ def test_actor_from_record_reconstructs_actor_without_description() -> None:
     assert actor.description is None
 
 
+def test_actor_from_record_raises_for_unknown_type() -> None:
+    """Expects ActorValidationError when the database record contains an unrecognised type value."""
+    record = {"id": "actor-003", "name": "Max", "typ": "unknown_type", "description": None}
+
+    with pytest.raises(ActorValidationError):
+        Actor.from_record(record)
+
+
 # --- Narrative + Actor ---
 
 
@@ -261,6 +269,22 @@ def test_narrative_link_to_causal_model_stores_id() -> None:
     narrative.link_to_causal_model("model-xyz")
 
     assert narrative.causal_model_id == "model-xyz"
+
+
+def test_narrative_link_to_causal_model_raises_for_empty_id() -> None:
+    """Expects NarrativeValidationError when an empty string is passed as the model ID."""
+    narrative = Narrative.create(title="A Novel")
+
+    with pytest.raises(NarrativeValidationError):
+        narrative.link_to_causal_model("")
+
+
+def test_narrative_link_to_causal_model_raises_for_whitespace_only_id() -> None:
+    """Expects NarrativeValidationError when a whitespace-only string is passed as the model ID."""
+    narrative = Narrative.create(title="A Novel")
+
+    with pytest.raises(NarrativeValidationError):
+        narrative.link_to_causal_model("   ")
 
 
 def test_narrative_from_record_reconstructs_causal_model_id() -> None:

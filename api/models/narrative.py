@@ -115,11 +115,15 @@ class Actor:
 
     @classmethod
     def from_record(cls, record: dict[str, Any]) -> Actor:
-        """Reconstructs an Actor from a database record."""
+        """Reconstructs an Actor from a database record. Raises ActorValidationError for unknown type."""
+        try:
+            typ = ActorType(record["typ"])
+        except ValueError as e:
+            raise ActorValidationError(f"Unknown actor type in record: {record['typ']}") from e
         return cls(
             id=record["id"],
             name=record["name"],
-            typ=ActorType(record["typ"]),
+            typ=typ,
             description=record.get("description"),
         )
 
@@ -189,7 +193,10 @@ class Narrative:
 
         This is the foundational connection that enables consistency checking,
         implicit assumption detection and the Transparenzbericht.
+        Raises NarrativeValidationError for empty or whitespace-only IDs.
         """
+        if not causal_model_id.strip():
+            raise NarrativeValidationError("causal_model_id must not be empty")
         self._causal_model_id = causal_model_id
 
     @property
