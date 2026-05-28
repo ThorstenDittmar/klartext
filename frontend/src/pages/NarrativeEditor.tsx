@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import {
+  Actor,
   api,
   CausalModel,
   Claim,
@@ -12,6 +13,16 @@ import {
 // ---------------------------------------------------------------------------
 // Claim type labels (German — user-facing)
 // ---------------------------------------------------------------------------
+
+const ACTOR_TYPE_LABELS: Record<string, string> = {
+  figur: "Figur",
+  organisation: "Organisation",
+  gruppe: "Gruppe",
+  institution: "Institution",
+  abstrakte_entitaet: "Abstrakte Entität",
+};
+
+const ACTOR_TYPES = Object.entries(ACTOR_TYPE_LABELS);
 
 const CLAIM_TYPE_LABELS: Record<string, string> = {
   empirischer_claim: "Empirisch",
@@ -57,6 +68,15 @@ export default function NarrativeEditor() {
   // Add scene form
   const [sceneTitle, setSceneTitle] = useState("");
   const [sceneText, setSceneText] = useState("");
+
+  // Actor interaction
+  const [selectedActorId, setSelectedActorId] = useState<string | null>(null);
+  const [showAddActor, setShowAddActor] = useState(false);
+
+  // Add / edit actor form
+  const [actorName, setActorName] = useState("");
+  const [actorTyp, setActorTyp] = useState("figur");
+  const [actorDescription, setActorDescription] = useState("");
 
   // UI state
   const [error, setError] = useState<string | null>(null);
@@ -170,6 +190,91 @@ export default function NarrativeEditor() {
       setError("Szene konnte nicht hinzugefügt werden.");
     } finally {
       setLoading(false);
+    }
+  }
+
+  function openAddActor() {
+    setShowAddActor(true);
+    setSelectedActorId(null);
+    setSelectedSceneId(null);
+    setShowAddScene(false);
+    setActorName("");
+    setActorTyp("figur");
+    setActorDescription("");
+  }
+
+  function selectActor(actor: Actor) {
+    setSelectedActorId(actor.id);
+    setShowAddActor(false);
+    setSelectedSceneId(null);
+    setShowAddScene(false);
+    setActorName(actor.name);
+    setActorTyp(actor.typ);
+    setActorDescription(actor.description ?? "");
+  }
+
+  function cancelActorForm() {
+    setShowAddActor(false);
+    setSelectedActorId(null);
+    setActorName("");
+    setActorTyp("figur");
+    setActorDescription("");
+  }
+
+  async function addActor() {
+    if (!selected || !actorName.trim()) return;
+    setLoading(true);
+    try {
+      const actor = await api.narratives.addActor(
+        selected.id,
+        actorName.trim(),
+        actorTyp,
+        actorDescription.trim() || null
+      );
+      setSelected((prev) => prev ? { ...prev, actors: [...prev.actors, actor] } : prev);
+      setSelectedActorId(actor.id);
+      setShowAddActor(false);
+    } catch {
+      setError("Akteur konnte nicht hinzugefügt werden.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function updateActor() {
+    if (!selected || !selectedActorId || !actorName.trim()) return;
+    setLoading(true);
+    try {
+      const updated = await api.narratives.updateActor(
+        selected.id,
+        selectedActorId,
+        actorName.trim(),
+        actorTyp,
+        actorDescription.trim() || null
+      );
+      setSelected((prev) =>
+        prev
+          ? { ...prev, actors: prev.actors.map((a) => (a.id === updated.id ? updated : a)) }
+          : prev
+      );
+    } catch {
+      setError("Akteur konnte nicht gespeichert werden.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function removeActor(actorId: string) {
+    if (!selected) return;
+    if (!window.confirm("Akteur wirklich löschen?")) return;
+    try {
+      await api.narratives.removeActor(selected.id, actorId);
+      setSelected((prev) =>
+        prev ? { ...prev, actors: prev.actors.filter((a) => a.id !== actorId) } : prev
+      );
+      if (selectedActorId === actorId) cancelActorForm();
+    } catch {
+      setError("Akteur konnte nicht gelöscht werden.");
     }
   }
 
@@ -305,11 +410,86 @@ export default function NarrativeEditor() {
               onClick={() => {
                 setShowAddScene(true);
                 setSelectedSceneId(null);
+                setSelectedActorId(null);
+                setShowAddActor(false);
               }}
               style={{ fontSize: "0.85rem", width: "100%" }}
             >
               + Szene hinzufügen
             </button>
+
+            {/* ------------------------------------------------------------ */}
+            {/* Actors                                                         */}
+            {/* ------------------------------------------------------------ */}
+            <div style={{ borderTop: "1px solid #eee", marginTop: "1.5rem", paddingTop: "1rem" }}>
+              <p
+                style={{
+                  margin: "0 0 0.75rem",
+                  fontSize: "0.75rem",
+                  color: "#aaa",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em",
+                }}
+              >
+                Akteure
+              </p>
+
+              <ul style={{ listStyle: "none", padding: 0, margin: "0 0 1rem" }}>
+                {selected.actors.map((actor) => (
+                  <li
+                    key={actor.id}
+                    style={{ display: "flex", alignItems: "center", gap: "0.25rem", marginBottom: "0.3rem" }}
+                  >
+                    <button
+                      onClick={() => selectActor(actor)}
+                      style={{
+                        flex: 1,
+                        background: selectedActorId === actor.id ? "#e8f0fe" : "none",
+                        border: `1px solid ${selectedActorId === actor.id ? "#4a7aff" : "#ddd"}`,
+                        borderRadius: 4,
+                        padding: "0.4rem 0.5rem",
+                        cursor: "pointer",
+                        textAlign: "left",
+                        fontSize: "0.8rem",
+                        overflow: "hidden",
+                        whiteSpace: "nowrap",
+                        textOverflow: "ellipsis",
+                      }}
+                      title={actor.name}
+                    >
+                      {actor.name}
+                      <span style={{ color: "#aaa", marginLeft: "0.3rem", fontSize: "0.7rem" }}>
+                        {ACTOR_TYPE_LABELS[actor.typ] ?? actor.typ}
+                      </span>
+                    </button>
+                    <button
+                      onClick={() => removeActor(actor.id)}
+                      title="Löschen"
+                      style={{
+                        flexShrink: 0,
+                        background: "none",
+                        border: "1px solid #ddd",
+                        borderRadius: 4,
+                        padding: "0.3rem 0.5rem",
+                        cursor: "pointer",
+                        color: "#aaa",
+                        fontSize: "0.75rem",
+                        lineHeight: 1,
+                      }}
+                    >
+                      ×
+                    </button>
+                  </li>
+                ))}
+              </ul>
+
+              <button
+                onClick={openAddActor}
+                style={{ fontSize: "0.85rem", width: "100%" }}
+              >
+                + Akteur hinzufügen
+              </button>
+            </div>
           </>
         )}
       </div>
@@ -368,6 +548,79 @@ export default function NarrativeEditor() {
               </button>
               <button
                 onClick={() => setShowAddScene(false)}
+                style={{ background: "none", border: "1px solid #ddd" }}
+              >
+                Abbrechen
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ---------------------------------------------------------------- */}
+        {/* Add / edit actor form                                             */}
+        {/* ---------------------------------------------------------------- */}
+        {(showAddActor || selectedActorId) && (
+          <div>
+            <h2 style={{ marginTop: 0 }}>
+              {selectedActorId ? "Akteur bearbeiten" : "Neuer Akteur"}
+            </h2>
+
+            <label style={{ display: "block", fontSize: "0.85rem", marginBottom: "0.25rem" }}>
+              Name
+            </label>
+            <input
+              value={actorName}
+              onChange={(e) => setActorName(e.target.value)}
+              placeholder="Name des Akteurs"
+              style={{
+                width: "100%",
+                padding: "0.4rem",
+                marginBottom: "1rem",
+                boxSizing: "border-box",
+              }}
+            />
+
+            <label style={{ display: "block", fontSize: "0.85rem", marginBottom: "0.25rem" }}>
+              Typ
+            </label>
+            <select
+              value={actorTyp}
+              onChange={(e) => setActorTyp(e.target.value)}
+              style={{ padding: "0.4rem", marginBottom: "1rem", fontSize: "0.85rem" }}
+            >
+              {ACTOR_TYPES.map(([value, label]) => (
+                <option key={value} value={value}>{label}</option>
+              ))}
+            </select>
+
+            <label style={{ display: "block", fontSize: "0.85rem", marginBottom: "0.25rem" }}>
+              Beschreibung{" "}
+              <span style={{ color: "#bbb", fontWeight: "normal" }}>(optional)</span>
+            </label>
+            <textarea
+              value={actorDescription}
+              onChange={(e) => setActorDescription(e.target.value)}
+              placeholder="Kurze Beschreibung des Akteurs…"
+              rows={4}
+              style={{
+                width: "100%",
+                padding: "0.4rem",
+                marginBottom: "1rem",
+                boxSizing: "border-box",
+                resize: "vertical",
+                lineHeight: 1.6,
+              }}
+            />
+
+            <div style={{ display: "flex", gap: "0.5rem" }}>
+              <button
+                onClick={selectedActorId ? updateActor : addActor}
+                disabled={loading || !actorName.trim()}
+              >
+                Speichern
+              </button>
+              <button
+                onClick={cancelActorForm}
                 style={{ background: "none", border: "1px solid #ddd" }}
               >
                 Abbrechen

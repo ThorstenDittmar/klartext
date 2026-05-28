@@ -9,6 +9,14 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   return response.json();
 }
 
+async function requestVoid(path: string, options?: RequestInit): Promise<void> {
+  const response = await fetch(`${BASE}${path}`, {
+    headers: { "Content-Type": "application/json" },
+    ...options,
+  });
+  if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
+}
+
 export interface Axiom {
   id: string;
   label: string;
@@ -22,6 +30,13 @@ export interface CausalModel {
   axioms: Axiom[];
 }
 
+export interface Actor {
+  id: string;
+  name: string;
+  typ: string;
+  description: string | null;
+}
+
 export interface Scene {
   id: string;
   title: string;
@@ -32,7 +47,9 @@ export interface Scene {
 export interface Narrative {
   id: string;
   title: string;
+  causal_model_id: string | null;
   scenes: Scene[];
+  actors: Actor[];
 }
 
 export interface NarrativeSummary {
@@ -97,5 +114,17 @@ export const api = {
       ),
     getSceneClaims: (narrativeId: string, sceneId: string) =>
       request<Claim[]>(`/narratives/${narrativeId}/scenes/${sceneId}/claims`),
+    addActor: (narrativeId: string, name: string, typ: string, description: string | null) =>
+      request<Actor>(`/narratives/${narrativeId}/actors`, {
+        method: "POST",
+        body: JSON.stringify({ name, typ, description }),
+      }),
+    updateActor: (narrativeId: string, actorId: string, name: string, typ: string, description: string | null) =>
+      request<Actor>(`/narratives/${narrativeId}/actors/${actorId}`, {
+        method: "PUT",
+        body: JSON.stringify({ name, typ, description }),
+      }),
+    removeActor: (narrativeId: string, actorId: string) =>
+      requestVoid(`/narratives/${narrativeId}/actors/${actorId}`, { method: "DELETE" }),
   },
 };
