@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from api.models.narrative import Narrative, Scene
+from api.models.narrative import Actor, ActorType, Narrative, Scene
 from tests.mothers.scene_mother import SceneMother
 
 
@@ -47,6 +47,24 @@ class NarrativeMother:
     def with_title(title: str) -> Narrative:
         """Narrative with a custom title — for title-specific tests."""
         return Narrative.create(title=title)
+
+    @staticmethod
+    def with_actors() -> Narrative:
+        """Narrative with one scene and three actors of different types — for actor-related tests."""
+        narrative = Narrative.create(title="Klartext")
+        narrative.add_scene(SceneMother.minimal())
+        narrative.add_actor(Actor.create(name="Max", typ=ActorType.INDIVIDUAL))
+        narrative.add_actor(Actor.create(name="CDU", typ=ActorType.ORGANISATION))
+        narrative.add_actor(Actor.create(name="Voters", typ=ActorType.GROUP))
+        return narrative
+
+    @staticmethod
+    def linked_to_causal_model(causal_model_id: str) -> Narrative:
+        """Narrative with a CausalModel link — for consistency checking and Transparenzbericht tests."""
+        narrative = Narrative.create(title="Klartext")
+        narrative.add_scene(SceneMother.minimal())
+        narrative.link_to_causal_model(causal_model_id)
+        return narrative
 
     @staticmethod
     def collection() -> list[Narrative]:

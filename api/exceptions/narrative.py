@@ -11,6 +11,10 @@ class NarrativeValidationError(DomainError):
     """Raised when a Narrative cannot be created due to invalid input."""
 
 
+class ActorValidationError(DomainError):
+    """Raised when an Actor cannot be created due to invalid input."""
+
+
 class NarrativeFileNotFoundError(ServiceError):
     """Raised when the narrative file does not exist at the given path."""
 

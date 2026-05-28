@@ -10,8 +10,8 @@ repository's job.
 
 import pytest
 
-from api.exceptions.narrative import NarrativeValidationError, SceneValidationError
-from api.models.narrative import Narrative, Scene
+from api.exceptions.narrative import ActorValidationError, NarrativeValidationError, SceneValidationError
+from api.models.narrative import Actor, ActorType, Narrative, Scene
 
 
 # --- Scene ---
@@ -128,3 +128,154 @@ def test_narrative_from_record_reconstructs_narrative() -> None:
 
     assert narrative.id == "xyz-456"
     assert narrative.title == "Mein Roman"
+
+
+# --- Actor ---
+
+
+def test_actor_create_stores_name_and_type() -> None:
+    """Expects name and type to be accessible after creation."""
+    actor = Actor.create(name="Max", typ=ActorType.INDIVIDUAL)
+
+    assert actor.name == "Max"
+    assert actor.typ == ActorType.INDIVIDUAL
+
+
+def test_actor_create_stores_description_when_provided() -> None:
+    """Expects description to be stored when explicitly passed."""
+    actor = Actor.create(name="Max", typ=ActorType.INDIVIDUAL, description="The protagonist.")
+
+    assert actor.description == "The protagonist."
+
+
+def test_actor_create_has_no_description_by_default() -> None:
+    """Expects description to be None when not provided."""
+    actor = Actor.create(name="Voters", typ=ActorType.GROUP)
+
+    assert actor.description is None
+
+
+def test_actor_create_has_no_id_before_persistence() -> None:
+    """Expects id to be None until the repository assigns one on first save."""
+    actor = Actor.create(name="Max", typ=ActorType.INDIVIDUAL)
+
+    assert actor.id is None
+
+
+def test_actor_create_raises_for_empty_name() -> None:
+    """Expects ActorValidationError because an actor without a name cannot be addressed."""
+    with pytest.raises(ActorValidationError):
+        Actor.create(name="", typ=ActorType.INDIVIDUAL)
+
+
+def test_actor_create_raises_for_whitespace_only_name() -> None:
+    """Expects ActorValidationError because a whitespace-only name is equivalent to empty."""
+    with pytest.raises(ActorValidationError):
+        Actor.create(name="   ", typ=ActorType.INDIVIDUAL)
+
+
+def test_actor_type_covers_all_expected_variants() -> None:
+    """Expects all five actor types to exist in the enum."""
+    types = {t.value for t in ActorType}
+
+    assert "figur" in types
+    assert "organisation" in types
+    assert "gruppe" in types
+    assert "institution" in types
+    assert "abstrakte_entitaet" in types
+
+
+def test_actor_from_record_reconstructs_actor_with_description() -> None:
+    """Expects all fields including id and description to be restored from the database record."""
+    record = {
+        "id": "actor-001",
+        "name": "Max",
+        "typ": "figur",
+        "description": "The protagonist.",
+    }
+
+    actor = Actor.from_record(record)
+
+    assert actor.id == "actor-001"
+    assert actor.name == "Max"
+    assert actor.typ == ActorType.INDIVIDUAL
+    assert actor.description == "The protagonist."
+
+
+def test_actor_from_record_reconstructs_actor_without_description() -> None:
+    """Expects description to be None when the database record has no description."""
+    record = {"id": "actor-002", "name": "Voters", "typ": "gruppe", "description": None}
+
+    actor = Actor.from_record(record)
+
+    assert actor.description is None
+
+
+# --- Narrative + Actor ---
+
+
+def test_narrative_create_starts_with_no_actors() -> None:
+    """Expects a new Narrative to have an empty actor list."""
+    narrative = Narrative.create(title="A Novel")
+
+    assert narrative.actors == []
+
+
+def test_narrative_add_actor_appends_actor() -> None:
+    """Expects add_actor() to make the actor accessible via the actors property."""
+    narrative = Narrative.create(title="A Novel")
+    actor = Actor.create(name="Max", typ=ActorType.INDIVIDUAL)
+
+    narrative.add_actor(actor)
+
+    assert len(narrative.actors) == 1
+    assert narrative.actors[0].name == "Max"
+
+
+def test_narrative_add_actor_preserves_insertion_order() -> None:
+    """Expects actors to appear in the order they were added."""
+    narrative = Narrative.create(title="A Novel")
+    narrative.add_actor(Actor.create(name="Max", typ=ActorType.INDIVIDUAL))
+    narrative.add_actor(Actor.create(name="CDU", typ=ActorType.ORGANISATION))
+    narrative.add_actor(Actor.create(name="Voters", typ=ActorType.GROUP))
+
+    assert narrative.actors[0].name == "Max"
+    assert narrative.actors[1].name == "CDU"
+    assert narrative.actors[2].name == "Voters"
+
+
+# --- Narrative + CausalModel link ---
+
+
+def test_narrative_causal_model_id_is_none_by_default() -> None:
+    """Expects a new Narrative to have no causal model linked."""
+    narrative = Narrative.create(title="A Novel")
+
+    assert narrative.causal_model_id is None
+
+
+def test_narrative_link_to_causal_model_stores_id() -> None:
+    """Expects link_to_causal_model() to make the id accessible via the property."""
+    narrative = Narrative.create(title="A Novel")
+
+    narrative.link_to_causal_model("model-xyz")
+
+    assert narrative.causal_model_id == "model-xyz"
+
+
+def test_narrative_from_record_reconstructs_causal_model_id() -> None:
+    """Expects causal_model_id to be restored from the database record when present."""
+    record = {"id": "xyz-456", "title": "A Novel", "causal_model_id": "model-xyz"}
+
+    narrative = Narrative.from_record(record)
+
+    assert narrative.causal_model_id == "model-xyz"
+
+
+def test_narrative_from_record_accepts_missing_causal_model_id() -> None:
+    """Expects causal_model_id to be None when the database record has no link."""
+    record = {"id": "xyz-456", "title": "A Novel"}
+
+    narrative = Narrative.from_record(record)
+
+    assert narrative.causal_model_id is None
