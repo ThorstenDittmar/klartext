@@ -127,6 +127,14 @@ class Actor:
             description=record.get("description"),
         )
 
+    def update(self, name: str, typ: ActorType, description: str | None) -> None:
+        """Updates name, type and description. Raises ActorValidationError for empty name."""
+        if not name.strip():
+            raise ActorValidationError("name must not be empty")
+        self._name = name
+        self._typ = typ
+        self._description = description
+
     @property
     def id(self) -> str | None:
         return self._id
@@ -187,6 +195,10 @@ class Narrative:
     def add_actor(self, actor: Actor) -> None:
         """Appends an Actor to the Narrative in the order it is called."""
         self._actors.append(actor)
+
+    def remove_actor(self, actor_id: str) -> None:
+        """Removes the Actor with the given id from this Narrative. Silent no-op for unknown ids."""
+        self._actors = [a for a in self._actors if a.id != actor_id]
 
     def link_to_causal_model(self, causal_model_id: str) -> None:
         """Links this Narrative to a CausalModel by ID.

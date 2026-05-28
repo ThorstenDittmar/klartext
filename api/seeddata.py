@@ -10,8 +10,9 @@ real repositories and can be called from the CLI.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Optional
 
 from api.models.narrative import Narrative, Scene
 
@@ -40,6 +41,44 @@ SEED_CLAIMS: list[SeedClaims] = [
     SeedClaims(scene_index=0),
     SeedClaims(scene_index=1),
     SeedClaims(scene_index=2),
+]
+
+
+# ---------------------------------------------------------------------------
+# Actor seed data
+# ---------------------------------------------------------------------------
+
+
+@dataclass
+class SeedActor:
+    """A single actor definition for the narrative seed data."""
+
+    name: str
+    typ: str  # ActorType value (German string: 'figur', 'organisation', etc.)
+    description: Optional[str] = field(default=None)
+
+
+SEED_ACTORS: list[SeedActor] = [
+    SeedActor(
+        name="Mara",
+        typ="figur",
+        description="Autorin und Mitgründerin von klartext.jetzt.",
+    ),
+    SeedActor(
+        name="Tarek",
+        typ="figur",
+        description="Entwickler und Mitgründer von klartext.jetzt.",
+    ),
+    SeedActor(
+        name="klartext.jetzt",
+        typ="organisation",
+        description="Die Plattform für epistemische Publikationen.",
+    ),
+    SeedActor(
+        name="Öffentlichkeit",
+        typ="abstrakte_entitaet",
+        description="Die abstrakte Gemeinschaft der Debattenteilnehmer.",
+    ),
 ]
 
 

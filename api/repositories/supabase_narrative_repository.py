@@ -6,12 +6,13 @@ import logging
 
 from supabase import AsyncClient
 
-from api.exceptions.narrative import NarrativeNotFoundError, NarrativePersistenceError
-from api.models.narrative import Narrative, Scene
+from api.exceptions.narrative import ActorNotFoundError, NarrativeNotFoundError, NarrativePersistenceError
+from api.models.narrative import Actor, Narrative, Scene
 from api.repositories.narrative_repository import NarrativeRepository
 
 _NARRATIVE_TABLE = "narrative"
 _SCENE_TABLE = "narrative_einheiten"
+_ACTOR_TABLE = "narrative_akteure"
 _SCENE_TYPE = "szene"
 
 
@@ -112,7 +113,11 @@ class SupabaseNarrativeRepository(NarrativeRepository):
             raise NarrativeNotFoundError(f"Narrative not found: {narrative_id}")
 
         row = narrative_result.data[0]
-        narrative = Narrative.from_record({"id": row["id"], "title": row["titel"]})
+        narrative = Narrative.from_record({
+            "id": row["id"],
+            "title": row["titel"],
+            "causal_model_id": row.get("wirkmodell_id"),
+        })
 
         try:
             scene_result = (
@@ -136,6 +141,30 @@ class SupabaseNarrativeRepository(NarrativeRepository):
                         "title": scene_row["titel"],
                         "text": scene_row["inhalt"],
                         "position": scene_row["position"],
+                    }
+                )
+            )
+
+        try:
+            actor_result = (
+                await self._client.table(_ACTOR_TABLE)
+                .select("*")
+                .eq("narrativ_id", narrative_id)
+                .execute()
+            )
+        except Exception as e:
+            raise NarrativePersistenceError(
+                f"Failed to load actors for narrative {narrative_id}: {e}"
+            ) from e
+
+        for actor_row in actor_result.data:
+            narrative.add_actor(
+                Actor.from_record(
+                    {
+                        "id": actor_row["id"],
+                        "name": actor_row["name"],
+                        "typ": actor_row["typ"],
+                        "description": actor_row.get("beschreibung"),
                     }
                 )
             )
@@ -210,5 +239,196 @@ class SupabaseNarrativeRepository(NarrativeRepository):
                 "title": row["titel"],
                 "text": row["inhalt"],
                 "position": row["position"],
+            }
+        )
+
+    async def add_actor(self, narrative_id: str, actor: Actor) -> Actor:
+        """Inserts a new Actor row for the given Narrative. Returns the Actor with an assigned ID.
+
+        Raises NarrativeNotFoundError if no Narrative exists for the given ID.
+        Raises NarrativePersistenceError on database failure.
+        """
+        self.logger.info(
+            "SupabaseNarrativeRepository.add_actor: narrative_id=%s, name=%s",
+            narrative_id,
+            actor.name,
+        )
+        narrative_result = (
+            await self._client.table(_NARRATIVE_TABLE).select("id").eq("id", narrative_id).execute()
+        )
+        if not narrative_result.data:
+            raise NarrativeNotFoundError(f"Narrative not found: {narrative_id}")
+
+        try:
+            result = (
+                await self._client.table(_ACTOR_TABLE)
+                .insert(
+                    {
+                        "narrativ_id": narrative_id,
+                        "name": actor.name,
+                        "typ": actor.typ.value,
+                        "beschreibung": actor.description,
+                    }
+                )
+                .execute()
+            )
+        except Exception as e:
+            raise NarrativePersistenceError(
+                f"Failed to add actor '{actor.name}' to narrative {narrative_id}: {e}"
+            ) from e
+
+        if not result.data:
+            raise NarrativePersistenceError(f"Add actor returned no data for '{actor.name}'.")
+
+        row = result.data[0]
+        return Actor.from_record(
+            {
+                "id": row["id"],
+                "name": row["name"],
+                "typ": row["typ"],
+                "description": row.get("beschreibung"),
+            }
+        )
+
+    async def get_actor(self, narrative_id: str, actor_id: str) -> Actor:
+        """Returns the Actor with the given ID from the Narrative.
+
+        Raises NarrativeNotFoundError if no Narrative exists for the given ID.
+        Raises ActorNotFoundError if no Actor with that ID exists in the Narrative.
+        Raises NarrativePersistenceError on database failure.
+        """
+        self.logger.debug(
+            "SupabaseNarrativeRepository.get_actor: narrative_id=%s, actor_id=%s",
+            narrative_id,
+            actor_id,
+        )
+        narrative_result = (
+            await self._client.table(_NARRATIVE_TABLE).select("id").eq("id", narrative_id).execute()
+        )
+        if not narrative_result.data:
+            raise NarrativeNotFoundError(f"Narrative not found: {narrative_id}")
+
+        try:
+            result = (
+                await self._client.table(_ACTOR_TABLE)
+                .select("*")
+                .eq("id", actor_id)
+                .eq("narrativ_id", narrative_id)
+                .execute()
+            )
+        except Exception as e:
+            raise NarrativePersistenceError(
+                f"Failed to load actor {actor_id}: {e}"
+            ) from e
+
+        if not result.data:
+            raise ActorNotFoundError(f"Actor not found: {actor_id}")
+
+        row = result.data[0]
+        return Actor.from_record(
+            {
+                "id": row["id"],
+                "name": row["name"],
+                "typ": row["typ"],
+                "description": row.get("beschreibung"),
+            }
+        )
+
+    async def update_actor(self, narrative_id: str, actor: Actor) -> Actor:
+        """Persists changes to an existing Actor. Returns the updated Actor.
+
+        Raises NarrativePersistenceError on database failure.
+        """
+        self.logger.info(
+            "SupabaseNarrativeRepository.update_actor: narrative_id=%s, actor_id=%s",
+            narrative_id,
+            actor.id,
+        )
+        try:
+            result = (
+                await self._client.table(_ACTOR_TABLE)
+                .update(
+                    {
+                        "name": actor.name,
+                        "typ": actor.typ.value,
+                        "beschreibung": actor.description,
+                    }
+                )
+                .eq("id", actor.id)
+                .eq("narrativ_id", narrative_id)
+                .execute()
+            )
+        except Exception as e:
+            raise NarrativePersistenceError(
+                f"Failed to update actor {actor.id}: {e}"
+            ) from e
+
+        if not result.data:
+            raise NarrativePersistenceError(f"Update actor returned no data for {actor.id}.")
+
+        row = result.data[0]
+        return Actor.from_record(
+            {
+                "id": row["id"],
+                "name": row["name"],
+                "typ": row["typ"],
+                "description": row.get("beschreibung"),
+            }
+        )
+
+    async def remove_actor(self, narrative_id: str, actor_id: str) -> None:
+        """Deletes the Actor with the given ID from the Narrative.
+
+        Raises NarrativePersistenceError on database failure.
+        """
+        self.logger.info(
+            "SupabaseNarrativeRepository.remove_actor: narrative_id=%s, actor_id=%s",
+            narrative_id,
+            actor_id,
+        )
+        try:
+            await (
+                self._client.table(_ACTOR_TABLE)
+                .delete()
+                .eq("id", actor_id)
+                .eq("narrativ_id", narrative_id)
+                .execute()
+            )
+        except Exception as e:
+            raise NarrativePersistenceError(
+                f"Failed to remove actor {actor_id}: {e}"
+            ) from e
+
+    async def link_to_causal_model(self, narrative_id: str, causal_model_id: str) -> Narrative:
+        """Updates the wirkmodell_id column on the Narrative row. Returns the updated Narrative.
+
+        Raises NarrativeNotFoundError if no Narrative exists for the given ID.
+        Raises NarrativePersistenceError on database failure.
+        """
+        self.logger.info(
+            "SupabaseNarrativeRepository.link_to_causal_model: narrative_id=%s",
+            narrative_id,
+        )
+        try:
+            result = (
+                await self._client.table(_NARRATIVE_TABLE)
+                .update({"wirkmodell_id": causal_model_id})
+                .eq("id", narrative_id)
+                .execute()
+            )
+        except Exception as e:
+            raise NarrativePersistenceError(
+                f"Failed to link causal model for narrative {narrative_id}: {e}"
+            ) from e
+
+        if not result.data:
+            raise NarrativeNotFoundError(f"Narrative not found: {narrative_id}")
+
+        row = result.data[0]
+        return Narrative.from_record(
+            {
+                "id": row["id"],
+                "title": row["titel"],
+                "causal_model_id": row.get("wirkmodell_id"),
             }
         )

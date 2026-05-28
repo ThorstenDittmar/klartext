@@ -95,7 +95,7 @@ def _wait_for_api(url: str, timeout: int = 30) -> bool:
 
 async def _seed(url: str) -> None:
     """Seeds the database with the predefined test dataset via the running API."""
-    from api.seeddata import FIXTURE_PATH, SEED_CAUSAL_MODEL, SEED_CLAIMS
+    from api.seeddata import FIXTURE_PATH, SEED_ACTORS, SEED_CAUSAL_MODEL, SEED_CLAIMS
 
     async with httpx.AsyncClient(base_url=url, timeout=30) as client:
         # 1. Import narrative
@@ -179,6 +179,42 @@ async def _seed(url: str) -> None:
                     f"({axiom_response.status_code})",
                     fg=typer.colors.YELLOW,
                 )
+
+        # 5. Add actors to narrative
+        typer.echo("  → Adding actors to narrative…")
+        for actor in SEED_ACTORS:
+            actor_response = await client.post(
+                f"/narratives/{narrative_id}/actors",
+                json={"name": actor.name, "typ": actor.typ, "description": actor.description},
+            )
+            if actor_response.status_code == 201:
+                typer.secho(
+                    f"  ✓  Actor added: {actor.name} ({actor.typ})",
+                    fg=typer.colors.GREEN,
+                )
+            else:
+                typer.secho(
+                    f"  ⚠  Actor '{actor.name}' failed "
+                    f"({actor_response.status_code})",
+                    fg=typer.colors.YELLOW,
+                )
+
+        # 6. Link narrative to causal model
+        typer.echo("  → Linking narrative to causal model…")
+        link_response = await client.put(
+            f"/narratives/{narrative_id}/causal-model",
+            json={"causal_model_id": model_id},
+        )
+        if link_response.status_code == 200:
+            typer.secho(
+                f"  ✓  Narrative linked to causal model (id={model_id})",
+                fg=typer.colors.GREEN,
+            )
+        else:
+            typer.secho(
+                f"  ⚠  Linking failed ({link_response.status_code})",
+                fg=typer.colors.YELLOW,
+            )
 
 
 # ---------------------------------------------------------------------------

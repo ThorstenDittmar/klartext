@@ -9,8 +9,8 @@ from __future__ import annotations
 
 import pytest
 
-from api.exceptions.narrative import NarrativeNotFoundError
-from api.models.narrative import Narrative
+from api.exceptions.narrative import ActorNotFoundError, NarrativeNotFoundError
+from api.models.narrative import ActorType, Narrative
 from tests.fakes.fake_narrative_repository import FakeNarrativeRepository
 from tests.mothers.narrative_mother import NarrativeMother
 
@@ -114,6 +114,138 @@ async def test_narrative_repository_find_by_id_raises_for_unknown_id() -> None:
 
 
 # ---------------------------------------------------------------------------
+# add_actor / get_actor / update_actor / remove_actor
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_narrative_repository_add_actor_assigns_id() -> None:
+    """Expects the saved actor to have a non-None ID assigned by the repository."""
+    repo = FakeNarrativeRepository()
+    saved_narrative = await repo.save(NarrativeMother.empty())
+
+    from api.models.narrative import Actor
+    actor = Actor.create(name="Max", typ=ActorType.INDIVIDUAL)
+    saved_actor = await repo.add_actor(saved_narrative.id, actor)  # type: ignore[arg-type]
+
+    assert saved_actor.id is not None
+
+
+@pytest.mark.asyncio
+async def test_narrative_repository_add_actor_stores_name_and_type() -> None:
+    """Expects name and type to be accessible on the saved actor."""
+    repo = FakeNarrativeRepository()
+    saved_narrative = await repo.save(NarrativeMother.empty())
+
+    from api.models.narrative import Actor
+    actor = Actor.create(name="CDU", typ=ActorType.ORGANISATION)
+    saved_actor = await repo.add_actor(saved_narrative.id, actor)  # type: ignore[arg-type]
+
+    assert saved_actor.name == "CDU"
+    assert saved_actor.typ == ActorType.ORGANISATION
+
+
+@pytest.mark.asyncio
+async def test_narrative_repository_add_actor_raises_for_unknown_narrative() -> None:
+    """Expects NarrativeNotFoundError when the narrative does not exist."""
+    repo = FakeNarrativeRepository()
+
+    from api.models.narrative import Actor
+    actor = Actor.create(name="Max", typ=ActorType.INDIVIDUAL)
+
+    with pytest.raises(NarrativeNotFoundError):
+        await repo.add_actor("00000000-0000-0000-0000-000000000000", actor)
+
+
+@pytest.mark.asyncio
+async def test_narrative_repository_get_actor_returns_saved_actor() -> None:
+    """Expects get_actor to return the actor that was previously added."""
+    repo = FakeNarrativeRepository()
+    saved_narrative = await repo.save(NarrativeMother.empty())
+
+    from api.models.narrative import Actor
+    saved_actor = await repo.add_actor(saved_narrative.id, Actor.create(name="Max", typ=ActorType.INDIVIDUAL))  # type: ignore[arg-type]
+    found = await repo.get_actor(saved_narrative.id, saved_actor.id)  # type: ignore[arg-type]
+
+    assert found.id == saved_actor.id
+    assert found.name == "Max"
+
+
+@pytest.mark.asyncio
+async def test_narrative_repository_get_actor_raises_for_unknown_narrative() -> None:
+    """Expects NarrativeNotFoundError when the narrative does not exist."""
+    repo = FakeNarrativeRepository()
+
+    with pytest.raises(NarrativeNotFoundError):
+        await repo.get_actor("00000000-0000-0000-0000-000000000000", "actor-id")
+
+
+@pytest.mark.asyncio
+async def test_narrative_repository_get_actor_raises_for_unknown_actor() -> None:
+    """Expects ActorNotFoundError when the actor does not exist in the narrative."""
+    repo = FakeNarrativeRepository()
+    saved_narrative = await repo.save(NarrativeMother.empty())
+
+    with pytest.raises(ActorNotFoundError):
+        await repo.get_actor(saved_narrative.id, "00000000-0000-0000-0000-000000000000")  # type: ignore[arg-type]
+
+
+@pytest.mark.asyncio
+async def test_narrative_repository_update_actor_returns_updated_actor() -> None:
+    """Expects update_actor to return the actor with the new name and type."""
+    repo = FakeNarrativeRepository()
+    saved_narrative = await repo.save(NarrativeMother.empty())
+
+    from api.models.narrative import Actor
+    saved_actor = await repo.add_actor(saved_narrative.id, Actor.create(name="Max", typ=ActorType.INDIVIDUAL))  # type: ignore[arg-type]
+    saved_actor.update(name="CDU", typ=ActorType.ORGANISATION, description="A party.")
+    updated = await repo.update_actor(saved_narrative.id, saved_actor)  # type: ignore[arg-type]
+
+    assert updated.name == "CDU"
+    assert updated.typ == ActorType.ORGANISATION
+    assert updated.description == "A party."
+
+
+@pytest.mark.asyncio
+async def test_narrative_repository_remove_actor_removes_actor() -> None:
+    """Expects the actor to be absent after remove_actor is called."""
+    repo = FakeNarrativeRepository()
+    saved_narrative = await repo.save(NarrativeMother.empty())
+
+    from api.models.narrative import Actor
+    saved_actor = await repo.add_actor(saved_narrative.id, Actor.create(name="Max", typ=ActorType.INDIVIDUAL))  # type: ignore[arg-type]
+    await repo.remove_actor(saved_narrative.id, saved_actor.id)  # type: ignore[arg-type]
+
+    with pytest.raises(ActorNotFoundError):
+        await repo.get_actor(saved_narrative.id, saved_actor.id)  # type: ignore[arg-type]
+
+
+# ---------------------------------------------------------------------------
+# link_to_causal_model
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_narrative_repository_link_to_causal_model_stores_id() -> None:
+    """Expects the causal_model_id to be returned on the narrative after linking."""
+    repo = FakeNarrativeRepository()
+    saved = await repo.save(NarrativeMother.empty())
+
+    updated = await repo.link_to_causal_model(saved.id, "model-xyz")  # type: ignore[arg-type]
+
+    assert updated.causal_model_id == "model-xyz"
+
+
+@pytest.mark.asyncio
+async def test_narrative_repository_link_to_causal_model_raises_for_unknown_narrative() -> None:
+    """Expects NarrativeNotFoundError when the narrative does not exist."""
+    repo = FakeNarrativeRepository()
+
+    with pytest.raises(NarrativeNotFoundError):
+        await repo.link_to_causal_model("00000000-0000-0000-0000-000000000000", "model-xyz")
+
+
+# ---------------------------------------------------------------------------
 # Integration – requires a running Supabase instance
 # Run with: pytest -m integration
 # ---------------------------------------------------------------------------
@@ -177,3 +309,144 @@ async def test_supabase_narrative_repository_list_all_includes_saved_narrative()
         assert saved.id in ids
     finally:
         await client.table("narrative").delete().eq("id", saved.id).execute()
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
+async def test_supabase_narrative_repository_add_and_get_actor() -> None:
+    """Calls the real database. Expects add_actor to persist an Actor retrievable by get_actor.
+
+    Requires SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY to be set.
+    """
+    import os
+
+    from supabase import acreate_client
+
+    from api.models.narrative import Actor
+    from api.repositories.supabase_narrative_repository import SupabaseNarrativeRepository
+
+    client = await acreate_client(
+        os.environ["SUPABASE_URL"],
+        os.environ["SUPABASE_SERVICE_ROLE_KEY"],
+    )
+    repo = SupabaseNarrativeRepository(client=client)
+    saved_narrative = await repo.save(NarrativeMother.empty())
+
+    try:
+        saved_actor = await repo.add_actor(
+            saved_narrative.id,  # type: ignore[arg-type]
+            Actor.create(name="Max", typ=ActorType.INDIVIDUAL, description="The protagonist."),
+        )
+        found = await repo.get_actor(saved_narrative.id, saved_actor.id)  # type: ignore[arg-type]
+
+        assert found.id == saved_actor.id
+        assert found.name == "Max"
+        assert found.typ == ActorType.INDIVIDUAL
+        assert found.description == "The protagonist."
+    finally:
+        await client.table("narrative_akteure").delete().eq("narrativ_id", saved_narrative.id).execute()
+        await client.table("narrative").delete().eq("id", saved_narrative.id).execute()
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
+async def test_supabase_narrative_repository_update_actor() -> None:
+    """Calls the real database. Expects update_actor to persist the changed fields.
+
+    Requires SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY to be set.
+    """
+    import os
+
+    from supabase import acreate_client
+
+    from api.models.narrative import Actor
+    from api.repositories.supabase_narrative_repository import SupabaseNarrativeRepository
+
+    client = await acreate_client(
+        os.environ["SUPABASE_URL"],
+        os.environ["SUPABASE_SERVICE_ROLE_KEY"],
+    )
+    repo = SupabaseNarrativeRepository(client=client)
+    saved_narrative = await repo.save(NarrativeMother.empty())
+
+    try:
+        saved_actor = await repo.add_actor(
+            saved_narrative.id,  # type: ignore[arg-type]
+            Actor.create(name="Max", typ=ActorType.INDIVIDUAL),
+        )
+        saved_actor.update(name="CDU", typ=ActorType.ORGANISATION, description="A party.")
+        updated = await repo.update_actor(saved_narrative.id, saved_actor)  # type: ignore[arg-type]
+
+        assert updated.name == "CDU"
+        assert updated.typ == ActorType.ORGANISATION
+        assert updated.description == "A party."
+    finally:
+        await client.table("narrative_akteure").delete().eq("narrativ_id", saved_narrative.id).execute()
+        await client.table("narrative").delete().eq("id", saved_narrative.id).execute()
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
+async def test_supabase_narrative_repository_remove_actor() -> None:
+    """Calls the real database. Expects remove_actor to delete the actor row.
+
+    Requires SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY to be set.
+    """
+    import os
+
+    from supabase import acreate_client
+
+    from api.exceptions.narrative import ActorNotFoundError
+    from api.models.narrative import Actor
+    from api.repositories.supabase_narrative_repository import SupabaseNarrativeRepository
+
+    client = await acreate_client(
+        os.environ["SUPABASE_URL"],
+        os.environ["SUPABASE_SERVICE_ROLE_KEY"],
+    )
+    repo = SupabaseNarrativeRepository(client=client)
+    saved_narrative = await repo.save(NarrativeMother.empty())
+
+    try:
+        saved_actor = await repo.add_actor(
+            saved_narrative.id,  # type: ignore[arg-type]
+            Actor.create(name="Max", typ=ActorType.INDIVIDUAL),
+        )
+        await repo.remove_actor(saved_narrative.id, saved_actor.id)  # type: ignore[arg-type]
+
+        with pytest.raises(ActorNotFoundError):
+            await repo.get_actor(saved_narrative.id, saved_actor.id)  # type: ignore[arg-type]
+    finally:
+        await client.table("narrative_akteure").delete().eq("narrativ_id", saved_narrative.id).execute()
+        await client.table("narrative").delete().eq("id", saved_narrative.id).execute()
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
+async def test_supabase_narrative_repository_link_to_causal_model() -> None:
+    """Calls the real database. Expects link_to_causal_model to persist the wirkmodell_id.
+
+    Requires SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY to be set.
+    """
+    import os
+
+    from supabase import acreate_client
+
+    from api.repositories.supabase_narrative_repository import SupabaseNarrativeRepository
+
+    client = await acreate_client(
+        os.environ["SUPABASE_URL"],
+        os.environ["SUPABASE_SERVICE_ROLE_KEY"],
+    )
+    repo = SupabaseNarrativeRepository(client=client)
+    saved_narrative = await repo.save(NarrativeMother.empty())
+
+    try:
+        # We need a real wirkmodell_id — for now we use a known dummy UUID.
+        # In production this would be a real Wirkmodell ID.
+        dummy_model_id = "00000000-0000-0000-0000-000000000001"
+        updated = await repo.link_to_causal_model(saved_narrative.id, dummy_model_id)  # type: ignore[arg-type]
+
+        assert updated.causal_model_id == dummy_model_id
+    finally:
+        await client.table("narrative").delete().eq("id", saved_narrative.id).execute()

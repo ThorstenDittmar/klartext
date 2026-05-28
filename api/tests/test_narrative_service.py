@@ -14,8 +14,8 @@ from pathlib import Path
 
 import pytest
 
-from api.exceptions.narrative import NarrativeFileNotFoundError, NarrativeNotFoundError
-from api.models.narrative import Scene
+from api.exceptions.narrative import ActorNotFoundError, NarrativeFileNotFoundError, NarrativeNotFoundError
+from api.models.narrative import ActorType, Scene
 from api.parsers.narrative_parser import NarrativeParser
 from api.repositories.narrative_repository import NarrativeRepository
 from api.services.narrative_import_service import NarrativeImportService
@@ -294,3 +294,206 @@ async def test_narrative_service_add_scene_raises_for_whitespace_only_text() -> 
 
     with pytest.raises(SceneValidationError):
         await service.add_scene(narrative.id, "Scene 1", "   ")  # type: ignore[arg-type]
+
+
+# ---------------------------------------------------------------------------
+# add_actor
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_narrative_service_add_actor_returns_actor_with_id() -> None:
+    """Expects add_actor to return an Actor with a non-None ID after persisting."""
+    service = make_service()
+    narrative = await service.create("My Narrative")
+
+    actor = await service.add_actor(narrative.id, "Max", ActorType.INDIVIDUAL)  # type: ignore[arg-type]
+
+    assert actor.id is not None
+
+
+@pytest.mark.asyncio
+async def test_narrative_service_add_actor_returns_actor_with_correct_name_and_type() -> None:
+    """Expects the returned Actor to carry the name and type that were passed in."""
+    service = make_service()
+    narrative = await service.create("My Narrative")
+
+    actor = await service.add_actor(narrative.id, "CDU", ActorType.ORGANISATION)  # type: ignore[arg-type]
+
+    assert actor.name == "CDU"
+    assert actor.typ == ActorType.ORGANISATION
+
+
+@pytest.mark.asyncio
+async def test_narrative_service_add_actor_description_defaults_to_none() -> None:
+    """Expects description to be None when not provided."""
+    service = make_service()
+    narrative = await service.create("My Narrative")
+
+    actor = await service.add_actor(narrative.id, "Voters", ActorType.GROUP)  # type: ignore[arg-type]
+
+    assert actor.description is None
+
+
+@pytest.mark.asyncio
+async def test_narrative_service_add_actor_raises_for_unknown_narrative_id() -> None:
+    """Expects NarrativeNotFoundError when the narrative does not exist."""
+    service = make_service()
+
+    with pytest.raises(NarrativeNotFoundError):
+        await service.add_actor("00000000-0000-0000-0000-000000000000", "Max", ActorType.INDIVIDUAL)
+
+
+@pytest.mark.asyncio
+async def test_narrative_service_add_actor_raises_for_empty_name() -> None:
+    """Expects ActorValidationError when the actor name is empty."""
+    from api.exceptions.narrative import ActorValidationError
+
+    service = make_service()
+    narrative = await service.create("My Narrative")
+
+    with pytest.raises(ActorValidationError):
+        await service.add_actor(narrative.id, "", ActorType.INDIVIDUAL)  # type: ignore[arg-type]
+
+
+# ---------------------------------------------------------------------------
+# update_actor
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_narrative_service_update_actor_returns_actor_with_updated_fields() -> None:
+    """Expects update_actor to return an Actor carrying the new name, type and description."""
+    service = make_service()
+    narrative = await service.create("My Narrative")
+    actor = await service.add_actor(narrative.id, "Max", ActorType.INDIVIDUAL)  # type: ignore[arg-type]
+
+    updated = await service.update_actor(narrative.id, actor.id, "CDU", ActorType.ORGANISATION, "A party.")  # type: ignore[arg-type]
+
+    assert updated.name == "CDU"
+    assert updated.typ == ActorType.ORGANISATION
+    assert updated.description == "A party."
+
+
+@pytest.mark.asyncio
+async def test_narrative_service_update_actor_raises_for_unknown_narrative_id() -> None:
+    """Expects NarrativeNotFoundError when the narrative does not exist."""
+    service = make_service()
+
+    with pytest.raises(NarrativeNotFoundError):
+        await service.update_actor(
+            "00000000-0000-0000-0000-000000000000",
+            "actor-id",
+            "Max",
+            ActorType.INDIVIDUAL,
+            None,
+        )
+
+
+@pytest.mark.asyncio
+async def test_narrative_service_update_actor_raises_for_unknown_actor_id() -> None:
+    """Expects ActorNotFoundError when the actor does not exist in the narrative."""
+    service = make_service()
+    narrative = await service.create("My Narrative")
+
+    with pytest.raises(ActorNotFoundError):
+        await service.update_actor(narrative.id, "00000000-0000-0000-0000-000000000000", "Max", ActorType.INDIVIDUAL, None)  # type: ignore[arg-type]
+
+
+@pytest.mark.asyncio
+async def test_narrative_service_update_actor_raises_for_empty_name() -> None:
+    """Expects ActorValidationError when the new name is empty."""
+    from api.exceptions.narrative import ActorValidationError
+
+    service = make_service()
+    narrative = await service.create("My Narrative")
+    actor = await service.add_actor(narrative.id, "Max", ActorType.INDIVIDUAL)  # type: ignore[arg-type]
+
+    with pytest.raises(ActorValidationError):
+        await service.update_actor(narrative.id, actor.id, "", ActorType.INDIVIDUAL, None)  # type: ignore[arg-type]
+
+
+# ---------------------------------------------------------------------------
+# remove_actor
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_narrative_service_remove_actor_removes_actor_from_narrative() -> None:
+    """Expects the actor to be absent from the narrative after remove_actor is called."""
+    service = make_service()
+    narrative = await service.create("My Narrative")
+    actor = await service.add_actor(narrative.id, "Max", ActorType.INDIVIDUAL)  # type: ignore[arg-type]
+    assert actor.id is not None
+
+    await service.remove_actor(narrative.id, actor.id)  # type: ignore[arg-type]
+
+    updated_narrative = await service.find_by_id(narrative.id)  # type: ignore[arg-type]
+    assert not any(a.id == actor.id for a in updated_narrative.actors)
+
+
+@pytest.mark.asyncio
+async def test_narrative_service_remove_actor_raises_for_unknown_narrative_id() -> None:
+    """Expects NarrativeNotFoundError when the narrative does not exist."""
+    service = make_service()
+
+    with pytest.raises(NarrativeNotFoundError):
+        await service.remove_actor("00000000-0000-0000-0000-000000000000", "actor-id")
+
+
+@pytest.mark.asyncio
+async def test_narrative_service_remove_actor_raises_for_unknown_actor_id() -> None:
+    """Expects ActorNotFoundError when the actor does not exist in the narrative."""
+    service = make_service()
+    narrative = await service.create("My Narrative")
+
+    with pytest.raises(ActorNotFoundError):
+        await service.remove_actor(narrative.id, "00000000-0000-0000-0000-000000000000")  # type: ignore[arg-type]
+
+
+# ---------------------------------------------------------------------------
+# link_to_causal_model
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_narrative_service_link_to_causal_model_returns_narrative_with_id() -> None:
+    """Expects link_to_causal_model to return the Narrative with its existing ID."""
+    service = make_service()
+    narrative = await service.create("My Narrative")
+
+    updated = await service.link_to_causal_model(narrative.id, "model-xyz")  # type: ignore[arg-type]
+
+    assert updated.id == narrative.id
+
+
+@pytest.mark.asyncio
+async def test_narrative_service_link_to_causal_model_stores_causal_model_id() -> None:
+    """Expects the causal_model_id to be accessible on the returned narrative."""
+    service = make_service()
+    narrative = await service.create("My Narrative")
+
+    updated = await service.link_to_causal_model(narrative.id, "model-xyz")  # type: ignore[arg-type]
+
+    assert updated.causal_model_id == "model-xyz"
+
+
+@pytest.mark.asyncio
+async def test_narrative_service_link_to_causal_model_raises_for_unknown_narrative_id() -> None:
+    """Expects NarrativeNotFoundError when the narrative does not exist."""
+    service = make_service()
+
+    with pytest.raises(NarrativeNotFoundError):
+        await service.link_to_causal_model("00000000-0000-0000-0000-000000000000", "model-xyz")
+
+
+@pytest.mark.asyncio
+async def test_narrative_service_link_to_causal_model_raises_for_empty_id() -> None:
+    """Expects NarrativeValidationError when the causal model ID is empty."""
+    from api.exceptions.narrative import NarrativeValidationError
+
+    service = make_service()
+    narrative = await service.create("My Narrative")
+
+    with pytest.raises(NarrativeValidationError):
+        await service.link_to_causal_model(narrative.id, "")  # type: ignore[arg-type]

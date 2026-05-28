@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from api.models.narrative import Narrative, Scene
+from api.models.narrative import Actor, ActorType, Narrative, Scene
 from api.repositories.narrative_repository import NarrativeRepository
 from api.services.narrative_import_service import NarrativeImportService
 
@@ -73,3 +73,72 @@ class NarrativeService:
     async def list_all(self) -> list[Narrative]:
         """Returns all persisted Narratives without their Scenes."""
         return await self._repository.list_all()
+
+    async def add_actor(
+        self,
+        narrative_id: str,
+        name: str,
+        typ: ActorType,
+        description: str | None = None,
+    ) -> Actor:
+        """Adds a new Actor to the Narrative with the given ID.
+
+        Returns the saved Actor with an assigned ID.
+        Raises NarrativeNotFoundError if no Narrative exists for that ID.
+        Raises ActorValidationError if the name is empty.
+        Raises NarrativePersistenceError on database failure.
+        """
+        await self._repository.find_by_id(narrative_id)
+        actor = Actor.create(name=name, typ=typ, description=description)
+        return await self._repository.add_actor(narrative_id, actor)
+
+    async def update_actor(
+        self,
+        narrative_id: str,
+        actor_id: str,
+        name: str,
+        typ: ActorType,
+        description: str | None,
+    ) -> Actor:
+        """Updates name, type and description of an existing Actor.
+
+        Uses find → change → save: loads the actor, applies changes via the domain method,
+        then persists the result.
+        Raises NarrativeNotFoundError if no Narrative exists for that ID.
+        Raises ActorNotFoundError if no Actor with that ID exists in the Narrative.
+        Raises ActorValidationError if the new name is empty.
+        Raises NarrativePersistenceError on database failure.
+        """
+        await self._repository.find_by_id(narrative_id)
+        actor = await self._repository.get_actor(narrative_id, actor_id)
+        actor.update(name=name, typ=typ, description=description)
+        return await self._repository.update_actor(narrative_id, actor)
+
+    async def remove_actor(self, narrative_id: str, actor_id: str) -> None:
+        """Removes an Actor from the Narrative with the given ID.
+
+        Raises NarrativeNotFoundError if no Narrative exists for that ID.
+        Raises ActorNotFoundError if no Actor with that ID exists in the Narrative.
+        Raises NarrativePersistenceError on database failure.
+
+        TODO: Referenzielle Integrität — wenn ein Actor gelöscht wird, der noch in Szenentext
+        vorkommt oder auf eine Wirkmodell-Entität gemappt ist, sollte der Autor gewarnt werden.
+        Optionen: (a) weiches Löschen mit Warnung, (b) Validierung vor dem Löschen,
+        (c) Konsistenzprüfung im Transparenzbericht. Entscheidung steht noch aus.
+        """
+        await self._repository.find_by_id(narrative_id)
+        await self._repository.get_actor(narrative_id, actor_id)
+        await self._repository.remove_actor(narrative_id, actor_id)
+
+    async def link_to_causal_model(self, narrative_id: str, causal_model_id: str) -> Narrative:
+        """Links the Narrative to a CausalModel by ID.
+
+        Uses find → change → save: loads the narrative, validates and applies the link
+        via the domain method, then persists the result.
+        Raises NarrativeNotFoundError if no Narrative exists for that ID.
+        Raises NarrativeValidationError if the causal_model_id is empty.
+        Raises NarrativePersistenceError on database failure.
+        """
+        narrative = await self._repository.find_by_id(narrative_id)
+        narrative.link_to_causal_model(causal_model_id)
+        return await self._repository.link_to_causal_model(narrative_id, causal_model_id)

@@ -12,6 +12,7 @@ from fastapi.responses import JSONResponse
 
 from api.dependencies import get_health_checker
 from api.exceptions.narrative import (
+    ActorNotFoundError,
     NarrativeFileNotFoundError,
     NarrativeNotFoundError,
     SceneNotFoundError,
@@ -64,6 +65,14 @@ async def handle_scene_not_found(
     request: Request, exc: SceneNotFoundError
 ) -> JSONResponse:
     """Translates SceneNotFoundError into a 404 response."""
+    return JSONResponse(status_code=404, content={"error": str(exc)})
+
+
+@app.exception_handler(ActorNotFoundError)
+async def handle_actor_not_found(
+    request: Request, exc: ActorNotFoundError
+) -> JSONResponse:
+    """Translates ActorNotFoundError into a 404 response."""
     return JSONResponse(status_code=404, content={"error": str(exc)})
 
 

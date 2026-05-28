@@ -6,8 +6,8 @@ These tests catch regressions when domain object invariants change.
 
 from __future__ import annotations
 
-from api.models.narrative import Narrative
-from api.seeddata import SEED_CLAIMS, build_simple_narrative
+from api.models.narrative import ActorType, Narrative
+from api.seeddata import SEED_ACTORS, SEED_CLAIMS, build_simple_narrative
 
 
 def test_build_simple_narrative_returns_narrative() -> None:
@@ -53,5 +53,29 @@ def test_seed_claims_covers_first_three_scenes() -> None:
     indices = {s.scene_index for s in SEED_CLAIMS}
 
     assert indices == {0, 1, 2}
+
+
+def test_seed_actors_is_not_empty() -> None:
+    """Expects SEED_ACTORS to contain at least one actor."""
+    assert len(SEED_ACTORS) > 0
+
+
+def test_seed_actors_all_have_non_empty_names() -> None:
+    """Expects every seed actor to have a non-empty name."""
+    for actor in SEED_ACTORS:
+        assert actor.name.strip() != ""
+
+
+def test_seed_actors_all_have_valid_types() -> None:
+    """Expects every seed actor type to be a valid ActorType value."""
+    valid_values = {t.value for t in ActorType}
+    for actor in SEED_ACTORS:
+        assert actor.typ in valid_values, f"Unknown typ: {actor.typ!r}"
+
+
+def test_seed_actors_include_at_least_one_individual() -> None:
+    """Expects at least one actor of type INDIVIDUAL (figur) in the seed data."""
+    types = {a.typ for a in SEED_ACTORS}
+    assert "figur" in types
 
 

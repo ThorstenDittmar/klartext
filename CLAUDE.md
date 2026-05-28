@@ -207,6 +207,31 @@ def email(self) -> str:
     return self._email
 ```
 
+## Git Workflow
+
+### Before switching between local and Codespace
+Always verify that all commits are pushed before switching environments:
+
+```bash
+git log --oneline origin/main..HEAD
+```
+
+If any commits are listed: push first, then switch.
+
+### Case-only renames on macOS
+macOS uses a case-insensitive filesystem. Renaming `NarrativEditor.tsx` to `NarrativeEditor.tsx`
+with plain `mv` is a no-op — the file never actually moves. Git may stage it correctly locally,
+but the rename never reaches the remote.
+
+Always use a temporary name as an intermediate step:
+
+```bash
+git mv OldName.tsx _temp.tsx
+git mv _temp.tsx NewName.tsx
+```
+
+This produces two real renames that work reliably on all platforms.
+
 ## Ports & Adapters
 Isolate technical components (e.g. verification procedures) via abstract interfaces:
 

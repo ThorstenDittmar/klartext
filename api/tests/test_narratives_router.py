@@ -12,9 +12,9 @@ import pytest
 from httpx import ASGITransport, AsyncClient
 
 from api.dependencies import get_narrative_service
-from api.exceptions.narrative import NarrativeFileNotFoundError, NarrativeNotFoundError
+from api.exceptions.narrative import ActorNotFoundError, NarrativeFileNotFoundError, NarrativeNotFoundError
 from api.main import app
-from api.models.narrative import Narrative, Scene
+from api.models.narrative import Actor, ActorType, Narrative, Scene
 from api.services.narrative_service import NarrativeService
 
 # ---------------------------------------------------------------------------
@@ -39,6 +39,7 @@ def make_saved_narrative() -> Narrative:
 
 
 SAVED_SCENE_2_ID = "cccc-3333"
+SAVED_ACTOR_ID = "dddd-4444"
 
 
 class FakeNarrativeService:
@@ -51,11 +52,19 @@ class FakeNarrativeService:
         raise_on_find: Exception | None = None,
         raise_on_create: Exception | None = None,
         raise_on_add_scene: Exception | None = None,
+        raise_on_add_actor: Exception | None = None,
+        raise_on_update_actor: Exception | None = None,
+        raise_on_remove_actor: Exception | None = None,
+        raise_on_link_to_causal_model: Exception | None = None,
     ) -> None:
         self._raise_on_import = raise_on_import
         self._raise_on_find = raise_on_find
         self._raise_on_create = raise_on_create
         self._raise_on_add_scene = raise_on_add_scene
+        self._raise_on_add_actor = raise_on_add_actor
+        self._raise_on_update_actor = raise_on_update_actor
+        self._raise_on_remove_actor = raise_on_remove_actor
+        self._raise_on_link_to_causal_model = raise_on_link_to_causal_model
         self._saved: list[Narrative] = [make_saved_narrative()]
 
     async def create(self, title: str) -> Narrative:
@@ -81,6 +90,30 @@ class FakeNarrativeService:
 
     async def list_all(self) -> list[Narrative]:
         return self._saved
+
+    async def add_actor(
+        self, narrative_id: str, name: str, typ: ActorType, description: str | None = None
+    ) -> Actor:
+        if self._raise_on_add_actor:
+            raise self._raise_on_add_actor
+        return Actor(id=SAVED_ACTOR_ID, name=name, typ=typ, description=description)
+
+    async def update_actor(
+        self, narrative_id: str, actor_id: str, name: str, typ: ActorType, description: str | None
+    ) -> Actor:
+        if self._raise_on_update_actor:
+            raise self._raise_on_update_actor
+        return Actor(id=actor_id, name=name, typ=typ, description=description)
+
+    async def remove_actor(self, narrative_id: str, actor_id: str) -> None:
+        if self._raise_on_remove_actor:
+            raise self._raise_on_remove_actor
+
+    async def link_to_causal_model(self, narrative_id: str, causal_model_id: str) -> Narrative:
+        if self._raise_on_link_to_causal_model:
+            raise self._raise_on_link_to_causal_model
+        narrative = Narrative(id=narrative_id, title="A Test Narrative", causal_model_id=causal_model_id)
+        return narrative
 
 
 # ---------------------------------------------------------------------------
@@ -445,6 +478,308 @@ async def test_narratives_add_scene_returns_404_for_unknown_narrative() -> None:
             response = await client.post(
                 "/narratives/unknown-id/scenes",
                 json={"title": "Scene", "text": "Text."},
+            )
+    finally:
+        clear_overrides()
+
+    assert response.status_code == 404
+
+
+# ---------------------------------------------------------------------------
+# POST /narratives/{id}/actors – happy path
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_narratives_add_actor_returns_201() -> None:
+    """Expects 201 when a valid actor is added to an existing narrative."""
+    override_with(FakeNarrativeService())
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.post(
+                f"/narratives/{SAVED_NARRATIVE_ID}/actors",
+                json={"name": "Max", "typ": "figur"},
+            )
+    finally:
+        clear_overrides()
+
+    assert response.status_code == 201
+
+
+@pytest.mark.asyncio
+async def test_narratives_add_actor_response_contains_id_name_and_type() -> None:
+    """Expects the response to include the actor id, name and type."""
+    override_with(FakeNarrativeService())
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.post(
+                f"/narratives/{SAVED_NARRATIVE_ID}/actors",
+                json={"name": "Max", "typ": "figur"},
+            )
+    finally:
+        clear_overrides()
+
+    data = response.json()
+    assert data["id"] == SAVED_ACTOR_ID
+    assert data["name"] == "Max"
+    assert data["typ"] == "figur"
+
+
+# ---------------------------------------------------------------------------
+# POST /narratives/{id}/actors – error cases
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_narratives_add_actor_returns_422_for_empty_name() -> None:
+    """Expects 422 when the name field is an empty string."""
+    override_with(FakeNarrativeService())
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.post(
+                f"/narratives/{SAVED_NARRATIVE_ID}/actors",
+                json={"name": "", "typ": "figur"},
+            )
+    finally:
+        clear_overrides()
+
+    assert response.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_narratives_add_actor_returns_404_for_unknown_narrative() -> None:
+    """Expects 404 when the service raises NarrativeNotFoundError."""
+    override_with(FakeNarrativeService(raise_on_add_actor=NarrativeNotFoundError("Not found.")))
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.post(
+                "/narratives/unknown-id/actors",
+                json={"name": "Max", "typ": "figur"},
+            )
+    finally:
+        clear_overrides()
+
+    assert response.status_code == 404
+
+
+# ---------------------------------------------------------------------------
+# PUT /narratives/{id}/actors/{actor_id} – happy path
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_narratives_update_actor_returns_200() -> None:
+    """Expects 200 when a valid update is sent for an existing actor."""
+    override_with(FakeNarrativeService())
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.put(
+                f"/narratives/{SAVED_NARRATIVE_ID}/actors/{SAVED_ACTOR_ID}",
+                json={"name": "CDU", "typ": "organisation", "description": "A party."},
+            )
+    finally:
+        clear_overrides()
+
+    assert response.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_narratives_update_actor_response_contains_updated_fields() -> None:
+    """Expects the response to reflect the new name, type and description."""
+    override_with(FakeNarrativeService())
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.put(
+                f"/narratives/{SAVED_NARRATIVE_ID}/actors/{SAVED_ACTOR_ID}",
+                json={"name": "CDU", "typ": "organisation", "description": "A party."},
+            )
+    finally:
+        clear_overrides()
+
+    data = response.json()
+    assert data["name"] == "CDU"
+    assert data["typ"] == "organisation"
+    assert data["description"] == "A party."
+
+
+# ---------------------------------------------------------------------------
+# PUT /narratives/{id}/actors/{actor_id} – error cases
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_narratives_update_actor_returns_422_for_empty_name() -> None:
+    """Expects 422 when the name field is an empty string."""
+    override_with(FakeNarrativeService())
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.put(
+                f"/narratives/{SAVED_NARRATIVE_ID}/actors/{SAVED_ACTOR_ID}",
+                json={"name": "", "typ": "figur"},
+            )
+    finally:
+        clear_overrides()
+
+    assert response.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_narratives_update_actor_returns_404_for_unknown_narrative() -> None:
+    """Expects 404 when the service raises NarrativeNotFoundError."""
+    override_with(FakeNarrativeService(raise_on_update_actor=NarrativeNotFoundError("Not found.")))
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.put(
+                f"/narratives/unknown-id/actors/{SAVED_ACTOR_ID}",
+                json={"name": "Max", "typ": "figur"},
+            )
+    finally:
+        clear_overrides()
+
+    assert response.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_narratives_update_actor_returns_404_for_unknown_actor() -> None:
+    """Expects 404 when the service raises ActorNotFoundError."""
+    override_with(FakeNarrativeService(raise_on_update_actor=ActorNotFoundError("Not found.")))
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.put(
+                f"/narratives/{SAVED_NARRATIVE_ID}/actors/unknown-actor-id",
+                json={"name": "Max", "typ": "figur"},
+            )
+    finally:
+        clear_overrides()
+
+    assert response.status_code == 404
+
+
+# ---------------------------------------------------------------------------
+# DELETE /narratives/{id}/actors/{actor_id} – happy path
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_narratives_remove_actor_returns_204() -> None:
+    """Expects 204 No Content when an existing actor is deleted."""
+    override_with(FakeNarrativeService())
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.delete(
+                f"/narratives/{SAVED_NARRATIVE_ID}/actors/{SAVED_ACTOR_ID}",
+            )
+    finally:
+        clear_overrides()
+
+    assert response.status_code == 204
+
+
+# ---------------------------------------------------------------------------
+# DELETE /narratives/{id}/actors/{actor_id} – error cases
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_narratives_remove_actor_returns_404_for_unknown_narrative() -> None:
+    """Expects 404 when the service raises NarrativeNotFoundError."""
+    override_with(FakeNarrativeService(raise_on_remove_actor=NarrativeNotFoundError("Not found.")))
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.delete(
+                f"/narratives/unknown-id/actors/{SAVED_ACTOR_ID}",
+            )
+    finally:
+        clear_overrides()
+
+    assert response.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_narratives_remove_actor_returns_404_for_unknown_actor() -> None:
+    """Expects 404 when the service raises ActorNotFoundError."""
+    override_with(FakeNarrativeService(raise_on_remove_actor=ActorNotFoundError("Not found.")))
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.delete(
+                f"/narratives/{SAVED_NARRATIVE_ID}/actors/unknown-actor-id",
+            )
+    finally:
+        clear_overrides()
+
+    assert response.status_code == 404
+
+
+# ---------------------------------------------------------------------------
+# PUT /narratives/{id}/causal-model – happy path
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_narratives_link_to_causal_model_returns_200() -> None:
+    """Expects 200 when a valid causal model ID is linked to an existing narrative."""
+    override_with(FakeNarrativeService())
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.put(
+                f"/narratives/{SAVED_NARRATIVE_ID}/causal-model",
+                json={"causal_model_id": "model-xyz"},
+            )
+    finally:
+        clear_overrides()
+
+    assert response.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_narratives_link_to_causal_model_response_contains_causal_model_id() -> None:
+    """Expects the response to include the linked causal_model_id."""
+    override_with(FakeNarrativeService())
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.put(
+                f"/narratives/{SAVED_NARRATIVE_ID}/causal-model",
+                json={"causal_model_id": "model-xyz"},
+            )
+    finally:
+        clear_overrides()
+
+    data = response.json()
+    assert data["causal_model_id"] == "model-xyz"
+
+
+# ---------------------------------------------------------------------------
+# PUT /narratives/{id}/causal-model – error cases
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_narratives_link_to_causal_model_returns_422_for_empty_id() -> None:
+    """Expects 422 when the causal_model_id field is an empty string."""
+    override_with(FakeNarrativeService())
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.put(
+                f"/narratives/{SAVED_NARRATIVE_ID}/causal-model",
+                json={"causal_model_id": ""},
+            )
+    finally:
+        clear_overrides()
+
+    assert response.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_narratives_link_to_causal_model_returns_404_for_unknown_narrative() -> None:
+    """Expects 404 when the service raises NarrativeNotFoundError."""
+    override_with(
+        FakeNarrativeService(raise_on_link_to_causal_model=NarrativeNotFoundError("Not found."))
+    )
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.put(
+                "/narratives/unknown-id/causal-model",
+                json={"causal_model_id": "model-xyz"},
             )
     finally:
         clear_overrides()

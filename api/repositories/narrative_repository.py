@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
-from api.models.narrative import Narrative, Scene
+from api.models.narrative import Actor, Narrative, Scene
 
 
 class NarrativeRepository(ABC):
@@ -43,6 +43,50 @@ class NarrativeRepository(ABC):
         """Persists a new Scene and appends it to the Narrative with the given ID.
 
         Returns the Scene with an assigned ID.
+        Raises NarrativeNotFoundError if no Narrative exists for that ID.
+        Raises NarrativePersistenceError on database failure.
+        """
+
+    @abstractmethod
+    async def add_actor(self, narrative_id: str, actor: Actor) -> Actor:
+        """Persists a new Actor and appends it to the Narrative with the given ID.
+
+        Returns the Actor with an assigned ID.
+        Raises NarrativeNotFoundError if no Narrative exists for that ID.
+        Raises NarrativePersistenceError on database failure.
+        """
+
+    @abstractmethod
+    async def get_actor(self, narrative_id: str, actor_id: str) -> Actor:
+        """Returns the Actor with the given ID from the Narrative.
+
+        Raises NarrativeNotFoundError if no Narrative exists for that ID.
+        Raises ActorNotFoundError if no Actor with that ID exists in the Narrative.
+        Raises NarrativePersistenceError on database failure.
+        """
+
+    @abstractmethod
+    async def update_actor(self, narrative_id: str, actor: Actor) -> Actor:
+        """Persists changes to an existing Actor.
+
+        Returns the updated Actor.
+        Raises NarrativeNotFoundError if no Narrative exists for that ID.
+        Raises NarrativePersistenceError on database failure.
+        """
+
+    @abstractmethod
+    async def remove_actor(self, narrative_id: str, actor_id: str) -> None:
+        """Deletes the Actor with the given ID from the Narrative.
+
+        Raises NarrativeNotFoundError if no Narrative exists for that ID.
+        Raises NarrativePersistenceError on database failure.
+        """
+
+    @abstractmethod
+    async def link_to_causal_model(self, narrative_id: str, causal_model_id: str) -> Narrative:
+        """Stores the causal_model_id on the Narrative with the given ID.
+
+        Returns the updated Narrative.
         Raises NarrativeNotFoundError if no Narrative exists for that ID.
         Raises NarrativePersistenceError on database failure.
         """

@@ -14,6 +14,11 @@ from api.exceptions.narrative import ActorValidationError, NarrativeValidationEr
 from api.models.narrative import Actor, ActorType, Narrative, Scene
 
 
+# helper — actor with a fake id, as if already persisted
+def _persisted_actor(name: str = "Max", typ: ActorType = ActorType.INDIVIDUAL) -> Actor:
+    return Actor(id="actor-persisted", name=name, typ=typ, description=None)
+
+
 # --- Scene ---
 
 
@@ -303,3 +308,67 @@ def test_narrative_from_record_accepts_missing_causal_model_id() -> None:
     narrative = Narrative.from_record(record)
 
     assert narrative.causal_model_id is None
+
+
+# --- Actor.update ---
+
+
+def test_actor_update_changes_all_fields() -> None:
+    """Expects name, type and description to reflect the new values after update."""
+    actor = _persisted_actor()
+
+    actor.update(name="CDU", typ=ActorType.ORGANISATION, description="A party.")
+
+    assert actor.name == "CDU"
+    assert actor.typ == ActorType.ORGANISATION
+    assert actor.description == "A party."
+
+
+def test_actor_update_can_clear_description() -> None:
+    """Expects description to become None when explicitly passed as None."""
+    actor = Actor(id="a1", name="Max", typ=ActorType.INDIVIDUAL, description="Old description.")
+
+    actor.update(name="Max", typ=ActorType.INDIVIDUAL, description=None)
+
+    assert actor.description is None
+
+
+def test_actor_update_raises_for_empty_name() -> None:
+    """Expects ActorValidationError because an empty name is invalid."""
+    actor = _persisted_actor()
+
+    with pytest.raises(ActorValidationError):
+        actor.update(name="", typ=ActorType.INDIVIDUAL, description=None)
+
+
+def test_actor_update_raises_for_whitespace_only_name() -> None:
+    """Expects ActorValidationError because a whitespace-only name is equivalent to empty."""
+    actor = _persisted_actor()
+
+    with pytest.raises(ActorValidationError):
+        actor.update(name="   ", typ=ActorType.INDIVIDUAL, description=None)
+
+
+# --- Narrative.remove_actor ---
+
+
+def test_narrative_remove_actor_removes_actor_by_id() -> None:
+    """Expects the actor to be absent from the narrative after remove_actor is called."""
+    narrative = Narrative.create(title="A Novel")
+    actor = _persisted_actor()
+    narrative.add_actor(actor)
+
+    narrative.remove_actor("actor-persisted")
+
+    assert len(narrative.actors) == 0
+
+
+def test_narrative_remove_actor_is_noop_for_unknown_id() -> None:
+    """Expects no error and no side effect when the id is not present."""
+    narrative = Narrative.create(title="A Novel")
+    actor = _persisted_actor()
+    narrative.add_actor(actor)
+
+    narrative.remove_actor("does-not-exist")
+
+    assert len(narrative.actors) == 1

@@ -13,16 +13,20 @@ from api.dependencies import (
 )
 from api.exceptions.narrative import SceneNotFoundError
 from api.models.claim import Claim
-from api.models.narrative import Narrative, Scene
+from api.models.narrative import Actor, Narrative, Scene
 from api.repositories.claim_repository import ClaimRepository
 from api.schemas.claims import ClaimResponse, ExtractClaimsResponse
 from api.schemas.narratives import (
+    ActorResponse,
+    CreateActorRequest,
     CreateNarrativeRequest,
     CreateSceneRequest,
     ImportNarrativeRequest,
+    LinkCausalModelRequest,
     NarrativeResponse,
     NarrativeSummaryResponse,
     SceneResponse,
+    UpdateActorRequest,
 )
 from api.services.claim_extractor_service import ClaimExtractorService
 from api.services.narrative_service import NarrativeService
@@ -40,7 +44,19 @@ def _to_narrative_response(narrative: Narrative) -> NarrativeResponse:
     return NarrativeResponse(
         id=narrative.id,  # type: ignore[arg-type]
         title=narrative.title,
+        causal_model_id=narrative.causal_model_id,
         scenes=[_to_scene_response(scene) for scene in narrative.scenes],
+        actors=[_to_actor_response(actor) for actor in narrative.actors],
+    )
+
+
+def _to_actor_response(actor: Actor) -> ActorResponse:
+    """Converts an Actor domain object into an ActorResponse schema."""
+    return ActorResponse(
+        id=actor.id,  # type: ignore[arg-type]
+        name=actor.name,
+        typ=actor.typ.value,
+        description=actor.description,
     )
 
 
@@ -127,6 +143,68 @@ async def add_scene(
     """Adds a new Scene to the Narrative with the given ID."""
     scene = await service.add_scene(narrative_id, request.title, request.text)
     return _to_scene_response(scene)
+
+
+# ---------------------------------------------------------------------------
+# Actor endpoints
+# ---------------------------------------------------------------------------
+
+
+@router.post(
+    "/{narrative_id}/actors",
+    status_code=status.HTTP_201_CREATED,
+    response_model=ActorResponse,
+)
+async def add_actor(
+    narrative_id: str,
+    request: CreateActorRequest,
+    service: NarrativeService = Depends(get_narrative_service),
+) -> ActorResponse:
+    """Adds a new Actor to the Narrative with the given ID."""
+    actor = await service.add_actor(narrative_id, request.name, request.typ, request.description)
+    return _to_actor_response(actor)
+
+
+@router.put(
+    "/{narrative_id}/actors/{actor_id}",
+    response_model=ActorResponse,
+)
+async def update_actor(
+    narrative_id: str,
+    actor_id: str,
+    request: UpdateActorRequest,
+    service: NarrativeService = Depends(get_narrative_service),
+) -> ActorResponse:
+    """Updates the name, type and description of an existing Actor."""
+    actor = await service.update_actor(narrative_id, actor_id, request.name, request.typ, request.description)
+    return _to_actor_response(actor)
+
+
+@router.delete(
+    "/{narrative_id}/actors/{actor_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def remove_actor(
+    narrative_id: str,
+    actor_id: str,
+    service: NarrativeService = Depends(get_narrative_service),
+) -> None:
+    """Removes an Actor from the Narrative with the given ID."""
+    await service.remove_actor(narrative_id, actor_id)
+
+
+@router.put(
+    "/{narrative_id}/causal-model",
+    response_model=NarrativeResponse,
+)
+async def link_to_causal_model(
+    narrative_id: str,
+    request: LinkCausalModelRequest,
+    service: NarrativeService = Depends(get_narrative_service),
+) -> NarrativeResponse:
+    """Links the Narrative to a CausalModel by ID."""
+    narrative = await service.link_to_causal_model(narrative_id, request.causal_model_id)
+    return _to_narrative_response(narrative)
 
 
 # ---------------------------------------------------------------------------
