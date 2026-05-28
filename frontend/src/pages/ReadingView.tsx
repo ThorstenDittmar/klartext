@@ -1,160 +1,169 @@
 import { useEffect, useState } from "react";
-import { api, CausalModel, ConsistencyResult, Narrative, Scene } from "../lib/api";
+import { api, Claim, Narrative, NarrativeSummary } from "../lib/api";
 
-export default function Leseansicht() {
-  const [narratives, setNarratives] = useState<{ id: string; title: string }[]>([]);
+// ---------------------------------------------------------------------------
+// Claim type labels (German — user-facing)
+// ---------------------------------------------------------------------------
+
+const CLAIM_TYPE_LABELS: Record<string, string> = {
+  empirischer_claim: "Empirisch",
+  kausaler_claim: "Kausal",
+  definitorischer_claim: "Definitorisch",
+  normativer_claim: "Normativ",
+  prognostischer_claim: "Prognostisch",
+  kontrafaktischer_claim: "Kontrafaktisch",
+  methodischer_claim: "Methodisch",
+  unsicherheitsclaim: "Unsicherheit",
+};
+
+// ---------------------------------------------------------------------------
+// ReadingView — continuous reading experience for the reader
+//
+// Shows all scenes with their full text in sequence. Already-extracted claims
+// are displayed below each scene. No analysis actions — those belong to the
+// author's NarrativeEditor.
+// ---------------------------------------------------------------------------
+
+export default function ReadingView() {
+  const [summaries, setSummaries] = useState<NarrativeSummary[]>([]);
   const [narrative, setNarrative] = useState<Narrative | null>(null);
-  const [models, setModels] = useState<CausalModel[]>([]);
-  const [selectedScene, setSelectedScene] = useState<Scene | null>(null);
-  const [selectedModelId, setSelectedModelId] = useState<string>("");
-  const [result, setResult] = useState<ConsistencyResult | null>(null);
-  const [checking, setChecking] = useState(false);
+  const [claimsByScene, setClaimsByScene] = useState<Record<string, Claim[]>>({});
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    Promise.all([api.narratives.list(), api.causalModels.list()])
-      .then(([narrs, mods]) => {
-        setNarratives(narrs);
-        setModels(mods);
-        if (mods.length > 0) setSelectedModelId(mods[0].id);
-        if (narrs.length > 0) return api.narratives.get(narrs[0].id);
+    api.narratives
+      .list()
+      .then((narrs) => {
+        setSummaries(narrs);
+        if (narrs.length > 0) return loadNarrative(narrs[0].id);
       })
-      .then((narr) => { if (narr) setNarrative(narr); })
       .catch(() => setError("API nicht erreichbar"));
   }, []);
 
-  async function check() {
-    if (!selectedScene || !selectedModelId) return;
-    setChecking(true);
-    setResult(null);
-    try {
-      const res = await api.causalModels.checkConsistency(selectedModelId, selectedScene.text);
-      setResult(res);
-    } catch {
-      setError("Konsistenzprüfung fehlgeschlagen.");
-    } finally {
-      setChecking(false);
-    }
+  // Loads a narrative and fetches all its scene claims in parallel.
+  async function loadNarrative(id: string) {
+    const narr = await api.narratives.get(id);
+    setNarrative(narr);
+    setClaimsByScene({});
+
+    const entries = await Promise.all(
+      narr.scenes.map(async (scene) => {
+        const claims = await api.narratives
+          .getSceneClaims(narr.id, scene.id)
+          .catch(() => [] as Claim[]);
+        return [scene.id, claims] as [string, Claim[]];
+      })
+    );
+    setClaimsByScene(Object.fromEntries(entries));
   }
 
   return (
-    <div>
-      <h2 style={{ marginTop: 0 }}>Leseansicht</h2>
+    <div style={{ maxWidth: 720, margin: "0 auto", padding: "0 1rem" }}>
       {error && <p style={{ color: "red" }}>{error}</p>}
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem" }}>
-        {/* Szenenauswahl */}
-        <div>
-          <h3>Narrativ</h3>
-          {narratives.length > 1 && (
-            <select
-              onChange={(e) => {
-                api.narratives.get(e.target.value).then(setNarrative);
-                setSelectedScene(null);
-                setResult(null);
-              }}
-              style={{ marginBottom: "1rem", padding: "0.4rem" }}
-            >
-              {narratives.map((n) => (
-                <option key={n.id} value={n.id}>{n.title}</option>
-              ))}
-            </select>
+      {/* Narrative selector — only shown when more than one narrative exists */}
+      {summaries.length > 1 && (
+        <select
+          onChange={(e) => loadNarrative(e.target.value)}
+          style={{ marginBottom: "2rem", padding: "0.4rem" }}
+        >
+          {summaries.map((n) => (
+            <option key={n.id} value={n.id}>
+              {n.title}
+            </option>
+          ))}
+        </select>
+      )}
+
+      {narrative && (
+        <>
+          <h1 style={{ marginTop: 0, marginBottom: "2.5rem", fontSize: "1.8rem" }}>
+            {narrative.title}
+          </h1>
+
+          {narrative.scenes.length === 0 && (
+            <p style={{ color: "#888" }}>Dieses Narrativ enthält noch keine Szenen.</p>
           )}
 
-          {narrative?.scenes.map((scene) => (
-            <div
-              key={scene.id}
-              onClick={() => { setSelectedScene(scene); setResult(null); }}
-              style={{
-                padding: "0.75rem",
-                marginBottom: "0.75rem",
-                border: `2px solid ${selectedScene?.id === scene.id ? "#4a7aff" : "#ddd"}`,
-                borderRadius: 4,
-                cursor: "pointer",
-                background: selectedScene?.id === scene.id ? "#f0f4ff" : "white",
-              }}
-            >
-              <strong>{scene.title}</strong>
-              <p style={{ margin: "0.25rem 0 0", fontSize: "0.85rem", color: "#555", whiteSpace: "pre-wrap" }}>
-                {scene.text.slice(0, 200)}…
-              </p>
-            </div>
-          ))}
-        </div>
+          {narrative.scenes.map((scene) => {
+            const claims = claimsByScene[scene.id];
+            return (
+              <div key={scene.id} style={{ marginBottom: "3rem" }}>
+                <h2 style={{ fontSize: "1.1rem", marginBottom: "0.75rem", color: "#222" }}>
+                  <span style={{ color: "#bbb", fontWeight: "normal", marginRight: "0.4rem" }}>
+                    {scene.position}.
+                  </span>
+                  {scene.title}
+                </h2>
 
-        {/* Konsistenzprüfung */}
-        <div>
-          <h3>Konsistenzprüfung</h3>
-
-          {selectedScene ? (
-            <>
-              <p style={{ fontSize: "0.85rem", color: "#555", whiteSpace: "pre-wrap", marginBottom: "1rem" }}>
-                {selectedScene.text}
-              </p>
-
-              <label style={{ display: "block", marginBottom: "0.5rem" }}>
-                Wirkmodell:
-                <select
-                  value={selectedModelId}
-                  onChange={(e) => setSelectedModelId(e.target.value)}
-                  style={{ marginLeft: "0.5rem", padding: "0.4rem" }}
+                <p
+                  style={{
+                    whiteSpace: "pre-wrap",
+                    lineHeight: 1.8,
+                    color: "#333",
+                    margin: "0 0 1rem",
+                    fontSize: "1rem",
+                  }}
                 >
-                  {models.map((m) => (
-                    <option key={m.id} value={m.id}>{m.title}</option>
-                  ))}
-                </select>
-              </label>
+                  {scene.text}
+                </p>
 
-              <button onClick={check} disabled={checking || !selectedModelId}>
-                {checking ? "Prüfe…" : "Konsistenz prüfen"}
-              </button>
-
-              {result && (
-                <div style={{ marginTop: "1.5rem" }}>
+                {/* Claims — shown only when already extracted by the author */}
+                {claims && claims.length > 0 && (
                   <div
                     style={{
-                      padding: "0.75rem 1rem",
-                      borderRadius: 4,
-                      background: result.consistent ? "#e6f4ea" : "#fce8e6",
-                      color: result.consistent ? "#1e7e34" : "#c5221f",
-                      fontWeight: "bold",
-                      marginBottom: "1rem",
+                      borderTop: "1px solid #f0f0f0",
+                      paddingTop: "0.75rem",
+                      marginTop: "0.5rem",
                     }}
                   >
-                    {result.consistent ? "✓ Konsistent" : `✗ ${result.conflicts.length} Konflikt${result.conflicts.length !== 1 ? "e" : ""}`}
-                  </div>
-
-                  {result.conflicts.map((c, i) => (
-                    <div
-                      key={i}
+                    <p
                       style={{
-                        marginBottom: "1rem",
-                        padding: "0.75rem",
-                        border: "1px solid #f5c6c6",
-                        borderRadius: 4,
-                        background: "#fffafa",
+                        margin: "0 0 0.5rem",
+                        fontSize: "0.75rem",
+                        color: "#bbb",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.05em",
                       }}
                     >
-                      <strong style={{ fontSize: "0.85rem", color: "#888" }}>Axiom</strong>
-                      <p style={{ margin: "0.15rem 0 0.5rem", fontStyle: "italic" }}>{c.axiom_label}</p>
-                      <strong style={{ fontSize: "0.85rem", color: "#888" }}>Problem</strong>
-                      <p style={{ margin: "0.15rem 0 0.5rem" }}>{c.description}</p>
-                      {c.suggestion && (
-                        <>
-                          <strong style={{ fontSize: "0.85rem", color: "#888" }}>Vorschlag</strong>
-                          <p style={{ margin: "0.15rem 0 0" }}>{c.suggestion}</p>
-                        </>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </>
-          ) : (
-            <p style={{ color: "#888" }}>Szene auswählen um die Konsistenz zu prüfen.</p>
-          )}
-        </div>
-      </div>
+                      Claims ({claims.length})
+                    </p>
+                    <ul style={{ margin: 0, padding: 0, listStyle: "none" }}>
+                      {claims.map((c, i) => (
+                        <li
+                          key={i}
+                          style={{
+                            display: "flex",
+                            gap: "0.5rem",
+                            alignItems: "flex-start",
+                            marginBottom: "0.4rem",
+                            fontSize: "0.85rem",
+                          }}
+                        >
+                          <span
+                            style={{
+                              flexShrink: 0,
+                              background: "#e8f0fe",
+                              color: "#3c5bb5",
+                              borderRadius: 3,
+                              padding: "0.1rem 0.4rem",
+                              fontSize: "0.75rem",
+                              marginTop: "0.15rem",
+                            }}
+                          >
+                            {CLAIM_TYPE_LABELS[c.typ] ?? c.typ}
+                          </span>
+                          <span style={{ color: "#555" }}>{c.text}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </>
+      )}
     </div>
   );
 }
