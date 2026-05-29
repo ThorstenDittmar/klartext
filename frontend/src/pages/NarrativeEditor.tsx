@@ -65,6 +65,10 @@ export default function NarrativeEditor() {
   // Create narrative form
   const [newTitle, setNewTitle] = useState("");
 
+  // Import narrative form
+  const [importPath, setImportPath] = useState("");
+  const [importing, setImporting] = useState(false);
+
   // Add scene form
   const [sceneTitle, setSceneTitle] = useState("");
   const [sceneText, setSceneText] = useState("");
@@ -102,6 +106,24 @@ export default function NarrativeEditor() {
       setConsistencyResult(null);
     } catch {
       setError("Narrativ konnte nicht geladen werden.");
+    }
+  }
+
+  async function importNarrative() {
+    if (!importPath.trim()) return;
+    setImporting(true);
+    setError(null);
+    try {
+      const narrative = await api.narratives.importFromPath(importPath.trim());
+      setSummaries((prev) => [...prev, { id: narrative.id, title: narrative.title }]);
+      setSelected(narrative);
+      setSelectedSceneId(null);
+      setShowAddScene(false);
+      setImportPath("");
+    } catch {
+      setError("Import fehlgeschlagen. Pfad prüfen.");
+    } finally {
+      setImporting(false);
     }
   }
 
@@ -348,6 +370,33 @@ export default function NarrativeEditor() {
             style={{ fontSize: "0.85rem" }}
           >
             Anlegen
+          </button>
+        </div>
+
+        <div style={{ borderTop: "1px solid #eee", paddingTop: "1rem", marginTop: "1rem" }}>
+          <p style={{ margin: "0 0 0.5rem", fontSize: "0.8rem", color: "#888" }}>
+            Aus Datei importieren
+          </p>
+          <input
+            value={importPath}
+            onChange={(e) => setImportPath(e.target.value)}
+            placeholder="Pfad zur .docx oder .md"
+            style={{
+              width: "100%",
+              padding: "0.4rem",
+              marginBottom: "0.5rem",
+              boxSizing: "border-box",
+              fontSize: "0.8rem",
+              fontFamily: "monospace",
+            }}
+            onKeyDown={(e) => e.key === "Enter" && importNarrative()}
+          />
+          <button
+            onClick={importNarrative}
+            disabled={importing || !importPath.trim()}
+            style={{ fontSize: "0.85rem" }}
+          >
+            {importing ? "Importiere…" : "Importieren"}
           </button>
         </div>
       </aside>

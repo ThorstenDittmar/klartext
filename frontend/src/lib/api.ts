@@ -102,6 +102,11 @@ export const api = {
         method: "POST",
         body: JSON.stringify({ title }),
       }),
+    importFromPath: (path: string) =>
+      request<Narrative>("/narratives/import", {
+        method: "POST",
+        body: JSON.stringify({ path }),
+      }),
     addScene: (narrativeId: string, title: string, text: string) =>
       request<Scene>(`/narratives/${narrativeId}/scenes`, {
         method: "POST",
