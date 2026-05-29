@@ -2134,32 +2134,17 @@
 <p><code>status</code> is <code>"ok"</code> when all checks pass, <code>"degraded"</code> when one or more fail. HTTP status is always <code>200</code> — read the body to detect degradation.</p>
 <hr />
 <h2 id="database">Database<a class="headerlink" href="#database" title="Permanent link">&para;</a></h2>
-<p>Schema is managed via migration files in <code>supabase/migrations/</code>. Never run SQL manually in the Supabase dashboard.</p>
-<table>
-<thead>
-<tr>
-<th>Migration</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>20260521000001_initial_schema.sql</code></td>
-<td>Core tables: users, narratives, Wirkmodelle, RLS policies</td>
-</tr>
-<tr>
-<td><code>20260521000002_claims_table.sql</code></td>
-<td>Claims table with FK to narrative_einheiten</td>
-</tr>
-</tbody>
-</table>
-<p>To apply new changes:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Create a new migration (Supabase generates the timestamp)</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>supabase<span class="w"> </span>migration<span class="w"> </span>new<span class="w"> </span>my_change_description
+<p>The migration files in <code>supabase/migrations/</code> are the single source of truth for the schema — <code>klartext db reset</code> rebuilds the database entirely from them. Never run SQL manually in the Supabase dashboard.</p>
+<p>To add a schema change:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># 1. Create a new migration file (Supabase generates the timestamp prefix)</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>supabase<span class="w"> </span>migration<span class="w"> </span>new<span class="w"> </span>describe_your_change
 <a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># Reset (drops and recreates the local DB, re-applies all migrations)</span>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>klartext<span class="w"> </span>db<span class="w"> </span>reset
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># 2. Write the SQL in the generated file</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="c1"># 3. Apply and verify locally</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>klartext<span class="w"> </span>db<span class="w"> </span>reset
 </code></pre></div>
+<p>The migration history lives in <code>git log -- supabase/migrations/</code>. Planned schema changes belong in GitHub Issues, not here.</p>
 <hr />
 <h2 id="testing">Testing<a class="headerlink" href="#testing" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>klartext<span class="w"> </span><span class="nb">test</span><span class="w">          </span><span class="c1"># unit tests only (fast, no external services)</span>
