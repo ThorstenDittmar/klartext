@@ -1,0 +1,12 @@
+# robots.txt for docs.klartext.jetzt
+
+# Allow all legitimate crawlers (default)
+User-agent: *
+Allow: /
+
+# Explicitly allow Anthropic/Claude crawler
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
