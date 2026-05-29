@@ -7,14 +7,12 @@ on:
   push:
     paths:
       - "setup.sh"
-      - "api/requirements*.txt"
       - "api/pyproject.toml"
       - "frontend/package*.json"
       - ".github/workflows/setup-smoke-test.yml"
   pull_request:
     paths:
       - "setup.sh"
-      - "api/requirements*.txt"
       - "api/pyproject.toml"
       - "frontend/package*.json"
       - ".github/workflows/setup-smoke-test.yml"

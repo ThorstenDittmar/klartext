@@ -31,7 +31,12 @@ section "Checking prerequisites"
 
 command -v python3 >/dev/null 2>&1 || error "Python 3.12+ is required (https://python.org)"
 PYTHON_VERSION=$(python3 -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")
+PYTHON_MAJOR=$(python3 -c "import sys; print(sys.version_info.major)")
+PYTHON_MINOR=$(python3 -c "import sys; print(sys.version_info.minor)")
 info "Python $PYTHON_VERSION"
+if [ "$PYTHON_MAJOR" -lt 3 ] || { [ "$PYTHON_MAJOR" -eq 3 ] && [ "$PYTHON_MINOR" -lt 12 ]; }; then
+    error "Python 3.12+ is required, but found $PYTHON_VERSION — install it at https://python.org"
+fi
 
 command -v node >/dev/null 2>&1 || error "Node.js 20+ is required (https://nodejs.org)"
 NODE_VERSION=$(node --version)
@@ -70,8 +75,7 @@ fi
 
 info "Installing dependencies…"
 .venv/bin/pip install -q --upgrade pip
-.venv/bin/pip install -q -r requirements-dev.txt
-.venv/bin/pip install -q -e .
+.venv/bin/pip install -q -e '.[dev]'
 
 if [ ! -f ".env" ]; then
     info "Creating .env from .env.example…"

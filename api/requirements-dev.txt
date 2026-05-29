@@ -1,5 +1,4 @@
--r requirements.txt
-pytest>=8.0.0
-pytest-asyncio>=0.23.0
-ruff>=0.5.0
-mypy>=1.10.0
+# All dependencies (runtime + dev tools) are defined in pyproject.toml.
+# This file is a thin wrapper so scripts that use `pip install -r requirements-dev.txt`
+# continue to work.  To add or remove a dependency, edit pyproject.toml only.
+-e .[dev]
