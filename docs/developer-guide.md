@@ -120,22 +120,21 @@ The interactive API docs are available at `http://localhost:8000/docs` when the 
 
 ## Database
 
-Schema is managed via migration files in `supabase/migrations/`. Never run SQL manually in the Supabase dashboard.
+The migration files in `supabase/migrations/` are the single source of truth for the schema — `klartext db reset` rebuilds the database entirely from them. Never run SQL manually in the Supabase dashboard.
 
-| Migration | Description |
-|---|---|
-| `20260521000001_initial_schema.sql` | Core tables: users, narratives, Wirkmodelle, RLS policies |
-| `20260521000002_claims_table.sql` | Claims table with FK to narrative_einheiten |
-
-To apply new changes:
+To add a schema change:
 
 ```bash
-# Create a new migration (Supabase generates the timestamp)
-supabase migration new my_change_description
+# 1. Create a new migration file (Supabase generates the timestamp prefix)
+supabase migration new describe_your_change
 
-# Reset (drops and recreates the local DB, re-applies all migrations)
+# 2. Write the SQL in the generated file
+
+# 3. Apply and verify locally
 klartext db reset
 ```
+
+The migration history lives in `git log -- supabase/migrations/`. Planned schema changes belong in GitHub Issues, not here.
 
 ---
 
