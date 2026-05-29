@@ -21,6 +21,7 @@ import anthropic
 from fastapi import Depends
 from supabase import AsyncClient, acreate_client
 
+from api.parsers.docx_narrative_parser import DocxNarrativeParser
 from api.parsers.markdown_narrative_parser import MarkdownNarrativeParser
 from api.providers.claude_claim_extraction_provider import ClaudeClaimExtractionProvider
 from api.providers.claude_consistency_checker import ClaudeConsistencyChecker
@@ -64,8 +65,11 @@ async def get_claim_repository(
 
 
 def get_narrative_import_service() -> NarrativeImportService:
-    """Wires MarkdownNarrativeParser into NarrativeImportService."""
-    return NarrativeImportService(parser=MarkdownNarrativeParser())
+    """Wires text and binary parsers into NarrativeImportService."""
+    return NarrativeImportService(
+        parser=MarkdownNarrativeParser(),
+        file_parsers={".docx": DocxNarrativeParser()},
+    )
 
 
 async def get_narrative_service(

@@ -26,7 +26,7 @@ FIXTURE_PATH = (
     / "tests"
     / "fixtures"
     / "klartext-eine-geschichte-ueber-eine-geschichte"
-    / "narrative.md"
+    / "narrative.docx"
 )
 
 
