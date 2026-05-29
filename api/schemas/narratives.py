@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Optional
-
 from pydantic import BaseModel, field_validator
 
 from api.models.narrative import ActorType
@@ -65,7 +63,7 @@ class CreateActorRequest(BaseModel):
 
     name: str
     typ: ActorType
-    description: Optional[str] = None
+    description: str | None = None
 
     @field_validator("name")
     @classmethod
@@ -81,7 +79,7 @@ class UpdateActorRequest(BaseModel):
 
     name: str
     typ: ActorType
-    description: Optional[str] = None
+    description: str | None = None
 
     @field_validator("name")
     @classmethod
@@ -112,7 +110,7 @@ class ActorResponse(BaseModel):
     id: str
     name: str
     typ: str
-    description: Optional[str]
+    description: str | None
 
 
 class SceneResponse(BaseModel):
@@ -129,7 +127,7 @@ class NarrativeResponse(BaseModel):
 
     id: str
     title: str
-    causal_model_id: Optional[str] = None
+    causal_model_id: str | None = None
     scenes: list[SceneResponse] = []
     actors: list[ActorResponse] = []
 

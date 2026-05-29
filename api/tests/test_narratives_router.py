@@ -12,10 +12,13 @@ import pytest
 from httpx import ASGITransport, AsyncClient
 
 from api.dependencies import get_narrative_service
-from api.exceptions.narrative import ActorNotFoundError, NarrativeFileNotFoundError, NarrativeNotFoundError
+from api.exceptions.narrative import (
+    ActorNotFoundError,
+    NarrativeFileNotFoundError,
+    NarrativeNotFoundError,
+)
 from api.main import app
 from api.models.narrative import Actor, ActorType, Narrative, Scene
-from api.services.narrative_service import NarrativeService
 
 # ---------------------------------------------------------------------------
 # Fake service
@@ -112,7 +115,9 @@ class FakeNarrativeService:
     async def link_to_causal_model(self, narrative_id: str, causal_model_id: str) -> Narrative:
         if self._raise_on_link_to_causal_model:
             raise self._raise_on_link_to_causal_model
-        narrative = Narrative(id=narrative_id, title="A Test Narrative", causal_model_id=causal_model_id)
+        narrative = Narrative(
+            id=narrative_id, title="A Test Narrative", causal_model_id=causal_model_id
+        )
         return narrative
 
 
@@ -208,9 +213,7 @@ async def test_narratives_import_returns_422_for_empty_path() -> None:
 async def test_narratives_import_returns_404_when_file_not_found() -> None:
     """Expects 404 when the service raises NarrativeFileNotFoundError."""
     override_with(
-        FakeNarrativeService(
-            raise_on_import=NarrativeFileNotFoundError("File not found.")
-        )
+        FakeNarrativeService(raise_on_import=NarrativeFileNotFoundError("File not found."))
     )
     try:
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
@@ -281,11 +284,7 @@ async def test_narratives_get_by_id_returns_200() -> None:
 @pytest.mark.asyncio
 async def test_narratives_get_by_id_returns_404_for_unknown_id() -> None:
     """Expects 404 when the service raises NarrativeNotFoundError."""
-    override_with(
-        FakeNarrativeService(
-            raise_on_find=NarrativeNotFoundError("Not found.")
-        )
-    )
+    override_with(FakeNarrativeService(raise_on_find=NarrativeNotFoundError("Not found.")))
     try:
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
             response = await client.get("/narratives/unknown-id")

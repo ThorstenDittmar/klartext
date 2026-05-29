@@ -19,7 +19,10 @@ class ClaimExtractorService:
         self._provider = provider
 
     async def extract_from_scene(self, scene: Scene) -> list[Claim]:
-        """Extracts claims from the given scene. Raises ClaimExtractionError if no claims are found."""
+        """Extracts claims from the given scene.
+
+        Raises ClaimExtractionError if no claims are found.
+        """
         claims = await self._provider.extract(scene)
 
         if not claims:

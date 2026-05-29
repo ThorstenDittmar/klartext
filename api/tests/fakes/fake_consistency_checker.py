@@ -24,12 +24,14 @@ class FakeConsistencyChecker(ConsistencyChecker):
         return self._result
 
     @staticmethod
-    def consistent() -> "FakeConsistencyChecker":
+    def consistent() -> FakeConsistencyChecker:
         """Returns a checker that always reports no conflicts."""
         return FakeConsistencyChecker(ConsistencyResult(consistent=True))
 
     @staticmethod
-    def with_conflict(axiom_label: str = "A-01", description: str = "Konflikt erkannt.") -> "FakeConsistencyChecker":
+    def with_conflict(
+        axiom_label: str = "A-01", description: str = "Konflikt erkannt."
+    ) -> FakeConsistencyChecker:
         """Returns a checker that always reports one conflict."""
         return FakeConsistencyChecker(
             ConsistencyResult(

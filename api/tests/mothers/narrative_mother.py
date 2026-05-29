@@ -37,7 +37,10 @@ class NarrativeMother:
 
     @staticmethod
     def complete() -> Narrative:
-        """Fully populated narrative with three varied scenes — for serialisation and mapping tests."""
+        """Fully populated narrative with three varied scenes.
+
+        Use for serialisation and mapping tests.
+        """
         narrative = Narrative.create(title="Klartext – Eine Geschichte über eine Geschichte")
         for scene in SceneMother.collection():
             narrative.add_scene(scene)
@@ -50,7 +53,10 @@ class NarrativeMother:
 
     @staticmethod
     def with_actors() -> Narrative:
-        """Narrative with one scene and three actors of different types — for actor-related tests."""
+        """Narrative with one scene and three actors of different types.
+
+        Use for actor-related tests.
+        """
         narrative = Narrative.create(title="Klartext")
         narrative.add_scene(SceneMother.minimal())
         narrative.add_actor(Actor.create(name="Max", typ=ActorType.INDIVIDUAL))
@@ -60,7 +66,10 @@ class NarrativeMother:
 
     @staticmethod
     def linked_to_causal_model(causal_model_id: str) -> Narrative:
-        """Narrative with a CausalModel link — for consistency checking and Transparenzbericht tests."""
+        """Narrative with a CausalModel link.
+
+        Use for consistency checking and Transparenzbericht tests.
+        """
         narrative = Narrative.create(title="Klartext")
         narrative.add_scene(SceneMother.minimal())
         narrative.link_to_causal_model(causal_model_id)

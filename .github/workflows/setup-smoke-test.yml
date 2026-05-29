@@ -48,6 +48,12 @@ jobs:
       - name: Verify klartext CLI is available
         run: api/.venv/bin/klartext --help
 
+      - name: Verify pre-commit is installed
+        run: api/.venv/bin/pre-commit --version
+
+      - name: Verify git hooks are active
+        run: test -f .git/hooks/pre-commit
+
       - name: Verify unit tests pass
         run: |
           cd api

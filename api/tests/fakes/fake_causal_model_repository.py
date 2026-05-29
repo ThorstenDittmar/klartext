@@ -23,7 +23,9 @@ class FakeCausalModelRepository(CausalModelRepository):
         cm_id = str(uuid.uuid4())
         saved = CausalModel(id=cm_id, title=causal_model.title, status=causal_model.status)
         for axiom in causal_model.axioms:
-            saved.add_axiom(Axiom(id=str(uuid.uuid4()), label=axiom.label, description=axiom.description))
+            saved.add_axiom(
+                Axiom(id=str(uuid.uuid4()), label=axiom.label, description=axiom.description)
+            )
         self._store[cm_id] = saved
         return saved
 
@@ -43,4 +45,6 @@ class FakeCausalModelRepository(CausalModelRepository):
 
     async def list_all(self) -> list[CausalModel]:
         """Returns all CausalModels as title-only summaries."""
-        return [CausalModel(id=cm.id, title=cm.title, status=cm.status) for cm in self._store.values()]
+        return [
+            CausalModel(id=cm.id, title=cm.title, status=cm.status) for cm in self._store.values()
+        ]

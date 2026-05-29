@@ -10,9 +10,6 @@ from api.exceptions.causal_model import CausalModelNotFoundError
 from api.main import app
 from api.models.causal_model import Axiom, CausalModel, CausalModelStatus
 from api.providers.consistency_checker import ConsistencyConflict, ConsistencyResult
-from api.services.causal_model_service import CausalModelService
-from tests.mothers.causal_model_mother import AxiomMother, CausalModelMother
-
 
 # ---------------------------------------------------------------------------
 # Fake service
@@ -23,7 +20,9 @@ class FakeCausalModelService:
     """In-memory CausalModelService stub for router tests."""
 
     def __init__(self) -> None:
-        self._cm = CausalModel(id="cm-001", title="Klartext Wirkmodell", status=CausalModelStatus.PRIVATE)
+        self._cm = CausalModel(
+            id="cm-001", title="Klartext Wirkmodell", status=CausalModelStatus.PRIVATE
+        )
         self._cm.add_axiom(Axiom(id="ax-001", label="A-01", description="Eine Annahme."))
 
     async def create(self, title: str) -> CausalModel:
@@ -40,7 +39,9 @@ class FakeCausalModelService:
         return self._cm
 
     async def list_all(self) -> list[CausalModel]:
-        return [CausalModel(id="cm-001", title="Klartext Wirkmodell", status=CausalModelStatus.PRIVATE)]
+        return [
+            CausalModel(id="cm-001", title="Klartext Wirkmodell", status=CausalModelStatus.PRIVATE)
+        ]
 
     async def check_consistency(self, causal_model_id: str, scene_text: str) -> ConsistencyResult:
         if causal_model_id == "unknown":
@@ -48,11 +49,13 @@ class FakeCausalModelService:
         if "invest" in scene_text.lower():
             return ConsistencyResult(
                 consistent=False,
-                conflicts=[ConsistencyConflict(
-                    axiom_label="A-01",
-                    description="Konflikt erkannt.",
-                    suggestion="Ausnahme ergänzen.",
-                )],
+                conflicts=[
+                    ConsistencyConflict(
+                        axiom_label="A-01",
+                        description="Konflikt erkannt.",
+                        suggestion="Ausnahme ergänzen.",
+                    )
+                ],
             )
         return ConsistencyResult(consistent=True)
 

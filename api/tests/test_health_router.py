@@ -14,7 +14,6 @@ from api.dependencies import get_health_checker
 from api.main import app
 from api.services.health_service import HealthChecker, HealthResult, HealthStatus
 
-
 # ---------------------------------------------------------------------------
 # Fakes
 # ---------------------------------------------------------------------------

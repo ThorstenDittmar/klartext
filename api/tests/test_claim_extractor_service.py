@@ -19,8 +19,12 @@ class FakeClaimExtractionProvider(ClaimExtractionProvider):
 
     async def extract(self, scene: Scene) -> list[Claim]:
         return [
-            Claim.create(text="Inflation entsteht durch Geldmenge.", typ=ClaimType.CAUSAL, confidence=0.9),
-            Claim.create(text="Zinserhöhungen dämpfen die Nachfrage.", typ=ClaimType.CAUSAL, confidence=0.85),
+            Claim.create(
+                text="Inflation entsteht durch Geldmenge.", typ=ClaimType.CAUSAL, confidence=0.9
+            ),
+            Claim.create(
+                text="Zinserhöhungen dämpfen die Nachfrage.", typ=ClaimType.CAUSAL, confidence=0.85
+            ),
         ]
 
 

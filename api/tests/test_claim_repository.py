@@ -128,9 +128,12 @@ async def test_supabase_claim_repository_save_all_and_find_by_scene_id() -> None
         assert all(0.0 <= c.confidence <= 1.0 for c in found)
     finally:
         await client.table("claims").delete().eq("scene_id", scene_id).execute()
-        await client.table("narrative_einheiten").delete().eq(
-            "narrativ_id", saved_narrative.id
-        ).execute()
+        await (
+            client.table("narrative_einheiten")
+            .delete()
+            .eq("narrativ_id", saved_narrative.id)
+            .execute()
+        )
         await client.table("narrative").delete().eq("id", saved_narrative.id).execute()
 
     _ = saved_claims

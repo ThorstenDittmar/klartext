@@ -31,7 +31,9 @@ async def create_causal_model(
         id=cm.id,  # type: ignore[arg-type]
         title=cm.title,
         status=cm.status.value,
-        axioms=[AxiomResponse(id=a.id, label=a.label, description=a.description) for a in cm.axioms],  # type: ignore[arg-type]
+        axioms=[
+            AxiomResponse(id=a.id, label=a.label, description=a.description) for a in cm.axioms
+        ],  # type: ignore[arg-type]
     )
 
 
@@ -58,11 +60,15 @@ async def get_causal_model(
         id=cm.id,  # type: ignore[arg-type]
         title=cm.title,
         status=cm.status.value,
-        axioms=[AxiomResponse(id=a.id, label=a.label, description=a.description) for a in cm.axioms],  # type: ignore[arg-type]
+        axioms=[
+            AxiomResponse(id=a.id, label=a.label, description=a.description) for a in cm.axioms
+        ],  # type: ignore[arg-type]
     )
 
 
-@router.post("/{causal_model_id}/axioms", status_code=status.HTTP_201_CREATED, response_model=AxiomResponse)
+@router.post(
+    "/{causal_model_id}/axioms", status_code=status.HTTP_201_CREATED, response_model=AxiomResponse
+)
 async def add_axiom(
     causal_model_id: str,
     request: AddAxiomRequest,

@@ -64,9 +64,14 @@ def _api_process(
 ) -> subprocess.Popen:
     """Starts the FastAPI server as a background process and returns the handle."""
     cmd = [
-        sys.executable, "-m", "uvicorn", "api.main:app",
-        "--host", host,
-        "--port", str(port),
+        sys.executable,
+        "-m",
+        "uvicorn",
+        "api.main:app",
+        "--host",
+        host,
+        "--port",
+        str(port),
     ]
     if reload:
         cmd.append("--reload")
@@ -100,9 +105,7 @@ async def _seed(url: str) -> None:
     async with httpx.AsyncClient(base_url=url, timeout=30) as client:
         # 1. Import narrative
         typer.echo("  → Importing Klartext narrative…")
-        response = await client.post(
-            "/narratives/import", json={"path": str(FIXTURE_PATH)}
-        )
+        response = await client.post("/narratives/import", json={"path": str(FIXTURE_PATH)})
         if response.status_code != 201:
             typer.secho(
                 f"  ✗  Import failed: {response.status_code} {response.text}",
@@ -175,8 +178,7 @@ async def _seed(url: str) -> None:
                 )
             else:
                 typer.secho(
-                    f"  ⚠  Axiom '{axiom.label}' failed "
-                    f"({axiom_response.status_code})",
+                    f"  ⚠  Axiom '{axiom.label}' failed ({axiom_response.status_code})",
                     fg=typer.colors.YELLOW,
                 )
 
@@ -194,8 +196,7 @@ async def _seed(url: str) -> None:
                 )
             else:
                 typer.secho(
-                    f"  ⚠  Actor '{actor.name}' failed "
-                    f"({actor_response.status_code})",
+                    f"  ⚠  Actor '{actor.name}' failed ({actor_response.status_code})",
                     fg=typer.colors.YELLOW,
                 )
 
@@ -365,9 +366,7 @@ def health(
 
 @app.command()
 def testdata(
-    url: str = typer.Option(
-        "http://127.0.0.1:8000", help="Base URL of the running API"
-    ),
+    url: str = typer.Option("http://127.0.0.1:8000", help="Base URL of the running API"),
 ) -> None:
     """Seed the database with a consistent test dataset.
 

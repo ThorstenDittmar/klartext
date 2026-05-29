@@ -176,7 +176,9 @@ async def update_actor(
     service: NarrativeService = Depends(get_narrative_service),
 ) -> ActorResponse:
     """Updates the name, type and description of an existing Actor."""
-    actor = await service.update_actor(narrative_id, actor_id, request.name, request.typ, request.description)
+    actor = await service.update_actor(
+        narrative_id, actor_id, request.name, request.typ, request.description
+    )
     return _to_actor_response(actor)
 
 
@@ -233,9 +235,7 @@ async def extract_scene_claims(
 
     scene = next((s for s in narrative.scenes if s.id == scene_id), None)
     if scene is None:
-        raise SceneNotFoundError(
-            f"Scene {scene_id} not found in narrative {narrative_id}"
-        )
+        raise SceneNotFoundError(f"Scene {scene_id} not found in narrative {narrative_id}")
 
     claims = await extractor.extract_from_scene(scene)
     saved_claims = await claim_repo.save_all(claims, scene_id=scene_id)

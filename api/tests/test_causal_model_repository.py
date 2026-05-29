@@ -10,7 +10,6 @@ from __future__ import annotations
 import pytest
 
 from api.exceptions.causal_model import CausalModelNotFoundError
-from api.models.causal_model import CausalModel
 from tests.fakes.fake_causal_model_repository import FakeCausalModelRepository
 from tests.mothers.causal_model_mother import AxiomMother, CausalModelMother
 

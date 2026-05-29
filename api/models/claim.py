@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from api.exceptions.claim import ClaimValidationError
 
 
-class ClaimType(str, Enum):
+class ClaimType(StrEnum):
     """The epistemic type of a claim. Values match the Claude API prompt convention."""
 
     EMPIRICAL = "empirischer_claim"
@@ -44,7 +44,10 @@ class Claim:
 
     @classmethod
     def create(cls, text: str, typ: ClaimType, confidence: float) -> Claim:
-        """Creates a new Claim from extracted data. Raises ClaimValidationError for invalid input."""
+        """Creates a new Claim from extracted data.
+
+        Raises ClaimValidationError for empty text or out-of-range confidence.
+        """
         if not text.strip():
             raise ClaimValidationError("text must not be empty")
         if not 0.0 <= confidence <= 1.0:
@@ -53,7 +56,10 @@ class Claim:
 
     @classmethod
     def from_record(cls, record: dict[str, Any]) -> Claim:
-        """Reconstructs a Claim from a database record. Raises ClaimValidationError for unknown typ."""
+        """Reconstructs a Claim from a database record.
+
+        Raises ClaimValidationError for an unrecognised typ value.
+        """
         try:
             typ = ClaimType(record["typ"])
         except ValueError as e:

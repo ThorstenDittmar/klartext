@@ -16,7 +16,6 @@ from api.providers.consistency_checker import (
 )
 from tests.mothers.causal_model_mother import AxiomMother
 
-
 # ---------------------------------------------------------------------------
 # Fakes
 # ---------------------------------------------------------------------------
@@ -117,9 +116,7 @@ async def test_claude_checker_returns_consistent_result_for_consistent_scene() -
     from api.providers.claude_consistency_checker import ClaudeConsistencyChecker
 
     mock_response = MagicMock()
-    mock_response.content = [
-        MagicMock(text=json.dumps({"consistent": True, "conflicts": []}))
-    ]
+    mock_response.content = [MagicMock(text=json.dumps({"consistent": True, "conflicts": []}))]
 
     mock_client = MagicMock(spec=anthropic.AsyncAnthropic)
     mock_client.messages = MagicMock()
@@ -172,16 +169,22 @@ async def test_claude_checker_returns_conflict_for_conflicting_scene() -> None:
 
     mock_response = MagicMock()
     mock_response.content = [
-        MagicMock(text=json.dumps({
-            "consistent": False,
-            "conflicts": [
+        MagicMock(
+            text=json.dumps(
                 {
-                    "axiom_label": "A-01",
-                    "description": "Die Szene beschreibt steigende Investitionen nach Zinserhöhung.",
-                    "suggestion": "Ausnahmebedingung ergänzen oder Axiom A-01 erweitern.",
+                    "consistent": False,
+                    "conflicts": [
+                        {
+                            "axiom_label": "A-01",
+                            "description": (
+                                "Die Szene beschreibt steigende Investitionen nach Zinserhöhung."
+                            ),
+                            "suggestion": "Ausnahmebedingung ergänzen oder Axiom A-01 erweitern.",
+                        }
+                    ],
                 }
-            ],
-        }))
+            )
+        )
     ]
 
     mock_client = MagicMock(spec=anthropic.AsyncAnthropic)

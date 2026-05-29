@@ -33,6 +33,10 @@ jobs:
       - name: mypy
         run: mypy . --ignore-missing-imports
 
+      - name: tach (layer boundaries)
+        run: tach check
+        working-directory: ${{ github.workspace }}
+
   lint-frontend:
     name: Frontend Lint + Typecheck
     runs-on: ubuntu-latest

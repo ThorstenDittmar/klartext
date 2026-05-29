@@ -2,13 +2,15 @@
 
 from __future__ import annotations
 
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from api.exceptions.causal_model import AxiomValidationError, CausalModelValidationError
 
 
-class CausalModelStatus(str, Enum):
+class CausalModelStatus(StrEnum):
+    """Publication status of a CausalModel — controls visibility and editability."""
+
     PRIVATE = "private"
     SHARED = "shared"
     REVIEWABLE = "reviewable"
@@ -91,7 +93,10 @@ class CausalModel:
 
     @classmethod
     def create(cls, title: str) -> CausalModel:
-        """Creates a new CausalModel with status 'private'. Raises CausalModelValidationError for empty title."""
+        """Creates a new CausalModel with status 'private'.
+
+        Raises CausalModelValidationError for empty title.
+        """
         if not title.strip():
             raise CausalModelValidationError("title must not be empty")
         return cls(id=None, title=title)

@@ -8,7 +8,6 @@ NarrativeFileParser registered for that suffix via *file_parsers*.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Optional
 
 from api.exceptions.narrative import NarrativeFileNotFoundError, NarrativeParseError
 from api.models.narrative import Narrative, Scene
@@ -28,7 +27,7 @@ class NarrativeImportService:
     def __init__(
         self,
         parser: NarrativeParser,
-        file_parsers: Optional[dict[str, NarrativeFileParser]] = None,
+        file_parsers: dict[str, NarrativeFileParser] | None = None,
     ) -> None:
         self._parser = parser
         self._file_parsers: dict[str, NarrativeFileParser] = file_parsers or {}
@@ -52,9 +51,7 @@ class NarrativeImportService:
     # Private helpers
     # ------------------------------------------------------------------
 
-    def _import_with_file_parser(
-        self, path: Path, file_parser: NarrativeFileParser
-    ) -> Narrative:
+    def _import_with_file_parser(self, path: Path, file_parser: NarrativeFileParser) -> Narrative:
         """Delegates file reading and scene extraction to *file_parser*."""
         scenes = file_parser.parse_file(path)
         if not scenes:

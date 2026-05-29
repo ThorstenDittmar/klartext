@@ -1,0 +1,51 @@
+source_roots = ["."]
+exclude = ["api/tests", "api/.venv", "frontend"]
+
+[[modules]]
+path = "api.exceptions"
+depends_on = []
+
+[[modules]]
+path = "api.models"
+depends_on = [{path = "api.exceptions"}]
+
+[[modules]]
+path = "api.schemas"
+depends_on = [{path = "api.models"}, {path = "api.exceptions"}]
+
+[[modules]]
+path = "api.repositories"
+depends_on = [{path = "api.models"}, {path = "api.exceptions"}]
+
+[[modules]]
+path = "api.providers"
+depends_on = [{path = "api.models"}, {path = "api.exceptions"}]
+
+[[modules]]
+path = "api.parsers"
+depends_on = [{path = "api.models"}, {path = "api.exceptions"}]
+
+[[modules]]
+path = "api.services"
+depends_on = [
+    {path = "api.models"}, {path = "api.exceptions"},
+    {path = "api.repositories"}, {path = "api.providers"},
+    {path = "api.parsers"}, {path = "api.schemas"},
+]
+
+[[modules]]
+path = "api.routers"
+depends_on = [
+    {path = "api.services"}, {path = "api.schemas"},
+    {path = "api.models"}, {path = "api.exceptions"},
+    {path = "api.repositories"}, {path = "api.dependencies"},
+]
+
+[[modules]]
+path = "api.dependencies"
+depends_on = [
+    {path = "api.models"}, {path = "api.exceptions"},
+    {path = "api.repositories"}, {path = "api.providers"},
+    {path = "api.parsers"}, {path = "api.schemas"},
+    {path = "api.services"},
+]

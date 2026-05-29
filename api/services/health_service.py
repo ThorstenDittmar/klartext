@@ -7,13 +7,15 @@ SupabaseHealthChecker is the adapter used in production.
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from enum import Enum
+from enum import StrEnum
 
 import anthropic
 from supabase import AsyncClient
 
 
-class HealthStatus(str, Enum):
+class HealthStatus(StrEnum):
+    """Status values for health check results — overall and per-dependency."""
+
     OK = "ok"
     DEGRADED = "degraded"  # overall status when one or more checks fail
     ERROR = "error"  # per-check status for failed individual checks

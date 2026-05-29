@@ -2,10 +2,14 @@
 
 from __future__ import annotations
 
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
-from api.exceptions.narrative import ActorValidationError, NarrativeValidationError, SceneValidationError
+from api.exceptions.narrative import (
+    ActorValidationError,
+    NarrativeValidationError,
+    SceneValidationError,
+)
 
 
 class Scene:
@@ -30,7 +34,10 @@ class Scene:
 
     @classmethod
     def create(cls, title: str, text: str, position: int) -> Scene:
-        """Creates a new Scene from user input. Raises SceneValidationError for empty title or text."""
+        """Creates a new Scene from user input.
+
+        Raises SceneValidationError for empty title or text.
+        """
         if not title.strip():
             raise SceneValidationError("title must not be empty")
         if not text.strip():
@@ -64,7 +71,7 @@ class Scene:
         return self._position
 
 
-class ActorType(str, Enum):
+class ActorType(StrEnum):
     """The type of an Actor within a Narrative.
 
     Values align with the Wirkmodell entity taxonomy so that actors
@@ -79,8 +86,10 @@ class ActorType(str, Enum):
 
 
 class Actor:
-    """A participant in a Narrative: a person, organisation, group, institution
-    or abstract entity that acts or is acted upon within the story.
+    """A participant in a Narrative.
+
+    A person, organisation, group, institution or abstract entity that acts or is
+    acted upon within the story.
 
     Actors can be mapped to Entitäten in the linked CausalModel, forming the
     connection between concrete narrative figures and abstract model elements.
@@ -115,7 +124,10 @@ class Actor:
 
     @classmethod
     def from_record(cls, record: dict[str, Any]) -> Actor:
-        """Reconstructs an Actor from a database record. Raises ActorValidationError for unknown type."""
+        """Reconstructs an Actor from a database record.
+
+        Raises ActorValidationError for an unrecognised type value.
+        """
         try:
             typ = ActorType(record["typ"])
         except ValueError as e:

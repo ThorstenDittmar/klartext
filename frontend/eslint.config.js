@@ -24,6 +24,9 @@ export default [
     },
     rules: {
       ...tsPlugin.configs.recommended.rules,
+      // TypeScript's own compiler already catches undefined references — no-undef
+      // produces false positives on TypeScript DOM interfaces (RequestInit, etc.)
+      "no-undef": "off",
       "@typescript-eslint/no-unused-vars": [
         "warn",
         { argsIgnorePattern: "^_" },

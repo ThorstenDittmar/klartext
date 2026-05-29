@@ -10,10 +10,9 @@ from __future__ import annotations
 import pytest
 
 from api.exceptions.narrative import ActorNotFoundError, NarrativeNotFoundError
-from api.models.narrative import ActorType, Narrative
+from api.models.narrative import ActorType
 from tests.fakes.fake_narrative_repository import FakeNarrativeRepository
 from tests.mothers.narrative_mother import NarrativeMother
-
 
 # ---------------------------------------------------------------------------
 # Happy path
@@ -125,6 +124,7 @@ async def test_narrative_repository_add_actor_assigns_id() -> None:
     saved_narrative = await repo.save(NarrativeMother.empty())
 
     from api.models.narrative import Actor
+
     actor = Actor.create(name="Max", typ=ActorType.INDIVIDUAL)
     saved_actor = await repo.add_actor(saved_narrative.id, actor)  # type: ignore[arg-type]
 
@@ -138,6 +138,7 @@ async def test_narrative_repository_add_actor_stores_name_and_type() -> None:
     saved_narrative = await repo.save(NarrativeMother.empty())
 
     from api.models.narrative import Actor
+
     actor = Actor.create(name="CDU", typ=ActorType.ORGANISATION)
     saved_actor = await repo.add_actor(saved_narrative.id, actor)  # type: ignore[arg-type]
 
@@ -151,6 +152,7 @@ async def test_narrative_repository_add_actor_raises_for_unknown_narrative() -> 
     repo = FakeNarrativeRepository()
 
     from api.models.narrative import Actor
+
     actor = Actor.create(name="Max", typ=ActorType.INDIVIDUAL)
 
     with pytest.raises(NarrativeNotFoundError):
@@ -164,7 +166,10 @@ async def test_narrative_repository_get_actor_returns_saved_actor() -> None:
     saved_narrative = await repo.save(NarrativeMother.empty())
 
     from api.models.narrative import Actor
-    saved_actor = await repo.add_actor(saved_narrative.id, Actor.create(name="Max", typ=ActorType.INDIVIDUAL))  # type: ignore[arg-type]
+
+    saved_actor = await repo.add_actor(
+        saved_narrative.id, Actor.create(name="Max", typ=ActorType.INDIVIDUAL)
+    )  # type: ignore[arg-type]
     found = await repo.get_actor(saved_narrative.id, saved_actor.id)  # type: ignore[arg-type]
 
     assert found.id == saved_actor.id
@@ -197,7 +202,10 @@ async def test_narrative_repository_update_actor_returns_updated_actor() -> None
     saved_narrative = await repo.save(NarrativeMother.empty())
 
     from api.models.narrative import Actor
-    saved_actor = await repo.add_actor(saved_narrative.id, Actor.create(name="Max", typ=ActorType.INDIVIDUAL))  # type: ignore[arg-type]
+
+    saved_actor = await repo.add_actor(
+        saved_narrative.id, Actor.create(name="Max", typ=ActorType.INDIVIDUAL)
+    )  # type: ignore[arg-type]
     saved_actor.update(name="CDU", typ=ActorType.ORGANISATION, description="A party.")
     updated = await repo.update_actor(saved_narrative.id, saved_actor)  # type: ignore[arg-type]
 
@@ -213,7 +221,10 @@ async def test_narrative_repository_remove_actor_removes_actor() -> None:
     saved_narrative = await repo.save(NarrativeMother.empty())
 
     from api.models.narrative import Actor
-    saved_actor = await repo.add_actor(saved_narrative.id, Actor.create(name="Max", typ=ActorType.INDIVIDUAL))  # type: ignore[arg-type]
+
+    saved_actor = await repo.add_actor(
+        saved_narrative.id, Actor.create(name="Max", typ=ActorType.INDIVIDUAL)
+    )  # type: ignore[arg-type]
     await repo.remove_actor(saved_narrative.id, saved_actor.id)  # type: ignore[arg-type]
 
     with pytest.raises(ActorNotFoundError):
@@ -344,7 +355,12 @@ async def test_supabase_narrative_repository_add_and_get_actor() -> None:
         assert found.typ == ActorType.INDIVIDUAL
         assert found.description == "The protagonist."
     finally:
-        await client.table("narrative_akteure").delete().eq("narrativ_id", saved_narrative.id).execute()
+        await (
+            client.table("narrative_akteure")
+            .delete()
+            .eq("narrativ_id", saved_narrative.id)
+            .execute()
+        )
         await client.table("narrative").delete().eq("id", saved_narrative.id).execute()
 
 
@@ -381,7 +397,12 @@ async def test_supabase_narrative_repository_update_actor() -> None:
         assert updated.typ == ActorType.ORGANISATION
         assert updated.description == "A party."
     finally:
-        await client.table("narrative_akteure").delete().eq("narrativ_id", saved_narrative.id).execute()
+        await (
+            client.table("narrative_akteure")
+            .delete()
+            .eq("narrativ_id", saved_narrative.id)
+            .execute()
+        )
         await client.table("narrative").delete().eq("id", saved_narrative.id).execute()
 
 
@@ -417,7 +438,12 @@ async def test_supabase_narrative_repository_remove_actor() -> None:
         with pytest.raises(ActorNotFoundError):
             await repo.get_actor(saved_narrative.id, saved_actor.id)  # type: ignore[arg-type]
     finally:
-        await client.table("narrative_akteure").delete().eq("narrativ_id", saved_narrative.id).execute()
+        await (
+            client.table("narrative_akteure")
+            .delete()
+            .eq("narrativ_id", saved_narrative.id)
+            .execute()
+        )
         await client.table("narrative").delete().eq("id", saved_narrative.id).execute()
 
 

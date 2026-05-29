@@ -10,7 +10,11 @@ repository's job.
 
 import pytest
 
-from api.exceptions.narrative import ActorValidationError, NarrativeValidationError, SceneValidationError
+from api.exceptions.narrative import (
+    ActorValidationError,
+    NarrativeValidationError,
+    SceneValidationError,
+)
 from api.models.narrative import Actor, ActorType, Narrative, Scene
 
 
@@ -78,7 +82,7 @@ def test_scene_from_record_reconstructs_scene() -> None:
 
 
 def test_narrative_create_raises_for_empty_title() -> None:
-    """Expects a NarrativeValidationError because a Narrative without a title cannot be identified."""
+    """Expects NarrativeValidationError because a Narrative without a title cannot be identified."""
     with pytest.raises(NarrativeValidationError):
         Narrative.create(title="")
 

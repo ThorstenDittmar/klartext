@@ -12,10 +12,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional
 
 from api.models.narrative import Narrative, Scene
-
 
 # ---------------------------------------------------------------------------
 # Narrative seed data
@@ -55,7 +53,7 @@ class SeedActor:
 
     name: str
     typ: str  # ActorType value (German string: 'figur', 'organisation', etc.)
-    description: Optional[str] = field(default=None)
+    description: str | None = field(default=None)
 
 
 SEED_ACTORS: list[SeedActor] = [

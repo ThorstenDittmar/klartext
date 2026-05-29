@@ -18,7 +18,6 @@ from docx import Document
 
 from api.parsers.docx_narrative_parser import DocxNarrativeParser
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -47,7 +46,9 @@ def test_docx_parser_returns_empty_list_for_document_without_scene_markers(
 ) -> None:
     """Expects an empty list when no paragraph matches the 'Szene N' pattern."""
     parser = DocxNarrativeParser()
-    doc_path = _make_docx(["Klartext", "Eine Geschichte.", "Kein Szenentrenner."], tmp_path / "t.docx")
+    doc_path = _make_docx(
+        ["Klartext", "Eine Geschichte.", "Kein Szenentrenner."], tmp_path / "t.docx"
+    )
 
     scenes = parser.parse_file(doc_path)
 

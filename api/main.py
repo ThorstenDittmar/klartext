@@ -11,13 +11,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from api.dependencies import get_health_checker
+from api.exceptions.causal_model import CausalModelNotFoundError
 from api.exceptions.narrative import (
     ActorNotFoundError,
     NarrativeFileNotFoundError,
     NarrativeNotFoundError,
     SceneNotFoundError,
 )
-from api.exceptions.causal_model import CausalModelNotFoundError
 from api.routers import claims, narratives
 from api.routers.causal_models import router as causal_models_router
 from api.services.health_service import HealthChecker, HealthStatus
@@ -45,9 +45,7 @@ app.add_middleware(
 
 
 @app.exception_handler(NarrativeNotFoundError)
-async def handle_narrative_not_found(
-    request: Request, exc: NarrativeNotFoundError
-) -> JSONResponse:
+async def handle_narrative_not_found(request: Request, exc: NarrativeNotFoundError) -> JSONResponse:
     """Translates NarrativeNotFoundError into a 404 response."""
     return JSONResponse(status_code=404, content={"error": str(exc)})
 
@@ -61,17 +59,13 @@ async def handle_narrative_file_not_found(
 
 
 @app.exception_handler(SceneNotFoundError)
-async def handle_scene_not_found(
-    request: Request, exc: SceneNotFoundError
-) -> JSONResponse:
+async def handle_scene_not_found(request: Request, exc: SceneNotFoundError) -> JSONResponse:
     """Translates SceneNotFoundError into a 404 response."""
     return JSONResponse(status_code=404, content={"error": str(exc)})
 
 
 @app.exception_handler(ActorNotFoundError)
-async def handle_actor_not_found(
-    request: Request, exc: ActorNotFoundError
-) -> JSONResponse:
+async def handle_actor_not_found(request: Request, exc: ActorNotFoundError) -> JSONResponse:
     """Translates ActorNotFoundError into a 404 response."""
     return JSONResponse(status_code=404, content={"error": str(exc)})
 

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from api.exceptions.causal_model import CausalModelNotFoundError
 from api.models.causal_model import Axiom, CausalModel
 from api.providers.consistency_checker import ConsistencyChecker, ConsistencyResult
 from api.repositories.causal_model_repository import CausalModelRepository
@@ -38,9 +37,7 @@ class CausalModelService:
         """Returns all CausalModels as title-only summaries."""
         return await self._repository.list_all()
 
-    async def check_consistency(
-        self, causal_model_id: str, scene_text: str
-    ) -> ConsistencyResult:
+    async def check_consistency(self, causal_model_id: str, scene_text: str) -> ConsistencyResult:
         """Checks a scene text against all Axioms of the given CausalModel.
 
         Raises CausalModelNotFoundError if the CausalModel does not exist.

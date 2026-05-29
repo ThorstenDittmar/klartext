@@ -14,7 +14,6 @@ import pytest
 from api.exceptions.causal_model import AxiomValidationError, CausalModelValidationError
 from api.models.causal_model import Axiom, CausalModel, CausalModelStatus
 
-
 # ---------------------------------------------------------------------------
 # Axiom
 # ---------------------------------------------------------------------------

@@ -43,9 +43,15 @@ def scene() -> Scene:
 @pytest.mark.asyncio
 async def test_claude_provider_returns_claim_objects(scene: Scene) -> None:
     """Expects the provider to parse the API response into proper Claim domain objects."""
-    response = json.dumps([
-        {"text": "Inflation entsteht durch Geldmenge.", "typ": "kausaler_claim", "confidence": 0.9}
-    ])
+    response = json.dumps(
+        [
+            {
+                "text": "Inflation entsteht durch Geldmenge.",
+                "typ": "kausaler_claim",
+                "confidence": 0.9,
+            }
+        ]
+    )
     provider = ClaudeClaimExtractionProvider(client=make_mock_client(response))
 
     claims = await provider.extract(scene)
@@ -57,9 +63,15 @@ async def test_claude_provider_returns_claim_objects(scene: Scene) -> None:
 @pytest.mark.asyncio
 async def test_claude_provider_maps_typ_to_claim_type_enum(scene: Scene) -> None:
     """Expects the 'typ' string from the API to be converted to a ClaimType enum value."""
-    response = json.dumps([
-        {"text": "Inflation entsteht durch Geldmenge.", "typ": "kausaler_claim", "confidence": 0.9}
-    ])
+    response = json.dumps(
+        [
+            {
+                "text": "Inflation entsteht durch Geldmenge.",
+                "typ": "kausaler_claim",
+                "confidence": 0.9,
+            }
+        ]
+    )
     provider = ClaudeClaimExtractionProvider(client=make_mock_client(response))
 
     claims = await provider.extract(scene)
@@ -70,10 +82,12 @@ async def test_claude_provider_maps_typ_to_claim_type_enum(scene: Scene) -> None
 @pytest.mark.asyncio
 async def test_claude_provider_clamps_confidence_within_valid_range(scene: Scene) -> None:
     """Expects confidence values outside 0.0–1.0 to be clamped, not rejected."""
-    response = json.dumps([
-        {"text": "Ein Claim.", "typ": "empirischer_claim", "confidence": 1.5},
-        {"text": "Noch ein Claim.", "typ": "empirischer_claim", "confidence": -0.2},
-    ])
+    response = json.dumps(
+        [
+            {"text": "Ein Claim.", "typ": "empirischer_claim", "confidence": 1.5},
+            {"text": "Noch ein Claim.", "typ": "empirischer_claim", "confidence": -0.2},
+        ]
+    )
     provider = ClaudeClaimExtractionProvider(client=make_mock_client(response))
 
     claims = await provider.extract(scene)
@@ -85,9 +99,7 @@ async def test_claude_provider_clamps_confidence_within_valid_range(scene: Scene
 @pytest.mark.asyncio
 async def test_claude_provider_passes_scene_text_to_api(scene: Scene) -> None:
     """Expects the scene text to appear in the prompt sent to the Claude API."""
-    response = json.dumps([
-        {"text": "Ein Claim.", "typ": "empirischer_claim", "confidence": 0.8}
-    ])
+    response = json.dumps([{"text": "Ein Claim.", "typ": "empirischer_claim", "confidence": 0.8}])
     mock_client = make_mock_client(response)
     provider = ClaudeClaimExtractionProvider(client=mock_client)
 
@@ -135,9 +147,7 @@ async def test_claude_provider_raises_for_json_object_instead_of_array(scene: Sc
 @pytest.mark.asyncio
 async def test_claude_provider_raises_for_unknown_claim_type_in_response(scene: Scene) -> None:
     """Expects a ClaimExtractionError when the API returns an unrecognised claim type string."""
-    response = json.dumps([
-        {"text": "Ein Claim.", "typ": "unbekannter_claim", "confidence": 0.8}
-    ])
+    response = json.dumps([{"text": "Ein Claim.", "typ": "unbekannter_claim", "confidence": 0.8}])
     provider = ClaudeClaimExtractionProvider(client=make_mock_client(response))
 
     with pytest.raises(ClaimExtractionError):
@@ -155,12 +165,13 @@ async def test_claude_provider_extracts_claims_from_real_scene() -> None:
     Requires ANTHROPIC_API_KEY to be set. Run with: pytest -m integration
     """
     import os
+
     real_client = anthropic.AsyncAnthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
     provider = ClaudeClaimExtractionProvider(client=real_client)
     scene = Scene.create(
         title="Szene 1",
         text="Inflation entsteht, wenn zu viel Geld zu wenigen Gütern gegenübersteht. "
-             "Die Zentralbank erhöht deshalb die Zinsen, um die Nachfrage zu dämpfen.",
+        "Die Zentralbank erhöht deshalb die Zinsen, um die Nachfrage zu dämpfen.",
         position=1,
     )
 

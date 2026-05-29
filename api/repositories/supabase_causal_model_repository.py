@@ -23,10 +23,16 @@ class SupabaseCausalModelRepository(CausalModelRepository):
     async def save(self, causal_model: CausalModel) -> CausalModel:
         """Inserts the CausalModel and all its Axioms. Returns both with IDs assigned."""
         try:
-            result = await self._client.table("causal_models").insert({
-                "title": causal_model.title,
-                "status": causal_model.status.value,
-            }).execute()
+            result = (
+                await self._client.table("causal_models")
+                .insert(
+                    {
+                        "title": causal_model.title,
+                        "status": causal_model.status.value,
+                    }
+                )
+                .execute()
+            )
         except Exception as exc:
             raise CausalModelPersistenceError(f"Failed to save CausalModel: {exc}") from exc
 
@@ -42,29 +48,40 @@ class SupabaseCausalModelRepository(CausalModelRepository):
     async def add_axiom(self, causal_model_id: str, axiom: Axiom) -> Axiom:
         """Inserts an Axiom as a model element and returns it with an ID."""
         try:
-            result = await self._client.table("model_elements").insert({
-                "causal_model_id": causal_model_id,
-                "typ": "axiom",
-                "label": axiom.label,
-                "description": axiom.description,
-                "is_axiomatic": True,
-            }).execute()
+            result = (
+                await self._client.table("model_elements")
+                .insert(
+                    {
+                        "causal_model_id": causal_model_id,
+                        "typ": "axiom",
+                        "label": axiom.label,
+                        "description": axiom.description,
+                        "is_axiomatic": True,
+                    }
+                )
+                .execute()
+            )
         except Exception as exc:
             raise CausalModelPersistenceError(f"Failed to save Axiom: {exc}") from exc
 
         row = result.data[0]
-        return Axiom.from_record({
-            "id": row["id"],
-            "label": row["label"],
-            "beschreibung": row["beschreibung"],
-        })
+        return Axiom.from_record(
+            {
+                "id": row["id"],
+                "label": row["label"],
+                "beschreibung": row["beschreibung"],
+            }
+        )
 
     async def find_by_id(self, causal_model_id: str) -> CausalModel:
         """Loads the CausalModel and all its Axioms from Supabase."""
         try:
-            cm_result = await self._client.table("causal_models").select("*").eq(
-                "id", causal_model_id
-            ).execute()
+            cm_result = (
+                await self._client.table("causal_models")
+                .select("*")
+                .eq("id", causal_model_id)
+                .execute()
+            )
         except Exception as exc:
             raise CausalModelPersistenceError(f"Failed to load CausalModel: {exc}") from exc
 
@@ -74,18 +91,26 @@ class SupabaseCausalModelRepository(CausalModelRepository):
         cm = CausalModel.from_record(cm_result.data[0])
 
         try:
-            axiom_result = await self._client.table("model_elements").select("*").eq(
-                "causal_model_id", causal_model_id
-            ).eq("typ", "axiom").execute()
+            axiom_result = (
+                await self._client.table("model_elements")
+                .select("*")
+                .eq("causal_model_id", causal_model_id)
+                .eq("typ", "axiom")
+                .execute()
+            )
         except Exception as exc:
             raise CausalModelPersistenceError(f"Failed to load Axioms: {exc}") from exc
 
         for row in axiom_result.data:
-            cm.add_axiom(Axiom.from_record({
-                "id": row["id"],
-                "label": row["label"],
-                "description": row["description"],
-            }))
+            cm.add_axiom(
+                Axiom.from_record(
+                    {
+                        "id": row["id"],
+                        "label": row["label"],
+                        "description": row["description"],
+                    }
+                )
+            )
 
         return cm
 

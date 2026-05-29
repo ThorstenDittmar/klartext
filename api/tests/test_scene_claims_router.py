@@ -12,14 +12,16 @@ from __future__ import annotations
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-from api.dependencies import get_claim_extractor_service, get_claim_repository, get_narrative_service
+from api.dependencies import (
+    get_claim_extractor_service,
+    get_claim_repository,
+    get_narrative_service,
+)
 from api.exceptions.narrative import NarrativeNotFoundError
 from api.main import app
 from api.models.claim import Claim, ClaimType
 from api.models.narrative import Narrative, Scene
 from api.repositories.claim_repository import ClaimRepository
-from api.services.claim_extractor_service import ClaimExtractorService
-from api.services.narrative_service import NarrativeService
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -37,9 +39,7 @@ UNKNOWN_ID = "0000-0000"
 
 def make_narrative_with_scene() -> Narrative:
     narrative = Narrative(id=NARRATIVE_ID, title="Klartext")
-    narrative.add_scene(
-        Scene(id=SCENE_ID, title="Szene 1", text="Inflation entsteht.", position=1)
-    )
+    narrative.add_scene(Scene(id=SCENE_ID, title="Szene 1", text="Inflation entsteht.", position=1))
     return narrative
 
 
@@ -86,6 +86,7 @@ class FakeClaimRepository(ClaimRepository):
 
     async def save_all(self, claims: list[Claim], scene_id: str) -> list[Claim]:
         import uuid
+
         saved = [
             Claim(id=str(uuid.uuid4()), text=c.text, typ=c.typ, confidence=c.confidence)
             for c in claims
@@ -107,14 +108,14 @@ def setup_overrides(
     extractor_service: object | None = None,
     claim_repository: object | None = None,
 ) -> None:
-    app.dependency_overrides[get_narrative_service] = (
-        lambda: narrative_service or FakeNarrativeService()
+    app.dependency_overrides[get_narrative_service] = lambda: (
+        narrative_service or FakeNarrativeService()
     )
-    app.dependency_overrides[get_claim_extractor_service] = (
-        lambda: extractor_service or FakeClaimExtractorService()
+    app.dependency_overrides[get_claim_extractor_service] = lambda: (
+        extractor_service or FakeClaimExtractorService()
     )
-    app.dependency_overrides[get_claim_repository] = (
-        lambda: claim_repository or FakeClaimRepository()
+    app.dependency_overrides[get_claim_repository] = lambda: (
+        claim_repository or FakeClaimRepository()
     )
 
 

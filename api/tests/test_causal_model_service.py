@@ -13,7 +13,6 @@ from api.models.causal_model import CausalModelStatus
 from api.services.causal_model_service import CausalModelService
 from tests.fakes.fake_causal_model_repository import FakeCausalModelRepository
 from tests.fakes.fake_consistency_checker import FakeConsistencyChecker
-from tests.mothers.causal_model_mother import AxiomMother, CausalModelMother
 
 
 def make_service(
@@ -72,7 +71,9 @@ async def test_add_axiom_assigns_id() -> None:
     service = make_service()
     cm = await service.create(title="Test")
 
-    axiom = await service.add_axiom(causal_model_id=cm.id, label="A-01", description="Eine Annahme.")  # type: ignore[arg-type]
+    axiom = await service.add_axiom(
+        causal_model_id=cm.id, label="A-01", description="Eine Annahme."
+    )  # type: ignore[arg-type]
 
     assert axiom.id is not None
 
@@ -83,7 +84,9 @@ async def test_add_axiom_stores_label_and_description() -> None:
     service = make_service()
     cm = await service.create(title="Test")
 
-    axiom = await service.add_axiom(causal_model_id=cm.id, label="A-01", description="Eine Annahme.")  # type: ignore[arg-type]
+    axiom = await service.add_axiom(
+        causal_model_id=cm.id, label="A-01", description="Eine Annahme."
+    )  # type: ignore[arg-type]
 
     assert axiom.label == "A-01"
     assert axiom.description == "Eine Annahme."

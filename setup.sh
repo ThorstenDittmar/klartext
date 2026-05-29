@@ -110,6 +110,16 @@ success "Frontend ready"
 cd ..
 
 # ---------------------------------------------------------------------------
+# Git hooks (pre-commit)
+# ---------------------------------------------------------------------------
+
+section "Installing git hooks"
+
+info "Installing pre-commit hooks…"
+api/.venv/bin/pre-commit install
+success "Git hooks installed — hooks run automatically before every commit"
+
+# ---------------------------------------------------------------------------
 # Supabase
 # ---------------------------------------------------------------------------
 

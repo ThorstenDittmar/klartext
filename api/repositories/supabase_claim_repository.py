@@ -43,14 +43,10 @@ class SupabaseClaimRepository(ClaimRepository):
         try:
             result = await self._client.table(_CLAIM_TABLE).insert(rows).execute()
         except Exception as e:
-            raise ClaimPersistenceError(
-                f"Failed to save claims for scene {scene_id}: {e}"
-            ) from e
+            raise ClaimPersistenceError(f"Failed to save claims for scene {scene_id}: {e}") from e
 
         if not result.data:
-            raise ClaimPersistenceError(
-                f"Save returned no data for claims of scene {scene_id}."
-            )
+            raise ClaimPersistenceError(f"Save returned no data for claims of scene {scene_id}.")
 
         return [Claim.from_record(row) for row in result.data]
 
@@ -68,8 +64,6 @@ class SupabaseClaimRepository(ClaimRepository):
                 .execute()
             )
         except Exception as e:
-            raise ClaimPersistenceError(
-                f"Failed to load claims for scene {scene_id}: {e}"
-            ) from e
+            raise ClaimPersistenceError(f"Failed to load claims for scene {scene_id}: {e}") from e
 
         return [Claim.from_record(row) for row in result.data]

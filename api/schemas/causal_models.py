@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-from typing import Optional
-
 from pydantic import BaseModel, field_validator
 
 
 class CreateCausalModelRequest(BaseModel):
+    """Request body for creating a new CausalModel."""
+
     title: str
 
     @field_validator("title")
@@ -19,6 +19,8 @@ class CreateCausalModelRequest(BaseModel):
 
 
 class AddAxiomRequest(BaseModel):
+    """Request body for adding an Axiom to a CausalModel."""
+
     label: str
     description: str
 
@@ -31,6 +33,8 @@ class AddAxiomRequest(BaseModel):
 
 
 class CheckConsistencyRequest(BaseModel):
+    """Request body for checking a scene's consistency against a CausalModel."""
+
     scene_text: str
 
     @field_validator("scene_text")
@@ -42,12 +46,16 @@ class CheckConsistencyRequest(BaseModel):
 
 
 class AxiomResponse(BaseModel):
+    """Response shape for a single Axiom."""
+
     id: str
     label: str
     description: str
 
 
 class CausalModelResponse(BaseModel):
+    """Response shape for a CausalModel with its full list of Axioms."""
+
     id: str
     title: str
     status: str
@@ -55,17 +63,23 @@ class CausalModelResponse(BaseModel):
 
 
 class CausalModelSummaryResponse(BaseModel):
+    """Response shape for a CausalModel without Axioms (list view)."""
+
     id: str
     title: str
     status: str
 
 
 class ConsistencyConflictResponse(BaseModel):
+    """Response shape for a single consistency conflict between a scene and an Axiom."""
+
     axiom_label: str
     description: str
-    suggestion: Optional[str]
+    suggestion: str | None
 
 
 class ConsistencyResultResponse(BaseModel):
+    """Response shape for the full consistency check result."""
+
     consistent: bool
     conflicts: list[ConsistencyConflictResponse]

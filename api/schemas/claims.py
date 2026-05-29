@@ -6,6 +6,8 @@ from pydantic import BaseModel, field_validator
 
 
 class ExtractClaimsRequest(BaseModel):
+    """Request body for extracting claims from raw text."""
+
     text: str
 
     @field_validator("text")
@@ -18,10 +20,14 @@ class ExtractClaimsRequest(BaseModel):
 
 
 class ClaimResponse(BaseModel):
+    """Response shape for a single extracted Claim."""
+
     text: str
     typ: str
     confidence: float
 
 
 class ExtractClaimsResponse(BaseModel):
+    """Response shape for a claim extraction result."""
+
     claims: list[ClaimResponse]

@@ -20,6 +20,8 @@ dev = [
     "pytest-asyncio>=0.23.0",
     "ruff>=0.5.0",
     "mypy>=1.10.0",
+    "pre-commit>=3.7.0",
+    "tach>=0.20.0",
 ]
 
 [project.scripts]
@@ -45,8 +47,25 @@ target-version = "py312"
 line-length = 100
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "UP", "B"]
-ignore = ["B008"]
+select = ["E", "F", "I", "UP", "B", "D", "N"]
+ignore = [
+    "B008",   # FastAPI Depends() in default args
+    "D102",   # method docstrings — @property getters are trivial per CLAUDE.md
+    "D107",   # __init__ docstring — we use factory methods instead
+    "D203",   # conflicts with D211
+    "D213",   # conflicts with D212
+    "D401",   # imperative mood — too prescriptive
+    "N999",   # invalid module name — allow api package naming
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["D100", "D101", "D102", "D103", "D104"]  # test files: docstrings optional
+"cli.py" = ["D103", "B904"]   # CLI: typer help strings + typer.Exit pattern
+"seeddata.py" = ["D"]         # seed data file, not production code
+"main.py" = ["E402"]          # load_dotenv() must run before other imports
 
 [tool.mypy]
 python_version = "3.12"

@@ -175,6 +175,7 @@ def test_narrative_import_service_dispatches_docx_to_file_parser(tmp_path: Path)
     )
     # Create a minimal but real DOCX so the path exists
     from docx import Document as _Document
+
     doc_path = tmp_path / "narrative.docx"
     _Document().save(str(doc_path))
 
@@ -211,6 +212,7 @@ def test_narrative_import_service_builds_narrative_from_file_parser_result(
         file_parsers={".docx": file_parser},
     )
     from docx import Document as _Document
+
     doc_path = tmp_path / "narrative.docx"
     _Document().save(str(doc_path))
 
@@ -230,6 +232,7 @@ def test_narrative_import_service_raises_parse_error_when_file_parser_returns_no
         file_parsers={".docx": FakeFileParserReturnsNothing()},
     )
     from docx import Document as _Document
+
     doc_path = tmp_path / "empty.docx"
     _Document().save(str(doc_path))
 
@@ -257,6 +260,7 @@ def test_narrative_import_service_derives_title_from_docx_filename(
         file_parsers={".docx": FakeNarrativeFileParser()},
     )
     from docx import Document as _Document
+
     doc_path = tmp_path / "meine-geschichte.docx"
     _Document().save(str(doc_path))
 

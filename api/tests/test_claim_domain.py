@@ -10,13 +10,14 @@ import pytest
 from api.exceptions.claim import ClaimValidationError
 from api.models.claim import Claim, ClaimType
 
-
 # --- Happy path ---
 
 
 def test_claim_create_stores_text_type_and_confidence() -> None:
     """Expects all three fields to be accessible after creation."""
-    claim = Claim.create(text="Inflation entsteht durch Geldmenge.", typ=ClaimType.CAUSAL, confidence=0.9)
+    claim = Claim.create(
+        text="Inflation entsteht durch Geldmenge.", typ=ClaimType.CAUSAL, confidence=0.9
+    )
 
     assert claim.text == "Inflation entsteht durch Geldmenge."
     assert claim.typ == ClaimType.CAUSAL
@@ -87,7 +88,7 @@ def test_claim_create_raises_for_confidence_above_one() -> None:
 
 
 def test_claim_from_record_raises_for_unknown_typ() -> None:
-    """Expects a ClaimValidationError when the database record contains an unrecognised claim type."""
+    """Expects ClaimValidationError when the database record contains an unrecognised claim type."""
     record = {"id": "abc-123", "text": "Ein Claim.", "typ": "unbekannter_claim", "confidence": 0.8}
 
     with pytest.raises(ClaimValidationError):

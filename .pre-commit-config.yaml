@@ -1,0 +1,54 @@
+# Pre-commit hooks — run automatically before every git commit.
+# Install once after cloning: pre-commit install  (handled by setup.sh)
+# Run manually on all files: pre-commit run --all-files
+
+repos:
+  # ---------------------------------------------------------------------------
+  # Python: ruff (lint + format)
+  # ---------------------------------------------------------------------------
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.11.12
+    hooks:
+      - id: ruff
+        name: ruff lint
+        args: [--fix]
+        types_or: [python, pyi]
+      - id: ruff-format
+        name: ruff format
+        types_or: [python, pyi]
+
+  # mypy: runs in CI only (lint.yml) — requires Python 3.12+ which is not
+  # guaranteed locally. Install Python 3.12 to enable type checking locally:
+  # https://docs.brew.sh/Homebrew-and-Python
+
+  # ---------------------------------------------------------------------------
+  # Python: tach (layer boundary enforcement)
+  # ---------------------------------------------------------------------------
+  - repo: local
+    hooks:
+      - id: tach-check
+        name: tach (layer boundaries)
+        entry: api/.venv/bin/tach
+        language: system
+        args: [check]
+        pass_filenames: false
+        types: [python]
+
+  # ---------------------------------------------------------------------------
+  # Frontend: ESLint + TypeScript
+  # ---------------------------------------------------------------------------
+  - repo: local
+    hooks:
+      - id: eslint
+        name: eslint
+        entry: bash -c 'cd frontend && npm run lint'
+        language: system
+        types_or: [ts, tsx]
+        pass_filenames: false
+
+      - id: tsc
+        name: tsc typecheck
+        entry: bash -c 'cd frontend && npm run typecheck'
+        language: system
+        types_or: [ts, tsx]
+        pass_filenames: false

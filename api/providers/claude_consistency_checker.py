@@ -54,9 +54,7 @@ class ClaudeConsistencyChecker(ConsistencyChecker):
         if not axioms:
             return ConsistencyResult(consistent=True)
 
-        axiom_block = "\n".join(
-            f"- {a.label}: {a.description}" for a in axioms
-        )
+        axiom_block = "\n".join(f"- {a.label}: {a.description}" for a in axioms)
         user_message = f"Szene:\n{scene_text}\n\nAxiome:\n{axiom_block}"
 
         response = await self._client.messages.create(
