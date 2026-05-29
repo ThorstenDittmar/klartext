@@ -15,11 +15,11 @@ import {
 // ---------------------------------------------------------------------------
 
 const ACTOR_TYPE_LABELS: Record<string, string> = {
-  figur: "Figur",
+  individual: "Figur",
   organisation: "Organisation",
-  gruppe: "Gruppe",
+  group: "Gruppe",
   institution: "Institution",
-  abstrakte_entitaet: "Abstrakte Entität",
+  abstract_entity: "Abstrakte Entität",
 };
 
 const ACTOR_TYPES = Object.entries(ACTOR_TYPE_LABELS);

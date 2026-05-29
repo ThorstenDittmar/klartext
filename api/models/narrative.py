@@ -71,11 +71,11 @@ class ActorType(str, Enum):
     can be mapped to corresponding model elements.
     """
 
-    INDIVIDUAL = "figur"
+    INDIVIDUAL = "individual"
     ORGANISATION = "organisation"
-    GROUP = "gruppe"
+    GROUP = "group"
     INSTITUTION = "institution"
-    ABSTRACT = "abstrakte_entitaet"
+    ABSTRACT = "abstract_entity"
 
 
 class Actor:

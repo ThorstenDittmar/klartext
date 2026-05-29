@@ -9,14 +9,14 @@ from api.exceptions.causal_model import AxiomValidationError, CausalModelValidat
 
 
 class CausalModelStatus(str, Enum):
-    PRIVATE = "privat"
-    SHARED = "geteilt"
-    REVIEWABLE = "reviewfaehig"
-    INTERNAL = "intern"
-    CATALOG = "katalog"
-    ARCHIVED = "archiviert"
-    REPLACED = "ersetzt"
-    WITHDRAWN = "zurueckgezogen"
+    PRIVATE = "private"
+    SHARED = "shared"
+    REVIEWABLE = "reviewable"
+    INTERNAL = "internal"
+    CATALOG = "catalogue"
+    ARCHIVED = "archived"
+    REPLACED = "superseded"
+    WITHDRAWN = "withdrawn"
 
 
 class Axiom:
@@ -51,7 +51,7 @@ class Axiom:
         return cls(
             id=record["id"],
             label=record["label"],
-            description=record["beschreibung"],
+            description=record["description"],
         )
 
     @property

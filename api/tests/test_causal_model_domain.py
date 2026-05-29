@@ -67,7 +67,7 @@ def test_axiom_from_record_reconstructs_axiom() -> None:
     record = {
         "id": "abc-123",
         "label": "A-01",
-        "beschreibung": "Eine Annahme.",
+        "description": "Eine Annahme.",
     }
 
     axiom = Axiom.from_record(record)
@@ -145,7 +145,7 @@ def test_causal_model_add_axiom_preserves_order() -> None:
 
 def test_causal_model_from_record_reconstructs_causal_model() -> None:
     """Expects from_record to reconstruct a persisted CausalModel with its ID."""
-    record = {"id": "cm-123", "title": "Klartext Wirkmodell", "status": "privat"}
+    record = {"id": "cm-123", "title": "Klartext Wirkmodell", "status": "private"}
 
     cm = CausalModel.from_record(record)
 

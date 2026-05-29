@@ -61,12 +61,12 @@ class SeedActor:
 SEED_ACTORS: list[SeedActor] = [
     SeedActor(
         name="Mara",
-        typ="figur",
+        typ="individual",
         description="Autorin und Mitgründerin von klartext.jetzt.",
     ),
     SeedActor(
         name="Tarek",
-        typ="figur",
+        typ="individual",
         description="Entwickler und Mitgründer von klartext.jetzt.",
     ),
     SeedActor(
@@ -76,7 +76,7 @@ SEED_ACTORS: list[SeedActor] = [
     ),
     SeedActor(
         name="Öffentlichkeit",
-        typ="abstrakte_entitaet",
+        typ="abstract_entity",
         description="Die abstrakte Gemeinschaft der Debattenteilnehmer.",
     ),
 ]

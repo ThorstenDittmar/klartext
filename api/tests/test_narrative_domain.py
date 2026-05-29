@@ -183,11 +183,11 @@ def test_actor_type_covers_all_expected_variants() -> None:
     """Expects all five actor types to exist in the enum."""
     types = {t.value for t in ActorType}
 
-    assert "figur" in types
+    assert "individual" in types
     assert "organisation" in types
-    assert "gruppe" in types
+    assert "group" in types
     assert "institution" in types
-    assert "abstrakte_entitaet" in types
+    assert "abstract_entity" in types
 
 
 def test_actor_from_record_reconstructs_actor_with_description() -> None:
@@ -195,7 +195,7 @@ def test_actor_from_record_reconstructs_actor_with_description() -> None:
     record = {
         "id": "actor-001",
         "name": "Max",
-        "typ": "figur",
+        "typ": "individual",
         "description": "The protagonist.",
     }
 
@@ -209,7 +209,7 @@ def test_actor_from_record_reconstructs_actor_with_description() -> None:
 
 def test_actor_from_record_reconstructs_actor_without_description() -> None:
     """Expects description to be None when the database record has no description."""
-    record = {"id": "actor-002", "name": "Voters", "typ": "gruppe", "description": None}
+    record = {"id": "actor-002", "name": "Voters", "typ": "group", "description": None}
 
     actor = Actor.from_record(record)
 

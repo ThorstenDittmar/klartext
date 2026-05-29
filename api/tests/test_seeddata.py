@@ -74,8 +74,8 @@ def test_seed_actors_all_have_valid_types() -> None:
 
 
 def test_seed_actors_include_at_least_one_individual() -> None:
-    """Expects at least one actor of type INDIVIDUAL (figur) in the seed data."""
+    """Expects at least one actor of type INDIVIDUAL in the seed data."""
     types = {a.typ for a in SEED_ACTORS}
-    assert "figur" in types
+    assert "individual" in types
 
 

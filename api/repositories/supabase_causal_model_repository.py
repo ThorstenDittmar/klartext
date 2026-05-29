@@ -13,8 +13,8 @@ class SupabaseCausalModelRepository(CausalModelRepository):
     """Adapter — persists CausalModels and Axioms in Supabase.
 
     Table mapping:
-      wirkmodelle  →  CausalModel (id, title, status)
-      modellelemente (typ='axiom', ist_axiomatisch=True)  →  Axiom (id, label, description)
+      causal_models  →  CausalModel (id, title, status)
+      model_elements (typ='axiom', is_axiomatic=True)  →  Axiom (id, label, description)
     """
 
     def __init__(self, client: AsyncClient) -> None:
@@ -23,7 +23,7 @@ class SupabaseCausalModelRepository(CausalModelRepository):
     async def save(self, causal_model: CausalModel) -> CausalModel:
         """Inserts the CausalModel and all its Axioms. Returns both with IDs assigned."""
         try:
-            result = await self._client.table("wirkmodelle").insert({
+            result = await self._client.table("causal_models").insert({
                 "title": causal_model.title,
                 "status": causal_model.status.value,
             }).execute()
@@ -42,12 +42,12 @@ class SupabaseCausalModelRepository(CausalModelRepository):
     async def add_axiom(self, causal_model_id: str, axiom: Axiom) -> Axiom:
         """Inserts an Axiom as a model element and returns it with an ID."""
         try:
-            result = await self._client.table("modellelemente").insert({
-                "wirkmodell_id": causal_model_id,
+            result = await self._client.table("model_elements").insert({
+                "causal_model_id": causal_model_id,
                 "typ": "axiom",
                 "label": axiom.label,
-                "beschreibung": axiom.description,
-                "ist_axiomatisch": True,
+                "description": axiom.description,
+                "is_axiomatic": True,
             }).execute()
         except Exception as exc:
             raise CausalModelPersistenceError(f"Failed to save Axiom: {exc}") from exc
@@ -62,7 +62,7 @@ class SupabaseCausalModelRepository(CausalModelRepository):
     async def find_by_id(self, causal_model_id: str) -> CausalModel:
         """Loads the CausalModel and all its Axioms from Supabase."""
         try:
-            cm_result = await self._client.table("wirkmodelle").select("*").eq(
+            cm_result = await self._client.table("causal_models").select("*").eq(
                 "id", causal_model_id
             ).execute()
         except Exception as exc:
@@ -74,8 +74,8 @@ class SupabaseCausalModelRepository(CausalModelRepository):
         cm = CausalModel.from_record(cm_result.data[0])
 
         try:
-            axiom_result = await self._client.table("modellelemente").select("*").eq(
-                "wirkmodell_id", causal_model_id
+            axiom_result = await self._client.table("model_elements").select("*").eq(
+                "causal_model_id", causal_model_id
             ).eq("typ", "axiom").execute()
         except Exception as exc:
             raise CausalModelPersistenceError(f"Failed to load Axioms: {exc}") from exc
@@ -84,7 +84,7 @@ class SupabaseCausalModelRepository(CausalModelRepository):
             cm.add_axiom(Axiom.from_record({
                 "id": row["id"],
                 "label": row["label"],
-                "beschreibung": row["beschreibung"],
+                "description": row["description"],
             }))
 
         return cm
@@ -92,7 +92,7 @@ class SupabaseCausalModelRepository(CausalModelRepository):
     async def list_all(self) -> list[CausalModel]:
         """Returns all CausalModels as title-only summaries."""
         try:
-            result = await self._client.table("wirkmodelle").select("id, title, status").execute()
+            result = await self._client.table("causal_models").select("id, title, status").execute()
         except Exception as exc:
             raise CausalModelPersistenceError(f"Failed to list CausalModels: {exc}") from exc
 

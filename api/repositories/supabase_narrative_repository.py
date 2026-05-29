@@ -11,19 +11,13 @@ from api.models.narrative import Actor, Narrative, Scene
 from api.repositories.narrative_repository import NarrativeRepository
 
 _NARRATIVE_TABLE = "narrative"
-_SCENE_TABLE = "narrative_einheiten"
-_ACTOR_TABLE = "narrative_akteure"
-_SCENE_TYPE = "szene"
+_SCENE_TABLE = "narrative_units"
+_ACTOR_TABLE = "narrative_actors"
+_SCENE_TYPE = "scene"
 
 
 class SupabaseNarrativeRepository(NarrativeRepository):
-    """Reads and writes Narratives and their Scenes using the Supabase PostgREST API.
-
-    Column mapping (DB uses German names):
-      narrative.titel       → Narrative.title
-      narrative_einheiten.titel  → Scene.title
-      narrative_einheiten.inhalt → Scene.text
-    """
+    """Reads and writes Narratives and their Scenes using the Supabase PostgREST API."""
 
     logger = logging.getLogger(__name__)
 
@@ -39,7 +33,7 @@ class SupabaseNarrativeRepository(NarrativeRepository):
         try:
             narrative_result = (
                 await self._client.table(_NARRATIVE_TABLE)
-                .insert({"titel": narrative.title})
+                .insert({"title": narrative.title})
                 .execute()
             )
         except Exception as e:
@@ -57,10 +51,10 @@ class SupabaseNarrativeRepository(NarrativeRepository):
                     await self._client.table(_SCENE_TABLE)
                     .insert(
                         {
-                            "narrativ_id": narrative_id,
+                            "narrative_id": narrative_id,
                             "typ": _SCENE_TYPE,
-                            "titel": scene.title,
-                            "inhalt": scene.text,
+                            "title": scene.title,
+                            "content": scene.text,
                             "position": scene.position,
                         }
                     )
@@ -81,8 +75,8 @@ class SupabaseNarrativeRepository(NarrativeRepository):
                 Scene.from_record(
                     {
                         "id": scene_record["id"],
-                        "title": scene_record["titel"],
-                        "text": scene_record["inhalt"],
+                        "title": scene_record["title"],
+                        "text": scene_record["content"],
                         "position": scene_record["position"],
                     }
                 )
@@ -115,15 +109,15 @@ class SupabaseNarrativeRepository(NarrativeRepository):
         row = narrative_result.data[0]
         narrative = Narrative.from_record({
             "id": row["id"],
-            "title": row["titel"],
-            "causal_model_id": row.get("wirkmodell_id"),
+            "title": row["title"],
+            "causal_model_id": row.get("causal_model_id"),
         })
 
         try:
             scene_result = (
                 await self._client.table(_SCENE_TABLE)
                 .select("*")
-                .eq("narrativ_id", narrative_id)
+                .eq("narrative_id", narrative_id)
                 .eq("typ", _SCENE_TYPE)
                 .order("position")
                 .execute()
@@ -138,8 +132,8 @@ class SupabaseNarrativeRepository(NarrativeRepository):
                 Scene.from_record(
                     {
                         "id": scene_row["id"],
-                        "title": scene_row["titel"],
-                        "text": scene_row["inhalt"],
+                        "title": scene_row["title"],
+                        "text": scene_row["content"],
                         "position": scene_row["position"],
                     }
                 )
@@ -149,7 +143,7 @@ class SupabaseNarrativeRepository(NarrativeRepository):
             actor_result = (
                 await self._client.table(_ACTOR_TABLE)
                 .select("*")
-                .eq("narrativ_id", narrative_id)
+                .eq("narrative_id", narrative_id)
                 .execute()
             )
         except Exception as e:
@@ -164,7 +158,7 @@ class SupabaseNarrativeRepository(NarrativeRepository):
                         "id": actor_row["id"],
                         "name": actor_row["name"],
                         "typ": actor_row["typ"],
-                        "description": actor_row.get("beschreibung"),
+                        "description": actor_row.get("description"),
                     }
                 )
             )
@@ -180,7 +174,7 @@ class SupabaseNarrativeRepository(NarrativeRepository):
         try:
             result = (
                 await self._client.table(_NARRATIVE_TABLE)
-                .select("id, titel")
+                .select("id, title")
                 .order("created_at")
                 .execute()
             )
@@ -188,7 +182,7 @@ class SupabaseNarrativeRepository(NarrativeRepository):
             raise NarrativePersistenceError(f"Failed to list narratives: {e}") from e
 
         return [
-            Narrative.from_record({"id": row["id"], "title": row["titel"]})
+            Narrative.from_record({"id": row["id"], "title": row["title"]})
             for row in result.data
         ]
 
@@ -213,10 +207,10 @@ class SupabaseNarrativeRepository(NarrativeRepository):
                 await self._client.table(_SCENE_TABLE)
                 .insert(
                     {
-                        "narrativ_id": narrative_id,
+                        "narrative_id": narrative_id,
                         "typ": _SCENE_TYPE,
-                        "titel": scene.title,
-                        "inhalt": scene.text,
+                        "title": scene.title,
+                        "content": scene.text,
                         "position": scene.position,
                     }
                 )
@@ -236,8 +230,8 @@ class SupabaseNarrativeRepository(NarrativeRepository):
         return Scene.from_record(
             {
                 "id": row["id"],
-                "title": row["titel"],
-                "text": row["inhalt"],
+                "title": row["title"],
+                "text": row["content"],
                 "position": row["position"],
             }
         )
@@ -264,10 +258,10 @@ class SupabaseNarrativeRepository(NarrativeRepository):
                 await self._client.table(_ACTOR_TABLE)
                 .insert(
                     {
-                        "narrativ_id": narrative_id,
+                        "narrative_id": narrative_id,
                         "name": actor.name,
                         "typ": actor.typ.value,
-                        "beschreibung": actor.description,
+                        "description": actor.description,
                     }
                 )
                 .execute()
@@ -286,7 +280,7 @@ class SupabaseNarrativeRepository(NarrativeRepository):
                 "id": row["id"],
                 "name": row["name"],
                 "typ": row["typ"],
-                "description": row.get("beschreibung"),
+                "description": row.get("description"),
             }
         )
 
@@ -313,7 +307,7 @@ class SupabaseNarrativeRepository(NarrativeRepository):
                 await self._client.table(_ACTOR_TABLE)
                 .select("*")
                 .eq("id", actor_id)
-                .eq("narrativ_id", narrative_id)
+                .eq("narrative_id", narrative_id)
                 .execute()
             )
         except Exception as e:
@@ -330,7 +324,7 @@ class SupabaseNarrativeRepository(NarrativeRepository):
                 "id": row["id"],
                 "name": row["name"],
                 "typ": row["typ"],
-                "description": row.get("beschreibung"),
+                "description": row.get("description"),
             }
         )
 
@@ -351,11 +345,11 @@ class SupabaseNarrativeRepository(NarrativeRepository):
                     {
                         "name": actor.name,
                         "typ": actor.typ.value,
-                        "beschreibung": actor.description,
+                        "description": actor.description,
                     }
                 )
                 .eq("id", actor.id)
-                .eq("narrativ_id", narrative_id)
+                .eq("narrative_id", narrative_id)
                 .execute()
             )
         except Exception as e:
@@ -372,7 +366,7 @@ class SupabaseNarrativeRepository(NarrativeRepository):
                 "id": row["id"],
                 "name": row["name"],
                 "typ": row["typ"],
-                "description": row.get("beschreibung"),
+                "description": row.get("description"),
             }
         )
 
@@ -391,7 +385,7 @@ class SupabaseNarrativeRepository(NarrativeRepository):
                 self._client.table(_ACTOR_TABLE)
                 .delete()
                 .eq("id", actor_id)
-                .eq("narrativ_id", narrative_id)
+                .eq("narrative_id", narrative_id)
                 .execute()
             )
         except Exception as e:
@@ -400,7 +394,7 @@ class SupabaseNarrativeRepository(NarrativeRepository):
             ) from e
 
     async def link_to_causal_model(self, narrative_id: str, causal_model_id: str) -> Narrative:
-        """Updates the wirkmodell_id column on the Narrative row. Returns the updated Narrative.
+        """Updates the causal_model_id column on the Narrative row. Returns the updated Narrative.
 
         Raises NarrativeNotFoundError if no Narrative exists for the given ID.
         Raises NarrativePersistenceError on database failure.
@@ -412,7 +406,7 @@ class SupabaseNarrativeRepository(NarrativeRepository):
         try:
             result = (
                 await self._client.table(_NARRATIVE_TABLE)
-                .update({"wirkmodell_id": causal_model_id})
+                .update({"causal_model_id": causal_model_id})
                 .eq("id", narrative_id)
                 .execute()
             )
@@ -428,7 +422,7 @@ class SupabaseNarrativeRepository(NarrativeRepository):
         return Narrative.from_record(
             {
                 "id": row["id"],
-                "title": row["titel"],
-                "causal_model_id": row.get("wirkmodell_id"),
+                "title": row["title"],
+                "causal_model_id": row.get("causal_model_id"),
             }
         )

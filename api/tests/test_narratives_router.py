@@ -498,7 +498,7 @@ async def test_narratives_add_actor_returns_201() -> None:
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
             response = await client.post(
                 f"/narratives/{SAVED_NARRATIVE_ID}/actors",
-                json={"name": "Max", "typ": "figur"},
+                json={"name": "Max", "typ": "individual"},
             )
     finally:
         clear_overrides()
@@ -514,7 +514,7 @@ async def test_narratives_add_actor_response_contains_id_name_and_type() -> None
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
             response = await client.post(
                 f"/narratives/{SAVED_NARRATIVE_ID}/actors",
-                json={"name": "Max", "typ": "figur"},
+                json={"name": "Max", "typ": "individual"},
             )
     finally:
         clear_overrides()
@@ -522,7 +522,7 @@ async def test_narratives_add_actor_response_contains_id_name_and_type() -> None
     data = response.json()
     assert data["id"] == SAVED_ACTOR_ID
     assert data["name"] == "Max"
-    assert data["typ"] == "figur"
+    assert data["typ"] == "individual"
 
 
 # ---------------------------------------------------------------------------
@@ -538,7 +538,7 @@ async def test_narratives_add_actor_returns_422_for_empty_name() -> None:
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
             response = await client.post(
                 f"/narratives/{SAVED_NARRATIVE_ID}/actors",
-                json={"name": "", "typ": "figur"},
+                json={"name": "", "typ": "individual"},
             )
     finally:
         clear_overrides()
@@ -554,7 +554,7 @@ async def test_narratives_add_actor_returns_404_for_unknown_narrative() -> None:
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
             response = await client.post(
                 "/narratives/unknown-id/actors",
-                json={"name": "Max", "typ": "figur"},
+                json={"name": "Max", "typ": "individual"},
             )
     finally:
         clear_overrides()
@@ -615,7 +615,7 @@ async def test_narratives_update_actor_returns_422_for_empty_name() -> None:
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
             response = await client.put(
                 f"/narratives/{SAVED_NARRATIVE_ID}/actors/{SAVED_ACTOR_ID}",
-                json={"name": "", "typ": "figur"},
+                json={"name": "", "typ": "individual"},
             )
     finally:
         clear_overrides()
@@ -631,7 +631,7 @@ async def test_narratives_update_actor_returns_404_for_unknown_narrative() -> No
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
             response = await client.put(
                 f"/narratives/unknown-id/actors/{SAVED_ACTOR_ID}",
-                json={"name": "Max", "typ": "figur"},
+                json={"name": "Max", "typ": "individual"},
             )
     finally:
         clear_overrides()
@@ -647,7 +647,7 @@ async def test_narratives_update_actor_returns_404_for_unknown_actor() -> None:
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
             response = await client.put(
                 f"/narratives/{SAVED_NARRATIVE_ID}/actors/unknown-actor-id",
-                json={"name": "Max", "typ": "figur"},
+                json={"name": "Max", "typ": "individual"},
             )
     finally:
         clear_overrides()
