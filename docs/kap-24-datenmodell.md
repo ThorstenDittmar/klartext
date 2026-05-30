@@ -158,21 +158,63 @@ CREATE TABLE narrative (
 );
 ```
 
-### Tabelle: `narrative_einheiten`
+### Tabellen: `document_nodes`, `document_assets`, `document_links`
 
-Selbstreferentielle Baumstruktur für Werk → Teil → Kapitel → Szene → Fragment.
+Drei Tabellen bilden das Dokumentmodell ab: `document_nodes` für den Composite-Baum, `document_assets` für Ressourcen außerhalb des Baums, `document_links` für den Graphlayer. Vgl. Kap. 6.2.1.
 
 ```sql
-CREATE TABLE narrative_einheiten (
+-- DocumentNode: Composite-Baum. Jeder Knoten hat genau einen Parent,
+-- außer dem Root-Knoten (parent_id IS NULL).
+
+CREATE TABLE document_nodes (
+    id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    narrativ_id       UUID REFERENCES narrative(id),
+    version_id        UUID,
+    parent_id         UUID REFERENCES document_nodes(id) DEFAULT NULL,
+    node_type         TEXT NOT NULL,
+    -- Enum: work, part, chapter, section, paragraph, sentence, string, character
+    structural_role   TEXT DEFAULT NULL,
+    -- Enum: main_text, title, subtitle, preface, motto, dedication,
+    --       appendix, footnote, bibliography, glossary
+    presentation_role TEXT DEFAULT NULL,
+    -- Enum: heading, emphasis, block_quote, caption, normal
+    audience          TEXT NOT NULL DEFAULT 'public',
+    -- Enum: public, author_only, co_authors, editorial
+    inhalt            TEXT DEFAULT NULL,
+    position          INTEGER NOT NULL,
+    created_at        TIMESTAMPTZ DEFAULT now()
+);
+
+-- DocumentAsset: Ressourcen außerhalb des Baums.
+-- Kann von beliebig vielen document_nodes referenziert werden.
+
+CREATE TABLE document_assets (
     id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     narrativ_id UUID REFERENCES narrative(id),
-    version_id  UUID,  -- FK zu narrativ_versions
-    parent_id   UUID REFERENCES narrative_einheiten(id) DEFAULT NULL,
-    typ         TEXT NOT NULL,
-    -- Enum: werk, teil, kapitel, szene, fragment
-    titel       TEXT DEFAULT NULL,
+    asset_type  TEXT NOT NULL,
+    -- Enum: map, image, file, note, todo, comment, research_ref
     inhalt      TEXT DEFAULT NULL,
-    position    INTEGER NOT NULL,
+    url         TEXT DEFAULT NULL,
+    audience    TEXT NOT NULL DEFAULT 'author_only',
+    -- Enum: public, author_only, co_authors, editorial
+    created_by  UUID REFERENCES users(id),
+    created_at  TIMESTAMPTZ DEFAULT now()
+);
+
+-- DocumentLink: Graphlayer. Verbindet Knoten mit Knoten oder Assets.
+-- Von beiden Seiten abfragbar (source → target und target → source).
+
+CREATE TABLE document_links (
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    source_id   UUID NOT NULL,
+    source_type TEXT NOT NULL,
+    -- Enum: document_node, document_asset
+    target_id   UUID NOT NULL,
+    target_type TEXT NOT NULL,
+    -- Enum: document_node, document_asset
+    link_type   TEXT NOT NULL,
+    -- Enum: refers_to, annotation, cross_ref, asset_ref
+    created_by  UUID REFERENCES users(id),
     created_at  TIMESTAMPTZ DEFAULT now()
 );
 ```
@@ -209,8 +251,10 @@ CREATE INDEX idx_wirkmodelle_status ON wirkmodelle(status);
 -- Modellelemente nach Typ und Wirkmodell
 CREATE INDEX idx_modellelemente_typ ON modellelemente(wirkmodell_id, typ);
 
--- Narrative Baumstruktur
-CREATE INDEX idx_einheiten_parent ON narrative_einheiten(parent_id);
+-- Dokument-Baumstruktur
+CREATE INDEX idx_document_nodes_parent ON document_nodes(parent_id);
+CREATE INDEX idx_document_links_source ON document_links(source_id, source_type);
+CREATE INDEX idx_document_links_target ON document_links(target_id, target_type);
 
 -- Acceptance (nur from_user abfragbar)
 CREATE INDEX idx_acceptance_from ON acceptance(from_user_id);

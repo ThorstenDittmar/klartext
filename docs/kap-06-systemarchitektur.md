@@ -44,9 +44,73 @@ Der naheliegende Vergleich ist Hard Science Fiction. In diesem Genre entstehen f
 
 ### 6.2.1 Narrative Artefakte als strukturierte Dokumente
 
-Narrative Texte sind eigenständige Artefakte. Sie interpretieren, konkretisieren oder veranschaulichen Wirkmodelle, ersetzen diese jedoch nicht. Figuren, Konflikte, Szenen, Dialoge, Perspektiven und emotionale Dynamiken dürfen frei gestaltet werden, solange modellierte Bestandteile der Welt referenziert und nachvollziehbar eingebunden werden.
+Narrative Texte sind eigenständige Artefakte. Sie interpretieren,
+konkretisieren oder veranschaulichen Wirkmodelle, ersetzen diese
+jedoch nicht. Figuren, Konflikte, Szenen, Dialoge, Perspektiven
+und emotionale Dynamiken dürfen frei gestaltet werden, solange
+modellierte Bestandteile der Welt referenziert und nachvollziehbar
+eingebunden werden.
 
-Die narrative Ebene wird als strukturierte Dokumenthierarchie verstanden. Narrative Artefakte können aus Werk, Teil, Kapitel, Szene und Fragment bestehen. Narrative Texte werden nicht als unstrukturierter Fließtext modelliert, sondern als strukturierte Dokumente mit referenzierbaren Bestandteilen.
+Narrative Texte werden nicht als unstrukturierter Fließtext
+modelliert, sondern als strukturierte Dokumente mit
+referenzierbaren Bestandteilen. Das Dokumentmodell trennt
+drei orthogonale Konzepte:
+
+**DocumentNode – der Composite-Baum („besteht aus")**
+
+Ein `DocumentNode` ist die Grundeinheit des Textmodells. Alle
+Knoten folgen dem Composite Pattern: jeder Knoten kann
+Kindknoten enthalten, außer dem Leaf-Knoten `Character`.
+Die Hierarchie lautet:
+
+Work → Part → Chapter → Section → Paragraph → Sentence → String → Character
+
+```
+Diese Hierarchie beschreibt ausschließlich Containment – was
+```
+
+physisch Teil von etwas ist. Ein Chapter muss nicht semantisch
+motiviert sein; es ist ein literarisches Strukturelement.
+
+Jeder Knoten hat mindestens eine `nodeRole`:
+
+- `structuralRole`: Funktion im Dokumentaufbau (MainText, Title,
+  Subtitle, Preface, Motto, Dedication, Appendix, Footnote,
+  Bibliography, Glossary)
+- `presentationRole`: Darstellungsform (Heading, Emphasis,
+  BlockQuote, Caption, Normal)
+- `audience`: Sichtbarkeit (Public, AuthorOnly, CoAuthors,
+  Editorial)
+
+Rollen sind Eigenschaften eines Knotens, keine Typen. Ein Knoten
+kann mehrere Rollen haben. `audience` steuert direkt die
+Row-Level Security in der Datenbank.
+
+**DocumentAsset – außerhalb des Baums**
+
+Ein `DocumentAsset` lebt außerhalb des Baums. Es hat keinen
+Parent-Knoten und kann von beliebig vielen `DocumentNode`-
+Instanzen referenziert werden ohne kopiert zu werden.
+Typ-Ausprägungen: `map`, `image`, `file`, `note`, `todo`,
+`comment`, `research_ref` und weitere. Eine Autorennotiz und
+eine Recherchekarte sind strukturell identisch – beide sind
+`DocumentAsset`-Instanzen, unterschieden nur durch ihren `type`.
+
+**DocumentLink – der Graphlayer („bezieht sich auf")**
+
+`DocumentLink` modelliert alle Beziehungen die keine
+Containment-Beziehungen sind. Er verbindet eine Quelle
+(`DocumentNode`) mit einem Ziel (`DocumentNode` oder
+`DocumentAsset`) über einen `linkType`: `refers_to`,
+`annotation`, `cross_ref`, `asset_ref`. Die Beziehung ist von
+beiden Seiten aus sichtbar und abfragbar: ein Chapter kennt
+alle seine zugehörigen DocumentAssets, und jedes DocumentAsset
+kennt seinen Anker im Dokumentbaum.
+
+Die semantische Zuordnung zum Wirkmodell – also welcher
+Abschnitt des Texts sich auf welches Modellelement bezieht –
+ist eine weitere orthogonale Dimension und wird in
+Kap. 6.2.2 beschrieben.
 
 ### 6.2.2 Referenzen zwischen Narrativ und Wirkmodell
 
