@@ -1899,8 +1899,60 @@
 <p>Die narrative Ebene ist nicht bloße Verpackung. Sie ist ein eigenständiger Erkenntnismodus: Eine Geschichte kann zeigen, wie sich ein abstraktes Modell im Leben von Menschen auswirkt, Zielkonflikte sichtbar machen und Kausalität in konkreten Situationen veranschaulichen. Gleichzeitig bleibt die narrative Freiheit an das gewählte Wirkmodell und dessen Axiomraum gebunden. Eine Geschichte darf kreativ, literarisch und emotional sein; sie darf jedoch nicht ohne Markierung gegen die Grundannahmen und Kausalbeziehungen verstoßen, auf denen sie beruht.</p>
 <p>Der naheliegende Vergleich ist Hard Science Fiction. In diesem Genre entstehen fiktionale Welten innerhalb konsistenter wissenschaftlicher oder technischer Regeln. Das Projekt überträgt dieses Prinzip auf gesellschaftliche, politische und wissenschaftliche Wirkmodelle im weiteren Sinne.</p>
 <h3 id="621-narrative-artefakte-als-strukturierte-dokumente">6.2.1 Narrative Artefakte als strukturierte Dokumente<a class="headerlink" href="#621-narrative-artefakte-als-strukturierte-dokumente" title="Permanent link">&para;</a></h3>
-<p>Narrative Texte sind eigenständige Artefakte. Sie interpretieren, konkretisieren oder veranschaulichen Wirkmodelle, ersetzen diese jedoch nicht. Figuren, Konflikte, Szenen, Dialoge, Perspektiven und emotionale Dynamiken dürfen frei gestaltet werden, solange modellierte Bestandteile der Welt referenziert und nachvollziehbar eingebunden werden.</p>
-<p>Die narrative Ebene wird als strukturierte Dokumenthierarchie verstanden. Narrative Artefakte können aus Werk, Teil, Kapitel, Szene und Fragment bestehen. Narrative Texte werden nicht als unstrukturierter Fließtext modelliert, sondern als strukturierte Dokumente mit referenzierbaren Bestandteilen.</p>
+<p>Narrative Texte sind eigenständige Artefakte. Sie interpretieren,
+konkretisieren oder veranschaulichen Wirkmodelle, ersetzen diese
+jedoch nicht. Figuren, Konflikte, Szenen, Dialoge, Perspektiven
+und emotionale Dynamiken dürfen frei gestaltet werden, solange
+modellierte Bestandteile der Welt referenziert und nachvollziehbar
+eingebunden werden.</p>
+<p>Narrative Texte werden nicht als unstrukturierter Fließtext
+modelliert, sondern als strukturierte Dokumente mit
+referenzierbaren Bestandteilen. Das Dokumentmodell trennt
+drei orthogonale Konzepte:</p>
+<p><strong>DocumentNode – der Composite-Baum („besteht aus")</strong></p>
+<p>Ein <code>DocumentNode</code> ist die Grundeinheit des Textmodells. Alle
+Knoten folgen dem Composite Pattern: jeder Knoten kann
+Kindknoten enthalten, außer dem Leaf-Knoten <code>Character</code>.
+Die Hierarchie lautet:</p>
+<p>Work → Part → Chapter → Section → Paragraph → Sentence → String → Character</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Diese Hierarchie beschreibt ausschließlich Containment – was
+</code></pre></div>
+<p>physisch Teil von etwas ist. Ein Chapter muss nicht semantisch
+motiviert sein; es ist ein literarisches Strukturelement.</p>
+<p>Jeder Knoten hat mindestens eine <code>nodeRole</code>:</p>
+<ul>
+<li><code>structuralRole</code>: Funktion im Dokumentaufbau (MainText, Title,
+  Subtitle, Preface, Motto, Dedication, Appendix, Footnote,
+  Bibliography, Glossary)</li>
+<li><code>presentationRole</code>: Darstellungsform (Heading, Emphasis,
+  BlockQuote, Caption, Normal)</li>
+<li><code>audience</code>: Sichtbarkeit (Public, AuthorOnly, CoAuthors,
+  Editorial)</li>
+</ul>
+<p>Rollen sind Eigenschaften eines Knotens, keine Typen. Ein Knoten
+kann mehrere Rollen haben. <code>audience</code> steuert direkt die
+Row-Level Security in der Datenbank.</p>
+<p><strong>DocumentAsset – außerhalb des Baums</strong></p>
+<p>Ein <code>DocumentAsset</code> lebt außerhalb des Baums. Es hat keinen
+Parent-Knoten und kann von beliebig vielen <code>DocumentNode</code>-
+Instanzen referenziert werden ohne kopiert zu werden.
+Typ-Ausprägungen: <code>map</code>, <code>image</code>, <code>file</code>, <code>note</code>, <code>todo</code>,
+<code>comment</code>, <code>research_ref</code> und weitere. Eine Autorennotiz und
+eine Recherchekarte sind strukturell identisch – beide sind
+<code>DocumentAsset</code>-Instanzen, unterschieden nur durch ihren <code>type</code>.</p>
+<p><strong>DocumentLink – der Graphlayer („bezieht sich auf")</strong></p>
+<p><code>DocumentLink</code> modelliert alle Beziehungen die keine
+Containment-Beziehungen sind. Er verbindet eine Quelle
+(<code>DocumentNode</code>) mit einem Ziel (<code>DocumentNode</code> oder
+<code>DocumentAsset</code>) über einen <code>linkType</code>: <code>refers_to</code>,
+<code>annotation</code>, <code>cross_ref</code>, <code>asset_ref</code>. Die Beziehung ist von
+beiden Seiten aus sichtbar und abfragbar: ein Chapter kennt
+alle seine zugehörigen DocumentAssets, und jedes DocumentAsset
+kennt seinen Anker im Dokumentbaum.</p>
+<p>Die semantische Zuordnung zum Wirkmodell – also welcher
+Abschnitt des Texts sich auf welches Modellelement bezieht –
+ist eine weitere orthogonale Dimension und wird in
+Kap. 6.2.2 beschrieben.</p>
 <h3 id="622-referenzen-zwischen-narrativ-und-wirkmodell">6.2.2 Referenzen zwischen Narrativ und Wirkmodell<a class="headerlink" href="#622-referenzen-zwischen-narrativ-und-wirkmodell" title="Permanent link">&para;</a></h3>
 <p>Sobald narrative Elemente auf modellierte Bestandteile der Welt Bezug nehmen, müssen formale Referenzen erzeugt werden. Referenzen sollen grundsätzlich auf die kleinstmögliche semantisch sinnvolle Einheit eines Wirkmodells verweisen. Referenzen auf größere Wirkmodellverbünde oder Modellaggregate sind zulässig, wenn eine Aussage bewusst mehrere Wirkzusammenhänge adressiert oder keine präzisere Zuordnung möglich ist.</p>
 <p>Referenztypen können insbesondere sein:</p>
