@@ -6,6 +6,7 @@ The integration test calls the real Claude API.
 
 from __future__ import annotations
 
+import anthropic
 import pytest
 
 from api.models.causal_model import Axiom
@@ -105,18 +106,21 @@ async def test_checker_with_empty_axioms_list_returns_consistent() -> None:
 # ---------------------------------------------------------------------------
 
 
+def _make_text_block(text: str) -> anthropic.types.TextBlock:
+    """Creates a real TextBlock so isinstance() checks pass in provider code."""
+    return anthropic.types.TextBlock(type="text", text=text)
+
+
 @pytest.mark.asyncio
 async def test_claude_checker_returns_consistent_result_for_consistent_scene() -> None:
     """Expects ClaudeConsistencyChecker to return consistent=True for a mock consistent response."""
     import json
     from unittest.mock import AsyncMock, MagicMock
 
-    import anthropic
-
     from api.providers.claude_consistency_checker import ClaudeConsistencyChecker
 
     mock_response = MagicMock()
-    mock_response.content = [MagicMock(text=json.dumps({"consistent": True, "conflicts": []}))]
+    mock_response.content = [_make_text_block(json.dumps({"consistent": True, "conflicts": []}))]
 
     mock_client = MagicMock(spec=anthropic.AsyncAnthropic)
     mock_client.messages = MagicMock()
@@ -136,15 +140,13 @@ async def test_claude_checker_strips_markdown_code_fences_from_response() -> Non
     import json
     from unittest.mock import AsyncMock, MagicMock
 
-    import anthropic
-
     from api.providers.claude_consistency_checker import ClaudeConsistencyChecker
 
     raw_json = json.dumps({"consistent": True, "conflicts": []})
     fenced_response = f"```json\n{raw_json}\n```"
 
     mock_response = MagicMock()
-    mock_response.content = [MagicMock(text=fenced_response)]
+    mock_response.content = [_make_text_block(fenced_response)]
 
     mock_client = MagicMock(spec=anthropic.AsyncAnthropic)
     mock_client.messages = MagicMock()
@@ -163,14 +165,12 @@ async def test_claude_checker_returns_conflict_for_conflicting_scene() -> None:
     import json
     from unittest.mock import AsyncMock, MagicMock
 
-    import anthropic
-
     from api.providers.claude_consistency_checker import ClaudeConsistencyChecker
 
     mock_response = MagicMock()
     mock_response.content = [
-        MagicMock(
-            text=json.dumps(
+        _make_text_block(
+            json.dumps(
                 {
                     "consistent": False,
                     "conflicts": [

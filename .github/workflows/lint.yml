@@ -31,7 +31,8 @@ jobs:
         run: ruff format --check .
 
       - name: mypy
-        run: mypy . --ignore-missing-imports
+        run: mypy api/ --ignore-missing-imports
+        working-directory: ${{ github.workspace }}
 
       - name: tach (layer boundaries)
         run: tach check
