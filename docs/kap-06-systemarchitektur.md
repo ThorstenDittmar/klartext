@@ -63,12 +63,11 @@ Knoten folgen dem Composite Pattern: jeder Knoten kann
 Kindknoten enthalten, außer dem Leaf-Knoten `Character`.
 Die Hierarchie lautet:
 
+```
 Work → Part → Chapter → Section → Paragraph → Sentence → String → Character
-
 ```
+
 Diese Hierarchie beschreibt ausschließlich Containment – was
-```
-
 physisch Teil von etwas ist. Ein Chapter muss nicht semantisch
 motiviert sein; es ist ein literarisches Strukturelement.
 
