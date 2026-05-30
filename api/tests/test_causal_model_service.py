@@ -71,9 +71,10 @@ async def test_add_axiom_assigns_id() -> None:
     service = make_service()
     cm = await service.create(title="Test")
 
+    assert cm.id is not None
     axiom = await service.add_axiom(
         causal_model_id=cm.id, label="A-01", description="Eine Annahme."
-    )  # type: ignore[arg-type]
+    )
 
     assert axiom.id is not None
 
@@ -84,9 +85,10 @@ async def test_add_axiom_stores_label_and_description() -> None:
     service = make_service()
     cm = await service.create(title="Test")
 
+    assert cm.id is not None
     axiom = await service.add_axiom(
         causal_model_id=cm.id, label="A-01", description="Eine Annahme."
-    )  # type: ignore[arg-type]
+    )
 
     assert axiom.label == "A-01"
     assert axiom.description == "Eine Annahme."

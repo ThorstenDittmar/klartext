@@ -372,9 +372,11 @@ async def test_narrative_service_update_actor_returns_actor_with_updated_fields(
     narrative = await service.create("My Narrative")
     actor = await service.add_actor(narrative.id, "Max", ActorType.INDIVIDUAL)  # type: ignore[arg-type]
 
+    assert narrative.id is not None
+    assert actor.id is not None
     updated = await service.update_actor(
         narrative.id, actor.id, "CDU", ActorType.ORGANISATION, "A party."
-    )  # type: ignore[arg-type]
+    )
 
     assert updated.name == "CDU"
     assert updated.typ == ActorType.ORGANISATION
@@ -402,10 +404,11 @@ async def test_narrative_service_update_actor_raises_for_unknown_actor_id() -> N
     service = make_service()
     narrative = await service.create("My Narrative")
 
+    assert narrative.id is not None
     with pytest.raises(ActorNotFoundError):
         await service.update_actor(
             narrative.id, "00000000-0000-0000-0000-000000000000", "Max", ActorType.INDIVIDUAL, None
-        )  # type: ignore[arg-type]
+        )
 
 
 @pytest.mark.asyncio
