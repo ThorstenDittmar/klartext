@@ -32,8 +32,9 @@ async def create_causal_model(
         title=cm.title,
         status=cm.status.value,
         axioms=[
-            AxiomResponse(id=a.id, label=a.label, description=a.description) for a in cm.axioms
-        ],  # type: ignore[arg-type]
+            AxiomResponse(id=a.id, label=a.label, description=a.description)  # type: ignore[arg-type]
+            for a in cm.axioms
+        ],
     )
 
 
@@ -61,8 +62,9 @@ async def get_causal_model(
         title=cm.title,
         status=cm.status.value,
         axioms=[
-            AxiomResponse(id=a.id, label=a.label, description=a.description) for a in cm.axioms
-        ],  # type: ignore[arg-type]
+            AxiomResponse(id=a.id, label=a.label, description=a.description)  # type: ignore[arg-type]
+            for a in cm.axioms
+        ],
     )
 
 

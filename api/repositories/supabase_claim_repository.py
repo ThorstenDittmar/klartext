@@ -6,6 +6,7 @@ from supabase import AsyncClient
 
 from api.exceptions.claim import ClaimPersistenceError
 from api.models.claim import Claim
+from api.repositories._supabase import records
 from api.repositories.claim_repository import ClaimRepository
 
 _CLAIM_TABLE = "claims"
@@ -48,7 +49,7 @@ class SupabaseClaimRepository(ClaimRepository):
         if not result.data:
             raise ClaimPersistenceError(f"Save returned no data for claims of scene {scene_id}.")
 
-        return [Claim.from_record(row) for row in result.data]
+        return [Claim.from_record(row) for row in records(result.data)]
 
     async def find_by_scene_id(self, scene_id: str) -> list[Claim]:
         """Returns all Claims stored for the given scene ID.
@@ -66,4 +67,4 @@ class SupabaseClaimRepository(ClaimRepository):
         except Exception as e:
             raise ClaimPersistenceError(f"Failed to load claims for scene {scene_id}: {e}") from e
 
-        return [Claim.from_record(row) for row in result.data]
+        return [Claim.from_record(row) for row in records(result.data)]

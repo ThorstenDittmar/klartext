@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from typing import Any
 
 import anthropic
 
@@ -70,8 +71,8 @@ class ClaudeClaimExtractionProvider(ClaimExtractionProvider):
                 f"Claude API returned a JSON object instead of an array: {type(parsed)}"
             )
 
-        records: list[dict] = parsed
-        return [self._parse_claim(record) for record in records]
+        raw_records: list[dict[str, Any]] = parsed
+        return [self._parse_claim(record) for record in raw_records]
 
     def _strip_code_fences(self, text: str) -> str:
         """Removes markdown code fences that Claude sometimes wraps its response in."""
@@ -80,7 +81,7 @@ class ClaudeClaimExtractionProvider(ClaimExtractionProvider):
             text = text.rsplit("```", 1)[0]
         return text.strip()
 
-    def _parse_claim(self, record: dict) -> Claim:
+    def _parse_claim(self, record: dict[str, Any]) -> Claim:
         """Converts a raw API record into a Claim, clamping confidence to 0.0–1.0.
 
         Raises ClaimExtractionError if the API returned an unrecognised claim type.

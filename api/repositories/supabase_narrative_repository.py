@@ -12,6 +12,7 @@ from api.exceptions.narrative import (
     NarrativePersistenceError,
 )
 from api.models.narrative import Actor, Narrative, Scene
+from api.repositories._supabase import records
 from api.repositories.narrative_repository import NarrativeRepository
 
 _NARRATIVE_TABLE = "narrative"
@@ -46,7 +47,7 @@ class SupabaseNarrativeRepository(NarrativeRepository):
         if not narrative_result.data:
             raise NarrativePersistenceError("Save returned no data for narrative.")
 
-        narrative_id: str = narrative_result.data[0]["id"]
+        narrative_id: str = records(narrative_result.data)[0]["id"]
         saved = Narrative(id=narrative_id, title=narrative.title)
 
         for scene in narrative.scenes:
@@ -70,7 +71,7 @@ class SupabaseNarrativeRepository(NarrativeRepository):
             if not scene_result.data:
                 raise NarrativePersistenceError(f"Save returned no data for scene '{scene.title}'.")
 
-            scene_record = scene_result.data[0]
+            scene_record = records(scene_result.data)[0]
             saved.add_scene(
                 Scene.from_record(
                     {
@@ -104,7 +105,7 @@ class SupabaseNarrativeRepository(NarrativeRepository):
         if not narrative_result.data:
             raise NarrativeNotFoundError(f"Narrative not found: {narrative_id}")
 
-        row = narrative_result.data[0]
+        row = records(narrative_result.data)[0]
         narrative = Narrative.from_record(
             {
                 "id": row["id"],
@@ -127,7 +128,7 @@ class SupabaseNarrativeRepository(NarrativeRepository):
                 f"Failed to load scenes for narrative {narrative_id}: {e}"
             ) from e
 
-        for scene_row in scene_result.data:
+        for scene_row in records(scene_result.data):
             narrative.add_scene(
                 Scene.from_record(
                     {
@@ -151,7 +152,7 @@ class SupabaseNarrativeRepository(NarrativeRepository):
                 f"Failed to load actors for narrative {narrative_id}: {e}"
             ) from e
 
-        for actor_row in actor_result.data:
+        for actor_row in records(actor_result.data):
             narrative.add_actor(
                 Actor.from_record(
                     {
@@ -182,7 +183,8 @@ class SupabaseNarrativeRepository(NarrativeRepository):
             raise NarrativePersistenceError(f"Failed to list narratives: {e}") from e
 
         return [
-            Narrative.from_record({"id": row["id"], "title": row["title"]}) for row in result.data
+            Narrative.from_record({"id": row["id"], "title": row["title"]})
+            for row in records(result.data)
         ]
 
     async def add_scene(self, narrative_id: str, scene: Scene) -> Scene:
@@ -225,7 +227,7 @@ class SupabaseNarrativeRepository(NarrativeRepository):
         if not scene_result.data:
             raise NarrativePersistenceError(f"Add scene returned no data for '{scene.title}'.")
 
-        row = scene_result.data[0]
+        row = records(scene_result.data)[0]
         return Scene.from_record(
             {
                 "id": row["id"],
@@ -273,7 +275,7 @@ class SupabaseNarrativeRepository(NarrativeRepository):
         if not result.data:
             raise NarrativePersistenceError(f"Add actor returned no data for '{actor.name}'.")
 
-        row = result.data[0]
+        row = records(result.data)[0]
         return Actor.from_record(
             {
                 "id": row["id"],
@@ -315,7 +317,7 @@ class SupabaseNarrativeRepository(NarrativeRepository):
         if not result.data:
             raise ActorNotFoundError(f"Actor not found: {actor_id}")
 
-        row = result.data[0]
+        row = records(result.data)[0]
         return Actor.from_record(
             {
                 "id": row["id"],
@@ -355,7 +357,7 @@ class SupabaseNarrativeRepository(NarrativeRepository):
         if not result.data:
             raise NarrativePersistenceError(f"Update actor returned no data for {actor.id}.")
 
-        row = result.data[0]
+        row = records(result.data)[0]
         return Actor.from_record(
             {
                 "id": row["id"],
@@ -411,7 +413,7 @@ class SupabaseNarrativeRepository(NarrativeRepository):
         if not result.data:
             raise NarrativeNotFoundError(f"Narrative not found: {narrative_id}")
 
-        row = result.data[0]
+        row = records(result.data)[0]
         return Narrative.from_record(
             {
                 "id": row["id"],

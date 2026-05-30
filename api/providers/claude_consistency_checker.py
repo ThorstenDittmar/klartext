@@ -64,7 +64,10 @@ class ClaudeConsistencyChecker(ConsistencyChecker):
             messages=[{"role": "user", "content": user_message}],
         )
 
-        raw = response.content[0].text.strip()
+        first_block = response.content[0]
+        if not isinstance(first_block, anthropic.types.TextBlock):
+            raise ValueError(f"Unexpected content block type from Claude API: {type(first_block)}")
+        raw = first_block.text.strip()
         # Strip markdown code fences if present
         if raw.startswith("```"):
             raw = raw.split("\n", 1)[1].rsplit("```", 1)[0].strip()

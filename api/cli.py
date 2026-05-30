@@ -61,7 +61,7 @@ def _db_reset() -> None:
 
 def _api_process(
     host: str = "127.0.0.1", port: int = 8000, reload: bool = True
-) -> subprocess.Popen:
+) -> subprocess.Popen[bytes]:
     """Starts the FastAPI server as a background process and returns the handle."""
     cmd = [
         sys.executable,
@@ -79,7 +79,7 @@ def _api_process(
     return subprocess.Popen(cmd)
 
 
-def _frontend_process() -> subprocess.Popen:
+def _frontend_process() -> subprocess.Popen[bytes]:
     """Starts the Vite dev server as a background process and returns the handle."""
     typer.echo("Starting frontend (Vite) on http://127.0.0.1:5173")
     return subprocess.Popen(["npm", "run", "dev"], cwd=str(_FRONTEND_DIR))

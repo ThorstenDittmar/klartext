@@ -6,6 +6,7 @@ from supabase import AsyncClient
 
 from api.exceptions.causal_model import CausalModelNotFoundError, CausalModelPersistenceError
 from api.models.causal_model import Axiom, CausalModel
+from api.repositories._supabase import records
 from api.repositories.causal_model_repository import CausalModelRepository
 
 
@@ -36,7 +37,7 @@ class SupabaseCausalModelRepository(CausalModelRepository):
         except Exception as exc:
             raise CausalModelPersistenceError(f"Failed to save CausalModel: {exc}") from exc
 
-        row = result.data[0]
+        row = records(result.data)[0]
         saved = CausalModel.from_record(row)
 
         for axiom in causal_model.axioms:
@@ -64,7 +65,7 @@ class SupabaseCausalModelRepository(CausalModelRepository):
         except Exception as exc:
             raise CausalModelPersistenceError(f"Failed to save Axiom: {exc}") from exc
 
-        row = result.data[0]
+        row = records(result.data)[0]
         return Axiom.from_record(
             {
                 "id": row["id"],
@@ -88,7 +89,7 @@ class SupabaseCausalModelRepository(CausalModelRepository):
         if not cm_result.data:
             raise CausalModelNotFoundError(f"CausalModel not found: {causal_model_id}")
 
-        cm = CausalModel.from_record(cm_result.data[0])
+        cm = CausalModel.from_record(records(cm_result.data)[0])
 
         try:
             axiom_result = (
@@ -101,7 +102,7 @@ class SupabaseCausalModelRepository(CausalModelRepository):
         except Exception as exc:
             raise CausalModelPersistenceError(f"Failed to load Axioms: {exc}") from exc
 
-        for row in axiom_result.data:
+        for row in records(axiom_result.data):
             cm.add_axiom(
                 Axiom.from_record(
                     {
@@ -121,4 +122,4 @@ class SupabaseCausalModelRepository(CausalModelRepository):
         except Exception as exc:
             raise CausalModelPersistenceError(f"Failed to list CausalModels: {exc}") from exc
 
-        return [CausalModel.from_record(row) for row in result.data]
+        return [CausalModel.from_record(row) for row in records(result.data)]
