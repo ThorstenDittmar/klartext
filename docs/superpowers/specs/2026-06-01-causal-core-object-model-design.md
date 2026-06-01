@@ -27,14 +27,14 @@ Claims existieren nicht als eigenständige Klasse im Wirkgefüge. Jeder Claimtyp
 | Definitorisch | Metadaten des Slots + referentielle Integrität |
 | Normativ | Precondition auf einer Relation |
 | Prognostisch | Zurückgestellt → Zeitscheiben |
-| Kontrafaktisch | Axiomatisch gesetzter Slot + Zustand |
-| Methodisch | Axiomatisch gesetzter Slot + Zustand über Quelle |
+| Kontrafaktisch | Slot + Zustand mit `epistemic_status = AXIOMATIC` |
+| Methodisch | Slot + Zustand mit `epistemic_status = AXIOMATIC`, optional Source |
 | Unsicherheit | Attribut auf einem Element |
 
 Der Begriff "Claim" bleibt dem Narrativ vorbehalten.
 
-### Axiomatisch als Flag
-Es gibt keine `Axiom`-Klasse. Jedes Modellelement kann mit dem Flag `axiomatisch` markiert werden. Der **Axiomsraum** ist eine abgeleitete Menge — alle Elemente eines CausalModels, bei denen `axiomatisch = true`.
+### Axiomatic als EpistemicStatus
+Es gibt keine `Axiom`-Klasse und kein separates `axiomatic`-Flag. `AXIOMATIC` ist ein Wert des `EpistemicStatus`-Enums. Der **Axiomsraum** ist eine abgeleitete Menge — alle Elemente eines CausalModels, bei denen `epistemic_status = AXIOMATIC`.
 
 ### Veränderungen zurückgestellt
 Zustände beschreiben feste Werte ("421 ppm", "handlungsfähig"). Veränderungen (steigend, sinkend) finden auf einer Zeitachse statt und werden erst bei der Modellierung von Zeitscheiben behandelt.
@@ -80,11 +80,10 @@ Die gemeinsame Basisklasse aller Modellelemente. Definiert das Protokoll, das al
 
 **Gemeinsame Attribute aller Subklassen:**
 - `scope: Scope` — Gültigkeitsbedingungen (temporal, räumlich, disziplinär)
-- `axiomatic: bool` — markiert das Element als innerhalb dieses Modells nicht weiter herzuleitend
-- `epistemic_status: EpistemicStatus` — epistemischer Status (siehe unten)
+- `epistemic_status: EpistemicStatus` — Default: `INCOMPLETE` (siehe Abschnitt 8)
 
-**Verhaltensregel für `axiomatic`:**
-Die Markierung bedeutet nicht, dass das Element wahr oder unveränderlich ist. Sie bedeutet, dass das Modell dieses Element an dieser Stelle nicht weiter intern herleitet. Änderungen an axiomatic markierten Elementen sind prüfpflichtig — alle abhängigen Elemente müssen neu bewertet werden.
+**Verhaltensregel für `epistemic_status = AXIOMATIC`:**
+Die Markierung bedeutet nicht, dass das Element wahr oder unveränderlich ist. Sie bedeutet, dass das Modell dieses Element an dieser Stelle nicht weiter intern herleitet. Änderungen an `AXIOMATIC`-Elementen sind prüfpflichtig — alle abhängigen Elemente müssen neu bewertet werden.
 
 ### CausalLeaf (abstrakt)
 Atomares Element ohne eigene Kinder. Antwortet auf `get_namespace()` mit `∅` und auf `is_complete()` mit `false` — ein einzelnes Blatt ist für sich kein vollständiges Modell.
@@ -110,7 +109,7 @@ Da ein Zustand jedoch selbst epistemisch bewertet und als axiomatisch markiert w
 - `value: str | float | int` — qualitativer oder quantitativer Wert
 - `slot: Slot` — Referenz auf den zugehörigen Slot
 - `epistemic_status: EpistemicStatus`
-- `axiomatic: bool`
+
 - `source: Source | None`
 
 ### Entity
@@ -215,21 +214,26 @@ Zwei Elemente sind nur dann in echtem Konflikt, wenn ihre Scopes sich in **allen
 
 ## 8. EpistemicStatus
 
-`axiomatic` und `epistemic_status` sind orthogonal — sie beschreiben zwei unabhängige Dimensionen:
+`EpistemicStatus` ist ein Enum mit drei mutual exclusive Werten. Er beschreibt den **Transparenzstatus** eines Elements: wie ausformuliert ist es im Modell, und welche Rolle spielt es in der Ableitungsstruktur?
 
-- `axiomatic` = **strukturelle Rolle**: ist dieses Element ein Fundament des Modells (nicht hergeleitet)?
-- `epistemic_status` = **Art der Begründung**: wie wurde es etabliert?
+Die Plattform ist keine Wahrheitsmaschine — `EpistemicStatus` urteilt nicht über externe Wahrheit, sondern über die interne Struktur des Modells.
 
-"gesetzt" als EpistemicStatus-Wert ist redundant mit `axiomatic = true` und wird nicht verwendet.
+```python
+class EpistemicStatus(Enum):
+    INCOMPLETE = "incomplete"   # default — not yet formalized
+    DERIVED    = "derived"      # follows from other elements
+    AXIOMATIC  = "axiomatic"    # set as premise, not derived here
+```
 
-| EpistemicStatus | Bedeutung |
+| EpistemicStatus | Wann vollständig? |
 |---|---|
-| `empirically_supported` | Durch Beobachtung oder Messung begründet |
-| `normatively_set` | Durch Wertentscheidung begründet |
-| `hypothetical` | Als Annahme formuliert, nicht belegt |
-| `derived` | Folgt aus anderen Modellelementen |
-| `contested` | Im Modell explizit als strittig markiert |
-| `open` | Noch nicht bewertet |
+| `INCOMPLETE` | Nie — blockiert `is_complete()` |
+| `DERIVED` | Wenn alle Vorgänger in der Ableitungskette vollständig sind |
+| `AXIOMATIC` | Immer — ist der Anker, an dem Ableitungsketten enden |
+
+**Axiomsraum:** abgeleitete Menge aller Elemente mit `epistemic_status = AXIOMATIC` in einem CausalModel.
+
+**`is_complete()` auf CausalModel** gibt `true` zurück, wenn kein enthaltenes Element den Status `INCOMPLETE` hat und alle `DERIVED`-Ketten bis zu `AXIOMATIC`-Elementen aufgelöst sind.
 
 ---
 
