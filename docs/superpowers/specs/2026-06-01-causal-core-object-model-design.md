@@ -56,6 +56,11 @@ CausalComponent (abstrakt)
   └── CausalComposite (abstrakt)
         ├── CausalModel
         └── CausalModelFederation
+
+Außerhalb der CausalComponent-Hierarchie (keine Modellbausteine):
+  Zustand       — Wert eines Slots, immer relativ zu einem Slot
+  Precondition  — Bedingung auf einer Relation, kein eigenständiger Baustein
+  Quelle        — externe Referenz, nicht Teil des Wirkgefüges
 ```
 
 ---
@@ -91,16 +96,15 @@ Ein benannter Platzhalter für einen beobachtbaren oder messbaren Wert.
 
 Inspiriert durch das Variablenkonzept im Compilerbau: ein Bezeichner, der mit einem Wert (Zustand) gekoppelt ist, mit Typ, Scope und Namespace.
 
-**Attribute:**
+**Zusätzliche Attribute** (über CausalComponent hinaus):
 - `identifier: str` — eindeutiger Bezeichner im Namespace
 - `slot_type: SlotType` — Typ (physikalische Größe, soziale Größe, etc.)
-- `scope: Geltungsbereich`
-- `epistemic_status: EpistemicStatus`
-- `axiomatisch: bool`
 - `source: Quelle | None`
 
 ### Zustand
-Ein konkreter Wert eines Slots zu einem bestimmten Zeitpunkt oder in einem bestimmten Kontext. Eigenständiges Objekt — kein CausalComponent, da er immer relativ zu einem Slot existiert.
+Ein konkreter Wert eines Slots. Eigenständiges Objekt, aber **kein CausalComponent** — er existiert immer relativ zu einem Slot und ist kein eigenständiger Modellbaustein, der im Composite-Baum platziert wird.
+
+Da ein Zustand jedoch selbst epistemisch bewertet und als axiomatisch markiert werden kann (z.B. "dieser Wert gilt als gesetzt"), trägt er dieselben Statusattribute wie ein CausalComponent — allerdings nicht durch Vererbung, sondern als explizite Wiederholung.
 
 **Attribute:**
 - `value: str | float | int` — qualitativer oder quantitativer Wert
@@ -117,12 +121,9 @@ Zustände einer Entity beschreiben Kapazität oder Status ("handlungsfähig", "a
 ### Relation (abstrakt)
 Eine gerichtete Beziehung zwischen zwei (Slot + Zustand)-Paaren.
 
-**Attribute:**
+**Zusätzliche Attribute** (über CausalComponent hinaus):
 - `source_condition: (Slot, Zustand)` — Quellbedingung
 - `target_effect: (Slot, Zustand)` — Zieleffekt
-- `scope: Geltungsbereich`
-- `epistemic_status: EpistemicStatus`
-- `axiomatisch: bool`
 - `source: Quelle | None`
 
 ### CausalRelation
