@@ -188,6 +188,59 @@ Eine strukturierte Hierarchie mehrerer CausalModels und/oder CausalModelFederati
 
 `get_slots()` und `get_relations()` auf CausalModel aggregieren aus `contains` **und** `applies`.
 
+### add-Operation
+
+`add` ist die zentrale Mutationsmethode auf allen CausalComposites. Sie erzwingt zwei Invarianten vor dem Einhängen:
+
+```python
+def add(self, component: CausalComponent) -> None:
+    """Add a component to this composite.
+
+    Raises:
+        TypeError: if the component type is not allowed in this container.
+        NamespaceCollisionError: if the identifier already exists in this namespace.
+        ScopeConflictError: if the component scope conflicts with an axiomatic container scope.
+    """
+    # 1. Type check — enforced by each subclass
+    self._assert_type_allowed(component)
+
+    # 2. Namespace collision
+    if component.identifier in self._namespace:
+        raise NamespaceCollisionError(
+            identifier=component.identifier,
+            existing=self._namespace[component.identifier],
+            incoming=component,
+        )
+
+    # 3. Scope negotiation
+    if self.scope.is_axiomatic:
+        if not self.scope.is_compatible(component.scope):
+            raise ScopeConflictError(
+                container_scope=self.scope,
+                component_scope=component.scope,
+            )
+    else:
+        # Derived scope: expand container scope to include component scope
+        self.scope.expand_to_include(component.scope)
+
+    # 4. Add
+    self._components.append(component)
+```
+
+**Scope-Verhalten beim add:**
+
+| Container-Scope | Komponenten-Scope | Ergebnis |
+|---|---|---|
+| AXIOMATIC, kompatibel | beliebig | ✓ OK |
+| AXIOMATIC, inkompatibel | beliebig | `ScopeConflictError` |
+| DERIVED (leer) | 2030 | Container-Scope wird 2030 |
+| DERIVED (2030) | 2040 | Container-Scope wird 2030–2040 |
+| DERIVED (2030) | 2030–2040 | Container-Scope wird 2030–2040 |
+
+**Fehlerbehandlung in der UI:**
+- `NamespaceCollisionError` → UI bietet an, eine `ConflictRelation` anzulegen
+- `ScopeConflictError` → UI bietet an, eine `ConflictRelation` anzulegen oder den Scope des Elements anzupassen
+
 ---
 
 ## 6. Namespace
@@ -212,6 +265,29 @@ Scope:
 ```
 
 Zwei Elemente sind nur dann in echtem Konflikt, wenn ihre Scopes sich in **allen** Dimensionen überschneiden.
+
+**Scope ist selbst AXIOMATIC oder DERIVED:**
+
+- `AXIOMATIC` — vom Autor explizit gesetzt. Wirkt als Einschränkung: neu hinzugefügte Elemente müssen darin passen.
+- `DERIVED` — aus den enthaltenen Elementen berechnet. Wächst als Hülle mit jedem `add` mit.
+
+Ein Scope ohne explizite Dimensionen beginnt als DERIVED (leer) und akkumuliert seine Dimensionen durch die hinzugefügten Elemente.
+
+**Schlüsselmethoden:**
+
+```python
+@property
+def is_axiomatic(self) -> bool: ...
+
+def is_compatible(self, other: Scope) -> bool:
+    """True if this scope and other overlap in all defined dimensions."""
+    ...
+
+def expand_to_include(self, other: Scope) -> None:
+    """Expand this derived scope to include all dimensions of other.
+    Only valid if is_axiomatic is False."""
+    ...
+```
 
 ---
 
