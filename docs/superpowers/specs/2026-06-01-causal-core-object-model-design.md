@@ -62,6 +62,30 @@ CausalComponent (abstrakt)
 
 ## 4. Klassen im Detail
 
+### CausalComponent (abstrakt)
+Die gemeinsame Basisklasse aller Modellelemente. Definiert das Protokoll, das alle Subklassen erfüllen müssen — unabhängig davon, ob sie atomar, zusammengesetzt oder ein Fragment sind.
+
+**Funktion:** Jedes Element im Wirkgefüge ist ein CausalComponent. Das ermöglicht einheitliche Traversierung, Prüfung und Abfrage über alle Ebenen der Composite-Hierarchie hinweg.
+
+**Protokoll (abstrakte Methoden):**
+- `get_slots() → list[Slot]` — liefert alle Slots, die dieses Element enthält oder erreichbar macht
+- `get_relations() → list[Relation]` — liefert alle Relationen, die dieses Element enthält oder erreichbar macht
+- `get_namespace() → Namespace` — liefert den Namespace dieses Elements; CausalLeafs geben `∅` zurück
+- `is_complete() → bool` — gibt an, ob das Element für sich allein prüfbar und vollständig ist
+
+**Gemeinsame Attribute aller Subklassen:**
+- `scope: Geltungsbereich` — Gültigkeitsbedingungen (temporal, räumlich, disziplinär)
+- `axiomatisch: bool` — markiert das Element als innerhalb dieses Modells nicht weiter herzuleitend
+- `epistemic_status: EpistemicStatus` — epistemischer Status (gesetzt, abgeleitet, hypothetisch, empirisch gestützt, umstritten, offen, ...)
+
+**Verhaltensregel für `axiomatisch`:**
+Die Markierung bedeutet nicht, dass das Element wahr oder unveränderlich ist. Sie bedeutet, dass das Modell dieses Element an dieser Stelle nicht weiter intern herleitet. Änderungen an axiomatisch markierten Elementen sind prüfpflichtig — alle abhängigen Elemente müssen neu bewertet werden.
+
+### CausalLeaf (abstrakt)
+Atomares Element ohne eigene Kinder. Antwortet auf `get_namespace()` mit `∅` und auf `is_complete()` mit `false` — ein einzelnes Blatt ist für sich kein vollständiges Modell.
+
+**Funktion:** CausalLeafs sind die inhaltlichen Grundbausteine. Sie tragen die eigentliche semantische Last des Wirkgefüges.
+
 ### Slot
 Ein benannter Platzhalter für einen beobachtbaren oder messbaren Wert.
 
