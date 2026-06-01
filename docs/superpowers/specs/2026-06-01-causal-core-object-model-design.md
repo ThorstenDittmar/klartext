@@ -79,12 +79,12 @@ Die gemeinsame Basisklasse aller Modellelemente. Definiert das Protokoll, das al
 - `is_complete() → bool` — gibt an, ob das Element für sich allein prüfbar und vollständig ist
 
 **Gemeinsame Attribute aller Subklassen:**
-- `scope: Geltungsbereich` — Gültigkeitsbedingungen (temporal, räumlich, disziplinär)
-- `axiomatisch: bool` — markiert das Element als innerhalb dieses Modells nicht weiter herzuleitend
-- `epistemic_status: EpistemicStatus` — epistemischer Status (gesetzt, abgeleitet, hypothetisch, empirisch gestützt, umstritten, offen, ...)
+- `scope: Scope` — Gültigkeitsbedingungen (temporal, räumlich, disziplinär)
+- `axiomatic: bool` — markiert das Element als innerhalb dieses Modells nicht weiter herzuleitend
+- `epistemic_status: EpistemicStatus` — epistemischer Status (siehe unten)
 
-**Verhaltensregel für `axiomatisch`:**
-Die Markierung bedeutet nicht, dass das Element wahr oder unveränderlich ist. Sie bedeutet, dass das Modell dieses Element an dieser Stelle nicht weiter intern herleitet. Änderungen an axiomatisch markierten Elementen sind prüfpflichtig — alle abhängigen Elemente müssen neu bewertet werden.
+**Verhaltensregel für `axiomatic`:**
+Die Markierung bedeutet nicht, dass das Element wahr oder unveränderlich ist. Sie bedeutet, dass das Modell dieses Element an dieser Stelle nicht weiter intern herleitet. Änderungen an axiomatic markierten Elementen sind prüfpflichtig — alle abhängigen Elemente müssen neu bewertet werden.
 
 ### CausalLeaf (abstrakt)
 Atomares Element ohne eigene Kinder. Antwortet auf `get_namespace()` mit `∅` und auf `is_complete()` mit `false` — ein einzelnes Blatt ist für sich kein vollständiges Modell.
@@ -99,7 +99,7 @@ Inspiriert durch das Variablenkonzept im Compilerbau: ein Bezeichner, der mit ei
 **Zusätzliche Attribute** (über CausalComponent hinaus):
 - `identifier: str` — eindeutiger Bezeichner im Namespace
 - `slot_type: SlotType` — Typ (physikalische Größe, soziale Größe, etc.)
-- `source: Quelle | None`
+- `source: Source | None`
 
 ### Zustand
 Ein konkreter Wert eines Slots. Eigenständiges Objekt, aber **kein CausalComponent** — er existiert immer relativ zu einem Slot und ist kein eigenständiger Modellbaustein, der im Composite-Baum platziert wird.
@@ -110,8 +110,8 @@ Da ein Zustand jedoch selbst epistemisch bewertet und als axiomatisch markiert w
 - `value: str | float | int` — qualitativer oder quantitativer Wert
 - `slot: Slot` — Referenz auf den zugehörigen Slot
 - `epistemic_status: EpistemicStatus`
-- `axiomatisch: bool`
-- `source: Quelle | None`
+- `axiomatic: bool`
+- `source: Source | None`
 
 ### Entity
 Subtyp von `Slot`. Repräsentiert einen Akteur (Organisation, Gruppe, Institution). Kernmerkmal: Agency — die Fähigkeit zu handeln, zu entscheiden, zu beeinflussen.
@@ -124,7 +124,7 @@ Eine gerichtete Beziehung zwischen zwei (Slot + Zustand)-Paaren.
 **Zusätzliche Attribute** (über CausalComponent hinaus):
 - `source_condition: (Slot, Zustand)` — Quellbedingung
 - `target_effect: (Slot, Zustand)` — Zieleffekt
-- `source: Quelle | None`
+- `source: Source | None`
 
 ### CausalRelation
 Spezialisiert `Relation`. Beschreibt einen gerichteten Wirkzusammenhang.
@@ -163,7 +163,7 @@ Eine vollständige, versionierte, prüfbare Instanz eines Wirkmodells. Enthält 
 
 **Enthält (contains):** `CausalLeaf`  
 **Bindet ein (applies):** `CausalMixin`  
-**Eigenschaft:** `wirkraum: Wirkraum`  
+**Eigenschaft:** `causal_scope: CausalScope`  
 **Eigener Namespace:** ja
 
 ### CausalModelFederation
@@ -198,40 +198,60 @@ Hierarchisch, typisiert. Jeder Container (CausalMixin, CausalModel, CausalModelF
 
 ---
 
-## 7. Geltungsbereich
+## 7. Scope
 
 Attribut auf jedem Element (CausalLeaf, CausalMixin, CausalModel, CausalModelFederation). Drei strukturierte, automatisch prüfbare Dimensionen:
 
 ```
-Geltungsbereich:
+Scope:
   temporal:     DateRange(start, end)
-  spatial:      Referenz auf Regionshierarchie
-  disciplinary: Referenz auf Disziplintaxonomie
+  spatial:      reference to region hierarchy
+  disciplinary: reference to discipline taxonomy
 ```
 
-Zwei Elemente sind nur dann in echtem Konflikt, wenn ihre Geltungsbereiche sich in **allen** Dimensionen überschneiden.
+Zwei Elemente sind nur dann in echtem Konflikt, wenn ihre Scopes sich in **allen** Dimensionen überschneiden.
 
 ---
 
-## 8. Quelle
+## 8. EpistemicStatus
 
-Externes Objekt — kein Teil des Wirkgefüges. Jeder Slot und jede Relation kann optional auf eine Quelle verweisen. Die Referenz zeigt auf die kleinstmögliche semantische Einheit im Quelldokument (Absatz, Messreihe, Tabelle).
+`axiomatic` und `epistemic_status` sind orthogonal — sie beschreiben zwei unabhängige Dimensionen:
+
+- `axiomatic` = **strukturelle Rolle**: ist dieses Element ein Fundament des Modells (nicht hergeleitet)?
+- `epistemic_status` = **Art der Begründung**: wie wurde es etabliert?
+
+"gesetzt" als EpistemicStatus-Wert ist redundant mit `axiomatic = true` und wird nicht verwendet.
+
+| EpistemicStatus | Bedeutung |
+|---|---|
+| `empirically_supported` | Durch Beobachtung oder Messung begründet |
+| `normatively_set` | Durch Wertentscheidung begründet |
+| `hypothetical` | Als Annahme formuliert, nicht belegt |
+| `derived` | Folgt aus anderen Modellelementen |
+| `contested` | Im Modell explizit als strittig markiert |
+| `open` | Noch nicht bewertet |
 
 ---
 
-## 9. Offene Todos
+## 9. Source
+
+Externes Objekt — kein Teil des Wirkgefüges. Jeder Slot und jede Relation kann optional auf eine Source verweisen. Die Referenz zeigt auf die kleinstmögliche semantische Einheit im Quelldokument (paragraph, measurement series, table).
+
+---
+
+## 10. Offene Todos
 
 | # | Thema |
 |---|---|
 | T-09 | Veränderungen (steigend/sinkend) und Zeitscheiben |
 | T-10 | Prüfung: Slots mit gleichem Bezeichner + referentielle Integrität von Definitionen |
 | T-11 | Import von Quellen: granulare Verknüpfung auf Absatz-/Messreihenebene |
-| T-12 | Geltungsbereich: sachliche und methodische Dimension (derzeit ausgeklammert) |
-| T-13 | Geltungsbereich: Attribut oder eigenständiges Objekt? |
+| T-12 | Scope: sachliche und methodische Dimension (derzeit ausgeklammert) |
+| T-13 | Scope: attribute or standalone object? |
 
 ---
 
-## 10. Noch nicht abgestimmt mit restlicher Dokumentation
+## 11. Noch nicht abgestimmt mit restlicher Dokumentation
 
 Dieses Dokument beschreibt den erarbeiteten Kernstand. Folgende Kapitel der bestehenden Dokumentation müssen noch auf Konsistenz geprüft werden:
 
