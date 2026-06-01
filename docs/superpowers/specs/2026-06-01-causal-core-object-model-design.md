@@ -98,7 +98,8 @@ Inspiriert durch das Variablenkonzept im Compilerbau: ein Bezeichner, der mit ei
 **Zusätzliche Attribute** (über CausalComponent hinaus):
 - `identifier: str` — eindeutiger Bezeichner im Namespace
 - `slot_type: SlotType` — Typ (physikalische Größe, soziale Größe, etc.)
-- `source: Source | None`
+- `reference: Source | None` — optionaler Verweis auf externes Quelldokument
+- `derivation_source: Relation | None` — Relation, aus der dieses Element abgeleitet wird (`None` wenn axiomatic oder incomplete)
 
 ### Zustand
 Ein konkreter Wert eines Slots. Eigenständiges Objekt, aber **kein CausalComponent** — er existiert immer relativ zu einem Slot und ist kein eigenständiger Modellbaustein, der im Composite-Baum platziert wird.
@@ -110,7 +111,8 @@ Da ein Zustand jedoch selbst epistemisch bewertet und als axiomatisch markiert w
 - `slot: Slot` — Referenz auf den zugehörigen Slot
 - `epistemic_status: EpistemicStatus`
 
-- `source: Source | None`
+- `reference: Source | None` — optionaler Verweis auf externes Quelldokument
+- `derivation_source: Relation | None` — Relation, aus der dieses Element abgeleitet wird (`None` wenn axiomatic oder incomplete)
 
 ### Entity
 Subtyp von `Slot`. Repräsentiert einen Akteur (Organisation, Gruppe, Institution). Kernmerkmal: Agency — die Fähigkeit zu handeln, zu entscheiden, zu beeinflussen.
@@ -123,7 +125,8 @@ Eine gerichtete Beziehung zwischen zwei (Slot + Zustand)-Paaren.
 **Zusätzliche Attribute** (über CausalComponent hinaus):
 - `source_condition: (Slot, Zustand)` — Quellbedingung
 - `target_effect: (Slot, Zustand)` — Zieleffekt
-- `source: Source | None`
+- `reference: Source | None` — optionaler Verweis auf externes Quelldokument
+- `derivation_source: Relation | None` — Relation, aus der dieses Element abgeleitet wird (`None` wenn axiomatic oder incomplete)
 
 ### CausalRelation
 Spezialisiert `Relation`. Beschreibt einen gerichteten Wirkzusammenhang.
@@ -214,26 +217,45 @@ Zwei Elemente sind nur dann in echtem Konflikt, wenn ihre Scopes sich in **allen
 
 ## 8. EpistemicStatus
 
-`EpistemicStatus` ist ein Enum mit drei mutual exclusive Werten. Er beschreibt den **Transparenzstatus** eines Elements: wie ausformuliert ist es im Modell, und welche Rolle spielt es in der Ableitungsstruktur?
+`EpistemicStatus` beschreibt den **Transparenzstatus** eines Elements. Die Plattform ist keine Wahrheitsmaschine — es geht nicht um externe Wahrheit, sondern um interne Modellstruktur.
 
-Die Plattform ist keine Wahrheitsmaschine — `EpistemicStatus` urteilt nicht über externe Wahrheit, sondern über die interne Struktur des Modells.
+`DERIVED` wird nicht gespeichert, sondern berechnet. Der Autor setzt explizit nur `AXIOMATIC`. Alles andere folgt aus der Struktur.
 
 ```python
 class EpistemicStatus(Enum):
-    INCOMPLETE = "incomplete"   # default — not yet formalized
-    DERIVED    = "derived"      # follows from other elements
-    AXIOMATIC  = "axiomatic"    # set as premise, not derived here
+    INCOMPLETE = "incomplete"  # default — not yet formalized
+    AXIOMATIC  = "axiomatic"   # set as premise, not derived here
 ```
 
-| EpistemicStatus | Wann vollständig? |
-|---|---|
-| `INCOMPLETE` | Nie — blockiert `is_complete()` |
-| `DERIVED` | Wenn alle Vorgänger in der Ableitungskette vollständig sind |
-| `AXIOMATIC` | Immer — ist der Anker, an dem Ableitungsketten enden |
+Die berechneten Eigenschaften auf jedem `CausalComponent`:
 
-**Axiomsraum:** abgeleitete Menge aller Elemente mit `epistemic_status = AXIOMATIC` in einem CausalModel.
+```python
+@property
+def is_axiomatic(self) -> bool:
+    return self.epistemic_status == EpistemicStatus.AXIOMATIC
 
-**`is_complete()` auf CausalModel** gibt `true` zurück, wenn kein enthaltenes Element den Status `INCOMPLETE` hat und alle `DERIVED`-Ketten bis zu `AXIOMATIC`-Elementen aufgelöst sind.
+@property
+def is_derived(self) -> bool:
+    """An element is derived if it has an explicit derivation source."""
+    return self.derivation_source is not None
+
+@property
+def is_incomplete(self) -> bool:
+    return not self.is_axiomatic and not self.is_derived
+
+@property
+def is_complete(self) -> bool:
+    """Complete if axiomatic (chain anchor) or derived from a complete source."""
+    if self.is_axiomatic:
+        return True
+    if self.is_derived:
+        return self.derivation_source.is_complete
+    return False  # incomplete
+```
+
+**Axiomsraum:** abgeleitete Menge — alle Elemente eines CausalModels mit `epistemic_status = AXIOMATIC`.
+
+**`is_complete()` auf CausalModel** gibt `True` zurück, wenn kein enthaltenes Element `is_incomplete` ist und alle `is_derived`-Ketten bis zu einem `AXIOMATIC`-Element aufgelöst sind.
 
 ---
 
