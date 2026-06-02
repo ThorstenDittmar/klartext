@@ -213,15 +213,14 @@ def add(self, component: CausalComponent) -> None:
         )
 
     # 3. Scope negotiation
-    if self.scope.is_axiomatic:
-        if not self.scope.is_compatible(component.scope):
-            raise ScopeConflictError(
-                container_scope=self.scope,
-                component_scope=component.scope,
-            )
-    else:
-        # Derived scope: expand container scope to include component scope
-        self.scope.expand_to_include(component.scope)
+    # TODO (T-18): scope negotiation logic is not yet fully specified.
+    # Open questions: undefined vs universal scope, union vs intersection,
+    # list vs lowest-common-ancestor for spatial/disciplinary dimensions.
+    if self.scope is not None and not self.scope.is_compatible(component.scope):
+        raise ScopeConflictError(
+            container_scope=self.scope,
+            component_scope=component.scope,
+        )
 
     # 4. Add
     self._components.append(component)
@@ -231,11 +230,11 @@ def add(self, component: CausalComponent) -> None:
 
 | Container-Scope | Komponenten-Scope | Ergebnis |
 |---|---|---|
-| AXIOMATIC, kompatibel | beliebig | ✓ OK |
-| AXIOMATIC, inkompatibel | beliebig | `ScopeConflictError` |
-| DERIVED (leer) | 2030 | Container-Scope wird 2030 |
-| DERIVED (2030) | 2040 | Container-Scope wird 2030–2040 |
-| DERIVED (2030) | 2030–2040 | Container-Scope wird 2030–2040 |
+| gesetzt, kompatibel | beliebig | ✓ OK |
+| gesetzt, inkompatibel | beliebig | `ScopeConflictError` |
+| nicht gesetzt (`None`) | beliebig | ✓ OK — aber `is_complete() = False` |
+
+> **Offener Punkt (T-18):** Vollständiges Scope-Verhalten beim add noch nicht spezifiziert. Ungeklärte Fragen: "nicht definiert" vs. "unendlich/universal"; wie trägt ein Element seinen Scope zum Container bei (Union, Schnittmenge, Liste, oder nächsthöhere Hierarchieebene)?
 
 **Fehlerbehandlung in der UI:**
 - `NamespaceCollisionError` → UI bietet an, eine `ConflictRelation` anzulegen
@@ -266,26 +265,15 @@ Scope:
 
 Zwei Elemente sind nur dann in echtem Konflikt, wenn ihre Scopes sich in **allen** Dimensionen überschneiden.
 
-**Scope ist selbst AXIOMATIC oder DERIVED:**
+Ein explizit gesetzter Scope wirkt als Einschränkung beim `add`. Ist kein Scope gesetzt (`None`), blockiert das `is_complete()`, erlaubt aber weiteres Arbeiten am Modell.
 
-- `AXIOMATIC` — vom Autor explizit gesetzt. Wirkt als Einschränkung: neu hinzugefügte Elemente müssen darin passen.
-- `DERIVED` — aus den enthaltenen Elementen berechnet. Wächst als Hülle mit jedem `add` mit.
-
-Ein Scope ohne explizite Dimensionen beginnt als DERIVED (leer) und akkumuliert seine Dimensionen durch die hinzugefügten Elemente.
+> **Offener Punkt (T-18):** Unterscheidung zwischen "nicht definiert" und "unendlich/universal" noch nicht spezifiziert. Wie sich Scopes beim add zusammensetzen (zeitlich, räumlich, disziplinär) ist ebenfalls noch offen.
 
 **Schlüsselmethoden:**
 
 ```python
-@property
-def is_axiomatic(self) -> bool: ...
-
 def is_compatible(self, other: Scope) -> bool:
     """True if this scope and other overlap in all defined dimensions."""
-    ...
-
-def expand_to_include(self, other: Scope) -> None:
-    """Expand this derived scope to include all dimensions of other.
-    Only valid if is_axiomatic is False."""
     ...
 ```
 
