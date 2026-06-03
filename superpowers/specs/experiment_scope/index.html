@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/superpowers/specs/wirkgefuege-design-principles/">
+        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/superpowers/specs/experiment_scope/">
       
       
       
@@ -23,7 +23,7 @@
     
     
       
-        <title>Wirkgefüge — Designprinzipien - klartext.jetzt – Spezifikation</title>
+        <title>Experiment Scope: Narrative → Claims/Actors → Wirkgefüge - klartext.jetzt – Spezifikation</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#wirkgefuge-designprinzipien" class="md-skip">
+        <a href="#experiment-scope-narrative-claimsactors-wirkgefuge" class="md-skip">
           Zum Inhalt
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Wirkgefüge — Designprinzipien
+              Experiment Scope: Narrative → Claims/Actors → Wirkgefüge
             
           </span>
         </div>
@@ -1650,7 +1650,7 @@
 
 
   
-    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/superpowers/specs/wirkgefuege-design-principles.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/superpowers/specs/experiment_scope.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1658,34 +1658,193 @@
   
 
 
-<h1 id="wirkgefuge-designprinzipien">Wirkgefüge — Designprinzipien<a class="headerlink" href="#wirkgefuge-designprinzipien" title="Permanent link">&para;</a></h1>
-<p>Leitende Prinzipien aus der Konzeptionssession. Noch nicht ins Projekt integriert.
-Werden später in CLAUDE.md und Projektdokumentation eingearbeitet.</p>
+<h1 id="experiment-scope-narrative-claimsactors-wirkgefuge">Experiment Scope: Narrative → Claims/Actors → Wirkgefüge<a class="headerlink" href="#experiment-scope-narrative-claimsactors-wirkgefuge" title="Permanent link">&para;</a></h1>
+<p><strong>Datum:</strong> 2026-06-03
+<strong>Ziel:</strong> End-to-end Workflow zum Sammeln praktischer Erfahrungen
+mit dem Datenmodell. Baut auf bestehender Infrastruktur auf.</p>
 <hr />
-<h2 id="keine-wahrheitsmaschine">Keine Wahrheitsmaschine<a class="headerlink" href="#keine-wahrheitsmaschine" title="Permanent link">&para;</a></h2>
-<p>Die Plattform bewertet nicht, ob Inhalte empirisch wahr sind. Sie prüft ausschließlich
-die interne Konsistenz, Vollständigkeit und Transparenz von Modellen.</p>
-<p>Konsequenzen:
-- <code>EpistemicStatus</code> beschreibt den Transparenzstatus eines Elements, nicht seine externe Wahrheit
-- Kontrafaktische, spekulative oder fachlich randständige Modelle sind zulässig, sofern ihre Annahmen explizit sind
-- Claims über empirische Evidenz werden nicht durch die Plattform bewertet — Evidenz ist informativ und wird über <code>Source</code>-Referenzen eingebunden</p>
-<h2 id="alle-semantischen-operationen-laufen-top-down">Alle semantischen Operationen laufen top-down<a class="headerlink" href="#alle-semantischen-operationen-laufen-top-down" title="Permanent link">&para;</a></h2>
-<p>CausalComponents sind kontextfrei — sie kennen ihren Container nicht. Alle semantischen
-Operationen (Namespace-Auflösung, Scope-Prüfung, Vollständigkeitsprüfung, Prüfverfahren)
-starten immer am Container und traversieren nach unten.</p>
-<p>Konsequenzen:
-- Kein <code>_container</code>-Attribut auf CausalComponent
-- Eine Component kann in mehreren Containern gleichzeitig leben (insbesondere CausalMixin)
-- <code>resolve(identifier)</code> wird immer am CausalModel aufgerufen, nicht an der Component
-- Prüfverfahren starten immer an CausalModel oder CausalModelFederation</p>
-<h2 id="code-immer-auf-englisch">Code immer auf Englisch<a class="headerlink" href="#code-immer-auf-englisch" title="Permanent link">&para;</a></h2>
-<p>Alle Bezeichner (Klassen, Methoden, Variablen, Attribute) sind Englisch.
-Kommunikation mit dem User auf Deutsch.</p>
-<h2 id="explizitheit-uber-implizitheit">Explizitheit über Implizitheit<a class="headerlink" href="#explizitheit-uber-implizitheit" title="Permanent link">&para;</a></h2>
-<p>Interpretative Entscheidungen dürfen bei der Modellbildung getroffen werden,
-dürfen aber im fertigen Wirkgefüge nicht als unaufgelöste Mehrdeutigkeit verbleiben.
-Mehrdeutigkeiten müssen als Varianten, Konflikte, Lücken oder offene Fragen
-explizit ausgewiesen werden.</p>
+<h2 id="kontext">Kontext<a class="headerlink" href="#kontext" title="Permanent link">&para;</a></h2>
+<p>Bestehend und funktionierend:
+- Narrativ-Import (.docx, .md)
+- Claim-Extraktion via Claude API
+- CausalModel mit Axiomen
+- React-Frontend (minimal)</p>
+<p>Neu zu bauen in diesem Scope:
+- Actor-Extraktion aus Narrativ
+- Claims als DocumentAssets mit ClaimStatus
+- Actors als DocumentAssets mit ActorType
+- Minimales Wirkgefüge (Slot + CausalRelation) aus Claims
+- Frontend-Erweiterung für den Workflow</p>
+<hr />
+<h2 id="workflow">Workflow<a class="headerlink" href="#workflow" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>1. Narrativ hochladen (bestehend)
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>        ↓
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>2. Analyse: Claims + Actors extrahieren
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>        ↓
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>3. Claims und Actors bestätigen / verwerfen
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>        ↓
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>4. Wirkgefüge-Vorschläge aus Claims generieren
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>        ↓
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>5. Slots und Relationen bestätigen / anpassen
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>        ↓
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>6. CausalModel mit Slots, Relationen und EpistemicStatus speichern
+</code></pre></div>
+<hr />
+<h2 id="schritt-2-analyse-endpunkt">Schritt 2: Analyse-Endpunkt<a class="headerlink" href="#schritt-2-analyse-endpunkt" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>POST /narratives/{id}/analyse
+</code></pre></div>
+<p>Ruft Claude API auf mit dem vollständigen Narrativ-Text.
+Gibt zurück:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">&quot;actors&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="p">{</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">      </span><span class="nt">&quot;label&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Maria Schneider&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">      </span><span class="nt">&quot;actor_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;individual&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">      </span><span class="nt">&quot;occurrences&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Szene 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Szene 3&quot;</span><span class="p">],</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">      </span><span class="nt">&quot;entity_suggestion&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">    </span><span class="p">},</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">    </span><span class="p">{</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">      </span><span class="nt">&quot;label&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Zentralbank&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">      </span><span class="nt">&quot;actor_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;institution&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">      </span><span class="nt">&quot;occurrences&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Szene 2&quot;</span><span class="p">],</span>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">      </span><span class="nt">&quot;entity_suggestion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;zentralbank&quot;</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="w">  </span><span class="p">],</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="w">  </span><span class="nt">&quot;claims&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="w">    </span><span class="p">{</span>
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="w">      </span><span class="nt">&quot;label&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CO₂-Emissionen steigen&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="w">      </span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Die Emissionen stiegen seit Jahren unaufhörlich.&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="w">      </span><span class="nt">&quot;claim_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;empirischer_claim&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a><span class="w">      </span><span class="nt">&quot;confidence&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.91</span><span class="p">,</span>
+<a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a><span class="w">      </span><span class="nt">&quot;wirkgefuege_suggestion&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a><span class="w">        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;slot_zustand&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a><span class="w">        </span><span class="nt">&quot;slot&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;co2_emissionen&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a><span class="w">        </span><span class="nt">&quot;zustand&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;steigend&quot;</span>
+<a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a><span class="w">      </span><span class="p">}</span>
+<a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a><span class="w">    </span><span class="p">},</span>
+<a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a><span class="w">    </span><span class="p">{</span>
+<a id="__codelineno-2-29" name="__codelineno-2-29" href="#__codelineno-2-29"></a><span class="w">      </span><span class="nt">&quot;label&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Hohe Emissionen verursachen Temperaturanstieg&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-30" name="__codelineno-2-30" href="#__codelineno-2-30"></a><span class="w">      </span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;...&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-31" name="__codelineno-2-31" href="#__codelineno-2-31"></a><span class="w">      </span><span class="nt">&quot;claim_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;kausaler_claim&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-32" name="__codelineno-2-32" href="#__codelineno-2-32"></a><span class="w">      </span><span class="nt">&quot;confidence&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.87</span><span class="p">,</span>
+<a id="__codelineno-2-33" name="__codelineno-2-33" href="#__codelineno-2-33"></a><span class="w">      </span><span class="nt">&quot;wirkgefuege_suggestion&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-34" name="__codelineno-2-34" href="#__codelineno-2-34"></a><span class="w">        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;causal_relation&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-35" name="__codelineno-2-35" href="#__codelineno-2-35"></a><span class="w">        </span><span class="nt">&quot;source_slot&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;co2_emissionen&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-36" name="__codelineno-2-36" href="#__codelineno-2-36"></a><span class="w">        </span><span class="nt">&quot;source_zustand&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;hoch&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-37" name="__codelineno-2-37" href="#__codelineno-2-37"></a><span class="w">        </span><span class="nt">&quot;target_slot&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;global_temperatur&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-38" name="__codelineno-2-38" href="#__codelineno-2-38"></a><span class="w">        </span><span class="nt">&quot;target_zustand&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;steigend&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-39" name="__codelineno-2-39" href="#__codelineno-2-39"></a><span class="w">        </span><span class="nt">&quot;mechanism&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Treibhauseffekt&quot;</span>
+<a id="__codelineno-2-40" name="__codelineno-2-40" href="#__codelineno-2-40"></a><span class="w">      </span><span class="p">}</span>
+<a id="__codelineno-2-41" name="__codelineno-2-41" href="#__codelineno-2-41"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-2-42" name="__codelineno-2-42" href="#__codelineno-2-42"></a><span class="w">  </span><span class="p">]</span>
+<a id="__codelineno-2-43" name="__codelineno-2-43" href="#__codelineno-2-43"></a><span class="p">}</span>
+</code></pre></div>
+<hr />
+<h2 id="schritt-3-bestatigung">Schritt 3: Bestätigung<a class="headerlink" href="#schritt-3-bestatigung" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>POST /narratives/{id}/actors          — Actor anlegen (confirmed)
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>POST /narratives/{id}/claims          — Claim anlegen (status: DRAFT)
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>PUT  /narratives/{id}/claims/{id}     — Claim aktualisieren
+</code></pre></div>
+<hr />
+<h2 id="schritt-4-5-wirkgefuge-vorschlage">Schritt 4 + 5: Wirkgefüge-Vorschläge<a class="headerlink" href="#schritt-4-5-wirkgefuge-vorschlage" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>POST /narratives/{id}/suggest-wirkgefuege
+</code></pre></div>
+<p>Aggregiert alle DRAFT-Claims des Narrativs und schlägt daraus
+ein minimales Wirkgefüge vor:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="p">{</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="nt">&quot;suggested_slots&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="p">{</span><span class="nt">&quot;identifier&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;co2_emissionen&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;slot_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;physical_quantity&quot;</span><span class="p">},</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="p">{</span><span class="nt">&quot;identifier&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;global_temperatur&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;slot_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;physical_quantity&quot;</span><span class="p">}</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">  </span><span class="p">],</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">  </span><span class="nt">&quot;suggested_relations&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">    </span><span class="p">{</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CausalRelation&quot;</span><span class="p">,</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">      </span><span class="nt">&quot;source&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;co2_emissionen&quot;</span><span class="p">,</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">      </span><span class="nt">&quot;source_condition&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;hoch&quot;</span><span class="p">,</span>
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="w">      </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;global_temperatur&quot;</span><span class="p">,</span>
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="w">      </span><span class="nt">&quot;target_effect&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;steigend&quot;</span><span class="p">,</span>
+<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="w">      </span><span class="nt">&quot;mechanism&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Treibhauseffekt&quot;</span><span class="p">,</span>
+<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="w">      </span><span class="nt">&quot;epistemic_status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;incomplete&quot;</span>
+<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="w">  </span><span class="p">],</span>
+<a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a><span class="w">  </span><span class="nt">&quot;from_claims&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;claim-uuid-1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;claim-uuid-2&quot;</span><span class="p">]</span>
+<a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a><span class="p">}</span>
+</code></pre></div>
+<hr />
+<h2 id="schritt-6-causalmodel-speichern">Schritt 6: CausalModel speichern<a class="headerlink" href="#schritt-6-causalmodel-speichern" title="Permanent link">&para;</a></h2>
+<p>Bestehende Endpunkte erweitern:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>POST /causal-models                         — CausalModel anlegen (bestehend)
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>POST /causal-models/{id}/slots             — Slot hinzufügen (neu)
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>POST /causal-models/{id}/relations         — CausalRelation hinzufügen (neu)
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>PUT  /causal-models/{id}/relations/{id}    — Relation aktualisieren (neu)
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>PUT  /narratives/{id}/causal-model         — Narrativ verknüpfen (bestehend)
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>POST /claims/{id}/link-to-wirkgefuege      — Claim auf LINKED setzen (neu)
+</code></pre></div>
+<hr />
+<h2 id="domanenanderungen">Domänenänderungen<a class="headerlink" href="#domanenanderungen" title="Permanent link">&para;</a></h2>
+<h3 id="neue-klassen-zielarchitektur-aus-narrative_modelmd">Neue Klassen (Zielarchitektur aus narrative_model.md)<a class="headerlink" href="#neue-klassen-zielarchitektur-aus-narrative_modelmd" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Actor — DocumentAsset mit asset_type=&#39;actor&#39;</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">Actor</span><span class="p">:</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>  <span class="nb">id</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">actor_type</span><span class="p">,</span> <span class="n">entity_ref</span><span class="p">,</span> <span class="n">notes</span><span class="p">,</span> <span class="n">audience</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="c1"># Claim — DocumentAsset mit asset_type=&#39;claim&#39;</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="n">Claim</span><span class="p">:</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>  <span class="nb">id</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">wirkgefuege_ref</span><span class="p">,</span> <span class="n">confidence</span><span class="p">,</span> <span class="n">notes</span><span class="p">,</span> <span class="n">audience</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="c1"># ClaimStatus</span>
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="n">DRAFT</span> <span class="o">/</span> <span class="n">LINKED</span> <span class="o">/</span> <span class="n">UNRESOLVED</span>
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="c1"># ActorType</span>
+<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="n">individual</span> <span class="o">/</span> <span class="n">organisation</span> <span class="o">/</span> <span class="n">group</span> <span class="o">/</span> <span class="n">institution</span> <span class="o">/</span> <span class="n">abstract_entity</span>
+</code></pre></div>
+<h3 id="wirkgefuge-erweiterungen-aus-causal_modelmd">Wirkgefüge-Erweiterungen (aus causal_model.md)<a class="headerlink" href="#wirkgefuge-erweiterungen-aus-causal_modelmd" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Slot</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">Slot</span><span class="p">:</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>  <span class="nb">id</span><span class="p">,</span> <span class="n">causal_model_id</span><span class="p">,</span> <span class="n">identifier</span><span class="p">,</span> <span class="n">slot_type</span><span class="p">,</span> <span class="n">epistemic_status</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="c1"># CausalRelation</span>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="n">CausalRelation</span><span class="p">:</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>  <span class="nb">id</span><span class="p">,</span> <span class="n">causal_model_id</span><span class="p">,</span> <span class="n">identifier</span><span class="p">,</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>  <span class="n">source_slot_id</span><span class="p">,</span> <span class="n">source_condition</span><span class="p">,</span>
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>  <span class="n">target_slot_id</span><span class="p">,</span> <span class="n">target_effect</span><span class="p">,</span>
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>  <span class="n">mechanism</span><span class="p">,</span> <span class="n">epistemic_status</span>
+</code></pre></div>
+<h3 id="datenbank">Datenbank<a class="headerlink" href="#datenbank" title="Permanent link">&para;</a></h3>
+<p>Neue Tabellen:
+- <code>document_assets</code> (Actor + Claim + andere Assets)
+- <code>document_links</code> (Verbindungen)
+- <code>slots</code> (Wirkgefüge-Slots)
+- <code>causal_relations</code> (Kausalrelationen)</p>
+<p>Bestehende Tabellen bleiben erhalten — keine Migration in diesem Scope.</p>
+<hr />
+<h2 id="frontend-erweiterungen">Frontend-Erweiterungen<a class="headerlink" href="#frontend-erweiterungen" title="Permanent link">&para;</a></h2>
+<p>Bestehende React-Screens erweitern:</p>
+<ol>
+<li><strong>Narrativ-Detail:</strong> Button "Analysieren" → startet Schritt 2</li>
+<li><strong>Analyse-Ergebnis:</strong> Liste der vorgeschlagenen Actors und Claims
+   mit Bestätigen/Verwerfen pro Eintrag</li>
+<li><strong>Wirkgefüge-Vorschlag:</strong> Liste der vorgeschlagenen Slots und
+   Relationen mit Bearbeiten/Bestätigen</li>
+<li><strong>CausalModel-Detail:</strong> Slots und Relationen anzeigen</li>
+</ol>
+<p>Kein neues vollständiges UI — Erweiterung des Bestehenden.</p>
+<hr />
+<h2 id="was-explizit-nicht-in-diesem-scope-ist">Was explizit NICHT in diesem Scope ist<a class="headerlink" href="#was-explizit-nicht-in-diesem-scope-ist" title="Permanent link">&para;</a></h2>
+<ul>
+<li>DocumentNode-Baum (Section, Paragraph, etc.) — Phase 2</li>
+<li>Scope auf Slots und Relationen — Phase 2</li>
+<li>CausalModelFederation / Zeitscheiben — Phase 2</li>
+<li>Vollständige DocumentLink-Navigation — Phase 2</li>
+<li>Migration bestehender Daten — Phase 2</li>
+<li>Community-Features — Phase 2</li>
+</ul>
+<hr />
+<h2 id="erfolgskriterium">Erfolgskriterium<a class="headerlink" href="#erfolgskriterium" title="Permanent link">&para;</a></h2>
+<p>Ein Narrativ kann importiert, analysiert und in ein minimales
+Wirkgefüge überführt werden. Der Autor sieht welche Claims
+welchen Slots und Relationen entsprechen. Ein CausalModel mit
+mindestens zwei Slots und einer CausalRelation ist gespeichert
+und mit dem Narrativ verknüpft.</p>
 
 
 
