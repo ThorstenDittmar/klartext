@@ -434,17 +434,44 @@ Issues werden vom Modell getrennt verwaltet — sie sind kein Teil des Namespace
 
 ## 11. Offene Todos
 
+### 11.1 Zurückgestellte Konzeptionsthemen
+
 | # | Thema |
 |---|---|
-| T-09 | Veränderungen (steigend/sinkend) und Zeitscheiben |
+| T-09 | Veränderungen (steigend/sinkend) und Zeitscheiben; Precondition/Postcondition-Inhalt hängt daran |
 | T-10 | Prüfung: Slots mit gleichem Bezeichner + referentielle Integrität von Definitionen |
 | T-11 | Import von Quellen: granulare Verknüpfung auf Absatz-/Messreihenebene |
 | T-12 | Scope: sachliche und methodische Dimension (derzeit ausgeklammert) |
-| T-13 | Scope: attribute or standalone object? |
+| T-13 | Scope: Attribut oder eigenständiges Objekt? |
+| T-14 | Modell-Rating (System + Community) |
+| T-18 | Scope-Verhalten beim `add()`: "nicht definiert" vs. "unendlich/universal"; wie trägt ein Element seinen Scope zum Container bei (Union, Schnittmenge, Liste, LCA)? |
+| T-21 | Versionierungsmechanik des Wirkgefüges |
+| T-22 | DefinitoryRelation vs. CausalRelation mit AXIOMATIC — Abgrenzung validieren |
+
+### 11.2 UI-Feedback (nach Konzeptionsabschluss)
+
+| # | Thema |
+|---|---|
+| T-15 | UI: Namespace-Kollision beim Hinzufügen eines Slots (fachlichen Fehler sichtbar machen) |
+| T-16 | UI: Scope-Konflikt beim Hinzufügen einer CausalComponent |
+| T-17 | UI: Hinweis beim Anlegen eines CausalComposite ohne Scope |
+| T-20 | UI: Autor auf Namespace-Konflikte beim Einbinden eines CausalMixin hinweisen |
+
+### 11.3 Prüfverfahren
+
+| # | Thema |
+|---|---|
+| T-19 | Prüfungen: Namespace-Shadowing durch CausalMixin berücksichtigen |
+
+### 11.4 Noch nicht begonnen
+
+- **CausalModel im Detail:** `applies()`, `resolve(identifier)`, `axiomatic_space`, `is_complete()` konkret
+- **CausalModelFederation:** komplett offen
+- **Namespace als Klasse:** derzeit Konzept, Entscheid über eigenständige Klasse steht aus
 
 ---
 
-## 11. Noch nicht abgestimmt mit restlicher Dokumentation
+## 12. Noch nicht abgestimmt mit restlicher Dokumentation
 
 Dieses Dokument beschreibt den erarbeiteten Kernstand. Folgende Kapitel der bestehenden Dokumentation müssen noch auf Konsistenz geprüft werden:
 
