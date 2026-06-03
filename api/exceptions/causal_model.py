@@ -13,6 +13,26 @@ class AxiomValidationError(DomainError):
     """Raised by Axiom when invariants are violated."""
 
 
+class SlotValidationError(DomainError):
+    """Raised by Slot when invariants are violated (empty identifier, unknown type)."""
+
+
+class CausalRelationValidationError(DomainError):
+    """Raised by CausalRelation or DefinitoryRelation when invariants are violated."""
+
+
+class NamespaceConflictError(DomainError):
+    """Raised by CausalModel or CausalMixin when an identifier is already in use."""
+
+
+class ScopeConflictError(DomainError):
+    """Raised by CausalModel.add() when a component scope is incompatible with the model scope."""
+
+
+class ConditionConflictError(DomainError):
+    """Raised when two conditions on the same Slot require incompatible states."""
+
+
 class CausalModelNotFoundError(RepositoryError):
     """Raised by CausalModelRepository when no CausalModel exists for the given ID."""
 
