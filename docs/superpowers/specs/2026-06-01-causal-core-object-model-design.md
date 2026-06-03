@@ -166,7 +166,16 @@ Spezialisiert `Relation`. Beschreibt einen gerichteten Wirkzusammenhang zwischen
 - `preconditions: list[Precondition]`
 
 ### DefinitoryRelation
-Spezialisiert `Relation`. Beschreibt, wie ein Slot aus anderen Slots definiert oder berechnet wird. Grundlage für referentielle Integrität: alle Begriffe in einer Definition müssen selbst als Slots existieren.
+Spezialisiert `Relation`. Beschreibt, was ein Slot **bedeutet** — nicht was er verursacht. Atemporal und konzeptbasiert, im Gegensatz zur dynamischen `CausalRelation`.
+
+Grundlage für referentielle Integrität: alle Slots in `components` müssen im Modell existieren.
+
+**Zusätzliche Attribute:**
+- `defined_slot: Slot` — der Slot, der definiert wird
+- `components: list[Slot]` — die Slots, aus denen er definiert wird
+- `definition_type: DefinitionType` — COMPOSITIONAL / OPERATIONAL / EQUIVALENCE
+
+> **Offener Punkt (T-22):** Abgrenzung zu `CausalRelation` mit `AXIOMATIC` noch zu validieren. Möglicherweise kann `DefinitoryRelation` als Sonderfall ausgedrückt werden.
 
 ### Condition (abstrakt)
 Abstrakte Basisklasse für alle Bedingungen. Kein CausalComponent — Bedingungen sind keine eigenständigen Modellbausteine, sondern Eigenschaften von Relationen und Composites.
