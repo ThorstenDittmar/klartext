@@ -12,6 +12,7 @@ from api.exceptions.causal_model import (
     CausalModelValidationError,
     CausalRelationValidationError,
     NamespaceConflictError,
+    ScopeConflictError,
     SlotValidationError,
 )
 
@@ -227,6 +228,7 @@ class CausalRelation:
         target_effect: Zustand | None = None,
         epistemic_status: EpistemicStatus = EpistemicStatus.INCOMPLETE,
         preconditions: list[Precondition] | None = None,
+        scope: Scope | None = None,
     ) -> None:
         self._id = id
         self._identifier = identifier
@@ -240,6 +242,7 @@ class CausalRelation:
         self._target_effect = target_effect
         self._epistemic_status = epistemic_status
         self.preconditions: list[Precondition] = preconditions or []
+        self._scope = scope
 
     @classmethod
     def create(
@@ -324,6 +327,10 @@ class CausalRelation:
         return self._epistemic_status
 
     @property
+    def scope(self) -> Scope | None:
+        return self._scope
+
+    @property
     def is_axiomatic(self) -> bool:
         return self._epistemic_status == EpistemicStatus.AXIOMATIC
 
@@ -344,6 +351,7 @@ class DefinitoryRelation:
         target: Slot,
         definition: str,
         epistemic_status: EpistemicStatus = EpistemicStatus.INCOMPLETE,
+        scope: Scope | None = None,
     ) -> None:
         self._id = id
         self._identifier = identifier
@@ -351,6 +359,7 @@ class DefinitoryRelation:
         self._target = target
         self._definition = definition
         self._epistemic_status = epistemic_status
+        self._scope = scope
 
     @classmethod
     def create(
@@ -403,6 +412,10 @@ class DefinitoryRelation:
     @property
     def epistemic_status(self) -> EpistemicStatus:
         return self._epistemic_status
+
+    @property
+    def scope(self) -> Scope | None:
+        return self._scope
 
     @property
     def is_axiomatic(self) -> bool:
@@ -681,37 +694,48 @@ class Axiom:
         return self._description
 
 
-class CausalModel:
-    """A formal, versionable causal model.
+class CausalModel(CausalMixin):
+    """A formal, versionable causal model — the top-level Wirkgefüge container.
 
-    A CausalModel defines a bounded domain of assumptions (Axioms), entities,
-    relations and claims. It serves as the reference against which narrative
-    scenes are checked for consistency.
+    Extends CausalMixin with scope, preconditions, postconditions, and a
+    scope-enforcing add().
 
-    Invariants enforced at construction time:
-    - title must not be empty
+    Backward compatibility: CausalModel.create(title=...) still works.
+    add_axiom() still works. The composite API (add, get_slots, etc.) is additive.
     """
 
     def __init__(
         self,
         id: str | None,
         title: str,
+        identifier: str | None = None,
         status: CausalModelStatus = CausalModelStatus.PRIVATE,
+        scope: Scope | None = None,
     ) -> None:
+        super().__init__(identifier=identifier or title)
         self._id = id
         self._title = title
         self._status = status
+        self._scope = scope
         self._axioms: list[Axiom] = []
+        self.preconditions: list[Precondition] = []
+        self.postconditions: list[Postcondition] = []
 
     @classmethod
-    def create(cls, title: str) -> CausalModel:
-        """Creates a new CausalModel with status 'private'.
+    def create(  # type: ignore[override]
+        cls,
+        title: str,
+        identifier: str | None = None,
+        scope: Scope | None = None,
+        status: CausalModelStatus = CausalModelStatus.PRIVATE,
+    ) -> CausalModel:
+        """Creates a new CausalModel.
 
         Raises CausalModelValidationError for empty title.
         """
         if not title.strip():
             raise CausalModelValidationError("title must not be empty")
-        return cls(id=None, title=title)
+        return cls(id=None, title=title, identifier=identifier, scope=scope, status=status)
 
     @classmethod
     def from_record(cls, record: dict[str, Any]) -> CausalModel:
@@ -722,9 +746,41 @@ class CausalModel:
             status=CausalModelStatus(record["status"]),
         )
 
+    def add(self, component: _Component) -> None:
+        """Adds a component, enforcing namespace uniqueness and scope compatibility.
+
+        Raises NamespaceConflictError when the identifier is already in use.
+        Raises ScopeConflictError when the component scope is incompatible with the model scope.
+        """
+        if self._scope is not None and component.scope is not None:
+            if not self._scope.includes(component.scope):
+                raise ScopeConflictError(
+                    f"Component '{component.identifier}' scope is incompatible "
+                    f"with model '{self.identifier}' scope"
+                )
+        super().add(component)
+
     def add_axiom(self, axiom: Axiom) -> None:
-        """Appends an Axiom to the CausalModel in the order it is called."""
+        """Backward-compatible: appends an Axiom.
+
+        Axioms are stored separately and do not participate in namespace or
+        scope enforcement.
+        """
         self._axioms.append(axiom)
+
+    def axiomatic_space(self) -> list[_Component]:
+        """Returns all components with epistemic_status == AXIOMATIC."""
+        return [c for c in self.get_slots() + self.get_relations() if c.is_axiomatic]
+
+    def is_complete(self) -> bool:
+        """True when the model has at least one component and none are INCOMPLETE."""
+        all_components: list[_Component] = self.get_slots() + self.get_relations()
+        if not all_components:
+            return False
+        return all(
+            c.is_axiomatic or c.epistemic_status != EpistemicStatus.INCOMPLETE
+            for c in all_components
+        )
 
     @property
     def id(self) -> str | None:
@@ -737,6 +793,14 @@ class CausalModel:
     @property
     def status(self) -> CausalModelStatus:
         return self._status
+
+    @property
+    def scope(self) -> Scope | None:
+        return self._scope
+
+    @scope.setter
+    def scope(self, value: Scope | None) -> None:
+        self._scope = value
 
     @property
     def axioms(self) -> list[Axiom]:
