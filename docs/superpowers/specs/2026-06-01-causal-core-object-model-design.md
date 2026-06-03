@@ -50,7 +50,6 @@ CausalComponent (abstrakt)
   │     │     └── Entity
   │     └── Relation (abstrakt)
   │           ├── CausalRelation
-  │           ├── ConflictRelation
   │           └── DefinitoryRelation
   ├── CausalMixin
   └── CausalComposite (abstrakt)
@@ -63,6 +62,11 @@ Außerhalb der CausalComponent-Hierarchie (keine Modellbausteine):
     ├── Precondition   — Bedingung die erfüllt sein muss (vor einem Übergang)
     └── Postcondition  — erwarteter Zustand nach einem Übergang
   Source        — externe Referenz, nicht Teil des Wirkgefüges
+
+ModelIssue (eigene Objektstruktur, kein CausalComponent):
+  ├── NamespaceConflict   — gleicher Bezeichner, verschiedene Elemente
+  ├── ScopeConflict       — unvereinbare Geltungsbereiche
+  └── ConditionConflict   — unvereinbare Bedingungen
 
 Hinweis: Precondition und Postcondition sind inhaltlich mit Zeitscheiben
 verknüpft und werden dort vollständig spezifiziert (T-09). Die Struktur
@@ -143,26 +147,23 @@ Subtyp von `Slot`. Repräsentiert einen Akteur (Organisation, Gruppe, Institutio
 Zustände einer Entity beschreiben Kapazität oder Status ("handlungsfähig", "aufgelöst"), keine Messwerte.
 
 ### Relation (abstrakt)
-Eine gerichtete Beziehung zwischen zwei (Slot + Zustand)-Paaren.
+Eine gerichtete Beziehung zwischen Modellelementen. Ist ein `CausalLeaf` — enthält selbst keine weiteren Komponenten. Subklassen definieren ihre eigenen Endpoint-Typen.
 
 **Zusätzliche Attribute** (über CausalComponent hinaus):
-- `source_condition: (Slot, Zustand)` — Quellbedingung
-- `target_effect: (Slot, Zustand)` — Zieleffekt
 - `reference: Source | None` — optionaler Verweis auf externes Quelldokument
 - `derivation_source: Relation | None` — Relation, aus der dieses Element abgeleitet wird (`None` wenn axiomatic oder incomplete)
 
 ### CausalRelation
-Spezialisiert `Relation`. Beschreibt einen gerichteten Wirkzusammenhang.
+Spezialisiert `Relation`. Beschreibt einen gerichteten Wirkzusammenhang zwischen zwei (Slot + Zustand)-Paaren.
 
 **Zusätzliche Attribute:**
+- `source_condition: tuple[Slot, Zustand]` — Quellbedingung
+- `target_effect: tuple[Slot, Zustand]` — Zieleffekt
 - `mechanism: str` — Wirkmechanismus
 - `polarity: Polarity` — positiv / negativ
 - `strength: float | None`
 - `uncertainty: float | None`
 - `preconditions: list[Precondition]`
-
-### ConflictRelation
-Spezialisiert `Relation`. Markiert expliziten Widerspruch zwischen zwei Elementen — z.B. zwei Slots mit gleichem Bezeichner aber verschiedenen Zuständen im selben Geltungsbereich.
 
 ### DefinitoryRelation
 Spezialisiert `Relation`. Beschreibt, wie ein Slot aus anderen Slots definiert oder berechnet wird. Grundlage für referentielle Integrität: alle Begriffe in einer Definition müssen selbst als Slots existieren.
@@ -299,8 +300,9 @@ def add(self, component: CausalComponent) -> None:
 > **Offener Punkt (T-18):** Vollständiges Scope-Verhalten beim add noch nicht spezifiziert. Ungeklärte Fragen: "nicht definiert" vs. "unendlich/universal"; wie trägt ein Element seinen Scope zum Container bei (Union, Schnittmenge, Liste, oder nächsthöhere Hierarchieebene)?
 
 **Fehlerbehandlung in der UI:**
-- `NamespaceCollisionError` → UI bietet an, eine `ConflictRelation` anzulegen
-- `ScopeConflictError` → UI bietet an, eine `ConflictRelation` anzulegen oder den Scope des Elements anzupassen
+- `NamespaceCollisionError` → UI erzeugt ein `NamespaceConflict`-Objekt, informiert den Autor
+- `ScopeConflictError` → UI erzeugt ein `ScopeConflict`-Objekt, informiert den Autor
+- `ConditionConflictError` → UI erzeugt ein `ConditionConflict`-Objekt, informiert den Autor
 
 ---
 
@@ -391,7 +393,32 @@ Externes Objekt — kein Teil des Wirkgefüges. Jeder Slot und jede Relation kan
 
 ---
 
-## 10. Offene Todos
+## 10. ModelIssue
+
+`ModelIssue` ist eine eigenständige Objektstruktur — kein `CausalComponent`, nicht Teil des Modell-Inhalts. Ein `ModelIssue` beschreibt einen Zustand, der aufgelöst werden muss, bevor das Modell vollständig sein kann.
+
+**Funktion:** Trennung zwischen Modellinhalt (Slots, Relationen) und Modellproblemen (Konflikte, Inkonsistenzen). Relationen sind gewünschte, dauerhafte Modellelemente. Issues sind transient — sie sollen aufgelöst werden.
+
+**Lebenszyklus:** `open → acknowledged → resolved`
+
+```
+ModelIssue (abstrakt)
+  ├── NamespaceConflict   — gleicher Bezeichner, verschiedene Elemente im selben Namespace
+  ├── ScopeConflict       — unvereinbare Geltungsbereiche
+  └── ConditionConflict   — unvereinbare Bedingungen
+```
+
+**Gemeinsame Attribute:**
+- `status: IssueStatus` — open / acknowledged / resolved
+- `affected_components: list[CausalComponent]` — betroffene Elemente
+- `detected_at: datetime`
+- `resolved_at: datetime | None`
+
+Issues werden vom Modell getrennt verwaltet — sie sind kein Teil des Namespace und beeinflussen `is_complete()`: ein Modell mit offenen Issues gibt `is_complete() = False` zurück.
+
+---
+
+## 11. Offene Todos
 
 | # | Thema |
 |---|---|
