@@ -97,13 +97,17 @@ def get_slots(self) -> list[Slot]: ...
 def get_relations(self) -> list[Relation]: ...
 def get_conditions(self) -> list[Condition]: ...
 
-# Structure:
-def get_namespace(self) -> Namespace: ...
+# Own namespace (None for CausalLeaf, own namespace for CausalMixin/CausalComposite):
+def get_namespace(self) -> Namespace | None: ...
+
 def is_complete(self) -> bool: ...
 ```
 
 Für `CausalLeaf`: `get_*()` = `get_own_*()` — keine Kinder vorhanden.  
 Für `CausalComposite` und `CausalMixin`: `get_*()` = `get_own_*()` + rekursiv alle Kinder.
+
+**Kontextualisierungsprinzip:**
+Components sind kontextfrei — sie kennen ihren Container nicht. Alle semantischen Operationen (Namespace-Auflösung, Scope-Prüfung, Vollständigkeitsprüfung, Prüfverfahren) laufen immer **top-down**: sie starten am Container und traversieren nach unten. Eine Component kann nicht fragen "in welchem Modell bin ich?" — das Modell fragt "welche Components gehören zu mir?"
 
 **Gemeinsame Attribute aller Subklassen:**
 - `scope: Scope` — Gültigkeitsbedingungen (temporal, räumlich, disziplinär)
@@ -205,7 +209,8 @@ Ein kohärentes, möglicherweise unvollständiges Fragment eines Wirkmodells. Wi
 `is_complete()` gibt immer `False` zurück — ein Fragment ist per Definition kein vollständiges Modell.
 
 **Enthält:** `CausalLeaf`, `CausalMixin`  
-**Eigener Namespace:** ja
+**Eigener Namespace:** ja  
+**`_used_in: list[CausalModel | CausalModelFederation]`** — informativ, kein semantischer Einfluss. Zeigt dem Autor wo dieses Mixin genutzt wird. Wird beim `applies` gepflegt.
 
 **Namespace-Auflösung beim `applies`:**
 
