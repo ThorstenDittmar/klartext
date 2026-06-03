@@ -141,9 +141,24 @@ Da ein Zustand jedoch selbst epistemisch bewertet und als axiomatisch markiert w
 - `value: str | float | int` — qualitativer oder quantitativer Wert
 - `slot: Slot` — Referenz auf den zugehörigen Slot
 - `epistemic_status: EpistemicStatus`
-
 - `reference: Source | None` — optionaler Verweis auf externes Quelldokument
 - `derivation_source: Relation | None` — Relation, aus der dieses Element abgeleitet wird (`None` wenn axiomatic oder incomplete)
+
+**Qualitative Werte und Trend-Semantik (offene Lücke):**
+
+`value: str` erlaubt sowohl statische qualitative Zustände (`"kritisch"`, `"hoch"`) als auch scheinbar dynamische Trend-Werte (`"steigend"`, `"sinkend"`). Diese sind semantisch grundverschieden:
+
+| Werttyp | Beispiel | Eigenständig? | Zeitscheibe nötig? |
+|---|---|---|---|
+| Quantitativer Wert | `421.0` | ja | nein |
+| Statischer Zustand | `"kritisch"` | ja | nein |
+| Trend-Zustand | `"steigend"` | nur als Trend-Slot | ggf. ja |
+
+**Regel:** `"steigend"` ist nur dann ein valider `Zustand.value`, wenn der referenzierte `Slot` explizit einen Trend beschreibt (z.B. `Slot: co2_trend`, Zustandsraum: `{steigend, stabil, sinkend}`). Der Trend-Slot ist dann ein eigenständiger Slot — nicht identisch mit einem Messwert-Slot (z.B. `co2_concentration`).
+
+Ob Trend-Zustände axiomatic gesetzt oder aus einem Zeitscheibenvergleich abgeleitet werden, ist noch nicht vollständig spezifiziert (→ T-09). Der Typ `str` bleibt vorläufig, solange der Zustandsraum eines Slots nicht formal modelliert ist.
+
+> **Offener Punkt (T-09):** Der Zustandsraum eines Slots (welche Werte sind valide?) ist derzeit nicht im Modell repräsentiert. Trend-Zustände wie `"steigend"` als abgeleitete Werte aus Zeitscheibenvergleichen sind ebenfalls T-09 zugeordnet.
 
 ### Entity
 Subtyp von `Slot`. Repräsentiert einen Akteur (Organisation, Gruppe, Institution). Kernmerkmal: Agency — die Fähigkeit zu handeln, zu entscheiden, zu beeinflussen.
