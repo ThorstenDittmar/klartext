@@ -59,8 +59,14 @@ CausalComponent (abstrakt)
 
 Außerhalb der CausalComponent-Hierarchie (keine Modellbausteine):
   Zustand       — Wert eines Slots, immer relativ zu einem Slot
-  Precondition  — Bedingung auf einer Relation, kein eigenständiger Baustein
-  Quelle        — externe Referenz, nicht Teil des Wirkgefüges
+  Condition     — abstrakte Basisklasse für Bedingungen (kein CausalComponent)
+    ├── Precondition   — Bedingung die erfüllt sein muss (vor einem Übergang)
+    └── Postcondition  — erwarteter Zustand nach einem Übergang
+  Source        — externe Referenz, nicht Teil des Wirkgefüges
+
+Hinweis: Precondition und Postcondition sind inhaltlich mit Zeitscheiben
+verknüpft und werden dort vollständig spezifiziert (T-09). Die Struktur
+von Condition ist jedoch bereits klar.
 ```
 
 ---
@@ -73,10 +79,27 @@ Die gemeinsame Basisklasse aller Modellelemente. Definiert das Protokoll, das al
 **Funktion:** Jedes Element im Wirkgefüge ist ein CausalComponent. Das ermöglicht einheitliche Traversierung, Prüfung und Abfrage über alle Ebenen der Composite-Hierarchie hinweg.
 
 **Protokoll (abstrakte Methoden):**
-- `get_slots() → list[Slot]` — liefert alle Slots, die dieses Element enthält oder erreichbar macht
-- `get_relations() → list[Relation]` — liefert alle Relationen, die dieses Element enthält oder erreichbar macht
-- `get_namespace() → Namespace` — liefert den Namespace dieses Elements; CausalLeafs geben `∅` zurück
-- `is_complete() → bool` — gibt an, ob das Element für sich allein prüfbar und vollständig ist
+
+Jede Methode existiert in zwei Varianten — direkt (nur das Element selbst) und rekursiv (Element + alle Kinder):
+
+```python
+# Direct — own elements only:
+def get_own_slots(self) -> list[Slot]: ...
+def get_own_relations(self) -> list[Relation]: ...
+def get_own_conditions(self) -> list[Condition]: ...
+
+# Recursive — own + all children:
+def get_slots(self) -> list[Slot]: ...
+def get_relations(self) -> list[Relation]: ...
+def get_conditions(self) -> list[Condition]: ...
+
+# Structure:
+def get_namespace(self) -> Namespace: ...
+def is_complete(self) -> bool: ...
+```
+
+Für `CausalLeaf`: `get_*()` = `get_own_*()` — keine Kinder vorhanden.  
+Für `CausalComposite` und `CausalMixin`: `get_*()` = `get_own_*()` + rekursiv alle Kinder.
 
 **Gemeinsame Attribute aller Subklassen:**
 - `scope: Scope` — Gültigkeitsbedingungen (temporal, räumlich, disziplinär)
@@ -144,11 +167,27 @@ Spezialisiert `Relation`. Markiert expliziten Widerspruch zwischen zwei Elemente
 ### DefinitoryRelation
 Spezialisiert `Relation`. Beschreibt, wie ein Slot aus anderen Slots definiert oder berechnet wird. Grundlage für referentielle Integrität: alle Begriffe in einer Definition müssen selbst als Slots existieren.
 
-### Precondition
-Eine Bedingung, die erfüllt sein muss, damit eine Relation oder ein Prozess gültig angewendet werden kann. Normative Claims ("sollte", "muss") werden als Preconditions modelliert.
+### Condition (abstrakt)
+Abstrakte Basisklasse für alle Bedingungen. Kein CausalComponent — Bedingungen sind keine eigenständigen Modellbausteine, sondern Eigenschaften von Relationen und Composites.
 
-**Attribute:**
-- `condition: (Slot, Zustand)`
+```python
+class Condition(ABC):
+    @abstractmethod
+    def is_compatible_with(self, other: Condition) -> bool:
+        """Returns True if this condition can coexist with the other condition
+        without contradiction. Used by add() to validate new components."""
+        ...
+```
+
+### Precondition
+Spezialisiert `Condition`. Eine Bedingung, die erfüllt sein muss, damit eine Relation oder ein Prozess gültig angewendet werden kann. Normative Claims ("sollte", "muss") werden als Preconditions modelliert.
+
+Inhaltliche Spezifikation (insbesondere Verbindung zu Zeitscheiben) folgt in T-09.
+
+### Postcondition
+Spezialisiert `Condition`. Beschreibt einen erwarteten Zustand nach einem Übergang oder der Anwendung einer Relation.
+
+Inhaltliche Spezifikation folgt in T-09.
 
 ### CausalMixin
 Ein kohärentes, möglicherweise unvollständiges Fragment eines Wirkmodells. Kann aus anderen CausalMixins und CausalLeafs zusammengesetzt werden. Wiederverwendbar in mehreren CausalModels.
@@ -222,7 +261,18 @@ def add(self, component: CausalComponent) -> None:
             component_scope=component.scope,
         )
 
-    # 4. Add
+    # 4. Condition compatibility check
+    new_conditions = component.get_conditions()
+    existing_conditions = self.get_conditions()
+    for new_cond in new_conditions:
+        for existing_cond in existing_conditions:
+            if not new_cond.is_compatible_with(existing_cond):
+                raise ConditionConflictError(
+                    new_condition=new_cond,
+                    existing_condition=existing_cond,
+                )
+
+    # 5. Add
     self._components.append(component)
 ```
 
