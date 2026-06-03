@@ -6,8 +6,7 @@
 - User-facing strings (UI text, error messages) in German
 
 ## Test-Driven Development
-- Always write tests before implementation (TDD)
-- TDD cycle: Domain → Service → Repository → Router
+Use the `tdd` skill. It extends the `superpowers:test-driven-development` skill with project-specific standards.
 
 ## Architecture
 
@@ -131,27 +130,6 @@ if settings.environment == "production":
 | Exceptions | `Error` suffix | `InvalidEmailError` |
 | Fakes (tests) | `Fake` prefix | `FakeUserRepository` |
 
-## Testing Strategy
-Four levels, always from inside out:
-
-1. **Domain objects** — pure unit tests, no mocks, no external systems
-2. **Services** — unit tests with fake repositories (in-memory, no Supabase)
-3. **Repositories** — integration tests against real test database
-4. **Router** — API tests via FastAPI `TestClient`
-
-**Infrastructure tests** — separate category, runs independently:
-- Is the database reachable?
-- Is Supabase Storage available?
-- Are external services responding?
-
-**Health check endpoint** — `/health` returns infrastructure status for monitoring and deployments.
-
-**Test naming**: methods read as specifications:
-```python
-def test_create_user_rejects_duplicate_email(): ...
-def test_change_email_raises_error_for_invalid_format(): ...
-```
-
 ## Infrastructure as Code
 All essential operations are scripted — no manual steps in terminals, dashboards, or GUIs.
 
@@ -187,18 +165,11 @@ Before closing any infrastructure-related task, verify each item:
 ## Comments
 - Every non-trivial method gets a docstring
 - Methods describe what they do
-- Tests describe the expectation
 - Trivial getters or simple pass-throughs do not need a comment
 
 ```python
-# method
 def create_user(self, request: CreateUserRequest) -> User:
     """Creates a new user and persists it. Raises EmailAlreadyExistsError if the email is taken."""
-    ...
-
-# test
-def test_create_user_rejects_duplicate_email():
-    """Expects an EmailAlreadyExistsError when a user with the same email already exists."""
     ...
 
 # trivial — no comment needed
@@ -231,6 +202,26 @@ git mv _temp.tsx NewName.tsx
 ```
 
 This produces two real renames that work reliably on all platforms.
+
+## Wirkgefüge Design Principles
+
+These principles govern all causal model (Wirkgefüge) code and architecture decisions.
+
+**No truth machine.** The platform does not evaluate whether content is empirically true.
+It checks only internal consistency, completeness and transparency of models.
+`EpistemicStatus` describes the transparency status of an element, not its external truth.
+Counterfactual, speculative or marginal models are valid as long as their assumptions are explicit.
+
+**All semantic operations run top-down.** CausalComponents are context-free — they do not
+know their container. All semantic operations (namespace resolution, scope checking,
+completeness verification, validation procedures) always start at the container and
+traverse downward. No `_container` attribute on CausalComponent. A component can live
+in multiple containers simultaneously (e.g. CausalMixin). `resolve(identifier)` is always
+called on CausalModel, never on a component.
+
+**Explicitness over implicitness.** Interpretive decisions may be made during modelling
+but must not remain as unresolved ambiguity in the finished model. Ambiguities must be
+explicitly marked as variants, conflicts, gaps or open questions.
 
 ## Ports & Adapters
 Isolate technical components (e.g. verification procedures) via abstract interfaces:
