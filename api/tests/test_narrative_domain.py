@@ -19,8 +19,8 @@ from api.models.narrative import Actor, ActorType, Narrative, Scene
 
 
 # helper — actor with a fake id, as if already persisted
-def _persisted_actor(name: str = "Max", typ: ActorType = ActorType.INDIVIDUAL) -> Actor:
-    return Actor(id="actor-persisted", name=name, typ=typ, description=None)
+def _persisted_actor(label: str = "Max", actor_type: ActorType = ActorType.INDIVIDUAL) -> Actor:
+    return Actor(id="actor-persisted", label=label, actor_type=actor_type, notes=None)
 
 
 # --- Scene ---
@@ -142,45 +142,63 @@ def test_narrative_from_record_reconstructs_narrative() -> None:
 # --- Actor ---
 
 
-def test_actor_create_stores_name_and_type() -> None:
-    """Expects name and type to be accessible after creation."""
-    actor = Actor.create(name="Max", typ=ActorType.INDIVIDUAL)
+def test_actor_create_stores_label_and_actor_type() -> None:
+    """Expects label and actor_type to be accessible after creation."""
+    actor = Actor.create(label="Max", actor_type=ActorType.INDIVIDUAL)
 
-    assert actor.name == "Max"
-    assert actor.typ == ActorType.INDIVIDUAL
-
-
-def test_actor_create_stores_description_when_provided() -> None:
-    """Expects description to be stored when explicitly passed."""
-    actor = Actor.create(name="Max", typ=ActorType.INDIVIDUAL, description="The protagonist.")
-
-    assert actor.description == "The protagonist."
+    assert actor.label == "Max"
+    assert actor.actor_type == ActorType.INDIVIDUAL
 
 
-def test_actor_create_has_no_description_by_default() -> None:
-    """Expects description to be None when not provided."""
-    actor = Actor.create(name="Voters", typ=ActorType.GROUP)
+def test_actor_create_stores_notes_when_provided() -> None:
+    """Expects notes to be stored when explicitly passed."""
+    actor = Actor.create(label="Max", actor_type=ActorType.INDIVIDUAL, notes="The protagonist.")
 
-    assert actor.description is None
+    assert actor.notes == "The protagonist."
+
+
+def test_actor_create_has_no_notes_by_default() -> None:
+    """Expects notes to be None when not provided."""
+    actor = Actor.create(label="Voters", actor_type=ActorType.GROUP)
+
+    assert actor.notes is None
+
+
+def test_actor_create_has_no_entity_ref_by_default() -> None:
+    """Expects entity_ref to be None — not every actor maps to a causal model entity."""
+    actor = Actor.create(label="Maria", actor_type=ActorType.INDIVIDUAL)
+
+    assert actor.entity_ref is None
+
+
+def test_actor_create_stores_entity_ref_when_provided() -> None:
+    """Expects entity_ref to be stored when an ID of a causal model entity is given."""
+    actor = Actor.create(
+        label="Zentralbank",
+        actor_type=ActorType.INSTITUTION,
+        entity_ref="entity-uuid-123",
+    )
+
+    assert actor.entity_ref == "entity-uuid-123"
 
 
 def test_actor_create_has_no_id_before_persistence() -> None:
     """Expects id to be None until the repository assigns one on first save."""
-    actor = Actor.create(name="Max", typ=ActorType.INDIVIDUAL)
+    actor = Actor.create(label="Max", actor_type=ActorType.INDIVIDUAL)
 
     assert actor.id is None
 
 
-def test_actor_create_raises_for_empty_name() -> None:
-    """Expects ActorValidationError because an actor without a name cannot be addressed."""
+def test_actor_create_raises_for_empty_label() -> None:
+    """Expects ActorValidationError because an actor without a label cannot be addressed."""
     with pytest.raises(ActorValidationError):
-        Actor.create(name="", typ=ActorType.INDIVIDUAL)
+        Actor.create(label="", actor_type=ActorType.INDIVIDUAL)
 
 
-def test_actor_create_raises_for_whitespace_only_name() -> None:
-    """Expects ActorValidationError because a whitespace-only name is equivalent to empty."""
+def test_actor_create_raises_for_whitespace_only_label() -> None:
+    """Expects ActorValidationError because a whitespace-only label is equivalent to empty."""
     with pytest.raises(ActorValidationError):
-        Actor.create(name="   ", typ=ActorType.INDIVIDUAL)
+        Actor.create(label="   ", actor_type=ActorType.INDIVIDUAL)
 
 
 def test_actor_type_covers_all_expected_variants() -> None:
@@ -194,38 +212,71 @@ def test_actor_type_covers_all_expected_variants() -> None:
     assert "abstract_entity" in types
 
 
-def test_actor_from_record_reconstructs_actor_with_description() -> None:
-    """Expects all fields including id and description to be restored from the database record."""
+def test_actor_from_record_reconstructs_actor_with_notes() -> None:
+    """Expects all fields including id and notes to be restored from the database record."""
     record = {
         "id": "actor-001",
-        "name": "Max",
-        "typ": "individual",
-        "description": "The protagonist.",
+        "label": "Max",
+        "actor_type": "individual",
+        "notes": "The protagonist.",
+        "entity_ref": None,
     }
 
     actor = Actor.from_record(record)
 
     assert actor.id == "actor-001"
-    assert actor.name == "Max"
-    assert actor.typ == ActorType.INDIVIDUAL
-    assert actor.description == "The protagonist."
+    assert actor.label == "Max"
+    assert actor.actor_type == ActorType.INDIVIDUAL
+    assert actor.notes == "The protagonist."
+    assert actor.entity_ref is None
 
 
-def test_actor_from_record_reconstructs_actor_without_description() -> None:
-    """Expects description to be None when the database record has no description."""
-    record = {"id": "actor-002", "name": "Voters", "typ": "group", "description": None}
+def test_actor_from_record_reconstructs_actor_with_entity_ref() -> None:
+    """Expects entity_ref to be restored when the DB record contains one."""
+    record = {
+        "id": "actor-002",
+        "label": "Zentralbank",
+        "actor_type": "institution",
+        "notes": None,
+        "entity_ref": "entity-uuid-456",
+    }
 
     actor = Actor.from_record(record)
 
-    assert actor.description is None
+    assert actor.entity_ref == "entity-uuid-456"
 
 
 def test_actor_from_record_raises_for_unknown_type() -> None:
     """Expects ActorValidationError when the database record contains an unrecognised type value."""
-    record = {"id": "actor-003", "name": "Max", "typ": "unknown_type", "description": None}
+    record = {
+        "id": "actor-003",
+        "label": "Max",
+        "actor_type": "unknown_type",
+        "notes": None,
+        "entity_ref": None,
+    }
 
     with pytest.raises(ActorValidationError):
         Actor.from_record(record)
+
+
+def test_actor_update_changes_label_actor_type_and_notes() -> None:
+    """Expects update() to change all mutable fields at once."""
+    actor = _persisted_actor()
+
+    actor.update(label="Maria", actor_type=ActorType.INDIVIDUAL, notes="Updated note.")
+
+    assert actor.label == "Maria"
+    assert actor.actor_type == ActorType.INDIVIDUAL
+    assert actor.notes == "Updated note."
+
+
+def test_actor_update_raises_for_empty_label() -> None:
+    """Expects ActorValidationError when update() receives an empty label."""
+    actor = _persisted_actor()
+
+    with pytest.raises(ActorValidationError):
+        actor.update(label="", actor_type=ActorType.INDIVIDUAL, notes=None)
 
 
 # --- Narrative + Actor ---
