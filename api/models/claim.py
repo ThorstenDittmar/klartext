@@ -9,16 +9,19 @@ from api.exceptions.claim import ClaimValidationError
 
 
 class ClaimType(StrEnum):
-    """The epistemic type of a claim. Values match the Claude API prompt convention."""
+    """The epistemic type of a claim.
 
-    EMPIRICAL = "empirischer_claim"
-    CAUSAL = "kausaler_claim"
-    DEFINITIONAL = "definitorischer_claim"
-    NORMATIVE = "normativer_claim"
-    PROGNOSTIC = "prognostischer_claim"
-    COUNTERFACTUAL = "kontrafaktischer_claim"
-    METHODOLOGICAL = "methodischer_claim"
-    UNCERTAINTY = "unsicherheitsclaim"
+    Values are stored in the database and passed to the Claude API prompt.
+    """
+
+    EMPIRICAL = "empirical"
+    CAUSAL = "causal"
+    DEFINITIONAL = "definitional"
+    NORMATIVE = "normative"
+    PROGNOSTIC = "prognostic"
+    COUNTERFACTUAL = "counterfactual"
+    METHODOLOGICAL = "methodological"
+    UNCERTAINTY = "uncertainty"
 
 
 class Claim:

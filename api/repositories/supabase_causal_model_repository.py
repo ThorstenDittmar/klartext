@@ -70,7 +70,7 @@ class SupabaseCausalModelRepository(CausalModelRepository):
             {
                 "id": row["id"],
                 "label": row["label"],
-                "beschreibung": row["beschreibung"],
+                "description": row["description"],
             }
         )
 

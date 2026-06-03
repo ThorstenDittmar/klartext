@@ -33,7 +33,7 @@ def test_claim_has_no_id_before_persistence() -> None:
 
 def test_claim_from_record_reconstructs_claim() -> None:
     """Expects all fields – including the persisted id – to be restored from the database record."""
-    record = {"id": "abc-123", "text": "Ein Claim.", "typ": "empirischer_claim", "confidence": 0.8}
+    record = {"id": "abc-123", "text": "Ein Claim.", "typ": "empirical", "confidence": 0.8}
 
     claim = Claim.from_record(record)
 

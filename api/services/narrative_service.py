@@ -121,10 +121,10 @@ class NarrativeService:
         Raises ActorNotFoundError if no Actor with that ID exists in the Narrative.
         Raises NarrativePersistenceError on database failure.
 
-        TODO: Referenzielle Integrität — wenn ein Actor gelöscht wird, der noch in Szenentext
-        vorkommt oder auf eine Wirkmodell-Entität gemappt ist, sollte der Autor gewarnt werden.
-        Optionen: (a) weiches Löschen mit Warnung, (b) Validierung vor dem Löschen,
-        (c) Konsistenzprüfung im Transparenzbericht. Entscheidung steht noch aus.
+        TODO: Referential integrity — when an Actor is deleted that still appears in scene text
+        or is mapped to a causal model entity, the author should be warned.
+        Options: (a) soft-delete with warning, (b) pre-delete validation,
+        (c) consistency check in Transparenzbericht. Decision pending.
         """
         await self._repository.find_by_id(narrative_id)
         await self._repository.get_actor(narrative_id, actor_id)

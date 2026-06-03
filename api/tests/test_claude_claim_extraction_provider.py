@@ -47,7 +47,7 @@ async def test_claude_provider_returns_claim_objects(scene: Scene) -> None:
         [
             {
                 "text": "Inflation entsteht durch Geldmenge.",
-                "typ": "kausaler_claim",
+                "typ": "causal",
                 "confidence": 0.9,
             }
         ]
@@ -67,7 +67,7 @@ async def test_claude_provider_maps_typ_to_claim_type_enum(scene: Scene) -> None
         [
             {
                 "text": "Inflation entsteht durch Geldmenge.",
-                "typ": "kausaler_claim",
+                "typ": "causal",
                 "confidence": 0.9,
             }
         ]
@@ -84,8 +84,8 @@ async def test_claude_provider_clamps_confidence_within_valid_range(scene: Scene
     """Expects confidence values outside 0.0–1.0 to be clamped, not rejected."""
     response = json.dumps(
         [
-            {"text": "Ein Claim.", "typ": "empirischer_claim", "confidence": 1.5},
-            {"text": "Noch ein Claim.", "typ": "empirischer_claim", "confidence": -0.2},
+            {"text": "Ein Claim.", "typ": "empirical", "confidence": 1.5},
+            {"text": "Noch ein Claim.", "typ": "empirical", "confidence": -0.2},
         ]
     )
     provider = ClaudeClaimExtractionProvider(client=make_mock_client(response))
@@ -99,7 +99,7 @@ async def test_claude_provider_clamps_confidence_within_valid_range(scene: Scene
 @pytest.mark.asyncio
 async def test_claude_provider_passes_scene_text_to_api(scene: Scene) -> None:
     """Expects the scene text to appear in the prompt sent to the Claude API."""
-    response = json.dumps([{"text": "Ein Claim.", "typ": "empirischer_claim", "confidence": 0.8}])
+    response = json.dumps([{"text": "Ein Claim.", "typ": "empirical", "confidence": 0.8}])
     mock_client = make_mock_client(response)
     provider = ClaudeClaimExtractionProvider(client=mock_client)
 
@@ -113,7 +113,7 @@ async def test_claude_provider_passes_scene_text_to_api(scene: Scene) -> None:
 @pytest.mark.asyncio
 async def test_claude_provider_strips_markdown_code_fences(scene: Scene) -> None:
     """Expects the provider to handle Claude responses wrapped in markdown code fences."""
-    raw = json.dumps([{"text": "Ein Claim.", "typ": "empirischer_claim", "confidence": 0.8}])
+    raw = json.dumps([{"text": "Ein Claim.", "typ": "empirical", "confidence": 0.8}])
     response = f"```json\n{raw}\n```"
     provider = ClaudeClaimExtractionProvider(client=make_mock_client(response))
 
