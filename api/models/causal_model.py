@@ -805,3 +805,109 @@ class CausalModel(CausalMixin):
     @property
     def axioms(self) -> list[Axiom]:
         return self._axioms
+
+
+class CausalModelFederation:
+    """Chains multiple CausalModels (time slices) and manages Postcondition propagation.
+
+    Successor detection: Model B is a successor of A when
+    B.scope.temporal.start > A.scope.temporal.end.
+
+    Postcondition propagation rule: a Postcondition from model N propagates
+    forward until consumed by a compatible Precondition in a successor model.
+    """
+
+    def __init__(self, identifier: str) -> None:
+        self.identifier = identifier
+        self._models: list[CausalModel] = []
+
+    @classmethod
+    def create(cls, identifier: str) -> CausalModelFederation:
+        """Creates a new empty CausalModelFederation."""
+        return cls(identifier=identifier)
+
+    def add_model(self, model: CausalModel) -> None:
+        """Registers a CausalModel as a member of this federation."""
+        self._models.append(model)
+
+    def get_successors(self, model: CausalModel) -> list[CausalModel]:
+        """Returns all models whose temporal start is after model's temporal end."""
+        if model.scope is None or model.scope.temporal is None:
+            return []
+        model_end = model.scope.temporal.end
+        return [
+            m
+            for m in self._models
+            if m is not model
+            and m.scope is not None
+            and m.scope.temporal is not None
+            and m.scope.temporal.start > model_end
+        ]
+
+    def validate_transition(
+        self, predecessor: CausalModel, successor: CausalModel
+    ) -> list[ConditionConflict]:
+        """Returns one ConditionConflict for each incompatible Postcondition/Precondition pair."""
+        conflicts: list[ConditionConflict] = []
+        for postcond in predecessor.postconditions:
+            for precond in successor.preconditions:
+                if postcond.slot.identifier == precond.slot.identifier:
+                    if not postcond.is_compatible_with(precond):
+                        conflicts.append(
+                            ConditionConflict(postcondition=postcond, precondition=precond)
+                        )
+        return conflicts
+
+    def get_active_postconditions(self, model: CausalModel) -> list[Postcondition]:
+        """Returns Postconditions from predecessors that propagate into *model*.
+
+        A Postcondition is consumed if any intermediate model between its origin
+        and *model* has a compatible Precondition for the same Slot.
+        """
+        if model.scope is None or model.scope.temporal is None:
+            return []
+
+        active: list[Postcondition] = []
+        for origin in self._models:
+            if origin is model:
+                continue
+            if origin.scope is None or origin.scope.temporal is None:
+                continue
+            if origin.scope.temporal.end >= model.scope.temporal.start:
+                continue  # not a predecessor
+
+            for postcond in origin.postconditions:
+                if not self._is_consumed_before(postcond, origin, model):
+                    active.append(postcond)
+        return active
+
+    def _is_consumed_before(
+        self,
+        postcond: Postcondition,
+        origin: CausalModel,
+        target: CausalModel,
+    ) -> bool:
+        """True if any model strictly between origin and target consumes postcond."""
+        if origin.scope is None or target.scope is None:
+            return False
+        origin_end = origin.scope.temporal.end if origin.scope.temporal else None
+        target_start = target.scope.temporal.start if target.scope.temporal else None
+        if origin_end is None or target_start is None:
+            return False
+
+        for inter in self._models:
+            if inter is origin or inter is target:
+                continue
+            if inter.scope is None or inter.scope.temporal is None:
+                continue
+            inter_start = inter.scope.temporal.start
+            inter_end = inter.scope.temporal.end
+            if not (inter_start > origin_end and inter_end < target_start):
+                continue
+            for precond in inter.preconditions:
+                if (
+                    precond.slot.identifier == postcond.slot.identifier
+                    and postcond.is_compatible_with(precond)
+                ):
+                    return True
+        return False
