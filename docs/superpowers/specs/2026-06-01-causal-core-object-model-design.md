@@ -190,12 +190,24 @@ Spezialisiert `Condition`. Beschreibt einen erwarteten Zustand nach einem Überg
 Inhaltliche Spezifikation folgt in T-09.
 
 ### CausalMixin
-Ein kohärentes, möglicherweise unvollständiges Fragment eines Wirkmodells. Kann aus anderen CausalMixins und CausalLeafs zusammengesetzt werden. Wiederverwendbar in mehreren CausalModels.
+Ein kohärentes, möglicherweise unvollständiges Fragment eines Wirkmodells. Wiederverwendbar — dasselbe Mixin kann in mehreren CausalModels eingebunden werden. Kann aus anderen CausalMixins und CausalLeafs zusammengesetzt werden, aber nie aus CausalComposites.
 
-`is_complete()` gibt immer `false` zurück.
+`is_complete()` gibt immer `False` zurück — ein Fragment ist per Definition kein vollständiges Modell.
 
 **Enthält:** `CausalLeaf`, `CausalMixin`  
 **Eigener Namespace:** ja
+
+**Namespace-Auflösung beim `applies`:**
+
+Wenn ein `CausalModel` ein `CausalMixin` einbindet, werden die Bezeichner des Mixins im Namespace des Containers sichtbar. Es gelten folgende Regeln:
+
+| Situation | Ergebnis |
+|---|---|
+| Bezeichner nur im Mixin | ✓ Mixin-Eintrag gilt direkt im Container |
+| Bezeichner im Container (eigener Eintrag) UND im Mixin | Container gewinnt — Mixin wird überschattet. Mixin bleibt unverändert. UI informiert den Autor. |
+| Bezeichner in zwei Mixins, nicht im Container selbst | `NamespaceCollisionError` — Autor muss explizite Definition im Container anlegen, die dann dem Container gehört. |
+
+**Qualifizierter Zugriff** ist immer möglich: `ClimateMixin::co2_concentration` — insbesondere für externe Referenzen aus anderen Modellen.
 
 ### CausalModel
 Eine vollständige, versionierte, prüfbare Instanz eines Wirkmodells. Enthält CausalLeafs direkt und bindet CausalMixins über eine separate `applies`-Beziehung ein (nicht `contains`).
