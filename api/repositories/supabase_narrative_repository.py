@@ -157,9 +157,10 @@ class SupabaseNarrativeRepository(NarrativeRepository):
                 Actor.from_record(
                     {
                         "id": actor_row["id"],
-                        "name": actor_row["name"],
-                        "typ": actor_row["typ"],
-                        "description": actor_row.get("description"),
+                        "label": actor_row["label"],
+                        "actor_type": actor_row["actor_type"],
+                        "notes": actor_row.get("notes"),
+                        "entity_ref": actor_row.get("entity_ref"),
                     }
                 )
             )
@@ -244,9 +245,9 @@ class SupabaseNarrativeRepository(NarrativeRepository):
         Raises NarrativePersistenceError on database failure.
         """
         self.logger.info(
-            "SupabaseNarrativeRepository.add_actor: narrative_id=%s, name=%s",
+            "SupabaseNarrativeRepository.add_actor: narrative_id=%s, label=%s",
             narrative_id,
-            actor.name,
+            actor.label,
         )
         narrative_result = (
             await self._client.table(_NARRATIVE_TABLE).select("id").eq("id", narrative_id).execute()
@@ -260,28 +261,30 @@ class SupabaseNarrativeRepository(NarrativeRepository):
                 .insert(
                     {
                         "narrative_id": narrative_id,
-                        "name": actor.name,
-                        "typ": actor.typ.value,
-                        "description": actor.description,
+                        "label": actor.label,
+                        "actor_type": actor.actor_type.value,
+                        "notes": actor.notes,
+                        "entity_ref": actor.entity_ref,
                     }
                 )
                 .execute()
             )
         except Exception as e:
             raise NarrativePersistenceError(
-                f"Failed to add actor '{actor.name}' to narrative {narrative_id}: {e}"
+                f"Failed to add actor '{actor.label}' to narrative {narrative_id}: {e}"
             ) from e
 
         if not result.data:
-            raise NarrativePersistenceError(f"Add actor returned no data for '{actor.name}'.")
+            raise NarrativePersistenceError(f"Add actor returned no data for '{actor.label}'.")
 
         row = records(result.data)[0]
         return Actor.from_record(
             {
                 "id": row["id"],
-                "name": row["name"],
-                "typ": row["typ"],
-                "description": row.get("description"),
+                "label": row["label"],
+                "actor_type": row["actor_type"],
+                "notes": row.get("notes"),
+                "entity_ref": row.get("entity_ref"),
             }
         )
 
@@ -321,9 +324,10 @@ class SupabaseNarrativeRepository(NarrativeRepository):
         return Actor.from_record(
             {
                 "id": row["id"],
-                "name": row["name"],
-                "typ": row["typ"],
-                "description": row.get("description"),
+                "label": row["label"],
+                "actor_type": row["actor_type"],
+                "notes": row.get("notes"),
+                "entity_ref": row.get("entity_ref"),
             }
         )
 
@@ -342,9 +346,10 @@ class SupabaseNarrativeRepository(NarrativeRepository):
                 await self._client.table(_ACTOR_TABLE)
                 .update(
                     {
-                        "name": actor.name,
-                        "typ": actor.typ.value,
-                        "description": actor.description,
+                        "label": actor.label,
+                        "actor_type": actor.actor_type.value,
+                        "notes": actor.notes,
+                        "entity_ref": actor.entity_ref,
                     }
                 )
                 .eq("id", actor.id)
@@ -361,9 +366,10 @@ class SupabaseNarrativeRepository(NarrativeRepository):
         return Actor.from_record(
             {
                 "id": row["id"],
-                "name": row["name"],
-                "typ": row["typ"],
-                "description": row.get("description"),
+                "label": row["label"],
+                "actor_type": row["actor_type"],
+                "notes": row.get("notes"),
+                "entity_ref": row.get("entity_ref"),
             }
         )
 
