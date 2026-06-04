@@ -63,6 +63,24 @@ Steps 2–6 from `experiment_scope.md`:
 
 ---
 
+## Plan E — Frontend Extensions
+
+**Status:** Geplant (2026-06-04)
+**Spec:** `docs/superpowers/specs/ui_experiment_scope.md`
+**Plan:** `docs/superpowers/plans/2026-06-04-frontend-extensions.md`
+
+**What:** 4 Screens für den Experiment-Workflow — Narrativ → Analyse → Wirkgefüge-Vorschlag → CausalModel.
+- Task 1: Backend: `causal_model_id` in `NarrativeSummaryResponse`
+- Task 2: `api.ts` — neue TypeScript-Typen + API-Calls
+- Task 3: `App.tsx` — neue Routes
+- Task 4: Screen 1 (`NarrativeEditor`) — "Analysieren →" Button
+- Task 5: Screen 2 (`NarrativeAnalyse`) — Actor/Claim-Karten mit Bestätigen/Verwerfen
+- Task 6: Screen 3 (`WirkgefuegeVorschlag`) — Slot/Relation-Karten + Speicherfluss
+- Task 7: Screen 4 (`CausalModelEditor`) — Slots + Relationen + Verknüpfte Narrative
+- Task 8: Full Regression Run
+
+---
+
 ## Other open items
 
 - **Migration 20260603000001 anwenden** — `supabase db push` oder `supabase migration up`
