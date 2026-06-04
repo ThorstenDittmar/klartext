@@ -77,3 +77,12 @@ Bei Actor/Claim-Refactorings (Plan B) wurde `api/cli.py` zunächst vergessen —
 es enthält Seeddata-Code der dieselben Domain-Felder referenziert wie Service/Router.
 **Regel für künftige Pläne:** Bei Domain-Feld-Umbenennungen immer `api/cli.py` in die
 Dateiliste aufnehmen.
+
+Bei Claim-API-Änderungen (Plan B) wurden drei weitere Dateien übersehen, die erst beim
+nächsten Test-Run auffielen:
+- `api/routers/claims.py` — baut `ClaimResponse` direkt aus Domain-Objekten
+- `api/tests/fakes/fake_claim_repository.py` — konstruiert `Claim(...)` direkt im Fake
+- `api/tests/test_claims_router.py` — erstellt `Claim`-Objekte in der Fake-Service-Klasse
+
+**Regel für künftige Pläne:** Bei Änderungen an `Claim` oder `Actor` immer auch diese
+Dateien in die Scope-Liste aufnehmen.
