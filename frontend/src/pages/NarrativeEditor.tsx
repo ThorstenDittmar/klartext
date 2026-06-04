@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Actor,
+  AnalyseNarrativeResponse,
   api,
   CausalModel,
   Claim,
@@ -85,6 +87,12 @@ export default function NarrativeEditor() {
   // UI state
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
+
+  // Analyse narrative
+  const [analysing, setAnalysing] = useState(false);
+  const [analyseError, setAnalyseError] = useState<string | null>(null);
 
   useEffect(() => {
     Promise.all([api.narratives.list(), api.causalModels.list()])
@@ -297,6 +305,21 @@ export default function NarrativeEditor() {
       if (selectedActorId === actorId) cancelActorForm();
     } catch {
       setError("Akteur konnte nicht gelöscht werden.");
+    }
+  }
+
+  async function analyseNarrative() {
+    if (!selected) return;
+    setAnalysing(true);
+    setAnalyseError(null);
+    try {
+      const analysis: AnalyseNarrativeResponse = await api.narratives.analyse(selected.id);
+      navigate(`/narrative/${selected.id}/analyse`, {
+        state: { analysis, narrative: { id: selected.id, title: selected.title } },
+      });
+    } catch {
+      setAnalyseError("Analyse fehlgeschlagen. Bitte erneut versuchen.");
+      setAnalysing(false);
     }
   }
 
@@ -876,6 +899,41 @@ export default function NarrativeEditor() {
               )}
             </div>
           </>
+        )}
+
+        {/* ---------------------------------------------------------------- */}
+        {/* Analyse button                                                     */}
+        {/* ---------------------------------------------------------------- */}
+        {selected && !showAddScene && !showAddActor && !selectedActorId && (
+          <div
+            style={{
+              borderTop: "1px solid #eee",
+              paddingTop: "1.5rem",
+              marginTop: "2rem",
+            }}
+          >
+            <button
+              onClick={analyseNarrative}
+              disabled={analysing}
+              style={{
+                padding: "0.75rem 1.5rem",
+                fontSize: "1rem",
+                background: analysing ? "#e0e0e0" : "#4a7aff",
+                color: analysing ? "#999" : "#fff",
+                border: "none",
+                borderRadius: 4,
+                cursor: analysing ? "not-allowed" : "pointer",
+                width: "100%",
+              }}
+            >
+              {analysing ? "⏳ Analyse läuft…" : "Analysieren →"}
+            </button>
+            {analyseError && (
+              <p style={{ color: "#A32D2D", fontSize: "0.85rem", marginTop: "0.5rem" }}>
+                {analyseError}
+              </p>
+            )}
+          </div>
         )}
       </main>
     </div>
