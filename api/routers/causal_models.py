@@ -5,7 +5,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, status
 
 from api.dependencies import get_causal_model_service
-from api.models.causal_model import CausalModel, CausalRelation, EpistemicStatus, Polarity, SlotType
+from api.models.causal_model import CausalModel, CausalRelation
 from api.schemas.causal_models import (
     AddAxiomRequest,
     AxiomResponse,
@@ -155,8 +155,8 @@ async def add_slot(
     slot = await service.add_slot(
         causal_model_id=causal_model_id,
         identifier=request.identifier,
-        slot_type=SlotType(request.slot_type),
-        epistemic_status=EpistemicStatus(request.epistemic_status),
+        slot_type=request.slot_type,
+        epistemic_status=request.epistemic_status,
     )
     return SlotResponse(
         id=slot.id,  # type: ignore[arg-type]
@@ -177,7 +177,7 @@ async def update_slot(
     slot = await service.update_slot(
         causal_model_id=causal_model_id,
         slot_id=slot_id,
-        epistemic_status=EpistemicStatus(request.epistemic_status),
+        epistemic_status=request.epistemic_status,
     )
     return SlotResponse(
         id=slot.id,  # type: ignore[arg-type]
@@ -217,7 +217,7 @@ async def add_relation(
         source_slot_id=request.source_slot_id,
         target_slot_id=request.target_slot_id,
         mechanism=request.mechanism,
-        polarity=Polarity(request.polarity) if request.polarity else None,
+        polarity=request.polarity,
     )
     return RelationResponse(
         id=relation.id,  # type: ignore[arg-type]
@@ -242,8 +242,8 @@ async def update_relation(
         causal_model_id=causal_model_id,
         relation_id=relation_id,
         mechanism=request.mechanism,
-        polarity=Polarity(request.polarity) if request.polarity else None,
-        epistemic_status=EpistemicStatus(request.epistemic_status),
+        polarity=request.polarity,
+        epistemic_status=request.epistemic_status,
     )
     return RelationResponse(
         id=relation.id,  # type: ignore[arg-type]

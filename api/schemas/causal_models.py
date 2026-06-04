@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from pydantic import BaseModel, field_validator
 
+from api.models.causal_model import EpistemicStatus, Polarity, SlotType
+
 
 class CreateCausalModelRequest(BaseModel):
     """Request body for creating a new CausalModel."""
@@ -60,7 +62,6 @@ class SlotResponse(BaseModel):
     identifier: str
     slot_type: str
     epistemic_status: str
-    is_entity: bool = False
 
 
 class RelationResponse(BaseModel):
@@ -98,8 +99,8 @@ class CreateSlotRequest(BaseModel):
     """Request body for adding a Slot to a CausalModel."""
 
     identifier: str
-    slot_type: str
-    epistemic_status: str = "incomplete"
+    slot_type: SlotType
+    epistemic_status: EpistemicStatus = EpistemicStatus.INCOMPLETE
 
     @field_validator("identifier")
     @classmethod
@@ -113,7 +114,7 @@ class CreateSlotRequest(BaseModel):
 class UpdateSlotRequest(BaseModel):
     """Request body for updating a Slot's epistemic_status."""
 
-    epistemic_status: str
+    epistemic_status: EpistemicStatus
 
 
 class CreateRelationRequest(BaseModel):
@@ -123,7 +124,7 @@ class CreateRelationRequest(BaseModel):
     source_slot_id: str
     target_slot_id: str
     mechanism: str | None = None
-    polarity: str | None = None
+    polarity: Polarity | None = None
 
     @field_validator("identifier")
     @classmethod
@@ -138,8 +139,8 @@ class UpdateRelationRequest(BaseModel):
     """Request body for updating a CausalRelation."""
 
     mechanism: str | None = None
-    polarity: str | None = None
-    epistemic_status: str = "incomplete"
+    polarity: Polarity | None = None
+    epistemic_status: EpistemicStatus = EpistemicStatus.INCOMPLETE
 
 
 class ConsistencyConflictResponse(BaseModel):
