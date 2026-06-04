@@ -37,3 +37,7 @@ class NarrativeNotFoundError(RepositoryError):
 
 class NarrativePersistenceError(RepositoryError):
     """Raised when saving or loading a Narrative fails due to a database error."""
+
+
+class NarrativeAnalysisError(ServiceError):
+    """Raised when narrative analysis fails (e.g. provider error or invalid response)."""
