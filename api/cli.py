@@ -421,7 +421,7 @@ def test(
     if verbose:
         cmd.append("-v")
 
-    result = subprocess.run(cmd)
+    result = subprocess.run(cmd, cwd=str(_PROJECT_ROOT / "api"))
     raise typer.Exit(result.returncode)
 
 
