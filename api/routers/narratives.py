@@ -198,7 +198,7 @@ async def list_narratives(
     """Returns all persisted Narratives as a flat list without their scenes."""
     narratives = await service.list_all()
     return [
-        NarrativeSummaryResponse(id=n.id, title=n.title)  # type: ignore[arg-type]
+        NarrativeSummaryResponse(id=n.id, title=n.title, causal_model_id=n.causal_model_id)  # type: ignore[arg-type]
         for n in narratives
     ]
 

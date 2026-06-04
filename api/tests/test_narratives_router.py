@@ -295,6 +295,21 @@ async def test_narratives_list_response_contains_narrative_summary() -> None:
     assert "scenes" not in item
 
 
+@pytest.mark.asyncio
+async def test_narratives_list_response_includes_causal_model_id() -> None:
+    """Expects each list item to include a causal_model_id field (null by default)."""
+    override_with(FakeNarrativeService())
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.get("/narratives")
+    finally:
+        clear_overrides()
+
+    item = response.json()[0]
+    assert "causal_model_id" in item
+    assert item["causal_model_id"] is None
+
+
 # ---------------------------------------------------------------------------
 # GET /narratives/{id} – happy path
 # ---------------------------------------------------------------------------
