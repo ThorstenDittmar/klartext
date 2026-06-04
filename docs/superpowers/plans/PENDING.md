@@ -51,7 +51,8 @@ New schemas + routers:
 
 ## Plan D — Analysis Workflow
 
-**Status:** Not started. Depends on Plans B + C.
+**Status:** In Progress (2026-06-04)
+**Plan:** `docs/superpowers/plans/2026-06-04-analysis-workflow.md`
 
 **What:** End-to-end workflow from narrative to minimal Wirkgefüge.
 
@@ -67,10 +68,7 @@ Steps 2–6 from `experiment_scope.md`:
 - **Migration 20260603000001 anwenden** — `supabase db push` oder `supabase migration up`
   gegen die laufende Instanz ausführen. Ohne diesen Schritt schlägt jeder Actor/Claim-DB-Zugriff fehl
   (neue Spaltenname `label`, `actor_type`, `notes`, `entity_ref` existieren noch nicht in der DB).
-- **Integration-Tests narrative_repository reparieren** — `klartext test --integration` zeigt
-  5 FAILED in `test_narrative_repository.py`. Ursache: veraltete Spalten-/Tabellennamen aus
-  Plan B (z.B. `name`→`label`, `typ`→`actor_type`). Die Integration-Tests wurden beim Plan B
-  nicht mitgepflegt.
+- ~~**Integration-Tests narrative_repository reparieren**~~ — DONE (2026-06-04). Alle 6 Tests grün.
 - **N-01** (`clean_up.md`): `precondition-postcondition.md.rtf` als Markdown neu speichern
 - **N-04** (`clean_up.md`): CausalModelFederation vollständig spezifizieren
 - **N-06** (`clean_up.md`): Community Model Specs anlegen
