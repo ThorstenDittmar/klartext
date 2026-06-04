@@ -392,16 +392,29 @@ def demo(
 
 @app.command()
 def test(
-    all_tests: bool = typer.Option(False, "--all", help="Include integration tests"),
+    all_tests: bool = typer.Option(False, "--all", help="Run unit + integration tests"),
+    integration: bool = typer.Option(False, "--integration", help="Run integration tests only"),
     verbose: bool = typer.Option(False, "-v", help="Verbose output"),
     path: str = typer.Option("tests/", help="Test path or file"),
 ) -> None:
-    """Run the test suite."""
+    """Run the test suite.
+
+    Default: unit tests only.
+    --integration: integration tests only (requires a running Supabase instance).
+    --all: unit tests + integration tests.
+    """
+    if all_tests and integration:
+        typer.secho("✗  --all and --integration are mutually exclusive.", fg=typer.colors.RED)
+        raise typer.Exit(1)
+
     cmd = [sys.executable, "-m", "pytest", path]
 
     if all_tests:
         cmd += ["-m", ""]
         typer.echo("Running all tests (unit + integration)…")
+    elif integration:
+        cmd += ["-m", "integration"]
+        typer.echo("Running integration tests…")
     else:
         typer.echo("Running unit tests…")
 
