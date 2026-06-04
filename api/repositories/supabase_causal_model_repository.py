@@ -9,6 +9,7 @@ from supabase import AsyncClient
 from api.exceptions.causal_model import (
     CausalModelNotFoundError,
     CausalModelPersistenceError,
+    NamespaceConflictError,
 )
 from api.models.causal_model import (
     Axiom,
@@ -134,12 +135,12 @@ class SupabaseCausalModelRepository(CausalModelRepository):
         for slot in await self.find_slots_by_model_id(causal_model_id):
             try:
                 cm.add(slot)
-            except Exception:
+            except NamespaceConflictError:
                 pass  # namespace conflict — slot already present, skip
         for relation in await self.find_relations_by_model_id(causal_model_id):
             try:
                 cm.add(relation)
-            except Exception:
+            except NamespaceConflictError:
                 pass  # namespace conflict — relation already present, skip
 
         return cm
@@ -303,7 +304,7 @@ class SupabaseCausalModelRepository(CausalModelRepository):
             "SupabaseCausalModelRepository.update_relation: relation_id=%s", relation.id
         )
         try:
-            await (
+            result = await (
                 self._client.table("causal_relations")
                 .update(
                     {
@@ -317,6 +318,10 @@ class SupabaseCausalModelRepository(CausalModelRepository):
             )
         except Exception as exc:
             raise CausalModelPersistenceError(f"Failed to update CausalRelation: {exc}") from exc
+        if not result.data:
+            raise CausalModelPersistenceError(
+                f"Failed to update CausalRelation: no row returned for id={relation.id}"
+            )
         return relation
 
     async def remove_relation(self, causal_model_id: str, relation_id: str) -> None:
