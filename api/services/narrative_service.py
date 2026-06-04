@@ -77,41 +77,43 @@ class NarrativeService:
     async def add_actor(
         self,
         narrative_id: str,
-        name: str,
-        typ: ActorType,
-        description: str | None = None,
+        label: str,
+        actor_type: ActorType,
+        notes: str | None = None,
+        entity_ref: str | None = None,
     ) -> Actor:
         """Adds a new Actor to the Narrative with the given ID.
 
         Returns the saved Actor with an assigned ID.
         Raises NarrativeNotFoundError if no Narrative exists for that ID.
-        Raises ActorValidationError if the name is empty.
+        Raises ActorValidationError if the label is empty.
         Raises NarrativePersistenceError on database failure.
         """
         await self._repository.find_by_id(narrative_id)
-        actor = Actor.create(name=name, typ=typ, description=description)
+        actor = Actor.create(label=label, actor_type=actor_type, notes=notes, entity_ref=entity_ref)
         return await self._repository.add_actor(narrative_id, actor)
 
     async def update_actor(
         self,
         narrative_id: str,
         actor_id: str,
-        name: str,
-        typ: ActorType,
-        description: str | None,
+        label: str,
+        actor_type: ActorType,
+        notes: str | None,
+        entity_ref: str | None = None,
     ) -> Actor:
-        """Updates name, type and description of an existing Actor.
+        """Updates label, actor_type, notes and entity_ref of an existing Actor.
 
         Uses find → change → save: loads the actor, applies changes via the domain method,
         then persists the result.
         Raises NarrativeNotFoundError if no Narrative exists for that ID.
         Raises ActorNotFoundError if no Actor with that ID exists in the Narrative.
-        Raises ActorValidationError if the new name is empty.
+        Raises ActorValidationError if the new label is empty.
         Raises NarrativePersistenceError on database failure.
         """
         await self._repository.find_by_id(narrative_id)
         actor = await self._repository.get_actor(narrative_id, actor_id)
-        actor.update(name=name, typ=typ, description=description)
+        actor.update(label=label, actor_type=actor_type, notes=notes, entity_ref=entity_ref)
         return await self._repository.update_actor(narrative_id, actor)
 
     async def remove_actor(self, narrative_id: str, actor_id: str) -> None:
