@@ -319,6 +319,7 @@ export default function NarrativeEditor() {
       });
     } catch {
       setAnalyseError("Analyse fehlgeschlagen. Bitte erneut versuchen.");
+    } finally {
       setAnalysing(false);
     }
   }
