@@ -142,29 +142,32 @@ def test_causal_relation_create_raises_when_source_equals_target() -> None:
 
 def test_causal_relation_update_changes_mechanism_and_polarity() -> None:
     """Expects update() to change mechanism, polarity and epistemic_status."""
-    source = Slot.create(identifier="geldmenge", slot_type=SlotType.PHYSICAL_QUANTITY)
+    source = Slot.create(identifier="money_supply", slot_type=SlotType.PHYSICAL_QUANTITY)
     target = Slot.create(identifier="inflation", slot_type=SlotType.TREND)
-    rel = CausalRelation.create(identifier="geldmenge→inflation", source=source, target=target)
+    rel = CausalRelation.create(
+        identifier="money_supply_causes_inflation", source=source, target=target
+    )
 
     rel.update(
-        mechanism="Quantitätstheorie",
+        mechanism="quantity_theory",
         polarity=Polarity.POSITIVE,
         epistemic_status=EpistemicStatus.AXIOMATIC,
     )
 
-    assert rel.mechanism == "Quantitätstheorie"
+    assert rel.mechanism == "quantity_theory"
     assert rel.polarity == Polarity.POSITIVE
     assert rel.epistemic_status == EpistemicStatus.AXIOMATIC
 
 
 def test_causal_relation_update_can_clear_mechanism() -> None:
     """Expects update() to accept None as mechanism."""
-    source = Slot.create(identifier="geldmenge", slot_type=SlotType.PHYSICAL_QUANTITY)
+    source = Slot.create(identifier="money_supply", slot_type=SlotType.PHYSICAL_QUANTITY)
     target = Slot.create(identifier="inflation", slot_type=SlotType.TREND)
     rel = CausalRelation.create(
-        identifier="geldmenge→inflation", source=source, target=target, mechanism="old"
+        identifier="money_supply_causes_inflation", source=source, target=target, mechanism="old"
     )
 
     rel.update(mechanism=None, polarity=None, epistemic_status=EpistemicStatus.INCOMPLETE)
 
     assert rel.mechanism is None
+    assert rel.polarity is None
