@@ -329,7 +329,7 @@ async def test_narrative_service_add_actor_returns_actor_with_correct_name_and_t
 
 
 @pytest.mark.asyncio
-async def test_narrative_service_add_actor_description_defaults_to_none() -> None:
+async def test_narrative_service_add_actor_notes_defaults_to_none() -> None:
     """Expects notes to be None when not provided."""
     service = make_service()
     narrative = await service.create("My Narrative")
@@ -349,7 +349,7 @@ async def test_narrative_service_add_actor_raises_for_unknown_narrative_id() -> 
 
 
 @pytest.mark.asyncio
-async def test_narrative_service_add_actor_raises_for_empty_name() -> None:
+async def test_narrative_service_add_actor_raises_for_empty_label() -> None:
     """Expects ActorValidationError when the actor label is empty."""
     from api.exceptions.narrative import ActorValidationError
 
@@ -412,7 +412,7 @@ async def test_narrative_service_update_actor_raises_for_unknown_actor_id() -> N
 
 
 @pytest.mark.asyncio
-async def test_narrative_service_update_actor_raises_for_empty_name() -> None:
+async def test_narrative_service_update_actor_raises_for_empty_label() -> None:
     """Expects ActorValidationError when the new label is empty."""
     from api.exceptions.narrative import ActorValidationError
 

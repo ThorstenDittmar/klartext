@@ -113,11 +113,19 @@ class FakeNarrativeService:
         )
 
     async def update_actor(
-        self, narrative_id: str, actor_id: str, label: str, actor_type: ActorType, notes: str | None
+        self,
+        narrative_id: str,
+        actor_id: str,
+        label: str,
+        actor_type: ActorType,
+        notes: str | None,
+        entity_ref: str | None = None,
     ) -> Actor:
         if self._raise_on_update_actor:
             raise self._raise_on_update_actor
-        return Actor(id=actor_id, label=label, actor_type=actor_type, notes=notes)
+        return Actor(
+            id=actor_id, label=label, actor_type=actor_type, notes=notes, entity_ref=entity_ref
+        )
 
     async def remove_actor(self, narrative_id: str, actor_id: str) -> None:
         if self._raise_on_remove_actor:
@@ -517,7 +525,7 @@ async def test_narratives_add_actor_returns_201() -> None:
 
 
 @pytest.mark.asyncio
-async def test_narratives_add_actor_response_contains_id_name_and_type() -> None:
+async def test_narratives_add_actor_response_contains_id_label_and_actor_type() -> None:
     """Expects the response to include the actor id, label and actor_type."""
     override_with(FakeNarrativeService())
     try:
@@ -541,7 +549,7 @@ async def test_narratives_add_actor_response_contains_id_name_and_type() -> None
 
 
 @pytest.mark.asyncio
-async def test_narratives_add_actor_returns_422_for_empty_name() -> None:
+async def test_narratives_add_actor_returns_422_for_empty_label() -> None:
     """Expects 422 when the label field is an empty string."""
     override_with(FakeNarrativeService())
     try:
@@ -618,7 +626,7 @@ async def test_narratives_update_actor_response_contains_updated_fields() -> Non
 
 
 @pytest.mark.asyncio
-async def test_narratives_update_actor_returns_422_for_empty_name() -> None:
+async def test_narratives_update_actor_returns_422_for_empty_label() -> None:
     """Expects 422 when the label field is an empty string."""
     override_with(FakeNarrativeService())
     try:

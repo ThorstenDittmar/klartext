@@ -132,7 +132,7 @@ async def test_narrative_repository_add_actor_assigns_id() -> None:
 
 
 @pytest.mark.asyncio
-async def test_narrative_repository_add_actor_stores_name_and_type() -> None:
+async def test_narrative_repository_add_actor_stores_label_and_actor_type() -> None:
     """Expects label and actor_type to be accessible on the saved actor."""
     repo = FakeNarrativeRepository()
     saved_narrative = await repo.save(NarrativeMother.empty())
