@@ -133,6 +133,10 @@ class Slot:
         """True when this element is set as a premise in the current model."""
         return self._epistemic_status == EpistemicStatus.AXIOMATIC
 
+    def update(self, epistemic_status: EpistemicStatus) -> None:
+        """Updates the epistemic_status of this Slot."""
+        self._epistemic_status = epistemic_status
+
 
 class Entity(Slot):
     """A Slot representing an actor with agency (organisation, institution, group).
@@ -333,6 +337,17 @@ class CausalRelation:
     @property
     def is_axiomatic(self) -> bool:
         return self._epistemic_status == EpistemicStatus.AXIOMATIC
+
+    def update(
+        self,
+        mechanism: str | None,
+        polarity: Polarity | None,
+        epistemic_status: EpistemicStatus,
+    ) -> None:
+        """Updates mechanism, polarity and epistemic_status of this CausalRelation."""
+        self._mechanism = mechanism
+        self._polarity = polarity
+        self._epistemic_status = epistemic_status
 
 
 class DefinitoryRelation:

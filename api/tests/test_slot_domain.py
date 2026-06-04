@@ -160,3 +160,26 @@ def test_slot_from_record_raises_for_unknown_slot_type() -> None:
 
     with pytest.raises(SlotValidationError):
         Slot.from_record(record)
+
+
+# ---------------------------------------------------------------------------
+# Slot.update()
+# ---------------------------------------------------------------------------
+
+
+def test_slot_update_changes_epistemic_status() -> None:
+    """Expects update() to change epistemic_status to AXIOMATIC."""
+    slot = Slot.create(identifier="geldmenge", slot_type=SlotType.PHYSICAL_QUANTITY)
+
+    slot.update(epistemic_status=EpistemicStatus.AXIOMATIC)
+
+    assert slot.epistemic_status == EpistemicStatus.AXIOMATIC
+
+
+def test_slot_update_keeps_identifier_unchanged() -> None:
+    """Expects update() to not change identifier."""
+    slot = Slot.create(identifier="geldmenge", slot_type=SlotType.PHYSICAL_QUANTITY)
+
+    slot.update(epistemic_status=EpistemicStatus.AXIOMATIC)
+
+    assert slot.identifier == "geldmenge"

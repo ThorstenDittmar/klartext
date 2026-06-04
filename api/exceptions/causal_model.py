@@ -39,3 +39,11 @@ class CausalModelNotFoundError(RepositoryError):
 
 class CausalModelPersistenceError(RepositoryError):
     """Raised by CausalModelRepository when a database operation fails."""
+
+
+class SlotNotFoundError(RepositoryError):
+    """Raised by CausalModelRepository when no Slot exists for the given ID."""
+
+
+class CausalRelationNotFoundError(RepositoryError):
+    """Raised by CausalModelRepository when no CausalRelation exists for the given ID."""

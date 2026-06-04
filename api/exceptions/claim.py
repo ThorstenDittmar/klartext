@@ -13,3 +13,7 @@ class ClaimExtractionError(ServiceError):
 
 class ClaimPersistenceError(RepositoryError):
     """Raised when saving or loading Claims fails due to a database error."""
+
+
+class ClaimNotFoundError(RepositoryError):
+    """Raised by ClaimRepository when no Claim exists for the given ID."""
