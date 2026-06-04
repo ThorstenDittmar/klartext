@@ -289,7 +289,7 @@ async def test_supabase_narrative_repository_save_and_find_by_id() -> None:
         assert found.title == "Klartext"
         assert len(found.scenes) == 2
     finally:
-        await client.table("narrative_einheiten").delete().eq("narrativ_id", saved.id).execute()
+        await client.table("narrative_units").delete().eq("narrative_id", saved.id).execute()
         await client.table("narrative").delete().eq("id", saved.id).execute()
 
 
@@ -356,9 +356,9 @@ async def test_supabase_narrative_repository_add_and_get_actor() -> None:
         assert found.notes == "The protagonist."
     finally:
         await (
-            client.table("narrative_akteure")
+            client.table("narrative_actors")
             .delete()
-            .eq("narrativ_id", saved_narrative.id)
+            .eq("narrative_id", saved_narrative.id)
             .execute()
         )
         await client.table("narrative").delete().eq("id", saved_narrative.id).execute()
@@ -398,9 +398,9 @@ async def test_supabase_narrative_repository_update_actor() -> None:
         assert updated.notes == "A party."
     finally:
         await (
-            client.table("narrative_akteure")
+            client.table("narrative_actors")
             .delete()
-            .eq("narrativ_id", saved_narrative.id)
+            .eq("narrative_id", saved_narrative.id)
             .execute()
         )
         await client.table("narrative").delete().eq("id", saved_narrative.id).execute()
@@ -439,9 +439,9 @@ async def test_supabase_narrative_repository_remove_actor() -> None:
             await repo.get_actor(saved_narrative.id, saved_actor.id)  # type: ignore[arg-type]
     finally:
         await (
-            client.table("narrative_akteure")
+            client.table("narrative_actors")
             .delete()
-            .eq("narrativ_id", saved_narrative.id)
+            .eq("narrative_id", saved_narrative.id)
             .execute()
         )
         await client.table("narrative").delete().eq("id", saved_narrative.id).execute()
@@ -450,29 +450,36 @@ async def test_supabase_narrative_repository_remove_actor() -> None:
 @pytest.mark.integration
 @pytest.mark.asyncio
 async def test_supabase_narrative_repository_link_to_causal_model() -> None:
-    """Calls the real database. Expects link_to_causal_model to persist the wirkmodell_id.
+    """Calls the real database. Expects link_to_causal_model to persist the causal_model_id.
 
+    Creates a real CausalModel first to satisfy the foreign key constraint.
     Requires SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY to be set.
     """
     import os
 
     from supabase import acreate_client
 
+    from api.repositories.supabase_causal_model_repository import SupabaseCausalModelRepository
     from api.repositories.supabase_narrative_repository import SupabaseNarrativeRepository
+    from tests.mothers.causal_model_mother import CausalModelMother
 
     client = await acreate_client(
         os.environ["SUPABASE_URL"],
         os.environ["SUPABASE_SERVICE_ROLE_KEY"],
     )
-    repo = SupabaseNarrativeRepository(client=client)
-    saved_narrative = await repo.save(NarrativeMother.empty())
+    narrative_repo = SupabaseNarrativeRepository(client=client)
+    causal_model_repo = SupabaseCausalModelRepository(client=client)
+
+    saved_narrative = await narrative_repo.save(NarrativeMother.empty())
+    saved_model = await causal_model_repo.save(CausalModelMother.empty())
 
     try:
-        # We need a real wirkmodell_id — for now we use a known dummy UUID.
-        # In production this would be a real Wirkmodell ID.
-        dummy_model_id = "00000000-0000-0000-0000-000000000001"
-        updated = await repo.link_to_causal_model(saved_narrative.id, dummy_model_id)  # type: ignore[arg-type]
+        updated = await narrative_repo.link_to_causal_model(
+            saved_narrative.id,
+            saved_model.id,  # type: ignore[arg-type]
+        )
 
-        assert updated.causal_model_id == dummy_model_id
+        assert updated.causal_model_id == saved_model.id
     finally:
         await client.table("narrative").delete().eq("id", saved_narrative.id).execute()
+        await client.table("causal_models").delete().eq("id", saved_model.id).execute()
