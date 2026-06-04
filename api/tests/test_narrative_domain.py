@@ -279,6 +279,23 @@ def test_actor_update_raises_for_empty_label() -> None:
         actor.update(label="", actor_type=ActorType.INDIVIDUAL, notes=None)
 
 
+def test_actor_update_raises_for_whitespace_only_label() -> None:
+    """Expects ActorValidationError because a whitespace-only label is equivalent to empty."""
+    actor = _persisted_actor()
+
+    with pytest.raises(ActorValidationError):
+        actor.update(label="   ", actor_type=ActorType.INDIVIDUAL, notes=None)
+
+
+def test_actor_update_can_clear_notes() -> None:
+    """Expects notes to become None when explicitly passed as None in update()."""
+    actor = Actor(id="a1", label="Max", actor_type=ActorType.INDIVIDUAL, notes="Old note.")
+
+    actor.update(label="Max", actor_type=ActorType.INDIVIDUAL, notes=None)
+
+    assert actor.notes is None
+
+
 # --- Narrative + Actor ---
 
 

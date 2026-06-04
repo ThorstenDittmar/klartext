@@ -143,13 +143,19 @@ class Actor:
             entity_ref=record.get("entity_ref"),
         )
 
-    def update(self, label: str, actor_type: ActorType, notes: str | None) -> None:
-        """Updates label, actor_type and notes. Raises ActorValidationError for empty label."""
+    def update(
+        self, label: str, actor_type: ActorType, notes: str | None, entity_ref: str | None = None
+    ) -> None:
+        """Updates label, actor_type, notes and entity_ref.
+
+        Raises ActorValidationError for empty label.
+        """
         if not label.strip():
             raise ActorValidationError("label must not be empty")
         self._label = label
         self._actor_type = actor_type
         self._notes = notes
+        self._entity_ref = entity_ref
 
     @property
     def id(self) -> str | None:
