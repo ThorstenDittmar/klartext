@@ -6,7 +6,8 @@ Plans that are next in line. Tests may already be written (RED).
 
 ## Plan B — Actor + Claim Evolution
 
-**Status:** Tests written and RED. Plan not yet written.
+**Status:** DONE (2026-06-03)  
+**Plan:** `docs/superpowers/plans/2026-06-03-actor-claim-evolution.md`
 
 **What:** Breaking changes to existing Actor and Claim domain objects, propagated
 through all layers (repository, schemas, router, frontend, DB migration).

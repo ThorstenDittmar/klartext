@@ -187,16 +187,16 @@ async def _seed(url: str) -> None:
         for actor in SEED_ACTORS:
             actor_response = await client.post(
                 f"/narratives/{narrative_id}/actors",
-                json={"name": actor.name, "typ": actor.typ, "description": actor.description},
+                json={"label": actor.label, "actor_type": actor.actor_type, "notes": actor.notes},
             )
             if actor_response.status_code == 201:
                 typer.secho(
-                    f"  ✓  Actor added: {actor.name} ({actor.typ})",
+                    f"  ✓  Actor added: {actor.label} ({actor.actor_type})",
                     fg=typer.colors.GREEN,
                 )
             else:
                 typer.secho(
-                    f"  ⚠  Actor '{actor.name}' failed ({actor_response.status_code})",
+                    f"  ⚠  Actor '{actor.label}' failed ({actor_response.status_code})",
                     fg=typer.colors.YELLOW,
                 )
 
