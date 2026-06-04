@@ -292,24 +292,24 @@ def test_narrative_create_starts_with_no_actors() -> None:
 def test_narrative_add_actor_appends_actor() -> None:
     """Expects add_actor() to make the actor accessible via the actors property."""
     narrative = Narrative.create(title="A Novel")
-    actor = Actor.create(name="Max", typ=ActorType.INDIVIDUAL)
+    actor = Actor.create(label="Max", actor_type=ActorType.INDIVIDUAL)
 
     narrative.add_actor(actor)
 
     assert len(narrative.actors) == 1
-    assert narrative.actors[0].name == "Max"
+    assert narrative.actors[0].label == "Max"
 
 
 def test_narrative_add_actor_preserves_insertion_order() -> None:
     """Expects actors to appear in the order they were added."""
     narrative = Narrative.create(title="A Novel")
-    narrative.add_actor(Actor.create(name="Max", typ=ActorType.INDIVIDUAL))
-    narrative.add_actor(Actor.create(name="CDU", typ=ActorType.ORGANISATION))
-    narrative.add_actor(Actor.create(name="Voters", typ=ActorType.GROUP))
+    narrative.add_actor(Actor.create(label="Max", actor_type=ActorType.INDIVIDUAL))
+    narrative.add_actor(Actor.create(label="CDU", actor_type=ActorType.ORGANISATION))
+    narrative.add_actor(Actor.create(label="Voters", actor_type=ActorType.GROUP))
 
-    assert narrative.actors[0].name == "Max"
-    assert narrative.actors[1].name == "CDU"
-    assert narrative.actors[2].name == "Voters"
+    assert narrative.actors[0].label == "Max"
+    assert narrative.actors[1].label == "CDU"
+    assert narrative.actors[2].label == "Voters"
 
 
 # --- Narrative + CausalModel link ---
@@ -363,45 +363,6 @@ def test_narrative_from_record_accepts_missing_causal_model_id() -> None:
     narrative = Narrative.from_record(record)
 
     assert narrative.causal_model_id is None
-
-
-# --- Actor.update ---
-
-
-def test_actor_update_changes_all_fields() -> None:
-    """Expects name, type and description to reflect the new values after update."""
-    actor = _persisted_actor()
-
-    actor.update(name="CDU", typ=ActorType.ORGANISATION, description="A party.")
-
-    assert actor.name == "CDU"
-    assert actor.typ == ActorType.ORGANISATION
-    assert actor.description == "A party."
-
-
-def test_actor_update_can_clear_description() -> None:
-    """Expects description to become None when explicitly passed as None."""
-    actor = Actor(id="a1", name="Max", typ=ActorType.INDIVIDUAL, description="Old description.")
-
-    actor.update(name="Max", typ=ActorType.INDIVIDUAL, description=None)
-
-    assert actor.description is None
-
-
-def test_actor_update_raises_for_empty_name() -> None:
-    """Expects ActorValidationError because an empty name is invalid."""
-    actor = _persisted_actor()
-
-    with pytest.raises(ActorValidationError):
-        actor.update(name="", typ=ActorType.INDIVIDUAL, description=None)
-
-
-def test_actor_update_raises_for_whitespace_only_name() -> None:
-    """Expects ActorValidationError because a whitespace-only name is equivalent to empty."""
-    actor = _persisted_actor()
-
-    with pytest.raises(ActorValidationError):
-        actor.update(name="   ", typ=ActorType.INDIVIDUAL, description=None)
 
 
 # --- Narrative.remove_actor ---

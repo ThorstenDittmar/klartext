@@ -89,79 +89,87 @@ class Actor:
     """A participant in a Narrative.
 
     A person, organisation, group, institution or abstract entity that acts or is
-    acted upon within the story.
-
-    Actors can be mapped to Entitäten in the linked CausalModel, forming the
-    connection between concrete narrative figures and abstract model elements.
+    acted upon within the story. The optional entity_ref links this actor to a
+    causal model Entity, forming the bridge between narrative figure and formal model.
 
     Invariants enforced at construction time:
-    - name must not be empty
+    - label must not be empty
     """
 
     def __init__(
         self,
         id: str | None,
-        name: str,
-        typ: ActorType,
-        description: str | None,
+        label: str,
+        actor_type: ActorType,
+        notes: str | None,
+        entity_ref: str | None = None,
     ) -> None:
         self._id = id
-        self._name = name
-        self._typ = typ
-        self._description = description
+        self._label = label
+        self._actor_type = actor_type
+        self._notes = notes
+        self._entity_ref = entity_ref
 
     @classmethod
     def create(
         cls,
-        name: str,
-        typ: ActorType,
-        description: str | None = None,
+        label: str,
+        actor_type: ActorType,
+        notes: str | None = None,
+        entity_ref: str | None = None,
     ) -> Actor:
-        """Creates a new Actor from user input. Raises ActorValidationError for empty name."""
-        if not name.strip():
-            raise ActorValidationError("name must not be empty")
-        return cls(id=None, name=name, typ=typ, description=description)
+        """Creates a new Actor from user input. Raises ActorValidationError for empty label."""
+        if not label.strip():
+            raise ActorValidationError("label must not be empty")
+        return cls(id=None, label=label, actor_type=actor_type, notes=notes, entity_ref=entity_ref)
 
     @classmethod
     def from_record(cls, record: dict[str, Any]) -> Actor:
         """Reconstructs an Actor from a database record.
 
-        Raises ActorValidationError for an unrecognised type value.
+        Raises ActorValidationError for an unrecognised actor_type value.
         """
         try:
-            typ = ActorType(record["typ"])
+            actor_type = ActorType(record["actor_type"])
         except ValueError as e:
-            raise ActorValidationError(f"Unknown actor type in record: {record['typ']}") from e
+            raise ActorValidationError(
+                f"Unknown actor type in record: {record['actor_type']}"
+            ) from e
         return cls(
             id=record["id"],
-            name=record["name"],
-            typ=typ,
-            description=record.get("description"),
+            label=record["label"],
+            actor_type=actor_type,
+            notes=record.get("notes"),
+            entity_ref=record.get("entity_ref"),
         )
 
-    def update(self, name: str, typ: ActorType, description: str | None) -> None:
-        """Updates name, type and description. Raises ActorValidationError for empty name."""
-        if not name.strip():
-            raise ActorValidationError("name must not be empty")
-        self._name = name
-        self._typ = typ
-        self._description = description
+    def update(self, label: str, actor_type: ActorType, notes: str | None) -> None:
+        """Updates label, actor_type and notes. Raises ActorValidationError for empty label."""
+        if not label.strip():
+            raise ActorValidationError("label must not be empty")
+        self._label = label
+        self._actor_type = actor_type
+        self._notes = notes
 
     @property
     def id(self) -> str | None:
         return self._id
 
     @property
-    def name(self) -> str:
-        return self._name
+    def label(self) -> str:
+        return self._label
 
     @property
-    def typ(self) -> ActorType:
-        return self._typ
+    def actor_type(self) -> ActorType:
+        return self._actor_type
 
     @property
-    def description(self) -> str | None:
-        return self._description
+    def notes(self) -> str | None:
+        return self._notes
+
+    @property
+    def entity_ref(self) -> str | None:
+        return self._entity_ref
 
 
 class Narrative:
