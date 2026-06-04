@@ -8,8 +8,8 @@ from __future__ import annotations
 
 import pytest
 
-from api.exceptions.causal_model import CausalModelNotFoundError
-from api.models.causal_model import CausalModelStatus
+from api.exceptions.causal_model import CausalModelNotFoundError, SlotNotFoundError
+from api.models.causal_model import CausalModelStatus, EpistemicStatus, Polarity, SlotType
 from api.services.causal_model_service import CausalModelService
 from tests.fakes.fake_causal_model_repository import FakeCausalModelRepository
 from tests.fakes.fake_consistency_checker import FakeConsistencyChecker
@@ -200,3 +200,103 @@ async def test_check_consistency_raises_for_unknown_causal_model() -> None:
             causal_model_id="00000000-0000-0000-0000-000000000000",
             scene_text="Eine Szene.",
         )
+
+
+# ---------------------------------------------------------------------------
+# add_slot
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_service_add_slot_returns_slot_with_id() -> None:
+    """Expects add_slot to return a Slot with a non-None ID."""
+    service = make_service()
+    cm = await service.create(title="Wirkmodell")
+
+    slot = await service.add_slot(
+        causal_model_id=cm.id,  # type: ignore[arg-type]
+        identifier="money_supply",
+        slot_type=SlotType.PHYSICAL_QUANTITY,
+    )
+
+    assert slot.id is not None
+    assert slot.identifier == "money_supply"
+
+
+@pytest.mark.asyncio
+async def test_service_add_slot_raises_for_unknown_model() -> None:
+    """Expects CausalModelNotFoundError when the CausalModel does not exist."""
+    service = make_service()
+
+    with pytest.raises(CausalModelNotFoundError):
+        await service.add_slot(
+            causal_model_id="00000000-0000-0000-0000-000000000000",
+            identifier="money_supply",
+            slot_type=SlotType.PHYSICAL_QUANTITY,
+        )
+
+
+# ---------------------------------------------------------------------------
+# add_relation
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_service_add_relation_returns_relation_with_id() -> None:
+    """Expects add_relation to return a CausalRelation with a non-None ID."""
+    service = make_service()
+    cm = await service.create(title="Wirkmodell")
+    source = await service.add_slot(cm.id, "money_supply", SlotType.PHYSICAL_QUANTITY)  # type: ignore[arg-type]
+    target = await service.add_slot(cm.id, "inflation", SlotType.TREND)  # type: ignore[arg-type]
+
+    relation = await service.add_relation(
+        causal_model_id=cm.id,  # type: ignore[arg-type]
+        identifier="money_supply_causes_inflation",
+        source_slot_id=source.id,  # type: ignore[arg-type]
+        target_slot_id=target.id,  # type: ignore[arg-type]
+    )
+
+    assert relation.id is not None
+    assert relation.identifier == "money_supply_causes_inflation"
+
+
+@pytest.mark.asyncio
+async def test_service_add_relation_raises_for_unknown_source_slot() -> None:
+    """Expects SlotNotFoundError when source_slot_id does not exist."""
+    service = make_service()
+    cm = await service.create(title="Wirkmodell")
+    target = await service.add_slot(cm.id, "inflation", SlotType.TREND)  # type: ignore[arg-type]
+
+    with pytest.raises(SlotNotFoundError):
+        await service.add_relation(
+            causal_model_id=cm.id,  # type: ignore[arg-type]
+            identifier="unknown_causes_inflation",
+            source_slot_id="00000000-0000-0000-0000-000000000000",
+            target_slot_id=target.id,  # type: ignore[arg-type]
+        )
+
+
+# ---------------------------------------------------------------------------
+# update_relation
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_service_update_relation_changes_mechanism() -> None:
+    """Expects update_relation to persist the new mechanism."""
+    service = make_service()
+    cm = await service.create(title="Wirkmodell")
+    source = await service.add_slot(cm.id, "money_supply", SlotType.PHYSICAL_QUANTITY)  # type: ignore[arg-type]
+    target = await service.add_slot(cm.id, "inflation", SlotType.TREND)  # type: ignore[arg-type]
+    rel = await service.add_relation(cm.id, "money_supply_causes_inflation", source.id, target.id)  # type: ignore[arg-type]
+
+    updated = await service.update_relation(
+        causal_model_id=cm.id,  # type: ignore[arg-type]
+        relation_id=rel.id,  # type: ignore[arg-type]
+        mechanism="quantity_theory",
+        polarity=Polarity.POSITIVE,
+        epistemic_status=EpistemicStatus.AXIOMATIC,
+    )
+
+    assert updated.mechanism == "quantity_theory"
+    assert updated.polarity == Polarity.POSITIVE

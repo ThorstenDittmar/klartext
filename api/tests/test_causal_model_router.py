@@ -8,7 +8,16 @@ from httpx import ASGITransport, AsyncClient
 from api.dependencies import get_causal_model_service
 from api.exceptions.causal_model import CausalModelNotFoundError
 from api.main import app
-from api.models.causal_model import Axiom, CausalModel, CausalModelStatus
+from api.models.causal_model import (
+    Axiom,
+    CausalModel,
+    CausalModelStatus,
+    CausalRelation,
+    EpistemicStatus,
+    Polarity,
+    Slot,
+    SlotType,
+)
 from api.providers.consistency_checker import ConsistencyConflict, ConsistencyResult
 
 # ---------------------------------------------------------------------------
@@ -58,6 +67,84 @@ class FakeCausalModelService:
                 ],
             )
         return ConsistencyResult(consistent=True)
+
+    async def add_slot(
+        self,
+        causal_model_id: str,
+        identifier: str,
+        slot_type: SlotType,
+        epistemic_status: EpistemicStatus = EpistemicStatus.INCOMPLETE,
+    ) -> Slot:
+        """Returns a stubbed Slot. Raises CausalModelNotFoundError for unknown model."""
+        if causal_model_id == "unknown":
+            raise CausalModelNotFoundError("not found")
+        return Slot(
+            id="slot-001",
+            identifier=identifier,
+            slot_type=slot_type,
+            epistemic_status=epistemic_status,
+        )
+
+    async def update_slot(
+        self, causal_model_id: str, slot_id: str, epistemic_status: EpistemicStatus
+    ) -> Slot:
+        """Returns a stubbed updated Slot."""
+        return Slot(
+            id=slot_id,
+            identifier="money_supply",
+            slot_type=SlotType.PHYSICAL_QUANTITY,
+            epistemic_status=epistemic_status,
+        )
+
+    async def remove_slot(self, causal_model_id: str, slot_id: str) -> None:
+        """No-op for test stub."""
+        pass
+
+    async def add_relation(
+        self,
+        causal_model_id: str,
+        identifier: str,
+        source_slot_id: str,
+        target_slot_id: str,
+        mechanism: str | None = None,
+        polarity: Polarity | None = None,
+    ) -> CausalRelation:
+        """Returns a stubbed CausalRelation."""
+        source = Slot(id=source_slot_id, identifier="src", slot_type=SlotType.PHYSICAL_QUANTITY)
+        target = Slot(id=target_slot_id, identifier="tgt", slot_type=SlotType.TREND)
+        return CausalRelation(
+            id="rel-001",
+            identifier=identifier,
+            source=source,
+            target=target,
+            mechanism=mechanism,
+            polarity=polarity,
+        )
+
+    async def update_relation(
+        self,
+        causal_model_id: str,
+        relation_id: str,
+        mechanism: str | None,
+        polarity: Polarity | None,
+        epistemic_status: EpistemicStatus,
+    ) -> CausalRelation:
+        """Returns a stubbed updated CausalRelation."""
+        source = Slot(id="slot-src", identifier="src", slot_type=SlotType.PHYSICAL_QUANTITY)
+        target = Slot(id="slot-tgt", identifier="tgt", slot_type=SlotType.TREND)
+        return CausalRelation(
+            id=relation_id,
+            identifier="money_supply_causes_inflation",
+            source=source,
+            target=target,
+            mechanism=mechanism,
+            polarity=polarity,
+            epistemic_status=epistemic_status,
+        )
+
+    async def remove_relation(self, causal_model_id: str, relation_id: str) -> None:
+        """No-op for test stub."""
+        pass
 
 
 # ---------------------------------------------------------------------------
@@ -277,3 +364,91 @@ async def test_check_consistency_returns_422_for_empty_scene_text() -> None:
         )
     app.dependency_overrides.clear()
     assert response.status_code == 422
+
+
+# ---------------------------------------------------------------------------
+# GET /causal-models/health
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_causal_models_health_returns_200() -> None:
+    """Expects GET /causal-models/health to return HTTP 200 with status ok."""
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.get("/causal-models/health")
+    assert response.status_code == 200
+    assert response.json()["status"] == "ok"
+
+
+# ---------------------------------------------------------------------------
+# POST /causal-models/{id}/slots
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_add_slot_returns_201() -> None:
+    """Expects POST /causal-models/{id}/slots to return HTTP 201."""
+    app.dependency_overrides[get_causal_model_service] = lambda: FakeCausalModelService()
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.post(
+            "/causal-models/cm-001/slots",
+            json={"identifier": "money_supply", "slot_type": "physical_quantity"},
+        )
+    app.dependency_overrides.clear()
+    assert response.status_code == 201
+
+
+@pytest.mark.asyncio
+async def test_add_slot_response_contains_id_and_identifier() -> None:
+    """Expects the slot response to include id and identifier."""
+    app.dependency_overrides[get_causal_model_service] = lambda: FakeCausalModelService()
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.post(
+            "/causal-models/cm-001/slots",
+            json={"identifier": "money_supply", "slot_type": "physical_quantity"},
+        )
+    app.dependency_overrides.clear()
+    data = response.json()
+    assert data["id"] == "slot-001"
+    assert data["identifier"] == "money_supply"
+
+
+# ---------------------------------------------------------------------------
+# POST /causal-models/{id}/relations
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_add_relation_returns_201() -> None:
+    """Expects POST /causal-models/{id}/relations to return HTTP 201."""
+    app.dependency_overrides[get_causal_model_service] = lambda: FakeCausalModelService()
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.post(
+            "/causal-models/cm-001/relations",
+            json={
+                "identifier": "money_supply_causes_inflation",
+                "source_slot_id": "slot-src",
+                "target_slot_id": "slot-tgt",
+            },
+        )
+    app.dependency_overrides.clear()
+    assert response.status_code == 201
+
+
+# ---------------------------------------------------------------------------
+# PUT /causal-models/{id}/relations/{rid}
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_update_relation_returns_200() -> None:
+    """Expects PUT /causal-models/{id}/relations/{rid} to return HTTP 200."""
+    app.dependency_overrides[get_causal_model_service] = lambda: FakeCausalModelService()
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.put(
+            "/causal-models/cm-001/relations/rel-001",
+            json={"mechanism": "quantity_theory", "polarity": "positive"},
+        )
+    app.dependency_overrides.clear()
+    assert response.status_code == 200
+    assert response.json()["mechanism"] == "quantity_theory"

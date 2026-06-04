@@ -53,13 +53,37 @@ class AxiomResponse(BaseModel):
     description: str
 
 
+class SlotResponse(BaseModel):
+    """Response shape for a single Slot."""
+
+    id: str
+    identifier: str
+    slot_type: str
+    epistemic_status: str
+    is_entity: bool = False
+
+
+class RelationResponse(BaseModel):
+    """Response shape for a single CausalRelation."""
+
+    id: str
+    identifier: str
+    source_slot_id: str
+    target_slot_id: str
+    mechanism: str | None
+    polarity: str | None
+    epistemic_status: str
+
+
 class CausalModelResponse(BaseModel):
-    """Response shape for a CausalModel with its full list of Axioms."""
+    """Response shape for a CausalModel with its Axioms, Slots and CausalRelations."""
 
     id: str
     title: str
     status: str
     axioms: list[AxiomResponse]
+    slots: list[SlotResponse] = []
+    relations: list[RelationResponse] = []
 
 
 class CausalModelSummaryResponse(BaseModel):
@@ -68,6 +92,54 @@ class CausalModelSummaryResponse(BaseModel):
     id: str
     title: str
     status: str
+
+
+class CreateSlotRequest(BaseModel):
+    """Request body for adding a Slot to a CausalModel."""
+
+    identifier: str
+    slot_type: str
+    epistemic_status: str = "incomplete"
+
+    @field_validator("identifier")
+    @classmethod
+    def identifier_not_empty(cls, v: str) -> str:
+        """Validates that identifier is not empty."""
+        if not v.strip():
+            raise ValueError("identifier must not be empty")
+        return v
+
+
+class UpdateSlotRequest(BaseModel):
+    """Request body for updating a Slot's epistemic_status."""
+
+    epistemic_status: str
+
+
+class CreateRelationRequest(BaseModel):
+    """Request body for adding a CausalRelation to a CausalModel."""
+
+    identifier: str
+    source_slot_id: str
+    target_slot_id: str
+    mechanism: str | None = None
+    polarity: str | None = None
+
+    @field_validator("identifier")
+    @classmethod
+    def identifier_not_empty(cls, v: str) -> str:
+        """Validates that identifier is not empty."""
+        if not v.strip():
+            raise ValueError("identifier must not be empty")
+        return v
+
+
+class UpdateRelationRequest(BaseModel):
+    """Request body for updating a CausalRelation."""
+
+    mechanism: str | None = None
+    polarity: str | None = None
+    epistemic_status: str = "incomplete"
 
 
 class ConsistencyConflictResponse(BaseModel):
