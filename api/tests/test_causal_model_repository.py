@@ -10,6 +10,7 @@ from __future__ import annotations
 import pytest
 
 from api.exceptions.causal_model import CausalModelNotFoundError
+from api.models.causal_model import EpistemicStatus, Slot, SlotType
 from tests.fakes.fake_causal_model_repository import FakeCausalModelRepository
 from tests.mothers.causal_model_mother import AxiomMother, CausalModelMother
 
@@ -119,6 +120,76 @@ async def test_causal_model_repository_list_all_returns_empty_list_when_empty() 
     result = await repo.list_all()
 
     assert result == []
+
+
+# ---------------------------------------------------------------------------
+# Slot repository contract
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_slot_repository_add_slot_assigns_id() -> None:
+    """Expects add_slot to return the Slot with a non-None ID."""
+    repo = FakeCausalModelRepository()
+    cm = await repo.save(CausalModelMother.empty())
+    slot = Slot.create(identifier="money_supply", slot_type=SlotType.PHYSICAL_QUANTITY)
+
+    saved = await repo.add_slot(cm.id, slot)  # type: ignore[arg-type]
+
+    assert saved.id is not None
+
+
+@pytest.mark.asyncio
+async def test_slot_repository_add_slot_makes_it_retrievable() -> None:
+    """Expects find_slots_by_model_id to return the added Slot."""
+    repo = FakeCausalModelRepository()
+    cm = await repo.save(CausalModelMother.empty())
+    slot = Slot.create(identifier="money_supply", slot_type=SlotType.PHYSICAL_QUANTITY)
+    await repo.add_slot(cm.id, slot)  # type: ignore[arg-type]
+
+    found = await repo.find_slots_by_model_id(cm.id)  # type: ignore[arg-type]
+
+    assert len(found) == 1
+    assert found[0].identifier == "money_supply"
+
+
+@pytest.mark.asyncio
+async def test_slot_repository_update_slot_persists_epistemic_status() -> None:
+    """Expects update_slot to persist the changed epistemic_status."""
+    repo = FakeCausalModelRepository()
+    cm = await repo.save(CausalModelMother.empty())
+    slot = Slot.create(identifier="money_supply", slot_type=SlotType.PHYSICAL_QUANTITY)
+    saved = await repo.add_slot(cm.id, slot)  # type: ignore[arg-type]
+    saved.update(epistemic_status=EpistemicStatus.AXIOMATIC)
+
+    await repo.update_slot(saved)
+
+    found = await repo.find_slots_by_model_id(cm.id)  # type: ignore[arg-type]
+    assert found[0].epistemic_status == EpistemicStatus.AXIOMATIC
+
+
+@pytest.mark.asyncio
+async def test_slot_repository_remove_slot_deletes_it() -> None:
+    """Expects remove_slot to make the Slot no longer retrievable."""
+    repo = FakeCausalModelRepository()
+    cm = await repo.save(CausalModelMother.empty())
+    slot = Slot.create(identifier="money_supply", slot_type=SlotType.PHYSICAL_QUANTITY)
+    saved = await repo.add_slot(cm.id, slot)  # type: ignore[arg-type]
+
+    await repo.remove_slot(cm.id, saved.id)  # type: ignore[arg-type]
+
+    found = await repo.find_slots_by_model_id(cm.id)  # type: ignore[arg-type]
+    assert found == []
+
+
+@pytest.mark.asyncio
+async def test_slot_repository_add_slot_raises_for_unknown_model() -> None:
+    """Expects CausalModelNotFoundError when adding a Slot to a non-existent CausalModel."""
+    repo = FakeCausalModelRepository()
+    slot = Slot.create(identifier="money_supply", slot_type=SlotType.PHYSICAL_QUANTITY)
+
+    with pytest.raises(CausalModelNotFoundError):
+        await repo.add_slot("00000000-0000-0000-0000-000000000000", slot)
 
 
 # ---------------------------------------------------------------------------
