@@ -32,9 +32,10 @@ export interface CausalModel {
 
 export interface Actor {
   id: string;
-  name: string;
-  typ: string;
-  description: string | null;
+  label: string;
+  actor_type: string;
+  notes: string | null;
+  entity_ref: string | null;
 }
 
 export interface Scene {
@@ -119,15 +120,27 @@ export const api = {
       ),
     getSceneClaims: (narrativeId: string, sceneId: string) =>
       request<Claim[]>(`/narratives/${narrativeId}/scenes/${sceneId}/claims`),
-    addActor: (narrativeId: string, name: string, typ: string, description: string | null) =>
+    addActor: (
+      narrativeId: string,
+      label: string,
+      actor_type: string,
+      notes: string | null,
+      entity_ref?: string | null,
+    ) =>
       request<Actor>(`/narratives/${narrativeId}/actors`, {
         method: "POST",
-        body: JSON.stringify({ name, typ, description }),
+        body: JSON.stringify({ label, actor_type, notes, entity_ref: entity_ref ?? null }),
       }),
-    updateActor: (narrativeId: string, actorId: string, name: string, typ: string, description: string | null) =>
+    updateActor: (
+      narrativeId: string,
+      actorId: string,
+      label: string,
+      actor_type: string,
+      notes: string | null,
+    ) =>
       request<Actor>(`/narratives/${narrativeId}/actors/${actorId}`, {
         method: "PUT",
-        body: JSON.stringify({ name, typ, description }),
+        body: JSON.stringify({ label, actor_type, notes }),
       }),
     removeActor: (narrativeId: string, actorId: string) =>
       requestVoid(`/narratives/${narrativeId}/actors/${actorId}`, { method: "DELETE" }),

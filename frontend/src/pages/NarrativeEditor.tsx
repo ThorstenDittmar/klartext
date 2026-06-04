@@ -78,9 +78,9 @@ export default function NarrativeEditor() {
   const [showAddActor, setShowAddActor] = useState(false);
 
   // Add / edit actor form
-  const [actorName, setActorName] = useState("");
-  const [actorTyp, setActorTyp] = useState("figur");
-  const [actorDescription, setActorDescription] = useState("");
+  const [actorLabel, setActorLabel] = useState("");
+  const [actorType, setActorType] = useState("individual");
+  const [actorNotes, setActorNotes] = useState("");
 
   // UI state
   const [error, setError] = useState<string | null>(null);
@@ -220,9 +220,9 @@ export default function NarrativeEditor() {
     setSelectedActorId(null);
     setSelectedSceneId(null);
     setShowAddScene(false);
-    setActorName("");
-    setActorTyp("figur");
-    setActorDescription("");
+    setActorLabel("");
+    setActorType("individual");
+    setActorNotes("");
   }
 
   function selectActor(actor: Actor) {
@@ -230,28 +230,28 @@ export default function NarrativeEditor() {
     setShowAddActor(false);
     setSelectedSceneId(null);
     setShowAddScene(false);
-    setActorName(actor.name);
-    setActorTyp(actor.typ);
-    setActorDescription(actor.description ?? "");
+    setActorLabel(actor.label);
+    setActorType(actor.actor_type);
+    setActorNotes(actor.notes ?? "");
   }
 
   function cancelActorForm() {
     setShowAddActor(false);
     setSelectedActorId(null);
-    setActorName("");
-    setActorTyp("figur");
-    setActorDescription("");
+    setActorLabel("");
+    setActorType("individual");
+    setActorNotes("");
   }
 
   async function addActor() {
-    if (!selected || !actorName.trim()) return;
+    if (!selected || !actorLabel.trim()) return;
     setLoading(true);
     try {
       const actor = await api.narratives.addActor(
         selected.id,
-        actorName.trim(),
-        actorTyp,
-        actorDescription.trim() || null
+        actorLabel.trim(),
+        actorType,
+        actorNotes.trim() || null,
       );
       setSelected((prev) => prev ? { ...prev, actors: [...prev.actors, actor] } : prev);
       setSelectedActorId(actor.id);
@@ -264,15 +264,15 @@ export default function NarrativeEditor() {
   }
 
   async function updateActor() {
-    if (!selected || !selectedActorId || !actorName.trim()) return;
+    if (!selected || !selectedActorId || !actorLabel.trim()) return;
     setLoading(true);
     try {
       const updated = await api.narratives.updateActor(
         selected.id,
         selectedActorId,
-        actorName.trim(),
-        actorTyp,
-        actorDescription.trim() || null
+        actorLabel.trim(),
+        actorType,
+        actorNotes.trim() || null,
       );
       setSelected((prev) =>
         prev
@@ -504,11 +504,11 @@ export default function NarrativeEditor() {
                         whiteSpace: "nowrap",
                         textOverflow: "ellipsis",
                       }}
-                      title={actor.name}
+                      title={actor.label}
                     >
-                      {actor.name}
+                      {actor.label}
                       <span style={{ color: "#aaa", marginLeft: "0.3rem", fontSize: "0.7rem" }}>
-                        {ACTOR_TYPE_LABELS[actor.typ] ?? actor.typ}
+                        {ACTOR_TYPE_LABELS[actor.actor_type] ?? actor.actor_type}
                       </span>
                     </button>
                     <button
@@ -618,8 +618,8 @@ export default function NarrativeEditor() {
               Name
             </label>
             <input
-              value={actorName}
-              onChange={(e) => setActorName(e.target.value)}
+              value={actorLabel}
+              onChange={(e) => setActorLabel(e.target.value)}
               placeholder="Name des Akteurs"
               style={{
                 width: "100%",
@@ -633,8 +633,8 @@ export default function NarrativeEditor() {
               Typ
             </label>
             <select
-              value={actorTyp}
-              onChange={(e) => setActorTyp(e.target.value)}
+              value={actorType}
+              onChange={(e) => setActorType(e.target.value)}
               style={{ padding: "0.4rem", marginBottom: "1rem", fontSize: "0.85rem" }}
             >
               {ACTOR_TYPES.map(([value, label]) => (
@@ -647,8 +647,8 @@ export default function NarrativeEditor() {
               <span style={{ color: "#bbb", fontWeight: "normal" }}>(optional)</span>
             </label>
             <textarea
-              value={actorDescription}
-              onChange={(e) => setActorDescription(e.target.value)}
+              value={actorNotes}
+              onChange={(e) => setActorNotes(e.target.value)}
               placeholder="Kurze Beschreibung des Akteurs…"
               rows={4}
               style={{
@@ -664,7 +664,7 @@ export default function NarrativeEditor() {
             <div style={{ display: "flex", gap: "0.5rem" }}>
               <button
                 onClick={selectedActorId ? updateActor : addActor}
-                disabled={loading || !actorName.trim()}
+                disabled={loading || !actorLabel.trim()}
               >
                 Speichern
               </button>
