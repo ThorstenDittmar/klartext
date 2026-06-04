@@ -3,13 +3,16 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 from fastapi import APIRouter, Depends, status
 
 from api.dependencies import (
     get_claim_extractor_service,
     get_claim_repository,
+    get_narrative_analysis_service_async,
     get_narrative_service,
+    get_wirkgefuege_suggestion_service,
 )
 from api.exceptions.narrative import SceneNotFoundError
 from api.models.claim import Claim
@@ -18,6 +21,9 @@ from api.repositories.claim_repository import ClaimRepository
 from api.schemas.claims import ClaimResponse, ExtractClaimsResponse
 from api.schemas.narratives import (
     ActorResponse,
+    ActorSuggestionResponse,
+    AnalyseNarrativeResponse,
+    ClaimSuggestionResponse,
     CreateActorRequest,
     CreateNarrativeRequest,
     CreateSceneRequest,
@@ -26,10 +32,16 @@ from api.schemas.narratives import (
     NarrativeResponse,
     NarrativeSummaryResponse,
     SceneResponse,
+    SuggestedRelationResponse,
+    SuggestedSlotResponse,
+    SuggestWirkgefuegeResponse,
     UpdateActorRequest,
+    WirkgefuegeSuggestionSchema,
 )
 from api.services.claim_extractor_service import ClaimExtractorService
+from api.services.narrative_analysis_service import NarrativeAnalysisService
 from api.services.narrative_service import NarrativeService
+from api.services.wirkgefuege_suggestion_service import WirkgefuegeSuggestionService
 
 router = APIRouter(prefix="/narratives")
 
@@ -80,6 +92,73 @@ def _to_scene_response(scene: Scene) -> SceneResponse:
         title=scene.title,
         text=scene.text,
         position=scene.position,
+    )
+
+
+def _to_wirkgefuege_suggestion_schema(
+    ws: Any,
+) -> WirkgefuegeSuggestionSchema:
+    """Converts a WirkgefuegeSuggestion dataclass to its Pydantic schema."""
+    return WirkgefuegeSuggestionSchema(
+        suggestion_type=ws.suggestion_type,
+        slot=ws.slot,
+        zustand=ws.zustand,
+        source_slot=ws.source_slot,
+        source_condition=ws.source_condition,
+        target_slot=ws.target_slot,
+        target_effect=ws.target_effect,
+        mechanism=ws.mechanism,
+    )
+
+
+def _to_analyse_response(result: Any) -> AnalyseNarrativeResponse:
+    """Converts a NarrativeAnalysisResult to AnalyseNarrativeResponse."""
+    return AnalyseNarrativeResponse(
+        actors=[
+            ActorSuggestionResponse(
+                label=a.label,
+                actor_type=a.actor_type,
+                occurrences=a.occurrences,
+                entity_suggestion=a.entity_suggestion,
+            )
+            for a in result.actors
+        ],
+        claims=[
+            ClaimSuggestionResponse(
+                label=c.label,
+                text=c.text,
+                claim_type=c.claim_type,
+                confidence=c.confidence,
+                wirkgefuege_suggestion=(
+                    _to_wirkgefuege_suggestion_schema(c.wirkgefuege_suggestion)
+                    if c.wirkgefuege_suggestion
+                    else None
+                ),
+            )
+            for c in result.claims
+        ],
+    )
+
+
+def _to_suggest_response(result: Any) -> SuggestWirkgefuegeResponse:
+    """Converts a WirkgefuegeSuggestionResult to SuggestWirkgefuegeResponse."""
+    return SuggestWirkgefuegeResponse(
+        suggested_slots=[
+            SuggestedSlotResponse(identifier=s.identifier, slot_type=s.slot_type)
+            for s in result.suggested_slots
+        ],
+        suggested_relations=[
+            SuggestedRelationResponse(
+                source=r.source,
+                target=r.target,
+                source_condition=r.source_condition,
+                target_effect=r.target_effect,
+                mechanism=r.mechanism,
+                epistemic_status=r.epistemic_status,
+            )
+            for r in result.suggested_relations
+        ],
+        from_claims=result.from_claims,
     )
 
 
@@ -221,6 +300,46 @@ async def link_to_causal_model(
     """Links the Narrative to a CausalModel by ID."""
     narrative = await service.link_to_causal_model(narrative_id, request.causal_model_id)
     return _to_narrative_response(narrative)
+
+
+# ---------------------------------------------------------------------------
+# Analysis endpoints
+# ---------------------------------------------------------------------------
+
+
+@router.post(
+    "/{narrative_id}/analyse",
+    response_model=AnalyseNarrativeResponse,
+)
+async def analyse_narrative(
+    narrative_id: str,
+    service: NarrativeAnalysisService = Depends(get_narrative_analysis_service_async),
+) -> AnalyseNarrativeResponse:
+    """Analyses all scenes in the Narrative and returns suggested actors and claims.
+
+    Does not persist anything — the caller confirms actors/claims via separate endpoints.
+    Raises NarrativeNotFoundError (→ 404) if the Narrative does not exist.
+    """
+    result = await service.analyse(narrative_id)
+    return _to_analyse_response(result)
+
+
+@router.post(
+    "/{narrative_id}/suggest-wirkgefuege",
+    response_model=SuggestWirkgefuegeResponse,
+)
+async def suggest_wirkgefuege(
+    narrative_id: str,
+    service: WirkgefuegeSuggestionService = Depends(get_wirkgefuege_suggestion_service),
+) -> SuggestWirkgefuegeResponse:
+    """Suggests a minimal Wirkgefüge from all DRAFT Claims of the Narrative.
+
+    Does not persist anything — the caller creates slots/relations via separate endpoints.
+    Returns empty suggestions when no DRAFT Claims exist.
+    Raises NarrativeNotFoundError (→ 404) if the Narrative does not exist.
+    """
+    result = await service.suggest_for_narrative(narrative_id)
+    return _to_suggest_response(result)
 
 
 # ---------------------------------------------------------------------------

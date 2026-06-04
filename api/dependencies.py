@@ -36,8 +36,10 @@ from api.services.causal_model_service import CausalModelService
 from api.services.claim_extractor_service import ClaimExtractorService
 from api.services.claim_service import ClaimService
 from api.services.health_service import HealthChecker, SupabaseHealthChecker
+from api.services.narrative_analysis_service import NarrativeAnalysisService
 from api.services.narrative_import_service import NarrativeImportService
 from api.services.narrative_service import NarrativeService
+from api.services.wirkgefuege_suggestion_service import WirkgefuegeSuggestionService
 
 
 async def get_supabase_client() -> AsyncClient:
@@ -121,3 +123,42 @@ async def get_causal_model_service(
 ) -> CausalModelService:
     """Wires CausalModelRepository and ConsistencyChecker into CausalModelService."""
     return CausalModelService(repository=repository, consistency_checker=checker)
+
+
+async def get_narrative_analysis_service_async(
+    repository: NarrativeRepository = Depends(get_narrative_repository),
+) -> NarrativeAnalysisService:
+    """Wires NarrativeRepository and ClaudeNarrativeAnalysisProvider into NarrativeAnalysisService.
+
+    Uses a lazy import for ClaudeNarrativeAnalysisProvider so the module can be loaded
+    even before the Claude provider file is created (Task 6).
+    """
+    from api.providers.claude_narrative_analysis_provider import (
+        ClaudeNarrativeAnalysisProvider,  # noqa: PLC0415
+    )
+
+    client = anthropic.AsyncAnthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+    provider = ClaudeNarrativeAnalysisProvider(client=client)
+    return NarrativeAnalysisService(repository=repository, provider=provider)
+
+
+async def get_wirkgefuege_suggestion_service(
+    narrative_repository: NarrativeRepository = Depends(get_narrative_repository),
+    claim_repository: ClaimRepository = Depends(get_claim_repository),
+) -> WirkgefuegeSuggestionService:
+    """Wires repositories and ClaudeWirkgefuegeSuggestionProvider into WirkgefuegeSuggestionService.
+
+    Uses a lazy import for ClaudeWirkgefuegeSuggestionProvider so the module can be loaded
+    even before the Claude provider file is created (Task 6).
+    """
+    from api.providers.claude_wirkgefuege_suggestion_provider import (
+        ClaudeWirkgefuegeSuggestionProvider,  # noqa: PLC0415
+    )
+
+    client = anthropic.AsyncAnthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+    provider = ClaudeWirkgefuegeSuggestionProvider(client=client)
+    return WirkgefuegeSuggestionService(
+        narrative_repository=narrative_repository,
+        claim_repository=claim_repository,
+        provider=provider,
+    )

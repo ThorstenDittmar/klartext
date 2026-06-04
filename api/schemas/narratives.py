@@ -139,3 +139,78 @@ class NarrativeSummaryResponse(BaseModel):
 
     id: str
     title: str
+
+
+# ---------------------------------------------------------------------------
+# Analysis endpoint schemas
+# ---------------------------------------------------------------------------
+
+
+class WirkgefuegeSuggestionSchema(BaseModel):
+    """Schema for a Wirkgefüge suggestion within a ClaimSuggestionResponse."""
+
+    suggestion_type: str
+    slot: str | None = None
+    zustand: str | None = None
+    source_slot: str | None = None
+    source_condition: str | None = None
+    target_slot: str | None = None
+    target_effect: str | None = None
+    mechanism: str | None = None
+
+
+class ActorSuggestionResponse(BaseModel):
+    """Schema for a suggested Actor in the analysis response."""
+
+    label: str
+    actor_type: str
+    occurrences: list[str]
+    entity_suggestion: str | None
+
+
+class ClaimSuggestionResponse(BaseModel):
+    """Schema for a suggested Claim in the analysis response."""
+
+    label: str
+    text: str
+    claim_type: str
+    confidence: float
+    wirkgefuege_suggestion: WirkgefuegeSuggestionSchema | None
+
+
+class AnalyseNarrativeResponse(BaseModel):
+    """Response from POST /narratives/{id}/analyse."""
+
+    actors: list[ActorSuggestionResponse]
+    claims: list[ClaimSuggestionResponse]
+
+
+# ---------------------------------------------------------------------------
+# Wirkgefüge suggestion endpoint schemas
+# ---------------------------------------------------------------------------
+
+
+class SuggestedSlotResponse(BaseModel):
+    """Schema for a suggested Slot in the Wirkgefüge suggestion response."""
+
+    identifier: str
+    slot_type: str
+
+
+class SuggestedRelationResponse(BaseModel):
+    """Schema for a suggested CausalRelation in the Wirkgefüge suggestion response."""
+
+    source: str
+    target: str
+    source_condition: str | None
+    target_effect: str | None
+    mechanism: str | None
+    epistemic_status: str
+
+
+class SuggestWirkgefuegeResponse(BaseModel):
+    """Response from POST /narratives/{id}/suggest-wirkgefuege."""
+
+    suggested_slots: list[SuggestedSlotResponse]
+    suggested_relations: list[SuggestedRelationResponse]
+    from_claims: list[str]

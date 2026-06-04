@@ -11,7 +11,11 @@ from pathlib import Path
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-from api.dependencies import get_narrative_service
+from api.dependencies import (
+    get_narrative_analysis_service_async,
+    get_narrative_service,
+    get_wirkgefuege_suggestion_service,
+)
 from api.exceptions.narrative import (
     ActorNotFoundError,
     NarrativeFileNotFoundError,
@@ -19,6 +23,16 @@ from api.exceptions.narrative import (
 )
 from api.main import app
 from api.models.narrative import Actor, ActorType, Narrative, Scene
+from api.providers.narrative_analysis_provider import (
+    ActorSuggestion,
+    ClaimSuggestion,
+    NarrativeAnalysisResult,
+)
+from api.providers.wirkgefuege_suggestion_provider import (
+    SuggestedRelation,
+    SuggestedSlot,
+    WirkgefuegeSuggestionResult,
+)
 
 # ---------------------------------------------------------------------------
 # Fake service
@@ -803,3 +817,156 @@ async def test_narratives_link_to_causal_model_returns_404_for_unknown_narrative
         clear_overrides()
 
     assert response.status_code == 404
+
+
+# ---------------------------------------------------------------------------
+# Fake services for analysis endpoints
+# ---------------------------------------------------------------------------
+
+
+class FakeNarrativeAnalysisService:
+    """Returns preset analysis results without hitting the DB or Claude API."""
+
+    def __init__(
+        self,
+        *,
+        raise_on_analyse: Exception | None = None,
+    ) -> None:
+        self._raise_on_analyse = raise_on_analyse
+
+    async def analyse(self, narrative_id: str) -> NarrativeAnalysisResult:
+        if self._raise_on_analyse:
+            raise self._raise_on_analyse
+        return NarrativeAnalysisResult(
+            actors=[
+                ActorSuggestion(
+                    label="Central Bank",
+                    actor_type="institution",
+                    occurrences=["Scene 1"],
+                    entity_suggestion="central_bank",
+                )
+            ],
+            claims=[
+                ClaimSuggestion(
+                    label="Money supply causes inflation",
+                    text="Higher money supply leads to inflation.",
+                    claim_type="causal",
+                    confidence=0.87,
+                    wirkgefuege_suggestion=None,
+                )
+            ],
+        )
+
+
+class FakeWirkgefuegeSuggestionService:
+    """Returns preset suggestion results without hitting the DB or Claude API."""
+
+    def __init__(
+        self,
+        *,
+        raise_on_suggest: Exception | None = None,
+    ) -> None:
+        self._raise_on_suggest = raise_on_suggest
+
+    async def suggest_for_narrative(self, narrative_id: str) -> WirkgefuegeSuggestionResult:
+        if self._raise_on_suggest:
+            raise self._raise_on_suggest
+        return WirkgefuegeSuggestionResult(
+            suggested_slots=[
+                SuggestedSlot(identifier="money_supply", slot_type="physical_quantity"),
+                SuggestedSlot(identifier="inflation", slot_type="trend"),
+            ],
+            suggested_relations=[
+                SuggestedRelation(
+                    source="money_supply",
+                    target="inflation",
+                    mechanism="quantity_theory",
+                    epistemic_status="incomplete",
+                )
+            ],
+            from_claims=["claim-uuid-1"],
+        )
+
+
+# ---------------------------------------------------------------------------
+# Tests for POST /{narrative_id}/analyse
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_analyse_narrative_returns_actors_and_claims() -> None:
+    """Expects 200 with actors and claims when the service succeeds."""
+    app.dependency_overrides[get_narrative_analysis_service_async] = (
+        lambda: FakeNarrativeAnalysisService()
+    )
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.post(f"/narratives/{SAVED_NARRATIVE_ID}/analyse")
+
+        assert response.status_code == 200
+        body = response.json()
+        assert len(body["actors"]) == 1
+        assert body["actors"][0]["label"] == "Central Bank"
+        assert len(body["claims"]) == 1
+        assert body["claims"][0]["claim_type"] == "causal"
+    finally:
+        app.dependency_overrides.pop(get_narrative_analysis_service_async, None)
+
+
+@pytest.mark.asyncio
+async def test_analyse_narrative_returns_404_for_unknown_narrative() -> None:
+    """Expects 404 when the service raises NarrativeNotFoundError."""
+    from api.exceptions.narrative import NarrativeNotFoundError
+
+    app.dependency_overrides[get_narrative_analysis_service_async] = lambda: (
+        FakeNarrativeAnalysisService(raise_on_analyse=NarrativeNotFoundError("not found"))
+    )
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.post("/narratives/does-not-exist/analyse")
+
+        assert response.status_code == 404
+    finally:
+        app.dependency_overrides.pop(get_narrative_analysis_service_async, None)
+
+
+# ---------------------------------------------------------------------------
+# Tests for POST /{narrative_id}/suggest-wirkgefuege
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_suggest_wirkgefuege_returns_slots_and_relations() -> None:
+    """Expects 200 with suggested slots and relations when the service succeeds."""
+    app.dependency_overrides[get_wirkgefuege_suggestion_service] = (
+        lambda: FakeWirkgefuegeSuggestionService()
+    )
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.post(f"/narratives/{SAVED_NARRATIVE_ID}/suggest-wirkgefuege")
+
+        assert response.status_code == 200
+        body = response.json()
+        assert len(body["suggested_slots"]) == 2
+        assert body["suggested_slots"][0]["identifier"] == "money_supply"
+        assert len(body["suggested_relations"]) == 1
+        assert body["from_claims"] == ["claim-uuid-1"]
+    finally:
+        app.dependency_overrides.pop(get_wirkgefuege_suggestion_service, None)
+
+
+@pytest.mark.asyncio
+async def test_suggest_wirkgefuege_returns_404_for_unknown_narrative() -> None:
+    """Expects 404 when the service raises NarrativeNotFoundError."""
+    from api.exceptions.narrative import NarrativeNotFoundError
+
+    app.dependency_overrides[get_wirkgefuege_suggestion_service] = lambda: (
+        FakeWirkgefuegeSuggestionService(raise_on_suggest=NarrativeNotFoundError("not found"))
+    )
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.post("/narratives/does-not-exist/suggest-wirkgefuege")
+
+        assert response.status_code == 404
+    finally:
+        app.dependency_overrides.pop(get_wirkgefuege_suggestion_service, None)
