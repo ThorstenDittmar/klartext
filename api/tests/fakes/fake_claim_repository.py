@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import uuid
 
-from api.exceptions.claim import ClaimNotFoundError
+from api.exceptions.claim import ClaimNotFoundError, ClaimPersistenceError
 from api.models.claim import Claim
 from api.repositories.claim_repository import ClaimRepository
 
@@ -49,7 +49,14 @@ class FakeClaimRepository(ClaimRepository):
         return self._index[claim_id]
 
     async def update(self, claim: Claim) -> Claim:
-        """Persists the current state of a Claim by replacing the stored entry."""
-        if claim.id in self._index:
-            self._index[claim.id] = claim  # type: ignore[index]
+        """Persists the current state of a Claim by replacing both index and store entries."""
+        if claim.id not in self._index:
+            raise ClaimPersistenceError(f"Claim not found for update: {claim.id}")
+        self._index[claim.id] = claim  # type: ignore[index]
+        # keep _store consistent
+        for claims_list in self._store.values():
+            for i, c in enumerate(claims_list):
+                if c.id == claim.id:
+                    claims_list[i] = claim
+                    break
         return claim

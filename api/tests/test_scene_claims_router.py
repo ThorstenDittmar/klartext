@@ -17,6 +17,7 @@ from api.dependencies import (
     get_claim_repository,
     get_narrative_service,
 )
+from api.exceptions.claim import ClaimNotFoundError
 from api.exceptions.narrative import NarrativeNotFoundError
 from api.main import app
 from api.models.claim import Claim, ClaimType
@@ -102,8 +103,6 @@ class FakeClaimRepository(ClaimRepository):
 
     async def find_by_id(self, claim_id: str) -> Claim:
         """Finds a claim by ID across all scenes."""
-        from api.exceptions.claim import ClaimNotFoundError
-
         for claims in self._store.values():
             for claim in claims:
                 if claim.id == claim_id:
