@@ -21,6 +21,7 @@ Ein Claim ist eine behauptete Aussage –
 empirisch, kausal, normativ, prognostisch oder definitorisch.
 
 Antworte ausschließlich mit einem JSON-Array. Jeder Eintrag hat:
+- "label": Kurzer englischer Titel des Claims (max. 80 Zeichen)
 - "text": Die extrahierte Aussage (vollständiger Satz, max. 200 Zeichen)
 - "typ": Einer von: {_CLAIM_TYPES}
 - "confidence": Float zwischen 0.0 und 1.0
@@ -85,6 +86,7 @@ class ClaudeClaimExtractionProvider(ClaimExtractionProvider):
         """Converts a raw API record into a Claim, clamping confidence to 0.0–1.0.
 
         Raises ClaimExtractionError if the API returned an unrecognised claim type.
+        Falls back to the first 80 chars of text as label if the API omitted the label field.
         """
         try:
             typ = ClaimType(record["typ"])
@@ -93,4 +95,5 @@ class ClaudeClaimExtractionProvider(ClaimExtractionProvider):
                 f"Claude API returned unknown claim type: {record['typ']}"
             ) from e
         confidence = max(0.0, min(1.0, float(record.get("confidence", 0.5))))
-        return Claim.create(text=record["text"], typ=typ, confidence=confidence)
+        label = record.get("label") or record["text"][:80]
+        return Claim.create(label=label, text=record["text"], typ=typ, confidence=confidence)

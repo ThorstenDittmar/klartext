@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import logging
+
 from supabase import AsyncClient
 
 from api.exceptions.claim import ClaimPersistenceError
@@ -15,9 +17,10 @@ _CLAIM_TABLE = "claims"
 class SupabaseClaimRepository(ClaimRepository):
     """Reads and writes Claims using the Supabase PostgREST API.
 
-    Claims are stored in the 'claims' table and keyed by scene_id
-    (which references narrative_einheiten.id).
+    Claims are stored in the 'claims' table and keyed by scene_id.
     """
+
+    logger = logging.getLogger(__name__)
 
     def __init__(self, client: AsyncClient) -> None:
         self._client = client
@@ -28,15 +31,23 @@ class SupabaseClaimRepository(ClaimRepository):
         An empty input list is valid and returns an empty list immediately.
         Raises ClaimPersistenceError on database failure.
         """
+        self.logger.info(
+            "SupabaseClaimRepository.save_all: scene_id=%s, count=%d",
+            scene_id,
+            len(claims),
+        )
         if not claims:
             return []
 
         rows = [
             {
                 "scene_id": scene_id,
+                "label": claim.label,
                 "text": claim.text,
                 "typ": claim.typ.value,
                 "confidence": claim.confidence,
+                "status": claim.status.value,
+                "wirkgefuege_ref": claim.wirkgefuege_ref,
             }
             for claim in claims
         ]
@@ -57,6 +68,7 @@ class SupabaseClaimRepository(ClaimRepository):
         Returns an empty list when no claims exist for that scene.
         Raises ClaimPersistenceError on database failure.
         """
+        self.logger.debug("SupabaseClaimRepository.find_by_scene_id: scene_id=%s", scene_id)
         try:
             result = (
                 await self._client.table(_CLAIM_TABLE)

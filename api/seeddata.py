@@ -51,31 +51,31 @@ SEED_CLAIMS: list[SeedClaims] = [
 class SeedActor:
     """A single actor definition for the narrative seed data."""
 
-    name: str
-    typ: str  # ActorType value (German string: 'figur', 'organisation', etc.)
-    description: str | None = field(default=None)
+    label: str
+    actor_type: str  # ActorType value ('individual', 'organisation', etc.)
+    notes: str | None = field(default=None)
 
 
 SEED_ACTORS: list[SeedActor] = [
     SeedActor(
-        name="Mara",
-        typ="individual",
-        description="Autorin und Mitgründerin von klartext.jetzt.",
+        label="Mara",
+        actor_type="individual",
+        notes="Autorin und Mitgründerin von klartext.jetzt.",
     ),
     SeedActor(
-        name="Tarek",
-        typ="individual",
-        description="Entwickler und Mitgründer von klartext.jetzt.",
+        label="Tarek",
+        actor_type="individual",
+        notes="Entwickler und Mitgründer von klartext.jetzt.",
     ),
     SeedActor(
-        name="klartext.jetzt",
-        typ="organisation",
-        description="Die Plattform für epistemische Publikationen.",
+        label="klartext.jetzt",
+        actor_type="organisation",
+        notes="Die Plattform für epistemische Publikationen.",
     ),
     SeedActor(
-        name="Öffentlichkeit",
-        typ="abstract_entity",
-        description="Die abstrakte Gemeinschaft der Debattenteilnehmer.",
+        label="Öffentlichkeit",
+        actor_type="abstract_entity",
+        notes="Die abstrakte Gemeinschaft der Debattenteilnehmer.",
     ),
 ]
 
