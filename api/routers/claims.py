@@ -26,6 +26,14 @@ async def extract_claims(
     claims = await service.extract_from_scene(scene)
     return ExtractClaimsResponse(
         claims=[
-            ClaimResponse(text=c.text, typ=c.typ.value, confidence=c.confidence) for c in claims
+            ClaimResponse(
+                label=c.label,
+                text=c.text,
+                typ=c.typ.value,
+                confidence=c.confidence,
+                status=c.status.value,
+                wirkgefuege_ref=c.wirkgefuege_ref,
+            )
+            for c in claims
         ]
     )

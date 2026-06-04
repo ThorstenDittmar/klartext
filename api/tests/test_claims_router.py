@@ -20,11 +20,13 @@ class FakeClaimExtractorService:
     async def extract_from_scene(self, scene: Scene) -> list[Claim]:
         return [
             Claim.create(
+                label="Inflation durch Geldmenge",
                 text="Inflation entsteht durch Geldmenge.",
                 typ=ClaimType.CAUSAL,
                 confidence=0.9,
             ),
             Claim.create(
+                label="Zinserhöhungen dämpfen Nachfrage",
                 text="Zinserhöhungen dämpfen die Nachfrage.",
                 typ=ClaimType.CAUSAL,
                 confidence=0.85,

@@ -22,9 +22,12 @@ class FakeClaimRepository(ClaimRepository):
         saved = [
             Claim(
                 id=str(uuid.uuid4()),
+                label=c.label,
                 text=c.text,
                 typ=c.typ,
                 confidence=c.confidence,
+                status=c.status,
+                wirkgefuege_ref=c.wirkgefuege_ref,
             )
             for c in claims
         ]
