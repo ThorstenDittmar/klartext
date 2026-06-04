@@ -61,19 +61,19 @@ def test_seed_actors_is_not_empty() -> None:
 
 
 def test_seed_actors_all_have_non_empty_names() -> None:
-    """Expects every seed actor to have a non-empty name."""
+    """Expects every seed actor to have a non-empty label."""
     for actor in SEED_ACTORS:
-        assert actor.name.strip() != ""
+        assert actor.label.strip() != ""
 
 
 def test_seed_actors_all_have_valid_types() -> None:
     """Expects every seed actor type to be a valid ActorType value."""
     valid_values = {t.value for t in ActorType}
     for actor in SEED_ACTORS:
-        assert actor.typ in valid_values, f"Unknown typ: {actor.typ!r}"
+        assert actor.actor_type in valid_values, f"Unknown actor_type: {actor.actor_type!r}"
 
 
 def test_seed_actors_include_at_least_one_individual() -> None:
     """Expects at least one actor of type INDIVIDUAL in the seed data."""
-    types = {a.typ for a in SEED_ACTORS}
+    types = {a.actor_type for a in SEED_ACTORS}
     assert "individual" in types

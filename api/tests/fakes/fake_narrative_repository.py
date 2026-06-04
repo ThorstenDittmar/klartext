@@ -71,9 +71,10 @@ class FakeNarrativeRepository(NarrativeRepository):
             raise NarrativeNotFoundError(f"Narrative not found: {narrative_id}")
         saved_actor = Actor(
             id=str(uuid.uuid4()),
-            name=actor.name,
-            typ=actor.typ,
-            description=actor.description,
+            label=actor.label,
+            actor_type=actor.actor_type,
+            notes=actor.notes,
+            entity_ref=actor.entity_ref,
         )
         self._store[narrative_id].add_actor(saved_actor)
         return saved_actor

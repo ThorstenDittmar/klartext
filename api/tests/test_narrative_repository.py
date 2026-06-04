@@ -125,7 +125,7 @@ async def test_narrative_repository_add_actor_assigns_id() -> None:
 
     from api.models.narrative import Actor
 
-    actor = Actor.create(name="Max", typ=ActorType.INDIVIDUAL)
+    actor = Actor.create(label="Max", actor_type=ActorType.INDIVIDUAL)
     saved_actor = await repo.add_actor(saved_narrative.id, actor)  # type: ignore[arg-type]
 
     assert saved_actor.id is not None
@@ -133,17 +133,17 @@ async def test_narrative_repository_add_actor_assigns_id() -> None:
 
 @pytest.mark.asyncio
 async def test_narrative_repository_add_actor_stores_name_and_type() -> None:
-    """Expects name and type to be accessible on the saved actor."""
+    """Expects label and actor_type to be accessible on the saved actor."""
     repo = FakeNarrativeRepository()
     saved_narrative = await repo.save(NarrativeMother.empty())
 
     from api.models.narrative import Actor
 
-    actor = Actor.create(name="CDU", typ=ActorType.ORGANISATION)
+    actor = Actor.create(label="CDU", actor_type=ActorType.ORGANISATION)
     saved_actor = await repo.add_actor(saved_narrative.id, actor)  # type: ignore[arg-type]
 
-    assert saved_actor.name == "CDU"
-    assert saved_actor.typ == ActorType.ORGANISATION
+    assert saved_actor.label == "CDU"
+    assert saved_actor.actor_type == ActorType.ORGANISATION
 
 
 @pytest.mark.asyncio
@@ -153,7 +153,7 @@ async def test_narrative_repository_add_actor_raises_for_unknown_narrative() -> 
 
     from api.models.narrative import Actor
 
-    actor = Actor.create(name="Max", typ=ActorType.INDIVIDUAL)
+    actor = Actor.create(label="Max", actor_type=ActorType.INDIVIDUAL)
 
     with pytest.raises(NarrativeNotFoundError):
         await repo.add_actor("00000000-0000-0000-0000-000000000000", actor)
@@ -168,12 +168,12 @@ async def test_narrative_repository_get_actor_returns_saved_actor() -> None:
     from api.models.narrative import Actor
 
     saved_actor = await repo.add_actor(
-        saved_narrative.id, Actor.create(name="Max", typ=ActorType.INDIVIDUAL)
+        saved_narrative.id, Actor.create(label="Max", actor_type=ActorType.INDIVIDUAL)
     )  # type: ignore[arg-type]
     found = await repo.get_actor(saved_narrative.id, saved_actor.id)  # type: ignore[arg-type]
 
     assert found.id == saved_actor.id
-    assert found.name == "Max"
+    assert found.label == "Max"
 
 
 @pytest.mark.asyncio
@@ -197,21 +197,21 @@ async def test_narrative_repository_get_actor_raises_for_unknown_actor() -> None
 
 @pytest.mark.asyncio
 async def test_narrative_repository_update_actor_returns_updated_actor() -> None:
-    """Expects update_actor to return the actor with the new name and type."""
+    """Expects update_actor to return the actor with the new label and actor_type."""
     repo = FakeNarrativeRepository()
     saved_narrative = await repo.save(NarrativeMother.empty())
 
     from api.models.narrative import Actor
 
     saved_actor = await repo.add_actor(
-        saved_narrative.id, Actor.create(name="Max", typ=ActorType.INDIVIDUAL)
+        saved_narrative.id, Actor.create(label="Max", actor_type=ActorType.INDIVIDUAL)
     )  # type: ignore[arg-type]
-    saved_actor.update(name="CDU", typ=ActorType.ORGANISATION, description="A party.")
+    saved_actor.update(label="CDU", actor_type=ActorType.ORGANISATION, notes="A party.")
     updated = await repo.update_actor(saved_narrative.id, saved_actor)  # type: ignore[arg-type]
 
-    assert updated.name == "CDU"
-    assert updated.typ == ActorType.ORGANISATION
-    assert updated.description == "A party."
+    assert updated.label == "CDU"
+    assert updated.actor_type == ActorType.ORGANISATION
+    assert updated.notes == "A party."
 
 
 @pytest.mark.asyncio
@@ -223,7 +223,7 @@ async def test_narrative_repository_remove_actor_removes_actor() -> None:
     from api.models.narrative import Actor
 
     saved_actor = await repo.add_actor(
-        saved_narrative.id, Actor.create(name="Max", typ=ActorType.INDIVIDUAL)
+        saved_narrative.id, Actor.create(label="Max", actor_type=ActorType.INDIVIDUAL)
     )  # type: ignore[arg-type]
     await repo.remove_actor(saved_narrative.id, saved_actor.id)  # type: ignore[arg-type]
 
@@ -346,14 +346,14 @@ async def test_supabase_narrative_repository_add_and_get_actor() -> None:
     try:
         saved_actor = await repo.add_actor(
             saved_narrative.id,  # type: ignore[arg-type]
-            Actor.create(name="Max", typ=ActorType.INDIVIDUAL, description="The protagonist."),
+            Actor.create(label="Max", actor_type=ActorType.INDIVIDUAL, notes="The protagonist."),
         )
         found = await repo.get_actor(saved_narrative.id, saved_actor.id)  # type: ignore[arg-type]
 
         assert found.id == saved_actor.id
-        assert found.name == "Max"
-        assert found.typ == ActorType.INDIVIDUAL
-        assert found.description == "The protagonist."
+        assert found.label == "Max"
+        assert found.actor_type == ActorType.INDIVIDUAL
+        assert found.notes == "The protagonist."
     finally:
         await (
             client.table("narrative_akteure")
@@ -388,14 +388,14 @@ async def test_supabase_narrative_repository_update_actor() -> None:
     try:
         saved_actor = await repo.add_actor(
             saved_narrative.id,  # type: ignore[arg-type]
-            Actor.create(name="Max", typ=ActorType.INDIVIDUAL),
+            Actor.create(label="Max", actor_type=ActorType.INDIVIDUAL),
         )
-        saved_actor.update(name="CDU", typ=ActorType.ORGANISATION, description="A party.")
+        saved_actor.update(label="CDU", actor_type=ActorType.ORGANISATION, notes="A party.")
         updated = await repo.update_actor(saved_narrative.id, saved_actor)  # type: ignore[arg-type]
 
-        assert updated.name == "CDU"
-        assert updated.typ == ActorType.ORGANISATION
-        assert updated.description == "A party."
+        assert updated.label == "CDU"
+        assert updated.actor_type == ActorType.ORGANISATION
+        assert updated.notes == "A party."
     finally:
         await (
             client.table("narrative_akteure")
@@ -431,7 +431,7 @@ async def test_supabase_narrative_repository_remove_actor() -> None:
     try:
         saved_actor = await repo.add_actor(
             saved_narrative.id,  # type: ignore[arg-type]
-            Actor.create(name="Max", typ=ActorType.INDIVIDUAL),
+            Actor.create(label="Max", actor_type=ActorType.INDIVIDUAL),
         )
         await repo.remove_actor(saved_narrative.id, saved_actor.id)  # type: ignore[arg-type]
 

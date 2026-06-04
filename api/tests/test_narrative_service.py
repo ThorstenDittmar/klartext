@@ -318,25 +318,25 @@ async def test_narrative_service_add_actor_returns_actor_with_id() -> None:
 
 @pytest.mark.asyncio
 async def test_narrative_service_add_actor_returns_actor_with_correct_name_and_type() -> None:
-    """Expects the returned Actor to carry the name and type that were passed in."""
+    """Expects the returned Actor to carry the label and actor_type that were passed in."""
     service = make_service()
     narrative = await service.create("My Narrative")
 
     actor = await service.add_actor(narrative.id, "CDU", ActorType.ORGANISATION)  # type: ignore[arg-type]
 
-    assert actor.name == "CDU"
-    assert actor.typ == ActorType.ORGANISATION
+    assert actor.label == "CDU"
+    assert actor.actor_type == ActorType.ORGANISATION
 
 
 @pytest.mark.asyncio
 async def test_narrative_service_add_actor_description_defaults_to_none() -> None:
-    """Expects description to be None when not provided."""
+    """Expects notes to be None when not provided."""
     service = make_service()
     narrative = await service.create("My Narrative")
 
     actor = await service.add_actor(narrative.id, "Voters", ActorType.GROUP)  # type: ignore[arg-type]
 
-    assert actor.description is None
+    assert actor.notes is None
 
 
 @pytest.mark.asyncio
@@ -350,7 +350,7 @@ async def test_narrative_service_add_actor_raises_for_unknown_narrative_id() -> 
 
 @pytest.mark.asyncio
 async def test_narrative_service_add_actor_raises_for_empty_name() -> None:
-    """Expects ActorValidationError when the actor name is empty."""
+    """Expects ActorValidationError when the actor label is empty."""
     from api.exceptions.narrative import ActorValidationError
 
     service = make_service()
@@ -367,7 +367,7 @@ async def test_narrative_service_add_actor_raises_for_empty_name() -> None:
 
 @pytest.mark.asyncio
 async def test_narrative_service_update_actor_returns_actor_with_updated_fields() -> None:
-    """Expects update_actor to return an Actor carrying the new name, type and description."""
+    """Expects update_actor to return an Actor carrying the new label, actor_type and notes."""
     service = make_service()
     narrative = await service.create("My Narrative")
     actor = await service.add_actor(narrative.id, "Max", ActorType.INDIVIDUAL)  # type: ignore[arg-type]
@@ -378,9 +378,9 @@ async def test_narrative_service_update_actor_returns_actor_with_updated_fields(
         narrative.id, actor.id, "CDU", ActorType.ORGANISATION, "A party."
     )
 
-    assert updated.name == "CDU"
-    assert updated.typ == ActorType.ORGANISATION
-    assert updated.description == "A party."
+    assert updated.label == "CDU"
+    assert updated.actor_type == ActorType.ORGANISATION
+    assert updated.notes == "A party."
 
 
 @pytest.mark.asyncio
@@ -413,7 +413,7 @@ async def test_narrative_service_update_actor_raises_for_unknown_actor_id() -> N
 
 @pytest.mark.asyncio
 async def test_narrative_service_update_actor_raises_for_empty_name() -> None:
-    """Expects ActorValidationError when the new name is empty."""
+    """Expects ActorValidationError when the new label is empty."""
     from api.exceptions.narrative import ActorValidationError
 
     service = make_service()

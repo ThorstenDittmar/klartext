@@ -16,6 +16,7 @@ class ClaimMother:
     def causal() -> Claim:
         """A single causal claim with high confidence."""
         return Claim.create(
+            label="Money supply causes inflation",
             text="Inflation entsteht durch eine Ausweitung der Geldmenge.",
             typ=ClaimType.CAUSAL,
             confidence=0.9,
@@ -25,6 +26,7 @@ class ClaimMother:
     def empirical() -> Claim:
         """A single empirical claim with moderate confidence."""
         return Claim.create(
+            label="2022 inflation rate above 7%",
             text="Die Inflationsrate lag 2022 bei über 7 Prozent.",
             typ=ClaimType.EMPIRICAL,
             confidence=0.8,
@@ -34,6 +36,7 @@ class ClaimMother:
     def normative() -> Claim:
         """A single normative claim — for tests that distinguish claim types."""
         return Claim.create(
+            label="State should cap energy prices",
             text="Der Staat sollte die Energiepreise deckeln.",
             typ=ClaimType.NORMATIVE,
             confidence=0.75,
@@ -43,6 +46,7 @@ class ClaimMother:
     def with_low_confidence() -> Claim:
         """A claim with low confidence — for confidence boundary tests."""
         return Claim.create(
+            label="Inflation may decline by 2025",
             text="Möglicherweise wird die Inflation bis 2025 sinken.",
             typ=ClaimType.PROGNOSTIC,
             confidence=0.3,

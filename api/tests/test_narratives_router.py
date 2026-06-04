@@ -95,18 +95,29 @@ class FakeNarrativeService:
         return self._saved
 
     async def add_actor(
-        self, narrative_id: str, name: str, typ: ActorType, description: str | None = None
+        self,
+        narrative_id: str,
+        label: str,
+        actor_type: ActorType,
+        notes: str | None = None,
+        entity_ref: str | None = None,
     ) -> Actor:
         if self._raise_on_add_actor:
             raise self._raise_on_add_actor
-        return Actor(id=SAVED_ACTOR_ID, name=name, typ=typ, description=description)
+        return Actor(
+            id=SAVED_ACTOR_ID,
+            label=label,
+            actor_type=actor_type,
+            notes=notes,
+            entity_ref=entity_ref,
+        )
 
     async def update_actor(
-        self, narrative_id: str, actor_id: str, name: str, typ: ActorType, description: str | None
+        self, narrative_id: str, actor_id: str, label: str, actor_type: ActorType, notes: str | None
     ) -> Actor:
         if self._raise_on_update_actor:
             raise self._raise_on_update_actor
-        return Actor(id=actor_id, name=name, typ=typ, description=description)
+        return Actor(id=actor_id, label=label, actor_type=actor_type, notes=notes)
 
     async def remove_actor(self, narrative_id: str, actor_id: str) -> None:
         if self._raise_on_remove_actor:
@@ -497,7 +508,7 @@ async def test_narratives_add_actor_returns_201() -> None:
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
             response = await client.post(
                 f"/narratives/{SAVED_NARRATIVE_ID}/actors",
-                json={"name": "Max", "typ": "individual"},
+                json={"label": "Max", "actor_type": "individual"},
             )
     finally:
         clear_overrides()
@@ -507,21 +518,21 @@ async def test_narratives_add_actor_returns_201() -> None:
 
 @pytest.mark.asyncio
 async def test_narratives_add_actor_response_contains_id_name_and_type() -> None:
-    """Expects the response to include the actor id, name and type."""
+    """Expects the response to include the actor id, label and actor_type."""
     override_with(FakeNarrativeService())
     try:
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
             response = await client.post(
                 f"/narratives/{SAVED_NARRATIVE_ID}/actors",
-                json={"name": "Max", "typ": "individual"},
+                json={"label": "Max", "actor_type": "individual"},
             )
     finally:
         clear_overrides()
 
     data = response.json()
     assert data["id"] == SAVED_ACTOR_ID
-    assert data["name"] == "Max"
-    assert data["typ"] == "individual"
+    assert data["label"] == "Max"
+    assert data["actor_type"] == "individual"
 
 
 # ---------------------------------------------------------------------------
@@ -531,13 +542,13 @@ async def test_narratives_add_actor_response_contains_id_name_and_type() -> None
 
 @pytest.mark.asyncio
 async def test_narratives_add_actor_returns_422_for_empty_name() -> None:
-    """Expects 422 when the name field is an empty string."""
+    """Expects 422 when the label field is an empty string."""
     override_with(FakeNarrativeService())
     try:
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
             response = await client.post(
                 f"/narratives/{SAVED_NARRATIVE_ID}/actors",
-                json={"name": "", "typ": "individual"},
+                json={"label": "", "actor_type": "individual"},
             )
     finally:
         clear_overrides()
@@ -553,7 +564,7 @@ async def test_narratives_add_actor_returns_404_for_unknown_narrative() -> None:
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
             response = await client.post(
                 "/narratives/unknown-id/actors",
-                json={"name": "Max", "typ": "individual"},
+                json={"label": "Max", "actor_type": "individual"},
             )
     finally:
         clear_overrides()
@@ -574,7 +585,7 @@ async def test_narratives_update_actor_returns_200() -> None:
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
             response = await client.put(
                 f"/narratives/{SAVED_NARRATIVE_ID}/actors/{SAVED_ACTOR_ID}",
-                json={"name": "CDU", "typ": "organisation", "description": "A party."},
+                json={"label": "CDU", "actor_type": "organisation", "notes": "A party."},
             )
     finally:
         clear_overrides()
@@ -584,21 +595,21 @@ async def test_narratives_update_actor_returns_200() -> None:
 
 @pytest.mark.asyncio
 async def test_narratives_update_actor_response_contains_updated_fields() -> None:
-    """Expects the response to reflect the new name, type and description."""
+    """Expects the response to reflect the new label, actor_type and notes."""
     override_with(FakeNarrativeService())
     try:
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
             response = await client.put(
                 f"/narratives/{SAVED_NARRATIVE_ID}/actors/{SAVED_ACTOR_ID}",
-                json={"name": "CDU", "typ": "organisation", "description": "A party."},
+                json={"label": "CDU", "actor_type": "organisation", "notes": "A party."},
             )
     finally:
         clear_overrides()
 
     data = response.json()
-    assert data["name"] == "CDU"
-    assert data["typ"] == "organisation"
-    assert data["description"] == "A party."
+    assert data["label"] == "CDU"
+    assert data["actor_type"] == "organisation"
+    assert data["notes"] == "A party."
 
 
 # ---------------------------------------------------------------------------
@@ -608,13 +619,13 @@ async def test_narratives_update_actor_response_contains_updated_fields() -> Non
 
 @pytest.mark.asyncio
 async def test_narratives_update_actor_returns_422_for_empty_name() -> None:
-    """Expects 422 when the name field is an empty string."""
+    """Expects 422 when the label field is an empty string."""
     override_with(FakeNarrativeService())
     try:
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
             response = await client.put(
                 f"/narratives/{SAVED_NARRATIVE_ID}/actors/{SAVED_ACTOR_ID}",
-                json={"name": "", "typ": "individual"},
+                json={"label": "", "actor_type": "individual"},
             )
     finally:
         clear_overrides()
@@ -630,7 +641,7 @@ async def test_narratives_update_actor_returns_404_for_unknown_narrative() -> No
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
             response = await client.put(
                 f"/narratives/unknown-id/actors/{SAVED_ACTOR_ID}",
-                json={"name": "Max", "typ": "individual"},
+                json={"label": "Max", "actor_type": "individual"},
             )
     finally:
         clear_overrides()
@@ -646,7 +657,7 @@ async def test_narratives_update_actor_returns_404_for_unknown_actor() -> None:
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
             response = await client.put(
                 f"/narratives/{SAVED_NARRATIVE_ID}/actors/unknown-actor-id",
-                json={"name": "Max", "typ": "individual"},
+                json={"label": "Max", "actor_type": "individual"},
             )
     finally:
         clear_overrides()

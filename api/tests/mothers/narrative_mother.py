@@ -59,9 +59,9 @@ class NarrativeMother:
         """
         narrative = Narrative.create(title="Klartext")
         narrative.add_scene(SceneMother.minimal())
-        narrative.add_actor(Actor.create(name="Max", typ=ActorType.INDIVIDUAL))
-        narrative.add_actor(Actor.create(name="CDU", typ=ActorType.ORGANISATION))
-        narrative.add_actor(Actor.create(name="Voters", typ=ActorType.GROUP))
+        narrative.add_actor(Actor.create(label="Max", actor_type=ActorType.INDIVIDUAL))
+        narrative.add_actor(Actor.create(label="CDU", actor_type=ActorType.ORGANISATION))
+        narrative.add_actor(Actor.create(label="Voters", actor_type=ActorType.GROUP))
         return narrative
 
     @staticmethod

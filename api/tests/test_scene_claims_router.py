@@ -64,6 +64,7 @@ class FakeClaimExtractorService:
     def __init__(self, claims: list[Claim] | None = None) -> None:
         self._claims = claims or [
             Claim.create(
+                label="Money supply causes inflation",
                 text="Inflation entsteht durch Geldmenge.",
                 typ=ClaimType.CAUSAL,
                 confidence=0.9,
@@ -88,7 +89,9 @@ class FakeClaimRepository(ClaimRepository):
         import uuid
 
         saved = [
-            Claim(id=str(uuid.uuid4()), text=c.text, typ=c.typ, confidence=c.confidence)
+            Claim(
+                id=str(uuid.uuid4()), label=c.label, text=c.text, typ=c.typ, confidence=c.confidence
+            )
             for c in claims
         ]
         self._store[scene_id] = saved
@@ -223,6 +226,7 @@ async def test_get_scene_claims_returns_200() -> None:
     existing = [
         Claim(
             id="cccc-3333",
+            label="Money supply causes inflation",
             text="Inflation entsteht durch Geldmenge.",
             typ=ClaimType.CAUSAL,
             confidence=0.9,

@@ -20,10 +20,16 @@ class FakeClaimExtractionProvider(ClaimExtractionProvider):
     async def extract(self, scene: Scene) -> list[Claim]:
         return [
             Claim.create(
-                text="Inflation entsteht durch Geldmenge.", typ=ClaimType.CAUSAL, confidence=0.9
+                label="Money supply causes inflation",
+                text="Inflation entsteht durch Geldmenge.",
+                typ=ClaimType.CAUSAL,
+                confidence=0.9,
             ),
             Claim.create(
-                text="Zinserhöhungen dämpfen die Nachfrage.", typ=ClaimType.CAUSAL, confidence=0.85
+                label="Rate hikes dampen demand",
+                text="Zinserhöhungen dämpfen die Nachfrage.",
+                typ=ClaimType.CAUSAL,
+                confidence=0.85,
             ),
         ]
 
@@ -77,7 +83,14 @@ async def test_claim_extractor_service_passes_scene_to_provider(scene: Scene) ->
 
         async def extract(self, scene: Scene) -> list[Claim]:
             self.received_scene = scene
-            return [Claim.create(text="Dummy claim.", typ=ClaimType.EMPIRICAL, confidence=0.5)]
+            return [
+                Claim.create(
+                    label="Dummy claim",
+                    text="Dummy claim.",
+                    typ=ClaimType.EMPIRICAL,
+                    confidence=0.5,
+                )
+            ]
 
     provider = CapturingProvider()
     service = ClaimExtractorService(provider=provider)
