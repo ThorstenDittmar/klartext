@@ -2,12 +2,12 @@
 # setup.sh — Bootstrap klartext.jetzt for local development.
 #
 # Run this once after cloning the repository. Subsequent starts use
-# the klartext CLI (pip install -e api/).
+# the klartext CLI (source api/.venv/bin/activate && klartext start).
 #
 # Prerequisites:
-#   - Python 3.12+   https://python.org
 #   - Node.js 20+    https://nodejs.org
 #   - Supabase CLI   https://supabase.com/docs/guides/cli
+#   - uv             https://docs.astral.sh/uv (installed automatically if missing)
 #
 # Usage:
 #   bash setup.sh
@@ -29,18 +29,17 @@ section() { echo; echo "── $* ───────────────�
 
 section "Checking prerequisites"
 
-command -v python3 >/dev/null 2>&1 || error "Python 3.12+ is required (https://python.org)"
-PYTHON_VERSION=$(python3 -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")
-PYTHON_MAJOR=$(python3 -c "import sys; print(sys.version_info.major)")
-PYTHON_MINOR=$(python3 -c "import sys; print(sys.version_info.minor)")
-info "Python $PYTHON_VERSION"
-if [ "$PYTHON_MAJOR" -lt 3 ] || { [ "$PYTHON_MAJOR" -eq 3 ] && [ "$PYTHON_MINOR" -lt 12 ]; }; then
-    error "Python 3.12+ is required, but found $PYTHON_VERSION — install it at https://python.org"
-fi
-
 command -v node >/dev/null 2>&1 || error "Node.js 20+ is required (https://nodejs.org)"
 NODE_VERSION=$(node --version)
 info "Node $NODE_VERSION"
+
+if ! command -v uv >/dev/null 2>&1; then
+    info "uv not found — installing via official installer…"
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    export PATH="$HOME/.local/bin:$PATH"
+fi
+UV_VERSION=$(uv --version)
+info "uv $UV_VERSION"
 
 if ! command -v supabase >/dev/null 2>&1; then
     info "Supabase CLI not found — installing via npm…"
@@ -69,13 +68,12 @@ section "Setting up API"
 cd api
 
 if [ ! -d ".venv" ]; then
-    info "Creating virtual environment…"
-    python3 -m venv .venv
+    info "Creating virtual environment (Python 3.12)…"
+    uv venv .venv --python 3.12
 fi
 
 info "Installing dependencies…"
-.venv/bin/pip install -q --upgrade pip
-.venv/bin/pip install -q -e '.[dev]'
+uv pip install --python .venv/bin/python -q -e '.[dev]'
 
 if [ ! -f ".env" ]; then
     info "Creating .env from .env.example…"
@@ -128,8 +126,8 @@ section "Starting local Supabase"
 if [ "${SKIP_SUPABASE_START:-false}" = "true" ]; then
     info "Skipping supabase start (SKIP_SUPABASE_START=true)"
 else
-    info "Running supabase start (this may take a few minutes on first run)…"
-    supabase start
+    info "Resetting and starting local Supabase (this may take a few minutes on first run)…"
+    api/.venv/bin/klartext db reset
     success "Supabase running — Studio at http://127.0.0.1:54323"
 fi
 

@@ -17,6 +17,7 @@ Usage (after pip install -e .):
 from __future__ import annotations
 
 import asyncio
+import re
 import subprocess
 import sys
 import time
@@ -53,10 +54,93 @@ def _supabase_start() -> None:
     subprocess.run(["supabase", "start"], cwd=str(_PROJECT_ROOT), check=True)
 
 
+def _supabase_project_id() -> str:
+    """Reads the project_id from supabase/config.toml."""
+    config_path = _PROJECT_ROOT / "supabase" / "config.toml"
+    match = re.search(r'project_id\s*=\s*"([^"]+)"', config_path.read_text())
+    return match.group(1) if match else "klartext"
+
+
+def _record_migrations(db_container: str, migrations_dir: Path) -> None:
+    """Creates the supabase_migrations tracking schema and marks all migrations as applied.
+
+    Without this table, supabase start tries to re-apply all migrations on the
+    next run and fails because the tables already exist.
+    """
+    migration_files = sorted(migrations_dir.glob("*.sql"))
+    values = ", ".join(f"('{f.stem[:14]}', '{f.stem[15:]}')" for f in migration_files)
+    sql = f"""
+CREATE SCHEMA IF NOT EXISTS supabase_migrations;
+CREATE TABLE IF NOT EXISTS supabase_migrations.schema_migrations (
+    version text NOT NULL,
+    statements text[],
+    name text
+);
+INSERT INTO supabase_migrations.schema_migrations (version, name) VALUES {values}
+ON CONFLICT DO NOTHING;
+""".encode()
+    subprocess.run(
+        ["docker", "exec", "-i", db_container, "psql", "-U", "postgres", "-d", "postgres"],
+        input=sql,
+        check=True,
+    )
+
+
 def _db_reset() -> None:
-    """Resets the local Supabase database and re-applies all migrations."""
-    typer.echo("Resetting local database…")
-    subprocess.run(["supabase", "db", "reset"], cwd=str(_PROJECT_ROOT), check=True)
+    """Resets the local Supabase database and re-applies all migrations.
+
+    The Supabase CLI migration runner has a known issue on macOS where it
+    incorrectly reports 'relation users already exists' due to auth.users
+    being present in the search_path. This command works around it by
+    applying migrations directly via the postgres container, then registering
+    them in the tracking table so the CLI does not re-apply them on next start.
+    """
+    project_id = _supabase_project_id()
+    db_container = f"supabase_db_{project_id}"
+    migrations_dir = _PROJECT_ROOT / "supabase" / "migrations"
+
+    # Stop and remove old data — ignore errors if nothing is running
+    typer.echo("Stopping Supabase and removing old data…")
+    subprocess.run(["supabase", "stop", "--no-backup"], cwd=str(_PROJECT_ROOT))
+
+    # supabase start initialises the DB container but fails at the migration step.
+    # The DB container stays running after the failure — that is expected and required.
+    typer.echo("Initialising fresh database (migration errors here are expected)…")
+    subprocess.run(["supabase", "start"], cwd=str(_PROJECT_ROOT))
+
+    # Wait for the DB container to be healthy before applying migrations
+    typer.echo("Waiting for database container…")
+    for _ in range(30):
+        result = subprocess.run(
+            ["docker", "inspect", "--format", "{{.State.Health.Status}}", db_container],
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode == 0 and result.stdout.strip() == "healthy":
+            break
+        time.sleep(1)
+    else:
+        typer.secho("✗  Database container did not become healthy.", fg=typer.colors.RED)
+        raise typer.Exit(1)
+
+    # Apply all migrations directly via psql inside the container
+    typer.echo("Applying migrations…")
+    for migration_file in sorted(migrations_dir.glob("*.sql")):
+        typer.echo(f"  → {migration_file.name}")
+        subprocess.run(
+            ["docker", "exec", "-i", db_container, "psql", "-U", "postgres", "-d", "postgres"],
+            input=migration_file.read_bytes(),
+            check=True,
+        )
+
+    # Register all migrations so supabase start won't try to re-apply them
+    _record_migrations(db_container, migrations_dir)
+
+    # Full stop (backs up DB to Docker volume) then start (restores + starts all services)
+    typer.echo("Starting full Supabase stack…")
+    subprocess.run(["supabase", "stop"], cwd=str(_PROJECT_ROOT), check=True)
+    subprocess.run(["supabase", "start"], cwd=str(_PROJECT_ROOT), check=True)
+    typer.secho("✓  Database reset complete.", fg=typer.colors.GREEN)
 
 
 def _api_process(
