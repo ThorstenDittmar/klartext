@@ -100,6 +100,25 @@ class FakeClaimRepository(ClaimRepository):
     async def find_by_scene_id(self, scene_id: str) -> list[Claim]:
         return self._store.get(scene_id, [])
 
+    async def find_by_id(self, claim_id: str) -> Claim:
+        """Finds a claim by ID across all scenes."""
+        from api.exceptions.claim import ClaimNotFoundError
+
+        for claims in self._store.values():
+            for claim in claims:
+                if claim.id == claim_id:
+                    return claim
+        raise ClaimNotFoundError(f"Claim not found: {claim_id}")
+
+    async def update(self, claim: Claim) -> Claim:
+        """Replaces the stored claim entry with the updated one."""
+        for scene_id, claims in self._store.items():
+            for i, c in enumerate(claims):
+                if c.id == claim.id:
+                    self._store[scene_id][i] = claim
+                    return claim
+        return claim
+
 
 # ---------------------------------------------------------------------------
 # Helpers

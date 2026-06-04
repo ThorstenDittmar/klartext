@@ -6,7 +6,7 @@ import logging
 
 from supabase import AsyncClient
 
-from api.exceptions.claim import ClaimPersistenceError
+from api.exceptions.claim import ClaimNotFoundError, ClaimPersistenceError
 from api.models.claim import Claim
 from api.repositories._supabase import records
 from api.repositories.claim_repository import ClaimRepository
@@ -80,3 +80,35 @@ class SupabaseClaimRepository(ClaimRepository):
             raise ClaimPersistenceError(f"Failed to load claims for scene {scene_id}: {e}") from e
 
         return [Claim.from_record(row) for row in records(result.data)]
+
+    async def find_by_id(self, claim_id: str) -> Claim:
+        """Returns the Claim with the given ID. Raises ClaimNotFoundError if absent."""
+        self.logger.debug("SupabaseClaimRepository.find_by_id: claim_id=%s", claim_id)
+        try:
+            result = await self._client.table(_CLAIM_TABLE).select("*").eq("id", claim_id).execute()
+        except Exception as e:
+            raise ClaimPersistenceError(f"Failed to load claim {claim_id}: {e}") from e
+        if not result.data:
+            raise ClaimNotFoundError(f"Claim not found: {claim_id}")
+        return Claim.from_record(records(result.data)[0])
+
+    async def update(self, claim: Claim) -> Claim:
+        """Updates status and wirkgefuege_ref of an existing Claim."""
+        self.logger.info("SupabaseClaimRepository.update: claim_id=%s", claim.id)
+        try:
+            result = (
+                await self._client.table(_CLAIM_TABLE)
+                .update(
+                    {
+                        "status": claim.status.value,
+                        "wirkgefuege_ref": claim.wirkgefuege_ref,
+                    }
+                )
+                .eq("id", claim.id)
+                .execute()
+            )
+        except Exception as e:
+            raise ClaimPersistenceError(f"Failed to update claim {claim.id}: {e}") from e
+        if not result.data:
+            raise ClaimPersistenceError(f"Update returned no data for claim {claim.id}")
+        return Claim.from_record(records(result.data)[0])

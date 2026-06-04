@@ -30,3 +30,14 @@ class ClaimRepository(ABC):
         Returns an empty list when no Claims have been saved for that scene.
         Raises ClaimPersistenceError on database failure.
         """
+
+    @abstractmethod
+    async def find_by_id(self, claim_id: str) -> Claim:
+        """Returns the Claim with the given ID.
+
+        Raises ClaimNotFoundError if no Claim exists for that ID.
+        """
+
+    @abstractmethod
+    async def update(self, claim: Claim) -> Claim:
+        """Persists the current state of an existing Claim. Returns the updated Claim."""

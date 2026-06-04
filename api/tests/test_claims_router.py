@@ -8,10 +8,11 @@ Claude API is never called.
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-from api.dependencies import get_claim_extractor_service
+from api.dependencies import get_claim_extractor_service, get_claim_service
 from api.main import app
 from api.models.claim import Claim, ClaimType
 from api.models.narrative import Scene
+from tests.mothers.claim_mother import ClaimMother
 
 
 class FakeClaimExtractorService:
@@ -34,12 +35,30 @@ class FakeClaimExtractorService:
         ]
 
 
+class FakeClaimService:
+    """Returns a fixed linked claim for all link requests."""
+
+    async def link_to_wirkgefuege(self, claim_id: str, wirkgefuege_ref: str) -> Claim:
+        """Returns a claim with LINKED status and the given wirkgefuege_ref."""
+        claim = ClaimMother.causal()
+        claim.link_to_wirkgefuege(wirkgefuege_ref)
+        return claim
+
+
 @pytest.fixture(autouse=True)
 def override_dependency():
     """Replaces ClaimExtractorService with the fake for every test in this module."""
     app.dependency_overrides[get_claim_extractor_service] = lambda: FakeClaimExtractorService()
     yield
     app.dependency_overrides.clear()
+
+
+@pytest.fixture
+def override_claim_service():
+    """Replaces ClaimService with the fake for link tests."""
+    app.dependency_overrides[get_claim_service] = lambda: FakeClaimService()
+    yield
+    app.dependency_overrides.pop(get_claim_service, None)
 
 
 SAMPLE_TEXT = (
@@ -113,3 +132,19 @@ async def test_extract_claims_returns_422_for_missing_text_field() -> None:
         response = await client.post("/extract-claims", json={})
 
     assert response.status_code == 422
+
+
+# --- Link to Wirkgefüge ---
+
+
+@pytest.mark.asyncio
+async def test_link_claim_to_wirkgefuege_returns_200(override_claim_service) -> None:
+    """Expects POST /claims/{id}/link-to-wirkgefuege to return HTTP 200."""
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.post(
+            "/claims/claim-001/link-to-wirkgefuege",
+            json={"wirkgefuege_ref": "slot-abc"},
+        )
+    assert response.status_code == 200
+    assert response.json()["status"] == "linked"
+    assert response.json()["wirkgefuege_ref"] == "slot-abc"

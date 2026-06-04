@@ -34,3 +34,17 @@ class ExtractClaimsResponse(BaseModel):
     """Response shape for a claim extraction result."""
 
     claims: list[ClaimResponse]
+
+
+class LinkToWirkgefuegeRequest(BaseModel):
+    """Request body for linking a Claim to a Wirkgefüge component."""
+
+    wirkgefuege_ref: str
+
+    @field_validator("wirkgefuege_ref")
+    @classmethod
+    def ref_not_empty(cls, v: str) -> str:
+        """Validates that wirkgefuege_ref is not empty."""
+        if not v.strip():
+            raise ValueError("wirkgefuege_ref must not be empty")
+        return v

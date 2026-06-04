@@ -5,7 +5,7 @@ is chosen. Tests override these via app.dependency_overrides.
 
 DI chain:
   get_supabase_client ─┬─► get_narrative_repository ─► get_narrative_service
-                       └─► get_claim_repository
+                       └─► get_claim_repository ────────► get_claim_service
                        └─► get_health_checker
                        └─► get_causal_model_repository ─► get_causal_model_service
   get_narrative_import_service ────────────────────────► get_narrative_service
@@ -34,6 +34,7 @@ from api.repositories.supabase_claim_repository import SupabaseClaimRepository
 from api.repositories.supabase_narrative_repository import SupabaseNarrativeRepository
 from api.services.causal_model_service import CausalModelService
 from api.services.claim_extractor_service import ClaimExtractorService
+from api.services.claim_service import ClaimService
 from api.services.health_service import HealthChecker, SupabaseHealthChecker
 from api.services.narrative_import_service import NarrativeImportService
 from api.services.narrative_service import NarrativeService
@@ -92,6 +93,13 @@ def get_claim_extractor_service() -> ClaimExtractorService:
     client = anthropic.AsyncAnthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
     provider = ClaudeClaimExtractionProvider(client=client)
     return ClaimExtractorService(provider=provider)
+
+
+async def get_claim_service(
+    repository: ClaimRepository = Depends(get_claim_repository),
+) -> ClaimService:
+    """Wires ClaimRepository into ClaimService."""
+    return ClaimService(repository=repository)
 
 
 async def get_causal_model_repository(

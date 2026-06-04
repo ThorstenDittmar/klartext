@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import pytest
 
+from api.exceptions.claim import ClaimNotFoundError
 from api.models.claim import Claim
 from tests.fakes.fake_claim_repository import FakeClaimRepository
 from tests.mothers.claim_mother import ClaimMother
@@ -84,6 +85,41 @@ async def test_claim_repository_find_by_scene_id_isolates_claims_by_scene() -> N
     found = await repo.find_by_scene_id(SCENE_ID)
 
     assert len(found) == 3
+
+
+@pytest.mark.asyncio
+async def test_claim_repository_find_by_id_returns_saved_claim() -> None:
+    """Expects find_by_id to return the Claim that was previously saved."""
+    repo = FakeClaimRepository()
+    [saved] = await repo.save_all([ClaimMother.causal()], scene_id=SCENE_ID)
+
+    found = await repo.find_by_id(saved.id)  # type: ignore[arg-type]
+
+    assert found.id == saved.id
+    assert found.label == saved.label
+
+
+@pytest.mark.asyncio
+async def test_claim_repository_find_by_id_raises_for_unknown_id() -> None:
+    """Expects ClaimNotFoundError when no Claim exists for the given ID."""
+    repo = FakeClaimRepository()
+
+    with pytest.raises(ClaimNotFoundError):
+        await repo.find_by_id("00000000-0000-0000-0000-000000000000")
+
+
+@pytest.mark.asyncio
+async def test_claim_repository_update_persists_status_and_wirkgefuege_ref() -> None:
+    """Expects update to persist status and wirkgefuege_ref changes."""
+    repo = FakeClaimRepository()
+    [saved] = await repo.save_all([ClaimMother.causal()], scene_id=SCENE_ID)
+    saved.link_to_wirkgefuege("slot-abc")
+
+    updated = await repo.update(saved)
+
+    refetched = await repo.find_by_id(updated.id)  # type: ignore[arg-type]
+    assert refetched.status.value == "linked"
+    assert refetched.wirkgefuege_ref == "slot-abc"
 
 
 # ---------------------------------------------------------------------------
