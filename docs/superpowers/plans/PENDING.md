@@ -34,7 +34,7 @@ Files affected: `models/narrative.py`, `models/claim.py`, `schemas/narratives.py
 
 ## Plan C — Wirkgefüge Persistence
 
-**Status:** Plan written (2026-06-04). Ready to execute.  
+**Status:** DONE (2026-06-04)  
 **Plan:** `docs/superpowers/plans/2026-06-04-wirkgefuege-persistence.md`
 
 **What:** Persist Slot and CausalRelation to the database.
