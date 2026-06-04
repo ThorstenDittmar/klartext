@@ -28,6 +28,23 @@ api/
 - **Schema**: defines what goes in and out (Pydantic)
 - **Domain object**: knows its own invariants and how to change itself
 
+### Layer Boundary: routers → providers forbidden
+
+`api.routers` may NOT import from `api.providers` — tach enforces this boundary.
+Router helper functions that convert provider result types to Pydantic schemas must
+use `Any` for the provider-typed parameters instead of importing the concrete type.
+This is architecturally correct, not a type shortcut — the conversion helper lives
+in the router, but the provider type does not belong there.
+
+```python
+# correct — Any because routers cannot import from providers
+def _to_analyse_response(result: Any) -> AnalyseNarrativeResponse: ...
+
+# wrong — violates tach boundary
+from api.providers.narrative_analysis_provider import NarrativeAnalysisResult
+def _to_analyse_response(result: NarrativeAnalysisResult) -> AnalyseNarrativeResponse: ...
+```
+
 ### Health Subendpoints
 
 Every new service router gets a `GET /<resource>/health` endpoint:
