@@ -65,7 +65,7 @@ Steps 2–6 from `experiment_scope.md`:
 
 ## Plan E — Frontend Extensions
 
-**Status:** Geplant (2026-06-04)
+**Status:** DONE (2026-06-04)
 **Spec:** `docs/superpowers/specs/ui_experiment_scope.md`
 **Plan:** `docs/superpowers/plans/2026-06-04-frontend-extensions.md`
 
