@@ -2,14 +2,6 @@ import { useState } from "react";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { api, SuggestWirkgefuegeResponse } from "../lib/api";
 
-// ---------------------------------------------------------------------------
-// Colour constants from ui_experiment_scope.md
-// ---------------------------------------------------------------------------
-const C = {
-  confirmed: { bg: "#EAF3DE", text: "#3B6D11" },
-  rejected: { bg: "#FCEBEB", text: "#A32D2D" },
-} as const;
-
 const SLOT_TYPES = [
   "physical_quantity",
   "social_quantity",
@@ -155,31 +147,25 @@ export default function WirkgefuegeVorschlag() {
       <button
         onClick={() => navigate(-1)}
         style={{
-          background: "none",
-          border: "none",
-          cursor: "pointer",
-          color: "#4a7aff",
-          marginBottom: "1rem",
-          padding: 0,
-          fontSize: "0.9rem",
+          background: "none", border: "none", cursor: "pointer",
+          color: "var(--color-text-secondary)", marginBottom: "20px", padding: "0",
+          fontSize: "13px",
         }}
       >
         ← Zurück zur Analyse
       </button>
 
-      <h2 style={{ marginTop: 0 }}>Wirkgefüge-Vorschlag für: {narrative.title}</h2>
+      <h2 style={{ fontSize: "22px", fontWeight: "600", marginTop: "0", marginBottom: "24px" }}>Wirkgefüge-Vorschlag für: {narrative.title}</h2>
 
       {/* Slots */}
       <div
-        style={{ borderTop: "2px solid #e0e0e0", paddingTop: "1rem", marginBottom: "2rem" }}
+        style={{ borderTop: "1px solid var(--color-border)", paddingTop: "1rem", marginBottom: "2rem" }}
       >
         <h3
           style={{
-            textTransform: "uppercase",
-            fontSize: "0.75rem",
-            letterSpacing: "0.1em",
-            color: "#888",
-            marginTop: 0,
+            textTransform: "uppercase" as const, fontSize: "11px", letterSpacing: "0.06em",
+            color: "var(--color-text-tertiary)", marginTop: "0", fontWeight: "600",
+            padding: "16px 0 8px", borderTop: "1px solid var(--color-border)",
           }}
         >
           Slots ({acceptedSlotCount})
@@ -189,14 +175,15 @@ export default function WirkgefuegeVorschlag() {
           <div
             key={i}
             style={{
-              border: "1px solid #e0e0e0",
-              borderRadius: 4,
-              padding: "0.75rem",
-              marginBottom: "0.75rem",
+              border: "1px solid var(--color-border)",
+              borderRadius: "8px",
+              padding: "14px 16px",
+              marginBottom: "8px",
               opacity: slot.rejected ? 0.4 : 1,
               display: "flex",
               alignItems: "center",
-              gap: "0.75rem",
+              gap: "12px",
+              background: "var(--color-bg)",
             }}
           >
             <div style={{ flex: 1 }}>
@@ -209,14 +196,17 @@ export default function WirkgefuegeVorschlag() {
                 }
                 disabled={slot.rejected}
                 style={{
-                  fontFamily: "monospace",
-                  border: "1px solid #ddd",
-                  borderRadius: 3,
-                  padding: "0.2rem 0.4rem",
-                  fontSize: "0.9rem",
+                  fontFamily: "var(--font-sans)",
+                  border: "1px solid var(--color-border)",
+                  borderRadius: "6px",
+                  padding: "6px 10px",
+                  fontSize: "14px",
+                  fontWeight: "500",
                   width: "100%",
-                  boxSizing: "border-box",
-                  marginBottom: "0.25rem",
+                  boxSizing: "border-box" as const,
+                  marginBottom: "6px",
+                  color: "var(--color-text-primary)",
+                  background: slot.rejected ? "var(--color-bg-subtle)" : "var(--color-bg)",
                 }}
               />
               <select
@@ -227,7 +217,15 @@ export default function WirkgefuegeVorschlag() {
                   )
                 }
                 disabled={slot.rejected}
-                style={{ fontSize: "0.8rem", padding: "0.2rem" }}
+                style={{
+                  fontSize: "11px",
+                  padding: "2px 6px",
+                  border: "1px solid var(--color-border)",
+                  borderRadius: "10px",
+                  background: "var(--color-bg-subtle)",
+                  color: "var(--color-text-secondary)",
+                  cursor: "pointer",
+                }}
               >
                 {SLOT_TYPES.map((t) => (
                   <option key={t} value={t}>
@@ -243,13 +241,18 @@ export default function WirkgefuegeVorschlag() {
                 )
               }
               style={{
-                background: slot.rejected ? C.rejected.bg : "none",
-                border: "1px solid #ddd",
-                borderRadius: 3,
-                padding: "0.25rem 0.5rem",
+                background: slot.rejected ? "var(--color-red-bg)" : "none",
+                border: "1px solid var(--color-border)",
+                borderRadius: "6px",
+                padding: "0",
                 cursor: "pointer",
-                fontSize: "0.85rem",
-                color: slot.rejected ? C.rejected.text : "inherit",
+                fontSize: "14px",
+                color: slot.rejected ? "var(--color-red-text)" : "var(--color-text-tertiary)",
+                width: "30px",
+                height: "30px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
                 flexShrink: 0,
               }}
             >
@@ -261,15 +264,13 @@ export default function WirkgefuegeVorschlag() {
 
       {/* Relations */}
       <div
-        style={{ borderTop: "2px solid #e0e0e0", paddingTop: "1rem", marginBottom: "2rem" }}
+        style={{ borderTop: "1px solid var(--color-border)", paddingTop: "1rem", marginBottom: "2rem" }}
       >
         <h3
           style={{
-            textTransform: "uppercase",
-            fontSize: "0.75rem",
-            letterSpacing: "0.1em",
-            color: "#888",
-            marginTop: 0,
+            textTransform: "uppercase" as const, fontSize: "11px", letterSpacing: "0.06em",
+            color: "var(--color-text-tertiary)", marginTop: "0", fontWeight: "600",
+            padding: "16px 0 8px", borderTop: "1px solid var(--color-border)",
           }}
         >
           Kausalrelationen ({acceptedRelationCount})
@@ -279,18 +280,21 @@ export default function WirkgefuegeVorschlag() {
           <div
             key={i}
             style={{
-              border: "1px solid #e0e0e0",
-              borderRadius: 4,
-              padding: "0.75rem",
-              marginBottom: "0.75rem",
+              border: "1px solid var(--color-border)",
+              borderRadius: "8px",
+              padding: "14px 16px",
+              marginBottom: "8px",
               opacity: rel.rejected ? 0.4 : 1,
+              background: "var(--color-bg)",
             }}
           >
             <p
               style={{
-                margin: "0 0 0.5rem",
-                fontFamily: "monospace",
-                fontSize: "0.85rem",
+                margin: "0 0 10px",
+                fontFamily: "var(--font-sans)",
+                fontSize: "14px",
+                fontWeight: "500",
+                color: "var(--color-text-primary)",
               }}
             >
               {rel.source} → {rel.target}
@@ -304,7 +308,7 @@ export default function WirkgefuegeVorschlag() {
                 marginBottom: "0.25rem",
               }}
             >
-              <label style={{ fontSize: "0.8rem", color: "#888", flexShrink: 0 }}>
+              <label style={{ fontSize: "12px", color: "var(--color-text-secondary)", flexShrink: 0 }}>
                 Mechanismus:
               </label>
               <input
@@ -316,11 +320,15 @@ export default function WirkgefuegeVorschlag() {
                 }
                 disabled={rel.rejected}
                 style={{
-                  border: "1px solid #ddd",
-                  borderRadius: 3,
-                  padding: "0.2rem 0.4rem",
-                  fontSize: "0.8rem",
+                  border: "1px solid var(--color-border)",
+                  borderRadius: "6px",
+                  padding: "6px 10px",
+                  fontSize: "13px",
+                  fontStyle: "italic",
                   flex: 1,
+                  fontFamily: "var(--font-sans)",
+                  color: "var(--color-text-secondary)",
+                  background: rel.rejected ? "var(--color-bg-subtle)" : "var(--color-bg)",
                 }}
               />
             </div>
@@ -333,7 +341,7 @@ export default function WirkgefuegeVorschlag() {
               }}
             >
               <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-                <label style={{ fontSize: "0.8rem", color: "#888" }}>EpistemicStatus:</label>
+                <label style={{ fontSize: "12px", color: "var(--color-text-secondary)" }}>EpistemicStatus:</label>
                 <select
                   value={rel.epistemic_status}
                   onChange={(e) =>
@@ -344,7 +352,15 @@ export default function WirkgefuegeVorschlag() {
                     )
                   }
                   disabled={rel.rejected}
-                  style={{ fontSize: "0.8rem", padding: "0.2rem" }}
+                  style={{
+                    fontSize: "11px",
+                    padding: "2px 6px",
+                    border: "1px solid var(--color-border)",
+                    borderRadius: "10px",
+                    background: "var(--color-bg-subtle)",
+                    color: "var(--color-text-secondary)",
+                    cursor: "pointer",
+                  }}
                 >
                   {EPISTEMIC_STATUS_OPTIONS.map((o) => (
                     <option key={o} value={o}>
@@ -360,13 +376,19 @@ export default function WirkgefuegeVorschlag() {
                   )
                 }
                 style={{
-                  background: rel.rejected ? C.rejected.bg : "none",
-                  border: "1px solid #ddd",
-                  borderRadius: 3,
-                  padding: "0.25rem 0.5rem",
+                  background: rel.rejected ? "var(--color-red-bg)" : "none",
+                  border: "1px solid var(--color-border)",
+                  borderRadius: "6px",
+                  padding: "0",
                   cursor: "pointer",
-                  fontSize: "0.85rem",
-                  color: rel.rejected ? C.rejected.text : "inherit",
+                  fontSize: "14px",
+                  color: rel.rejected ? "var(--color-red-text)" : "var(--color-text-tertiary)",
+                  width: "30px",
+                  height: "30px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
                 }}
               >
                 ✗
@@ -377,9 +399,9 @@ export default function WirkgefuegeVorschlag() {
       </div>
 
       {/* Model name + save */}
-      <div style={{ borderTop: "2px solid #e0e0e0", paddingTop: "1rem" }}>
+      <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: "1rem" }}>
         <label
-          style={{ display: "block", fontSize: "0.85rem", marginBottom: "0.25rem" }}
+          style={{ fontSize: "12px", color: "var(--color-text-secondary)", display: "block", marginBottom: "6px" }}
         >
           Modellname
         </label>
@@ -389,22 +411,27 @@ export default function WirkgefuegeVorschlag() {
           placeholder="Modellname eingeben…"
           style={{
             width: "100%",
-            padding: "0.4rem",
-            marginBottom: "1rem",
-            boxSizing: "border-box",
-            fontSize: "0.9rem",
+            padding: "10px 12px",
+            marginBottom: "12px",
+            boxSizing: "border-box" as const,
+            fontSize: "14px",
+            border: "1px solid var(--color-border)",
+            borderRadius: "6px",
+            fontFamily: "var(--font-sans)",
+            color: "var(--color-text-primary)",
           }}
         />
         <button
           onClick={save}
           disabled={saving || !modelName.trim()}
           style={{
-            padding: "0.75rem 1.5rem",
-            fontSize: "1rem",
-            background: modelName.trim() ? "#1D9E75" : "#e0e0e0",
-            color: modelName.trim() ? "#fff" : "#999",
+            background: modelName.trim() ? "#1A1A1A" : "var(--color-bg-subtle)",
+            color: modelName.trim() ? "#FFFFFF" : "var(--color-text-tertiary)",
             border: "none",
-            borderRadius: 4,
+            borderRadius: "6px",
+            padding: "10px 16px",
+            fontSize: "14px",
+            fontWeight: "500",
             cursor: modelName.trim() ? "pointer" : "not-allowed",
             width: "100%",
           }}
@@ -412,7 +439,7 @@ export default function WirkgefuegeVorschlag() {
           {saving ? "Speichere…" : "CausalModel anlegen und speichern →"}
         </button>
         {error && (
-          <p style={{ color: C.rejected.text, marginTop: "0.5rem", fontSize: "0.85rem" }}>
+          <p style={{ color: "var(--color-red-text)", marginTop: "8px", fontSize: "13px" }}>
             {error}
           </p>
         )}

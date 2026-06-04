@@ -6,8 +6,8 @@ import { api, CausalModel, NarrativeSummary } from "../lib/api";
 // Colour constants for EpistemicStatus badges
 // ---------------------------------------------------------------------------
 const BADGE = {
-  incomplete: { bg: "#FAEEDA", text: "#854F0B" },
-  axiomatic: { bg: "#EAF3DE", text: "#3B6D11" },
+  incomplete: { bg: "var(--color-amber-bg)", text: "var(--color-amber-text)" },
+  axiomatic: { bg: "var(--color-green-bg)", text: "var(--color-green-text)" },
 } as const;
 
 function EpistemicBadge({ status }: { status: string }) {
@@ -18,8 +18,9 @@ function EpistemicBadge({ status }: { status: string }) {
         fontSize: "11px",
         background: style.bg,
         color: style.text,
-        padding: "0.1rem 0.4rem",
-        borderRadius: 3,
+        padding: "2px 8px",
+        borderRadius: "10px",
+        fontWeight: "500",
       }}
     >
       {status}
@@ -33,22 +34,27 @@ function EpistemicBadge({ status }: { status: string }) {
 const TABLE: React.CSSProperties = {
   width: "100%",
   borderCollapse: "collapse",
-  fontSize: "12px",
+  fontSize: "13px",
 };
 
 const TH: React.CSSProperties = {
   textAlign: "left",
-  color: "#aaa",
-  fontWeight: "normal",
-  borderBottom: "1px solid #e0e0e0",
-  paddingBottom: "0.4rem",
-  paddingRight: "1rem",
+  fontSize: "11px",
+  fontWeight: "600",
+  textTransform: "uppercase",
+  letterSpacing: "0.06em",
+  color: "var(--color-text-tertiary)",
+  borderBottom: "1px solid var(--color-border)",
+  paddingBottom: "8px",
+  paddingRight: "16px",
 };
 
 const TD: React.CSSProperties = {
-  padding: "0.4rem 1rem 0.4rem 0",
-  borderBottom: "1px solid #f0f0f0",
+  padding: "10px 16px 10px 0",
+  borderBottom: "1px solid var(--color-border-subtle)",
   verticalAlign: "top",
+  fontSize: "13px",
+  color: "var(--color-text-primary)",
 };
 
 // ---------------------------------------------------------------------------
@@ -129,9 +135,9 @@ export default function CausalModelEditor() {
   const linkedNarratives = narratives.filter((n) => n.causal_model_id === selected?.id);
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "280px 1fr", gap: "2rem" }}>
-      <aside>
-        <h2 style={{ marginTop: 0 }}>Wirkmodelle</h2>
+    <div style={{ display: "grid", gridTemplateColumns: "260px 1fr", minHeight: "calc(100vh - 4rem)" }}>
+      <aside style={{ background: "var(--color-bg-subtle)", borderRight: "1px solid var(--color-border)", padding: "16px 12px", overflowY: "auto" }}>
+        <h2 style={{ fontSize: "12px", fontWeight: "600", color: "var(--color-text-tertiary)", textTransform: "uppercase", letterSpacing: "0.06em", margin: "0 0 12px" }}>Wirkmodelle</h2>
         {error && <p style={{ color: "red" }}>{error}</p>}
         <ul style={{ listStyle: "none", padding: 0 }}>
           {models.map((m) => (
@@ -139,14 +145,17 @@ export default function CausalModelEditor() {
               <button
                 onClick={() => loadModel(m.id)}
                 style={{
-                  background: selected?.id === m.id ? "#e8f0fe" : "none",
-                  border: "1px solid #ddd",
-                  borderRadius: 4,
-                  padding: "0.5rem 0.75rem",
-                  marginBottom: "0.5rem",
+                  background: selected?.id === m.id ? "var(--color-blue-bg)" : "none",
+                  border: "none",
+                  borderRadius: "6px",
+                  padding: "8px 10px",
+                  marginBottom: "2px",
                   cursor: "pointer",
                   width: "100%",
-                  textAlign: "left",
+                  textAlign: "left" as const,
+                  fontSize: "13px",
+                  color: selected?.id === m.id ? "var(--color-blue-text)" : "var(--color-text-primary)",
+                  fontWeight: selected?.id === m.id ? "500" : "normal",
                 }}
               >
                 {m.title}
@@ -155,38 +164,56 @@ export default function CausalModelEditor() {
           ))}
         </ul>
 
-        <div style={{ marginTop: "1rem", borderTop: "1px solid #eee", paddingTop: "1rem" }}>
-          <h3 style={{ marginTop: 0, fontSize: "0.9rem" }}>Neues Wirkmodell</h3>
+        <div style={{ marginTop: "1rem", borderTop: "1px solid var(--color-border)", paddingTop: "1rem" }}>
+          <h3 style={{ fontSize: "11px", color: "var(--color-text-tertiary)", textTransform: "uppercase", letterSpacing: "0.06em", margin: "16px 0 8px", fontWeight: "600" }}>Neues Wirkmodell</h3>
           <input
             value={newTitle}
             onChange={(e) => setNewTitle(e.target.value)}
             placeholder="Titel"
             style={{
+              border: "1px solid var(--color-border)",
+              borderRadius: "6px",
+              padding: "8px 10px",
+              fontSize: "13px",
               width: "100%",
-              padding: "0.4rem",
-              marginBottom: "0.5rem",
-              boxSizing: "border-box",
+              marginBottom: "8px",
+              fontFamily: "var(--font-sans)",
+              boxSizing: "border-box" as const,
             }}
             onKeyDown={(e) => e.key === "Enter" && createModel()}
           />
-          <button onClick={createModel} disabled={loading || !newTitle.trim()}>
+          <button
+            onClick={createModel}
+            disabled={loading || !newTitle.trim()}
+            style={{
+              background: loading || !newTitle.trim() ? "var(--color-bg-subtle)" : "#1A1A1A",
+              color: loading || !newTitle.trim() ? "var(--color-text-tertiary)" : "#FFFFFF",
+              border: "none",
+              borderRadius: "6px",
+              padding: "8px 16px",
+              fontSize: "13px",
+              fontWeight: "500",
+              cursor: "pointer",
+              width: "100%",
+            }}
+          >
             Anlegen
           </button>
         </div>
       </aside>
 
-      <main>
+      <main style={{ padding: "24px 32px", background: "var(--color-bg)", overflowY: "auto" }}>
         {!selected ? (
           <p style={{ color: "#888" }}>Wirkmodell auswählen oder neu anlegen.</p>
         ) : (
           <>
-            <h2 style={{ marginTop: 0 }}>{selected.title}</h2>
-            <p style={{ color: "#888", fontSize: "0.85rem" }}>Status: {selected.status}</p>
+            <h2 style={{ fontSize: "20px", fontWeight: "600", marginTop: "0", marginBottom: "4px" }}>{selected.title}</h2>
+            <p style={{ fontSize: "12px", color: "var(--color-text-secondary)", margin: "0 0 24px" }}>Status: {selected.status}</p>
 
             {/* Slots -------------------------------------------------------- */}
-            <h3 style={{ marginBottom: "0.5rem" }}>Slots ({selected.slots.length})</h3>
+            <h3 style={{ fontSize: "11px", fontWeight: "600", textTransform: "uppercase" as const, letterSpacing: "0.06em", color: "var(--color-text-tertiary)", margin: "24px 0 10px" }}>Slots ({selected.slots.length})</h3>
             {selected.slots.length === 0 ? (
-              <p style={{ color: "#888", fontSize: "0.85rem" }}>Keine Slots.</p>
+              <p style={{ fontSize: "13px", color: "var(--color-text-tertiary)" }}>Keine Slots.</p>
             ) : (
               <table style={TABLE}>
                 <thead>
@@ -211,11 +238,11 @@ export default function CausalModelEditor() {
             )}
 
             {/* Relations ---------------------------------------------------- */}
-            <h3 style={{ marginBottom: "0.5rem", marginTop: "2rem" }}>
+            <h3 style={{ fontSize: "11px", fontWeight: "600", textTransform: "uppercase" as const, letterSpacing: "0.06em", color: "var(--color-text-tertiary)", margin: "24px 0 10px" }}>
               Kausalrelationen ({selected.relations.length})
             </h3>
             {selected.relations.length === 0 ? (
-              <p style={{ color: "#888", fontSize: "0.85rem" }}>Keine Relationen.</p>
+              <p style={{ fontSize: "13px", color: "var(--color-text-tertiary)" }}>Keine Relationen.</p>
             ) : (
               <table style={TABLE}>
                 <thead>
@@ -240,15 +267,15 @@ export default function CausalModelEditor() {
             )}
 
             {/* Axiome ------------------------------------------------------- */}
-            <h3 style={{ marginTop: "2rem" }}>Axiome ({selected.axioms.length})</h3>
+            <h3 style={{ fontSize: "11px", fontWeight: "600", textTransform: "uppercase" as const, letterSpacing: "0.06em", color: "var(--color-text-tertiary)", margin: "24px 0 10px" }}>Axiome ({selected.axioms.length})</h3>
             {selected.axioms.length === 0 ? (
-              <p style={{ color: "#888" }}>Noch keine Axiome.</p>
+              <p style={{ fontSize: "13px", color: "var(--color-text-tertiary)" }}>Noch keine Axiome.</p>
             ) : (
               <ul style={{ paddingLeft: "1.2rem" }}>
                 {selected.axioms.map((a) => (
-                  <li key={a.id} style={{ marginBottom: "1rem" }}>
-                    <strong>{a.label}</strong>
-                    <p style={{ margin: "0.25rem 0 0", color: "#444" }}>{a.description}</p>
+                  <li key={a.id} style={{ marginBottom: "12px", fontSize: "13px" }}>
+                    <strong style={{ color: "var(--color-text-primary)", fontSize: "13px" }}>{a.label}</strong>
+                    <p style={{ margin: "2px 0 0", color: "var(--color-text-secondary)", fontSize: "13px" }}>{a.description}</p>
                   </li>
                 ))}
               </ul>
@@ -257,23 +284,27 @@ export default function CausalModelEditor() {
             {/* Add axiom form ----------------------------------------------- */}
             <div
               style={{
-                marginTop: "2rem",
-                padding: "1rem",
-                border: "1px solid #ddd",
-                borderRadius: 4,
-                background: "#fafafa",
+                marginTop: "24px",
+                padding: "16px",
+                border: "1px solid var(--color-border)",
+                borderRadius: "8px",
+                background: "var(--color-bg-subtle)",
               }}
             >
-              <h3 style={{ marginTop: 0 }}>Axiom hinzufügen</h3>
+              <h3 style={{ fontSize: "11px", fontWeight: "600", textTransform: "uppercase" as const, letterSpacing: "0.06em", color: "var(--color-text-tertiary)", margin: "0 0 10px" }}>Axiom hinzufügen</h3>
               <input
                 value={axiomLabel}
                 onChange={(e) => setAxiomLabel(e.target.value)}
                 placeholder="Bezeichnung"
                 style={{
+                  border: "1px solid var(--color-border)",
+                  borderRadius: "6px",
+                  padding: "8px 10px",
+                  fontSize: "13px",
                   width: "100%",
-                  padding: "0.4rem",
-                  marginBottom: "0.5rem",
-                  boxSizing: "border-box",
+                  marginBottom: "8px",
+                  fontFamily: "var(--font-sans)",
+                  boxSizing: "border-box" as const,
                 }}
               />
               <textarea
@@ -282,26 +313,41 @@ export default function CausalModelEditor() {
                 placeholder="Beschreibung"
                 rows={3}
                 style={{
+                  border: "1px solid var(--color-border)",
+                  borderRadius: "6px",
+                  padding: "8px 10px",
+                  fontSize: "13px",
                   width: "100%",
-                  padding: "0.4rem",
-                  marginBottom: "0.5rem",
-                  boxSizing: "border-box",
+                  marginBottom: "8px",
+                  fontFamily: "var(--font-sans)",
+                  boxSizing: "border-box" as const,
                 }}
               />
               <button
                 onClick={addAxiom}
                 disabled={loading || !axiomLabel.trim() || !axiomDescription.trim()}
+                style={{
+                  background: loading || !axiomLabel.trim() || !axiomDescription.trim() ? "var(--color-bg-subtle)" : "#1A1A1A",
+                  color: loading || !axiomLabel.trim() || !axiomDescription.trim() ? "var(--color-text-tertiary)" : "#FFFFFF",
+                  border: "none",
+                  borderRadius: "6px",
+                  padding: "8px 16px",
+                  fontSize: "13px",
+                  fontWeight: "500",
+                  cursor: "pointer",
+                  width: "100%",
+                }}
               >
                 Axiom speichern
               </button>
             </div>
 
             {/* Verknüpfte Narrative ----------------------------------------- */}
-            <h3 style={{ marginTop: "2rem" }}>
+            <h3 style={{ fontSize: "11px", fontWeight: "600", textTransform: "uppercase" as const, letterSpacing: "0.06em", color: "var(--color-text-tertiary)", margin: "24px 0 10px" }}>
               Verknüpfte Narrative ({linkedNarratives.length})
             </h3>
             {linkedNarratives.length === 0 ? (
-              <p style={{ color: "#888", fontSize: "0.85rem" }}>Keine verknüpften Narrative.</p>
+              <p style={{ fontSize: "13px", color: "var(--color-text-tertiary)" }}>Keine verknüpften Narrative.</p>
             ) : (
               <ul style={{ listStyle: "none", padding: 0 }}>
                 {linkedNarratives.map((n) => (
@@ -310,14 +356,15 @@ export default function CausalModelEditor() {
                       onClick={() => navigate("/narrative")}
                       style={{
                         background: "none",
-                        border: "1px solid #ddd",
-                        borderRadius: 4,
-                        padding: "0.4rem 0.75rem",
+                        border: "1px solid var(--color-border)",
+                        borderRadius: "6px",
+                        padding: "8px 12px",
                         cursor: "pointer",
-                        fontSize: "0.85rem",
+                        fontSize: "13px",
+                        color: "var(--color-text-primary)",
                         display: "flex",
                         alignItems: "center",
-                        gap: "0.4rem",
+                        gap: "6px",
                       }}
                     >
                       <span>{n.title}</span>

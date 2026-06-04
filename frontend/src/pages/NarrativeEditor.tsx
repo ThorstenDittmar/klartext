@@ -340,13 +340,14 @@ export default function NarrativeEditor() {
       {/* ------------------------------------------------------------------ */}
       <aside
         style={{
-          borderRight: "1px solid #e0e0e0",
-          padding: "1.5rem 1rem",
+          background: "var(--color-bg-subtle)",
+          borderRight: "1px solid var(--color-border)",
+          padding: "16px 12px",
           overflowY: "auto",
         }}
       >
-        <h2 style={{ marginTop: 0, fontSize: "1rem" }}>Narrative</h2>
-        {error && <p style={{ color: "red", fontSize: "0.85rem" }}>{error}</p>}
+        <h2 style={{ fontSize: "12px", fontWeight: "600", color: "var(--color-text-tertiary)", textTransform: "uppercase", letterSpacing: "0.06em", margin: "0 0 12px" }}>Narrative</h2>
+        {error && <p style={{ color: "var(--color-red-text)", fontSize: "12px" }}>{error}</p>}
 
         <ul style={{ listStyle: "none", padding: 0, margin: "0 0 1.5rem" }}>
           {summaries.map((n) => (
@@ -354,15 +355,17 @@ export default function NarrativeEditor() {
               <button
                 onClick={() => selectNarrative(n.id)}
                 style={{
-                  background: selected?.id === n.id ? "#e8f0fe" : "none",
-                  border: "1px solid #ddd",
-                  borderRadius: 4,
-                  padding: "0.5rem 0.75rem",
-                  marginBottom: "0.4rem",
+                  background: selected?.id === n.id ? "var(--color-blue-bg)" : "none",
+                  border: "none",
+                  borderRadius: "6px",
+                  padding: "8px 10px",
+                  marginBottom: "2px",
                   cursor: "pointer",
                   width: "100%",
                   textAlign: "left",
-                  fontSize: "0.9rem",
+                  fontSize: "13px",
+                  color: selected?.id === n.id ? "var(--color-blue-text)" : "var(--color-text-primary)",
+                  fontWeight: selected?.id === n.id ? "500" : "normal",
                 }}
               >
                 {n.title}
@@ -371,8 +374,8 @@ export default function NarrativeEditor() {
           ))}
         </ul>
 
-        <div style={{ borderTop: "1px solid #eee", paddingTop: "1rem" }}>
-          <p style={{ margin: "0 0 0.5rem", fontSize: "0.8rem", color: "#888" }}>
+        <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: "1rem" }}>
+          <p style={{ margin: "0 0 6px", fontSize: "11px", color: "var(--color-text-tertiary)", textTransform: "uppercase" as const, letterSpacing: "0.06em" }}>
             Neues Narrativ
           </p>
           <input
@@ -381,24 +384,38 @@ export default function NarrativeEditor() {
             placeholder="Titel"
             style={{
               width: "100%",
-              padding: "0.4rem",
-              marginBottom: "0.5rem",
-              boxSizing: "border-box",
-              fontSize: "0.85rem",
+              padding: "8px 10px",
+              marginBottom: "8px",
+              boxSizing: "border-box" as const,
+              fontSize: "13px",
+              border: "1px solid var(--color-border)",
+              borderRadius: "6px",
+              fontFamily: "var(--font-sans)",
+              outline: "none",
             }}
             onKeyDown={(e) => e.key === "Enter" && createNarrative()}
           />
           <button
             onClick={createNarrative}
             disabled={loading || !newTitle.trim()}
-            style={{ fontSize: "0.85rem" }}
+            style={{
+              fontSize: "13px",
+              background: loading ? "var(--color-bg-subtle)" : "#1A1A1A",
+              color: loading ? "var(--color-text-tertiary)" : "#FFFFFF",
+              border: "none",
+              borderRadius: "6px",
+              padding: "8px 16px",
+              cursor: "pointer",
+              width: "100%",
+              fontWeight: "500",
+            }}
           >
             Anlegen
           </button>
         </div>
 
-        <div style={{ borderTop: "1px solid #eee", paddingTop: "1rem", marginTop: "1rem" }}>
-          <p style={{ margin: "0 0 0.5rem", fontSize: "0.8rem", color: "#888" }}>
+        <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: "1rem", marginTop: "1rem" }}>
+          <p style={{ margin: "0 0 6px", fontSize: "11px", color: "var(--color-text-tertiary)", textTransform: "uppercase" as const, letterSpacing: "0.06em" }}>
             Aus Datei importieren
           </p>
           <input
@@ -407,18 +424,31 @@ export default function NarrativeEditor() {
             placeholder="Pfad zur .docx oder .md"
             style={{
               width: "100%",
-              padding: "0.4rem",
-              marginBottom: "0.5rem",
-              boxSizing: "border-box",
-              fontSize: "0.8rem",
-              fontFamily: "monospace",
+              padding: "8px 10px",
+              marginBottom: "8px",
+              boxSizing: "border-box" as const,
+              fontSize: "13px",
+              border: "1px solid var(--color-border)",
+              borderRadius: "6px",
+              fontFamily: "var(--font-sans)",
+              outline: "none",
             }}
             onKeyDown={(e) => e.key === "Enter" && importNarrative()}
           />
           <button
             onClick={importNarrative}
             disabled={importing || !importPath.trim()}
-            style={{ fontSize: "0.85rem" }}
+            style={{
+              fontSize: "13px",
+              background: importing ? "var(--color-bg-subtle)" : "#1A1A1A",
+              color: importing ? "var(--color-text-tertiary)" : "#FFFFFF",
+              border: "none",
+              borderRadius: "6px",
+              padding: "8px 16px",
+              cursor: "pointer",
+              width: "100%",
+              fontWeight: "500",
+            }}
           >
             {importing ? "Importiere…" : "Importieren"}
           </button>
@@ -430,9 +460,10 @@ export default function NarrativeEditor() {
       {/* ------------------------------------------------------------------ */}
       <div
         style={{
-          borderRight: "1px solid #e0e0e0",
-          padding: "1.5rem 1rem",
+          borderRight: "1px solid var(--color-border)",
+          padding: "16px 12px",
           overflowY: "auto",
+          background: "var(--color-bg-subtle)",
         }}
       >
         {!selected ? (
@@ -441,11 +472,11 @@ export default function NarrativeEditor() {
           <>
             <p
               style={{
-                margin: "0 0 0.75rem",
-                fontSize: "0.75rem",
-                color: "#aaa",
-                textTransform: "uppercase",
-                letterSpacing: "0.05em",
+                margin: "0 0 8px",
+                fontSize: "11px",
+                color: "var(--color-text-tertiary)",
+                textTransform: "uppercase" as const,
+                letterSpacing: "0.06em",
               }}
             >
               Szenen
@@ -457,17 +488,16 @@ export default function NarrativeEditor() {
                   <button
                     onClick={() => selectScene(scene)}
                     style={{
-                      background: selectedSceneId === scene.id ? "#e8f0fe" : "none",
-                      border: `1px solid ${
-                        selectedSceneId === scene.id ? "#4a7aff" : "#ddd"
-                      }`,
-                      borderRadius: 4,
-                      padding: "0.5rem 0.75rem",
-                      marginBottom: "0.4rem",
+                      background: selectedSceneId === scene.id ? "var(--color-blue-bg)" : "none",
+                      border: "none",
+                      borderRadius: "6px",
+                      padding: "8px 10px",
+                      marginBottom: "2px",
                       cursor: "pointer",
                       width: "100%",
                       textAlign: "left",
-                      fontSize: "0.85rem",
+                      fontSize: "13px",
+                      color: selectedSceneId === scene.id ? "var(--color-blue-text)" : "var(--color-text-primary)",
                     }}
                   >
                     <span style={{ color: "#bbb", marginRight: "0.4rem" }}>
@@ -486,7 +516,16 @@ export default function NarrativeEditor() {
                 setSelectedActorId(null);
                 setShowAddActor(false);
               }}
-              style={{ fontSize: "0.85rem", width: "100%" }}
+              style={{
+                fontSize: "13px",
+                background: "var(--color-bg)",
+                border: "1px solid var(--color-border)",
+                borderRadius: "6px",
+                padding: "6px 14px",
+                cursor: "pointer",
+                width: "100%",
+                color: "var(--color-text-primary)",
+              }}
             >
               + Szene hinzufügen
             </button>
@@ -494,14 +533,14 @@ export default function NarrativeEditor() {
             {/* ------------------------------------------------------------ */}
             {/* Actors                                                         */}
             {/* ------------------------------------------------------------ */}
-            <div style={{ borderTop: "1px solid #eee", marginTop: "1.5rem", paddingTop: "1rem" }}>
+            <div style={{ borderTop: "1px solid var(--color-border)", marginTop: "1.5rem", paddingTop: "1rem" }}>
               <p
                 style={{
-                  margin: "0 0 0.75rem",
-                  fontSize: "0.75rem",
-                  color: "#aaa",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.05em",
+                  margin: "0 0 8px",
+                  fontSize: "11px",
+                  color: "var(--color-text-tertiary)",
+                  textTransform: "uppercase" as const,
+                  letterSpacing: "0.06em",
                 }}
               >
                 Akteure
@@ -517,13 +556,14 @@ export default function NarrativeEditor() {
                       onClick={() => selectActor(actor)}
                       style={{
                         flex: 1,
-                        background: selectedActorId === actor.id ? "#e8f0fe" : "none",
-                        border: `1px solid ${selectedActorId === actor.id ? "#4a7aff" : "#ddd"}`,
-                        borderRadius: 4,
-                        padding: "0.4rem 0.5rem",
+                        background: selectedActorId === actor.id ? "var(--color-blue-bg)" : "none",
+                        border: "none",
+                        borderRadius: "6px",
+                        padding: "8px 10px",
                         cursor: "pointer",
                         textAlign: "left",
-                        fontSize: "0.8rem",
+                        fontSize: "13px",
+                        color: selectedActorId === actor.id ? "var(--color-blue-text)" : "var(--color-text-primary)",
                         overflow: "hidden",
                         whiteSpace: "nowrap",
                         textOverflow: "ellipsis",
@@ -531,7 +571,7 @@ export default function NarrativeEditor() {
                       title={actor.label}
                     >
                       {actor.label}
-                      <span style={{ color: "#aaa", marginLeft: "0.3rem", fontSize: "0.7rem" }}>
+                      <span style={{ color: "var(--color-text-tertiary)", marginLeft: "0.3rem", fontSize: "0.7rem" }}>
                         {ACTOR_TYPE_LABELS[actor.actor_type] ?? actor.actor_type}
                       </span>
                     </button>
@@ -541,13 +581,13 @@ export default function NarrativeEditor() {
                       style={{
                         flexShrink: 0,
                         background: "none",
-                        border: "1px solid #ddd",
-                        borderRadius: 4,
-                        padding: "0.3rem 0.5rem",
+                        border: "1px solid var(--color-border)",
+                        borderRadius: "4px",
+                        padding: "4px 6px",
                         cursor: "pointer",
-                        color: "#aaa",
-                        fontSize: "0.75rem",
-                        lineHeight: 1,
+                        color: "var(--color-text-tertiary)",
+                        fontSize: "12px",
+                        lineHeight: "1",
                       }}
                     >
                       ×
@@ -558,7 +598,16 @@ export default function NarrativeEditor() {
 
               <button
                 onClick={openAddActor}
-                style={{ fontSize: "0.85rem", width: "100%" }}
+                style={{
+                  fontSize: "13px",
+                  background: "var(--color-bg)",
+                  border: "1px solid var(--color-border)",
+                  borderRadius: "6px",
+                  padding: "6px 14px",
+                  cursor: "pointer",
+                  width: "100%",
+                  color: "var(--color-text-primary)",
+                }}
               >
                 + Akteur hinzufügen
               </button>
@@ -570,7 +619,7 @@ export default function NarrativeEditor() {
       {/* ------------------------------------------------------------------ */}
       {/* Column 3: Scene content                                             */}
       {/* ------------------------------------------------------------------ */}
-      <main style={{ padding: "1.5rem 2rem", overflowY: "auto" }}>
+      <main style={{ padding: "24px 32px", overflowY: "auto", background: "var(--color-bg)" }}>
         {/* Empty states */}
         {!selected && (
           <p style={{ color: "#888" }}>Narrativ auswählen oder neu anlegen.</p>
@@ -707,9 +756,9 @@ export default function NarrativeEditor() {
         {/* ---------------------------------------------------------------- */}
         {selectedScene && (
           <>
-            <h2 style={{ marginTop: 0 }}>
+            <h2 style={{ fontSize: "18px", fontWeight: "600", marginTop: "0", color: "var(--color-text-primary)" }}>
               <span
-                style={{ color: "#bbb", fontWeight: "normal", marginRight: "0.5rem" }}
+                style={{ color: "var(--color-text-tertiary)", fontWeight: "normal", marginRight: "8px" }}
               >
                 {selectedScene.position}.
               </span>
@@ -719,9 +768,10 @@ export default function NarrativeEditor() {
             <p
               style={{
                 whiteSpace: "pre-wrap",
-                lineHeight: 1.8,
-                color: "#333",
-                marginBottom: "2rem",
+                lineHeight: "1.7",
+                color: "var(--color-text-secondary)",
+                fontSize: "14px",
+                marginBottom: "24px",
               }}
             >
               {selectedScene.text}
@@ -730,9 +780,9 @@ export default function NarrativeEditor() {
             {/* Claims ---------------------------------------------------- */}
             <div
               style={{
-                borderTop: "1px solid #eee",
-                paddingTop: "1.25rem",
-                marginBottom: "2rem",
+                borderTop: "1px solid var(--color-border-subtle)",
+                paddingTop: "20px",
+                marginBottom: "24px",
               }}
             >
               <div
@@ -743,14 +793,14 @@ export default function NarrativeEditor() {
                   marginBottom: "0.75rem",
                 }}
               >
-                <h3 style={{ margin: 0, fontSize: "0.95rem" }}>
+                <h3 style={{ margin: "0", fontSize: "12px", color: "var(--color-text-tertiary)", textTransform: "uppercase", letterSpacing: "0.06em", fontWeight: "600" }}>
                   Claims{" "}
                   {selectedClaims !== null ? `(${selectedClaims.length})` : ""}
                 </h3>
                 <button
                   onClick={extractClaims}
                   disabled={extracting}
-                  style={{ fontSize: "0.8rem" }}
+                  style={{ fontSize: "12px", padding: "5px 12px", border: "1px solid var(--color-border)", borderRadius: "6px", background: "var(--color-bg)", cursor: "pointer" }}
                 >
                   {extracting ? "Extrahiere…" : "Claims extrahieren"}
                 </button>
@@ -772,23 +822,22 @@ export default function NarrativeEditor() {
                         gap: "0.5rem",
                         alignItems: "flex-start",
                         marginBottom: "0.4rem",
-                        fontSize: "0.85rem",
                       }}
                     >
                       <span
                         style={{
-                          flexShrink: 0,
-                          background: "#e8f0fe",
-                          color: "#3c5bb5",
-                          borderRadius: 3,
-                          padding: "0.1rem 0.4rem",
-                          fontSize: "0.75rem",
+                          background: "var(--color-bg-subtle)",
+                          color: "var(--color-text-secondary)",
+                          borderRadius: "10px",
+                          padding: "2px 8px",
+                          fontSize: "11px",
                           marginTop: "0.1rem",
+                          flexShrink: 0,
                         }}
                       >
                         {CLAIM_TYPE_LABELS[c.typ] ?? c.typ}
                       </span>
-                      <span style={{ color: "#333" }}>{c.text}</span>
+                      <span style={{ color: "var(--color-text-secondary)", fontSize: "13px" }}>{c.text}</span>
                     </li>
                   ))}
                 </ul>
@@ -796,8 +845,8 @@ export default function NarrativeEditor() {
             </div>
 
             {/* Consistency check ----------------------------------------- */}
-            <div style={{ borderTop: "1px solid #eee", paddingTop: "1.25rem" }}>
-              <h3 style={{ margin: "0 0 0.75rem", fontSize: "0.95rem" }}>
+            <div style={{ borderTop: "1px solid var(--color-border-subtle)", paddingTop: "1.25rem" }}>
+              <h3 style={{ margin: "0 0 0.75rem", fontSize: "12px", color: "var(--color-text-tertiary)", textTransform: "uppercase", letterSpacing: "0.06em", fontWeight: "600" }}>
                 Konsistenzprüfung
               </h3>
 
@@ -821,7 +870,7 @@ export default function NarrativeEditor() {
                         setSelectedModelId(e.target.value);
                         setConsistencyResult(null);
                       }}
-                      style={{ padding: "0.4rem", fontSize: "0.85rem" }}
+                      style={{ padding: "6px 10px", fontSize: "13px", border: "1px solid var(--color-border)", borderRadius: "6px" }}
                     >
                       {causalModels.map((m) => (
                         <option key={m.id} value={m.id}>
@@ -832,7 +881,7 @@ export default function NarrativeEditor() {
                     <button
                       onClick={checkConsistency}
                       disabled={checking || !selectedModelId}
-                      style={{ fontSize: "0.8rem" }}
+                      style={{ fontSize: "12px", padding: "5px 12px", border: "1px solid var(--color-border)", borderRadius: "6px", background: "var(--color-bg)", cursor: "pointer" }}
                     >
                       {checking ? "Prüfe…" : "Konsistenz prüfen"}
                     </button>
@@ -842,17 +891,17 @@ export default function NarrativeEditor() {
                     <div>
                       <div
                         style={{
-                          padding: "0.6rem 0.9rem",
-                          borderRadius: 4,
                           background: consistencyResult.consistent
-                            ? "#e6f4ea"
-                            : "#fce8e6",
+                            ? "var(--color-green-bg)"
+                            : "var(--color-red-bg)",
                           color: consistencyResult.consistent
-                            ? "#1e7e34"
-                            : "#c5221f",
-                          fontWeight: "bold",
+                            ? "var(--color-green-text)"
+                            : "var(--color-red-text)",
+                          borderRadius: "6px",
+                          padding: "8px 12px",
+                          fontWeight: "500",
+                          fontSize: "13px",
                           marginBottom: "0.75rem",
-                          fontSize: "0.9rem",
                         }}
                       >
                         {consistencyResult.consistent
@@ -867,11 +916,11 @@ export default function NarrativeEditor() {
                           key={i}
                           style={{
                             marginBottom: "0.75rem",
-                            padding: "0.75rem",
-                            border: "1px solid #f5c6c6",
-                            borderRadius: 4,
-                            background: "#fffafa",
-                            fontSize: "0.85rem",
+                            border: "1px solid var(--color-border)",
+                            borderRadius: "6px",
+                            padding: "12px",
+                            background: "var(--color-bg-subtle)",
+                            fontSize: "13px",
                           }}
                         >
                           <strong style={{ color: "#888", fontSize: "0.8rem" }}>
@@ -917,12 +966,13 @@ export default function NarrativeEditor() {
               onClick={analyseNarrative}
               disabled={analysing}
               style={{
-                padding: "0.75rem 1.5rem",
-                fontSize: "1rem",
-                background: analysing ? "#e0e0e0" : "#4a7aff",
-                color: analysing ? "#999" : "#fff",
+                background: analysing ? "var(--color-bg-subtle)" : "#1A1A1A",
+                color: analysing ? "var(--color-text-tertiary)" : "#FFFFFF",
                 border: "none",
-                borderRadius: 4,
+                borderRadius: "6px",
+                padding: "10px 16px",
+                fontSize: "14px",
+                fontWeight: "500",
                 cursor: analysing ? "not-allowed" : "pointer",
                 width: "100%",
               }}

@@ -17,9 +17,6 @@ const C = {
   entity: { bg: "#E1F5EE", text: "#0F6E56" },
 } as const;
 
-const BORDER_OK = "3px solid #1D9E75";
-const BORDER_NO = "3px solid #A32D2D";
-
 type ConfirmState = "pending" | "accepted" | "rejected";
 
 const ACTOR_TYPE_LABELS: Record<string, string> = {
@@ -93,30 +90,26 @@ export default function NarrativeAnalyse() {
   }
 
   return (
-    <div style={{ maxWidth: 720, margin: "0 auto" }}>
+    <div style={{ maxWidth: "760px", margin: "0 auto", padding: "32px 24px" }}>
       {/* Header */}
       <button
         onClick={() => navigate(-1)}
         style={{
-          background: "none",
-          border: "none",
-          cursor: "pointer",
-          color: "#4a7aff",
-          marginBottom: "1rem",
-          padding: 0,
-          fontSize: "0.9rem",
+          background: "none", border: "none", cursor: "pointer",
+          color: "var(--color-text-secondary)", marginBottom: "20px", padding: "0",
+          fontSize: "13px",
         }}
       >
         ← Zurück zu Narrativ
       </button>
 
-      <h2 style={{ marginTop: 0 }}>Analyse: {narrative.title}</h2>
-      <p style={{ color: "#888", fontSize: "0.85rem", marginBottom: "2rem" }}>
+      <h2 style={{ fontSize: "22px", fontWeight: "600", marginTop: "0", marginBottom: "4px", color: "var(--color-text-primary)" }}>Analyse: {narrative.title}</h2>
+      <p style={{ fontSize: "13px", color: "var(--color-text-secondary)", marginBottom: "24px", marginTop: "0" }}>
         {analysis.actors.length} Akteure gefunden · {analysis.claims.length} Claims gefunden
       </p>
 
       {/* Actors */}
-      <div style={{ borderTop: "2px solid #e0e0e0", paddingTop: "1rem", marginBottom: "2rem" }}>
+      <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: "1rem", marginBottom: "2rem" }}>
         <SectionHeader
           label="Akteure"
           onAcceptAll={() => setActorStates(analysis.actors.map(() => "accepted"))}
@@ -137,7 +130,7 @@ export default function NarrativeAnalyse() {
       </div>
 
       {/* Claims */}
-      <div style={{ borderTop: "2px solid #e0e0e0", paddingTop: "1rem", marginBottom: "2rem" }}>
+      <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: "1rem", marginBottom: "2rem" }}>
         <SectionHeader
           label="Claims"
           onAcceptAll={() => setClaimStates(analysis.claims.map(() => "accepted"))}
@@ -158,9 +151,9 @@ export default function NarrativeAnalyse() {
       </div>
 
       {/* Generate button */}
-      <div style={{ borderTop: "2px solid #e0e0e0", paddingTop: "1rem" }}>
+      <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: "1rem" }}>
         {error && (
-          <p style={{ color: C.rejected.text, marginBottom: "0.5rem", fontSize: "0.85rem" }}>
+          <p style={{ color: "var(--color-red-text)", marginBottom: "8px", fontSize: "13px", margin: "0 0 8px" }}>
             {error}
           </p>
         )}
@@ -168,12 +161,13 @@ export default function NarrativeAnalyse() {
           onClick={generateSuggestions}
           disabled={!anyClaimAccepted || suggesting}
           style={{
-            padding: "0.75rem 1.5rem",
-            fontSize: "1rem",
-            background: anyClaimAccepted ? "#1D9E75" : "#e0e0e0",
-            color: anyClaimAccepted ? "#fff" : "#999",
+            background: anyClaimAccepted ? "#1A1A1A" : "var(--color-bg-subtle)",
+            color: anyClaimAccepted ? "#FFFFFF" : "var(--color-text-tertiary)",
             border: "none",
-            borderRadius: 4,
+            borderRadius: "6px",
+            padding: "10px 16px",
+            fontSize: "14px",
+            fontWeight: "500",
             cursor: anyClaimAccepted ? "pointer" : "not-allowed",
             width: "100%",
           }}
@@ -199,34 +193,23 @@ function SectionHeader({
   return (
     <div
       style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: "1rem",
+        display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px",
+        padding: "16px 0 8px", borderTop: "1px solid var(--color-border)",
       }}
     >
       <h3
         style={{
-          margin: 0,
-          textTransform: "uppercase",
-          fontSize: "0.75rem",
-          letterSpacing: "0.1em",
-          color: "#888",
+          margin: "0", fontSize: "11px", textTransform: "uppercase" as const,
+          letterSpacing: "0.06em", color: "var(--color-text-tertiary)", fontWeight: "600",
         }}
       >
         {label}
       </h3>
-      <button onClick={onAcceptAll} style={{ fontSize: "0.8rem" }}>
+      <button onClick={onAcceptAll} style={{ fontSize: "12px", padding: "5px 12px", border: "1px solid var(--color-border)", borderRadius: "6px", background: "var(--color-bg)", cursor: "pointer", color: "var(--color-text-secondary)" }}>
         Alle bestätigen
       </button>
     </div>
   );
-}
-
-function borderForState(state: ConfirmState): string {
-  if (state === "accepted") return BORDER_OK;
-  if (state === "rejected") return BORDER_NO;
-  return "1px solid #e0e0e0";
 }
 
 function ConfirmButtons({
@@ -243,13 +226,18 @@ function ConfirmButtons({
       <button
         onClick={onAccept}
         style={{
-          background: state === "accepted" ? C.confirmed.bg : "none",
-          border: "1px solid #ddd",
-          borderRadius: 3,
-          padding: "0.25rem 0.5rem",
+          background: state === "accepted" ? "var(--color-green-bg)" : "var(--color-bg)",
+          border: state === "accepted" ? "1px solid #3B6D11" : "1px solid var(--color-border)",
+          borderRadius: "6px",
+          padding: "0",
           cursor: "pointer",
-          fontSize: "0.85rem",
-          color: state === "accepted" ? C.confirmed.text : "inherit",
+          fontSize: "14px",
+          color: state === "accepted" ? "var(--color-green-text)" : "var(--color-text-secondary)",
+          width: "30px",
+          height: "30px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
         ✓
@@ -257,13 +245,18 @@ function ConfirmButtons({
       <button
         onClick={onReject}
         style={{
-          background: state === "rejected" ? C.rejected.bg : "none",
-          border: "1px solid #ddd",
-          borderRadius: 3,
-          padding: "0.25rem 0.5rem",
+          background: state === "rejected" ? "var(--color-red-bg)" : "var(--color-bg)",
+          border: state === "rejected" ? "1px solid #A32D2D" : "1px solid var(--color-border)",
+          borderRadius: "6px",
+          padding: "0",
           cursor: "pointer",
-          fontSize: "0.85rem",
-          color: state === "rejected" ? C.rejected.text : "inherit",
+          fontSize: "14px",
+          color: state === "rejected" ? "var(--color-red-text)" : "var(--color-text-secondary)",
+          width: "30px",
+          height: "30px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
         ✗
@@ -286,11 +279,13 @@ function ActorCard({
   return (
     <div
       style={{
-        border: borderForState(state),
-        borderRadius: 4,
-        padding: "0.75rem",
-        marginBottom: "0.75rem",
-        opacity: state === "rejected" ? 0.5 : 1,
+        border: "1px solid var(--color-border)",
+        borderLeft: state === "accepted" ? "3px solid #3B6D11" : "1px solid var(--color-border)",
+        borderRadius: "8px",
+        padding: "14px 16px",
+        marginBottom: "8px",
+        background: "var(--color-bg)",
+        opacity: state === "rejected" ? 0.4 : 1,
         display: "flex",
         justifyContent: "space-between",
         alignItems: "flex-start",
@@ -307,27 +302,24 @@ function ActorCard({
         >
           <span>👤</span>
           <strong
-            style={{ textDecoration: state === "rejected" ? "line-through" : "none" }}
+            style={{ textDecoration: state === "rejected" ? "line-through" : "none", fontSize: "14px", fontWeight: "500", color: "var(--color-text-primary)" }}
           >
             {actor.label}
           </strong>
-          <span style={{ fontSize: "0.75rem", color: "#888" }}>
+          <span style={{ fontSize: "11px", color: "var(--color-text-secondary)", background: "var(--color-bg-subtle)", padding: "2px 8px", borderRadius: "10px", marginLeft: "6px" }}>
             {ACTOR_TYPE_LABELS[actor.actor_type] ?? actor.actor_type}
           </span>
         </div>
         {actor.occurrences.length > 0 && (
-          <p style={{ margin: "0 0 0.25rem", fontSize: "0.8rem", color: "#888" }}>
+          <p style={{ margin: "4px 0 0", fontSize: "12px", color: "var(--color-text-secondary)" }}>
             {actor.occurrences.join(", ")}
           </p>
         )}
         {actor.entity_suggestion && (
           <span
             style={{
-              fontSize: "0.75rem",
-              background: C.entity.bg,
-              color: C.entity.text,
-              padding: "0.1rem 0.4rem",
-              borderRadius: 3,
+              fontSize: "12px", background: "var(--color-teal-bg)", color: "var(--color-teal-text)",
+              padding: "2px 8px", borderRadius: "10px", display: "inline-block", marginTop: "6px",
             }}
           >
             → Entity-Vorschlag: "{actor.entity_suggestion}"
@@ -362,11 +354,13 @@ function ClaimCard({
   return (
     <div
       style={{
-        border: borderForState(state),
-        borderRadius: 4,
-        padding: "0.75rem",
-        marginBottom: "0.75rem",
-        opacity: state === "rejected" ? 0.5 : 1,
+        border: "1px solid var(--color-border)",
+        borderLeft: state === "accepted" ? "3px solid #3B6D11" : "1px solid var(--color-border)",
+        borderRadius: "8px",
+        padding: "14px 16px",
+        marginBottom: "8px",
+        background: "var(--color-bg)",
+        opacity: state === "rejected" ? 0.4 : 1,
       }}
     >
       <div
@@ -380,20 +374,15 @@ function ClaimCard({
         <strong
           style={{
             textDecoration: state === "rejected" ? "line-through" : "none",
-            fontSize: "0.9rem",
+            fontSize: "14px", fontWeight: "500", color: "var(--color-text-primary)",
           }}
         >
           {claim.label}
         </strong>
         <span
           style={{
-            fontSize: "0.75rem",
-            background: confStyle.bg,
-            color: confStyle.text,
-            padding: "0.1rem 0.4rem",
-            borderRadius: 3,
-            flexShrink: 0,
-            marginLeft: "0.5rem",
+            fontSize: "12px", fontWeight: "500", padding: "2px 7px", borderRadius: "10px",
+            background: confStyle.bg, color: confStyle.text, flexShrink: 0, marginLeft: "8px",
           }}
         >
           {Math.round(claim.confidence * 100)}%
@@ -402,10 +391,7 @@ function ClaimCard({
 
       <p
         style={{
-          margin: "0 0 0.25rem",
-          fontSize: "0.85rem",
-          color: "#555",
-          fontStyle: "italic",
+          margin: "4px 0 4px", fontSize: "13px", color: "var(--color-text-secondary)", fontStyle: "italic",
         }}
       >
         "{claim.text}"
@@ -414,11 +400,8 @@ function ClaimCard({
       <div style={{ marginBottom: "0.25rem" }}>
         <span
           style={{
-            fontSize: "0.75rem",
-            background: "#e8f0fe",
-            color: "#3c5bb5",
-            padding: "0.1rem 0.4rem",
-            borderRadius: 3,
+            fontSize: "11px", background: "var(--color-bg-subtle)", color: "var(--color-text-secondary)",
+            padding: "2px 8px", borderRadius: "10px",
           }}
         >
           {CLAIM_TYPE_LABELS[claim.claim_type] ?? claim.claim_type}
@@ -428,10 +411,7 @@ function ClaimCard({
       {ws && (
         <p
           style={{
-            margin: "0 0 0.25rem",
-            fontSize: "0.8rem",
-            color: "#888",
-            fontStyle: "italic",
+            margin: "4px 0 0", fontSize: "12px", color: "var(--color-text-tertiary)", fontStyle: "italic",
           }}
         >
           {ws.suggestion_type === "slot_state"

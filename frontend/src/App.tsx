@@ -9,11 +9,31 @@ import ReadingView from "./pages/ReadingView";
 export default function App() {
   return (
     <BrowserRouter>
-      <nav style={{ padding: "1rem", borderBottom: "1px solid #eee", display: "flex", gap: "1rem" }}>
-        <NavLink to="/">Login</NavLink>
-        <NavLink to="/causal-model">Wirkmodell</NavLink>
-        <NavLink to="/narrative">Narrativ</NavLink>
-        <NavLink to="/reading">Lesen</NavLink>
+      <nav style={{ padding: "12px 20px", borderBottom: "1px solid var(--color-border)", display: "flex", gap: "16px", background: "var(--color-bg)" }}>
+        <NavLink to="/" style={({ isActive }) => ({
+          color: isActive ? "var(--color-text-primary)" : "var(--color-text-secondary)",
+          fontWeight: isActive ? "500" : "normal",
+          textDecoration: "none",
+          fontSize: "14px",
+        })}>Login</NavLink>
+        <NavLink to="/causal-model" style={({ isActive }) => ({
+          color: isActive ? "var(--color-text-primary)" : "var(--color-text-secondary)",
+          fontWeight: isActive ? "500" : "normal",
+          textDecoration: "none",
+          fontSize: "14px",
+        })}>Wirkmodell</NavLink>
+        <NavLink to="/narrative" style={({ isActive }) => ({
+          color: isActive ? "var(--color-text-primary)" : "var(--color-text-secondary)",
+          fontWeight: isActive ? "500" : "normal",
+          textDecoration: "none",
+          fontSize: "14px",
+        })}>Narrativ</NavLink>
+        <NavLink to="/reading" style={({ isActive }) => ({
+          color: isActive ? "var(--color-text-primary)" : "var(--color-text-secondary)",
+          fontWeight: isActive ? "500" : "normal",
+          textDecoration: "none",
+          fontSize: "14px",
+        })}>Lesen</NavLink>
       </nav>
       <main style={{ padding: "2rem" }}>
         <Routes>
