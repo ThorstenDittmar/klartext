@@ -12,7 +12,7 @@ import pytest
 from httpx import ASGITransport, AsyncClient
 
 from api.dependencies import (
-    get_narrative_analysis_service_async,
+    get_narrative_analysis_service,
     get_narrative_service,
     get_wirkgefuege_suggestion_service,
 )
@@ -896,7 +896,7 @@ class FakeWirkgefuegeSuggestionService:
 @pytest.mark.asyncio
 async def test_analyse_narrative_returns_actors_and_claims() -> None:
     """Expects 200 with actors and claims when the service succeeds."""
-    app.dependency_overrides[get_narrative_analysis_service_async] = (
+    app.dependency_overrides[get_narrative_analysis_service] = (
         lambda: FakeNarrativeAnalysisService()
     )
     try:
@@ -910,7 +910,7 @@ async def test_analyse_narrative_returns_actors_and_claims() -> None:
         assert len(body["claims"]) == 1
         assert body["claims"][0]["claim_type"] == "causal"
     finally:
-        app.dependency_overrides.pop(get_narrative_analysis_service_async, None)
+        clear_overrides()
 
 
 @pytest.mark.asyncio
@@ -918,7 +918,7 @@ async def test_analyse_narrative_returns_404_for_unknown_narrative() -> None:
     """Expects 404 when the service raises NarrativeNotFoundError."""
     from api.exceptions.narrative import NarrativeNotFoundError
 
-    app.dependency_overrides[get_narrative_analysis_service_async] = lambda: (
+    app.dependency_overrides[get_narrative_analysis_service] = lambda: (
         FakeNarrativeAnalysisService(raise_on_analyse=NarrativeNotFoundError("not found"))
     )
     try:
@@ -927,7 +927,7 @@ async def test_analyse_narrative_returns_404_for_unknown_narrative() -> None:
 
         assert response.status_code == 404
     finally:
-        app.dependency_overrides.pop(get_narrative_analysis_service_async, None)
+        clear_overrides()
 
 
 # ---------------------------------------------------------------------------
@@ -952,7 +952,7 @@ async def test_suggest_wirkgefuege_returns_slots_and_relations() -> None:
         assert len(body["suggested_relations"]) == 1
         assert body["from_claims"] == ["claim-uuid-1"]
     finally:
-        app.dependency_overrides.pop(get_wirkgefuege_suggestion_service, None)
+        clear_overrides()
 
 
 @pytest.mark.asyncio
@@ -969,4 +969,4 @@ async def test_suggest_wirkgefuege_returns_404_for_unknown_narrative() -> None:
 
         assert response.status_code == 404
     finally:
-        app.dependency_overrides.pop(get_wirkgefuege_suggestion_service, None)
+        clear_overrides()

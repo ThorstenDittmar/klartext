@@ -125,7 +125,7 @@ async def get_causal_model_service(
     return CausalModelService(repository=repository, consistency_checker=checker)
 
 
-async def get_narrative_analysis_service_async(
+async def get_narrative_analysis_service(
     repository: NarrativeRepository = Depends(get_narrative_repository),
 ) -> NarrativeAnalysisService:
     """Wires NarrativeRepository and ClaudeNarrativeAnalysisProvider into NarrativeAnalysisService.

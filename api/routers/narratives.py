@@ -10,7 +10,7 @@ from fastapi import APIRouter, Depends, status
 from api.dependencies import (
     get_claim_extractor_service,
     get_claim_repository,
-    get_narrative_analysis_service_async,
+    get_narrative_analysis_service,
     get_narrative_service,
     get_wirkgefuege_suggestion_service,
 )
@@ -36,7 +36,7 @@ from api.schemas.narratives import (
     SuggestedSlotResponse,
     SuggestWirkgefuegeResponse,
     UpdateActorRequest,
-    WirkgefuegeSuggestionSchema,
+    WirkgefuegeSuggestionResponse,
 )
 from api.services.claim_extractor_service import ClaimExtractorService
 from api.services.narrative_analysis_service import NarrativeAnalysisService
@@ -97,9 +97,9 @@ def _to_scene_response(scene: Scene) -> SceneResponse:
 
 def _to_wirkgefuege_suggestion_schema(
     ws: Any,
-) -> WirkgefuegeSuggestionSchema:
+) -> WirkgefuegeSuggestionResponse:
     """Converts a WirkgefuegeSuggestion dataclass to its Pydantic schema."""
-    return WirkgefuegeSuggestionSchema(
+    return WirkgefuegeSuggestionResponse(
         suggestion_type=ws.suggestion_type,
         slot=ws.slot,
         zustand=ws.zustand,
@@ -313,7 +313,7 @@ async def link_to_causal_model(
 )
 async def analyse_narrative(
     narrative_id: str,
-    service: NarrativeAnalysisService = Depends(get_narrative_analysis_service_async),
+    service: NarrativeAnalysisService = Depends(get_narrative_analysis_service),
 ) -> AnalyseNarrativeResponse:
     """Analyses all scenes in the Narrative and returns suggested actors and claims.
 

@@ -146,7 +146,7 @@ class NarrativeSummaryResponse(BaseModel):
 # ---------------------------------------------------------------------------
 
 
-class WirkgefuegeSuggestionSchema(BaseModel):
+class WirkgefuegeSuggestionResponse(BaseModel):
     """Schema for a Wirkgefüge suggestion within a ClaimSuggestionResponse."""
 
     suggestion_type: str
@@ -165,7 +165,7 @@ class ActorSuggestionResponse(BaseModel):
     label: str
     actor_type: str
     occurrences: list[str]
-    entity_suggestion: str | None
+    entity_suggestion: str | None = None
 
 
 class ClaimSuggestionResponse(BaseModel):
@@ -175,7 +175,7 @@ class ClaimSuggestionResponse(BaseModel):
     text: str
     claim_type: str
     confidence: float
-    wirkgefuege_suggestion: WirkgefuegeSuggestionSchema | None
+    wirkgefuege_suggestion: WirkgefuegeSuggestionResponse | None = None
 
 
 class AnalyseNarrativeResponse(BaseModel):
@@ -202,9 +202,9 @@ class SuggestedRelationResponse(BaseModel):
 
     source: str
     target: str
-    source_condition: str | None
-    target_effect: str | None
-    mechanism: str | None
+    source_condition: str | None = None
+    target_effect: str | None = None
+    mechanism: str | None = None
     epistemic_status: str
 
 

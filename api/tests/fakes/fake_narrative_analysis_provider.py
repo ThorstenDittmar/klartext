@@ -15,7 +15,7 @@ from api.providers.narrative_analysis_provider import (
 class FakeNarrativeAnalysisProvider(NarrativeAnalysisProvider):
     """Returns a fixed deterministic result without calling any external API.
 
-    Used in service and router tests to avoid Claude API calls.
+    Used in service tests to avoid Claude API calls.
     """
 
     async def analyse(self, narrative: Narrative) -> NarrativeAnalysisResult:
