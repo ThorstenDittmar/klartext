@@ -51,7 +51,7 @@ New schemas + routers:
 
 ## Plan D — Analysis Workflow
 
-**Status:** In Progress (2026-06-04)
+**Status:** DONE (2026-06-04)
 **Plan:** `docs/superpowers/plans/2026-06-04-analysis-workflow.md`
 
 **What:** End-to-end workflow from narrative to minimal Wirkgefüge.
