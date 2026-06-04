@@ -81,8 +81,13 @@ class FakeCausalModelRepository(CausalModelRepository):
         return list(self._slots.get(causal_model_id, []))
 
     async def update_slot(self, slot: Slot) -> Slot:
-        """Persists the current state of a Slot (in-memory: already mutated in place)."""
+        """Persists the current state of a Slot by replacing the stored entry."""
         self.logger.info("FakeCausalModelRepository.update_slot: slot_id=%s", slot.id)
+        for slots in self._slots.values():
+            for i, s in enumerate(slots):
+                if s.id == slot.id:
+                    slots[i] = slot
+                    return slot
         return slot
 
     async def remove_slot(self, causal_model_id: str, slot_id: str) -> None:
