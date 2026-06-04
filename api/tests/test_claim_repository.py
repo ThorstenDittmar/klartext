@@ -165,11 +165,67 @@ async def test_supabase_claim_repository_save_all_and_find_by_scene_id() -> None
     finally:
         await client.table("claims").delete().eq("scene_id", scene_id).execute()
         await (
-            client.table("narrative_einheiten")
+            client.table("narrative_units")
             .delete()
-            .eq("narrativ_id", saved_narrative.id)
+            .eq("narrative_id", saved_narrative.id)
             .execute()
         )
         await client.table("narrative").delete().eq("id", saved_narrative.id).execute()
 
     _ = saved_claims
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
+async def test_supabase_claim_repository_find_by_id_and_update() -> None:
+    """Calls the real database. Expects find_by_id to retrieve a saved Claim by ID.
+
+    Also verifies that update persists status and wirkgefuege_ref changes.
+
+    Requires SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY to be set.
+    """
+    import os
+
+    from supabase import acreate_client
+
+    from api.repositories.supabase_claim_repository import SupabaseClaimRepository
+    from api.repositories.supabase_narrative_repository import SupabaseNarrativeRepository
+    from tests.mothers.narrative_mother import NarrativeMother
+
+    client = await acreate_client(
+        os.environ["SUPABASE_URL"],
+        os.environ["SUPABASE_SERVICE_ROLE_KEY"],
+    )
+    narrative_repo = SupabaseNarrativeRepository(client=client)
+    claim_repo = SupabaseClaimRepository(client=client)
+
+    saved_narrative = await narrative_repo.save(NarrativeMother.with_one_scene())
+    scene_id: str = saved_narrative.scenes[0].id  # type: ignore[assignment]
+    [saved_claim] = await claim_repo.save_all([ClaimMother.causal()], scene_id=scene_id)
+
+    try:
+        # find_by_id
+        found = await claim_repo.find_by_id(saved_claim.id)  # type: ignore[arg-type]
+        assert found.id == saved_claim.id
+        assert found.label == saved_claim.label
+
+        # update (link to wirkgefuege)
+        found.link_to_wirkgefuege("slot-test-ref")
+        updated = await claim_repo.update(found)
+
+        assert updated.status.value == "linked"
+        assert updated.wirkgefuege_ref == "slot-test-ref"
+
+        # verify persisted
+        refetched = await claim_repo.find_by_id(saved_claim.id)  # type: ignore[arg-type]
+        assert refetched.status.value == "linked"
+        assert refetched.wirkgefuege_ref == "slot-test-ref"
+    finally:
+        await client.table("claims").delete().eq("scene_id", scene_id).execute()
+        await (
+            client.table("narrative_units")
+            .delete()
+            .eq("narrative_id", saved_narrative.id)
+            .execute()
+        )
+        await client.table("narrative").delete().eq("id", saved_narrative.id).execute()

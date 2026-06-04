@@ -302,5 +302,95 @@ async def test_supabase_causal_model_repository_save_and_find_by_id() -> None:
         assert found.title == "Klartext Wirkmodell"
         assert len(found.axioms) == 3
     finally:
-        await client.table("modellelemente").delete().eq("wirkmodell_id", saved.id).execute()
-        await client.table("wirkmodelle").delete().eq("id", saved.id).execute()
+        await client.table("model_elements").delete().eq("causal_model_id", saved.id).execute()
+        await client.table("causal_models").delete().eq("id", saved.id).execute()
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
+async def test_supabase_causal_model_repository_add_slot_and_find() -> None:
+    """Calls the real database. Expects add_slot to persist a Slot retrievable via find_by_id.
+
+    Requires SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY to be set.
+    """
+    import os
+
+    from supabase import acreate_client
+
+    from api.repositories.supabase_causal_model_repository import SupabaseCausalModelRepository
+
+    client = await acreate_client(
+        os.environ["SUPABASE_URL"],
+        os.environ["SUPABASE_SERVICE_ROLE_KEY"],
+    )
+    repo = SupabaseCausalModelRepository(client=client)
+    cm = await repo.save(CausalModelMother.empty())
+
+    try:
+        slot = Slot.create(identifier="money_supply", slot_type=SlotType.PHYSICAL_QUANTITY)
+        saved_slot = await repo.add_slot(cm.id, slot)  # type: ignore[arg-type]
+
+        slots = await repo.find_slots_by_model_id(cm.id)  # type: ignore[arg-type]
+
+        assert saved_slot.id is not None
+        assert len(slots) == 1
+        assert slots[0].identifier == "money_supply"
+        assert slots[0].slot_type == SlotType.PHYSICAL_QUANTITY
+
+        # find_by_id should now include the slot
+        found_cm = await repo.find_by_id(cm.id)  # type: ignore[arg-type]
+        assert len(found_cm.get_slots()) == 1
+    finally:
+        await client.table("slots").delete().eq("causal_model_id", cm.id).execute()
+        await client.table("causal_models").delete().eq("id", cm.id).execute()
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
+async def test_supabase_causal_model_repository_add_relation_and_find() -> None:
+    """Calls the real database. Expects add_relation to persist a CausalRelation retrievable.
+
+    Verifies that find_relations_by_model_id resolves source and target Slots correctly.
+
+    Requires SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY to be set.
+    """
+    import os
+
+    from supabase import acreate_client
+
+    from api.repositories.supabase_causal_model_repository import SupabaseCausalModelRepository
+
+    client = await acreate_client(
+        os.environ["SUPABASE_URL"],
+        os.environ["SUPABASE_SERVICE_ROLE_KEY"],
+    )
+    repo = SupabaseCausalModelRepository(client=client)
+    cm = await repo.save(CausalModelMother.empty())
+
+    try:
+        source = await repo.add_slot(  # type: ignore[arg-type]
+            cm.id, Slot.create("money_supply", SlotType.PHYSICAL_QUANTITY)
+        )
+        target = await repo.add_slot(  # type: ignore[arg-type]
+            cm.id, Slot.create("inflation", SlotType.TREND)
+        )
+        relation = CausalRelation.create(
+            identifier="money_supply_causes_inflation",
+            source=source,
+            target=target,
+            polarity=Polarity.POSITIVE,
+        )
+        saved_rel = await repo.add_relation(cm.id, relation)  # type: ignore[arg-type]
+
+        relations = await repo.find_relations_by_model_id(cm.id)  # type: ignore[arg-type]
+
+        assert saved_rel.id is not None
+        assert len(relations) == 1
+        assert relations[0].identifier == "money_supply_causes_inflation"
+        assert relations[0].polarity == Polarity.POSITIVE
+        assert relations[0].source.identifier == "money_supply"
+        assert relations[0].target.identifier == "inflation"
+    finally:
+        await client.table("causal_relations").delete().eq("causal_model_id", cm.id).execute()
+        await client.table("slots").delete().eq("causal_model_id", cm.id).execute()
+        await client.table("causal_models").delete().eq("id", cm.id).execute()
