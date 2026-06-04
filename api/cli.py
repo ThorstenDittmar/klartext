@@ -491,12 +491,12 @@ _FLUSH_SQL = """
 TRUNCATE TABLE
     causal_relations,
     slots,
-    axioms,
+    model_elements,
     causal_models,
     claims,
     narrative_actors,
-    narrative_scenes,
-    narratives
+    narrative_units,
+    narrative
 RESTART IDENTITY CASCADE;
 """.strip()
 
