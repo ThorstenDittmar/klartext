@@ -76,7 +76,7 @@ export interface ConsistencyResult {
 export interface WirkgefuegeSuggestionInClaim {
   suggestion_type: string;
   slot: string | null;
-  zustand: string | null;
+  slot_state: string | null;
   source_slot: string | null;
   source_condition: string | null;
   target_slot: string | null;

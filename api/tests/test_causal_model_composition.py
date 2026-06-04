@@ -1,7 +1,7 @@
 """Tests for Wirkgefüge domain composition.
 
 Covers the full in-memory object model — building a CausalModel from Slots,
-Zustands, CausalRelations and DefinitoryRelations, verifying traversal,
+SlotStates, CausalRelations and DefinitoryRelations, verifying traversal,
 namespace enforcement, completeness, and CausalMixin reuse.
 
 The composition model uses actual Slot references, not string IDs. Persistence
@@ -25,8 +25,8 @@ from api.models.causal_model import (
     EpistemicStatus,
     Polarity,
     Slot,
+    SlotState,
     SlotType,
-    Zustand,
 )
 
 # ---------------------------------------------------------------------------
@@ -61,45 +61,45 @@ def _model(identifier: str = "model", title: str = "Test Model") -> CausalModel:
 
 
 # ---------------------------------------------------------------------------
-# Zustand
+# SlotState
 # ---------------------------------------------------------------------------
 
 
-def test_zustand_create_stores_value_and_slot() -> None:
+def test_slot_state_create_stores_value_and_slot() -> None:
     """Expects value and the associated Slot to be accessible after creation."""
     slot = _slot("co2_concentration")
-    zustand = Zustand.create(value="high", slot=slot)
+    slot_state = SlotState.create(value="high", slot=slot)
 
-    assert zustand.value == "high"
-    assert zustand.slot is slot
+    assert slot_state.value == "high"
+    assert slot_state.slot is slot
 
 
-def test_zustand_default_epistemic_status_is_incomplete() -> None:
-    """Expects INCOMPLETE as the default — Zustand not yet formalised."""
+def test_slot_state_default_epistemic_status_is_incomplete() -> None:
+    """Expects INCOMPLETE as the default — SlotState not yet formalised."""
     slot = _slot("co2_concentration")
-    zustand = Zustand.create(value="high", slot=slot)
+    slot_state = SlotState.create(value="high", slot=slot)
 
-    assert zustand.epistemic_status == EpistemicStatus.INCOMPLETE
+    assert slot_state.epistemic_status == EpistemicStatus.INCOMPLETE
 
 
-def test_zustand_can_be_created_axiomatic() -> None:
-    """Expects AXIOMATIC Zustand to be valid — the value is set as a premise."""
+def test_slot_state_can_be_created_axiomatic() -> None:
+    """Expects AXIOMATIC SlotState to be valid — the value is set as a premise."""
     slot = _slot("baseline_temp")
-    zustand = Zustand.create(
+    slot_state = SlotState.create(
         value="14.0",
         slot=slot,
         epistemic_status=EpistemicStatus.AXIOMATIC,
     )
 
-    assert zustand.epistemic_status == EpistemicStatus.AXIOMATIC
+    assert slot_state.epistemic_status == EpistemicStatus.AXIOMATIC
 
 
-def test_zustand_numeric_value_is_stored() -> None:
+def test_slot_state_numeric_value_is_stored() -> None:
     """Expects float values to be stored without conversion."""
     slot = _slot("co2_ppm")
-    zustand = Zustand.create(value=421.0, slot=slot)
+    slot_state = SlotState.create(value=421.0, slot=slot)
 
-    assert zustand.value == 421.0
+    assert slot_state.value == 421.0
 
 
 # ---------------------------------------------------------------------------
@@ -121,12 +121,12 @@ def test_entity_has_entity_state_slot_type() -> None:
     assert entity.slot_type == SlotType.ENTITY_STATE
 
 
-def test_entity_zustand_describes_capacity_not_measurement() -> None:
+def test_entity_slot_state_describes_capacity_not_measurement() -> None:
     """Expects qualitative states on Entity to be valid — capacity is not a measurement."""
     entity = _entity("central_bank")
-    zustand = Zustand.create(value="active", slot=entity)
+    slot_state = SlotState.create(value="active", slot=entity)
 
-    assert zustand.value == "active"
+    assert slot_state.value == "active"
 
 
 # ---------------------------------------------------------------------------
@@ -157,8 +157,8 @@ def test_causal_relation_stores_source_and_target_conditions() -> None:
     """Expects source_condition and target_effect to narrow when the relation applies."""
     source = _slot("co2")
     target = _slot("temperature")
-    z_source = Zustand.create("high", source)
-    z_target = Zustand.create("rising", target)
+    z_source = SlotState.create("high", source)
+    z_target = SlotState.create("rising", target)
 
     relation = CausalRelation.create(
         identifier="co2_warms",

@@ -12,9 +12,9 @@ from api.models.narrative import Narrative
 class WirkgefuegeSuggestion:
     """A suggestion for how a Claim maps to a Wirkgefüge element."""
 
-    suggestion_type: str  # "slot_zustand" or "causal_relation"
-    slot: str | None = None  # slot_zustand: slot identifier (snake_case)
-    zustand: str | None = None  # slot_zustand: state description
+    suggestion_type: str  # "slot_state" or "causal_relation"
+    slot: str | None = None  # slot_state: slot identifier (snake_case)
+    slot_state: str | None = None  # slot_state: state description
     source_slot: str | None = None  # causal_relation: source slot identifier
     source_condition: str | None = None  # causal_relation: source state
     target_slot: str | None = None  # causal_relation: target slot identifier

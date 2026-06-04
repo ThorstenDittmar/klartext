@@ -152,7 +152,7 @@ class WirkgefuegeSuggestionResponse(BaseModel):
 
     suggestion_type: str
     slot: str | None = None
-    zustand: str | None = None
+    slot_state: str | None = None
     source_slot: str | None = None
     source_condition: str | None = None
     target_slot: str | None = None

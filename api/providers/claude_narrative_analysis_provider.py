@@ -39,8 +39,8 @@ _SYSTEM_PROMPT = (
     f'- "claim_type": Einer von: {_CLAIM_TYPES}\n'
     '- "confidence": Float zwischen 0.0 und 1.0\n'
     '- "wirkgefuege_suggestion": null oder Objekt mit:\n'
-    '  - "type": "slot_zustand" oder "causal_relation"\n'
-    '  - Für "slot_zustand": "slot" (snake_case, englisch), "zustand" (Zustandsbeschreibung)\n'
+    '  - "type": "slot_state" oder "causal_relation"\n'
+    '  - Für "slot_state": "slot" (snake_case, englisch), "slot_state" (Zustandsbeschreibung)\n'
     '  - Für "causal_relation": "source_slot", "source_condition", "target_slot",'
     ' "target_effect", "mechanism" (alles snake_case/englisch)\n\n'
     "Maximal 5 Akteure und 10 Claims."
@@ -161,9 +161,9 @@ class ClaudeNarrativeAnalysisProvider(NarrativeAnalysisProvider):
                 f"wirkgefuege_suggestion must be a JSON object, got: {type(record)}"
             )
         return WirkgefuegeSuggestion(
-            suggestion_type=record.get("type", "slot_zustand"),
+            suggestion_type=record.get("type", "slot_state"),
             slot=record.get("slot"),
-            zustand=record.get("zustand"),
+            slot_state=record.get("slot_state"),
             source_slot=record.get("source_slot"),
             source_condition=record.get("source_condition"),
             target_slot=record.get("target_slot"),

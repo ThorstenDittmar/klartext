@@ -434,8 +434,8 @@ function ClaimCard({
             fontStyle: "italic",
           }}
         >
-          {ws.suggestion_type === "slot_zustand"
-            ? `→ Slot: ${ws.slot ?? "?"} / ${ws.zustand ?? "?"}`
+          {ws.suggestion_type === "slot_state"
+            ? `→ Slot: ${ws.slot ?? "?"} / ${ws.slot_state ?? "?"}`
             : `→ ${ws.source_slot ?? "?"} → ${ws.target_slot ?? "?"}`}
         </p>
       )}

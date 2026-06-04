@@ -31,7 +31,7 @@ class EpistemicStatus(StrEnum):
 
 
 class SlotType(StrEnum):
-    """Semantic category of a Slot — determines which Zustand values are valid."""
+    """Semantic category of a Slot — determines which SlotState values are valid."""
 
     PHYSICAL_QUANTITY = "physical_quantity"
     SOCIAL_QUANTITY = "social_quantity"
@@ -164,10 +164,10 @@ class Entity(Slot):
         )
 
 
-# ── Zustand ────────────────────────────────────────────────────────────────
+# ── SlotState ──────────────────────────────────────────────────────────────
 
 
-class Zustand:
+class SlotState:
     """A concrete value of a Slot at a point in time or within a Scope.
 
     Not a CausalComponent — exists relative to a Slot and is not placed
@@ -190,8 +190,8 @@ class Zustand:
         value: str | float | int,
         slot: Slot,
         epistemic_status: EpistemicStatus = EpistemicStatus.INCOMPLETE,
-    ) -> Zustand:
-        """Creates a new Zustand for the given Slot."""
+    ) -> SlotState:
+        """Creates a new SlotState for the given Slot."""
         return cls(value=value, slot=slot, epistemic_status=epistemic_status)
 
     @property
@@ -228,8 +228,8 @@ class CausalRelation:
         polarity: Polarity | None = None,
         strength: float | None = None,
         uncertainty: float | None = None,
-        source_condition: Zustand | None = None,
-        target_effect: Zustand | None = None,
+        source_condition: SlotState | None = None,
+        target_effect: SlotState | None = None,
         epistemic_status: EpistemicStatus = EpistemicStatus.INCOMPLETE,
         preconditions: list[Precondition] | None = None,
         scope: Scope | None = None,
@@ -256,8 +256,8 @@ class CausalRelation:
         target: Slot,
         mechanism: str | None = None,
         polarity: Polarity | None = None,
-        source_condition: Zustand | None = None,
-        target_effect: Zustand | None = None,
+        source_condition: SlotState | None = None,
+        target_effect: SlotState | None = None,
         epistemic_status: EpistemicStatus = EpistemicStatus.INCOMPLETE,
     ) -> CausalRelation:
         """Creates a CausalRelation.
@@ -319,11 +319,11 @@ class CausalRelation:
         return self._polarity
 
     @property
-    def source_condition(self) -> Zustand | None:
+    def source_condition(self) -> SlotState | None:
         return self._source_condition
 
     @property
-    def target_effect(self) -> Zustand | None:
+    def target_effect(self) -> SlotState | None:
         return self._target_effect
 
     @property
@@ -540,7 +540,7 @@ class Condition:
     different state values.
     """
 
-    def __init__(self, slot: Slot, state: Zustand, scope: Scope) -> None:
+    def __init__(self, slot: Slot, state: SlotState, scope: Scope) -> None:
         self.slot = slot
         self.state = state
         self.scope = scope

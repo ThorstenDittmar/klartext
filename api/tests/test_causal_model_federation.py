@@ -23,9 +23,9 @@ from api.models.causal_model import (
     Precondition,
     Scope,
     Slot,
+    SlotState,
     SlotType,
     TimeSlice,
-    Zustand,
 )
 
 # ---------------------------------------------------------------------------
@@ -57,7 +57,7 @@ def _model(identifier: str, start_year: int, end_year: int) -> CausalModel:
 def test_precondition_stores_slot_state_and_scope() -> None:
     """Expects all three attributes to be accessible after creation."""
     slot = _slot("co2")
-    state = Zustand.create("high", slot)
+    state = SlotState.create("high", slot)
     scope = _scope(2010, 2020)
 
     precond = Precondition(slot=slot, state=state, scope=scope)
@@ -70,7 +70,7 @@ def test_precondition_stores_slot_state_and_scope() -> None:
 def test_postcondition_stores_slot_state_and_scope() -> None:
     """Expects all three attributes to be accessible after creation."""
     slot = _slot("temperature")
-    state = Zustand.create("rising", slot)
+    state = SlotState.create("rising", slot)
     scope = _scope(2000, 2010)
 
     postcond = Postcondition(slot=slot, state=state, scope=scope)
@@ -87,7 +87,7 @@ def test_precondition_on_causal_relation() -> None:
     relation = CausalRelation.create(identifier="r", source=source, target=target)
 
     precond = Precondition(
-        slot=source, state=Zustand.create("high", source), scope=_scope(2000, 2010)
+        slot=source, state=SlotState.create("high", source), scope=_scope(2000, 2010)
     )
     relation.preconditions.append(precond)
 
@@ -104,10 +104,10 @@ def test_conditions_on_different_slots_are_compatible() -> None:
     slot_a = _slot("co2")
     slot_b = _slot("temperature")
     post = Postcondition(
-        slot=slot_a, state=Zustand.create("high", slot_a), scope=_scope(2000, 2010)
+        slot=slot_a, state=SlotState.create("high", slot_a), scope=_scope(2000, 2010)
     )
     pre = Precondition(
-        slot=slot_b, state=Zustand.create("rising", slot_b), scope=_scope(2010, 2020)
+        slot=slot_b, state=SlotState.create("rising", slot_b), scope=_scope(2010, 2020)
     )
 
     assert post.is_compatible_with(pre)
@@ -116,8 +116,10 @@ def test_conditions_on_different_slots_are_compatible() -> None:
 def test_conditions_on_same_slot_with_same_state_are_compatible() -> None:
     """Expects compatible transition: Postcondition 'rising' consumed by Precondition 'rising'."""
     slot = _slot("co2")
-    post = Postcondition(slot=slot, state=Zustand.create("rising", slot), scope=_scope(2000, 2010))
-    pre = Precondition(slot=slot, state=Zustand.create("rising", slot), scope=_scope(2010, 2020))
+    post = Postcondition(
+        slot=slot, state=SlotState.create("rising", slot), scope=_scope(2000, 2010)
+    )
+    pre = Precondition(slot=slot, state=SlotState.create("rising", slot), scope=_scope(2010, 2020))
 
     assert post.is_compatible_with(pre)
 
@@ -125,8 +127,10 @@ def test_conditions_on_same_slot_with_same_state_are_compatible() -> None:
 def test_conditions_on_same_slot_with_different_states_are_incompatible() -> None:
     """Expects incompatible transition: Postcondition 'rising' vs Precondition 'stable'."""
     slot = _slot("co2")
-    post = Postcondition(slot=slot, state=Zustand.create("rising", slot), scope=_scope(2000, 2010))
-    pre = Precondition(slot=slot, state=Zustand.create("stable", slot), scope=_scope(2010, 2020))
+    post = Postcondition(
+        slot=slot, state=SlotState.create("rising", slot), scope=_scope(2000, 2010)
+    )
+    pre = Precondition(slot=slot, state=SlotState.create("stable", slot), scope=_scope(2010, 2020))
 
     assert not post.is_compatible_with(pre)
 
@@ -168,7 +172,7 @@ def test_federation_get_successors_does_not_return_predecessor() -> None:
 def test_validate_transition_returns_empty_for_compatible_conditions() -> None:
     """Expects no conflicts when the Postcondition of slice N matches Precondition of slice N+1."""
     slot = _slot("temperature")
-    state_rising = Zustand.create("rising", slot)
+    state_rising = SlotState.create("rising", slot)
 
     model_1 = _model("slice_1", 2000, 2009)
     model_1.postconditions.append(
@@ -195,12 +199,12 @@ def test_validate_transition_returns_condition_conflict_for_incompatible_states(
 
     model_1 = _model("slice_1", 2000, 2009)
     model_1.postconditions.append(
-        Postcondition(slot=slot, state=Zustand.create("rising", slot), scope=_scope(2000, 2009))
+        Postcondition(slot=slot, state=SlotState.create("rising", slot), scope=_scope(2000, 2009))
     )
 
     model_2 = _model("slice_2", 2010, 2019)
     model_2.preconditions.append(
-        Precondition(slot=slot, state=Zustand.create("stable", slot), scope=_scope(2010, 2019))
+        Precondition(slot=slot, state=SlotState.create("stable", slot), scope=_scope(2010, 2019))
     )
 
     federation = CausalModelFederation.create(identifier="fed")
@@ -220,18 +224,26 @@ def test_validate_transition_detects_multiple_conflicts_for_multiple_slots() -> 
 
     model_1 = _model("slice_1", 2000, 2009)
     model_1.postconditions.append(
-        Postcondition(slot=slot_a, state=Zustand.create("rising", slot_a), scope=_scope(2000, 2009))
+        Postcondition(
+            slot=slot_a, state=SlotState.create("rising", slot_a), scope=_scope(2000, 2009)
+        )
     )
     model_1.postconditions.append(
-        Postcondition(slot=slot_b, state=Zustand.create("rising", slot_b), scope=_scope(2000, 2009))
+        Postcondition(
+            slot=slot_b, state=SlotState.create("rising", slot_b), scope=_scope(2000, 2009)
+        )
     )
 
     model_2 = _model("slice_2", 2010, 2019)
     model_2.preconditions.append(
-        Precondition(slot=slot_a, state=Zustand.create("stable", slot_a), scope=_scope(2010, 2019))
+        Precondition(
+            slot=slot_a, state=SlotState.create("stable", slot_a), scope=_scope(2010, 2019)
+        )
     )
     model_2.preconditions.append(
-        Precondition(slot=slot_b, state=Zustand.create("stable", slot_b), scope=_scope(2010, 2019))
+        Precondition(
+            slot=slot_b, state=SlotState.create("stable", slot_b), scope=_scope(2010, 2019)
+        )
     )
 
     federation = CausalModelFederation.create(identifier="fed")
@@ -252,7 +264,7 @@ def test_get_active_postconditions_returns_postconditions_from_predecessors() ->
     """Expects Postconditions from slice N to be visible at slice N+1 when not consumed."""
     slot = _slot("co2")
     postcond = Postcondition(
-        slot=slot, state=Zustand.create("rising", slot), scope=_scope(2000, 2009)
+        slot=slot, state=SlotState.create("rising", slot), scope=_scope(2000, 2009)
     )
 
     model_1 = _model("slice_1", 2000, 2009)
@@ -273,7 +285,7 @@ def test_get_active_postconditions_returns_postconditions_from_predecessors() ->
 def test_get_active_postconditions_excludes_consumed_postcondition() -> None:
     """Expects a Postcondition consumed by a compatible Precondition to not propagate further."""
     slot = _slot("co2")
-    state_rising = Zustand.create("rising", slot)
+    state_rising = SlotState.create("rising", slot)
 
     model_1 = _model("slice_1", 2000, 2009)
     postcond = Postcondition(slot=slot, state=state_rising, scope=_scope(2000, 2009))
@@ -301,7 +313,7 @@ def test_get_active_postconditions_propagates_across_multiple_slices() -> None:
     """Expects unbounded forward propagation until explicitly consumed."""
     slot = _slot("sea_level")
     postcond = Postcondition(
-        slot=slot, state=Zustand.create("rising", slot), scope=_scope(2000, 2009)
+        slot=slot, state=SlotState.create("rising", slot), scope=_scope(2000, 2009)
     )
 
     model_1 = _model("slice_1", 2000, 2009)
@@ -344,14 +356,14 @@ def test_complex_three_slice_scenario_with_valid_and_invalid_transitions() -> No
     model_1.postconditions.append(
         Postcondition(
             slot=slot_co2,
-            state=Zustand.create("high", slot_co2),
+            state=SlotState.create("high", slot_co2),
             scope=_scope(2000, 2009),
         )
     )
     model_1.postconditions.append(
         Postcondition(
             slot=slot_temp,
-            state=Zustand.create("rising", slot_temp),
+            state=SlotState.create("rising", slot_temp),
             scope=_scope(2000, 2009),
         )
     )
@@ -360,14 +372,14 @@ def test_complex_three_slice_scenario_with_valid_and_invalid_transitions() -> No
     model_2.preconditions.append(
         Precondition(
             slot=slot_co2,
-            state=Zustand.create("high", slot_co2),  # compatible → consumed
+            state=SlotState.create("high", slot_co2),  # compatible → consumed
             scope=_scope(2010, 2019),
         )
     )
     model_2.preconditions.append(
         Precondition(
             slot=slot_temp,
-            state=Zustand.create("stable", slot_temp),  # incompatible → conflict
+            state=SlotState.create("stable", slot_temp),  # incompatible → conflict
             scope=_scope(2010, 2019),
         )
     )

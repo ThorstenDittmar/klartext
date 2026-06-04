@@ -102,7 +102,7 @@ def _to_wirkgefuege_suggestion_schema(
     return WirkgefuegeSuggestionResponse(
         suggestion_type=ws.suggestion_type,
         slot=ws.slot,
-        zustand=ws.zustand,
+        slot_state=ws.slot_state,
         source_slot=ws.source_slot,
         source_condition=ws.source_condition,
         target_slot=ws.target_slot,
