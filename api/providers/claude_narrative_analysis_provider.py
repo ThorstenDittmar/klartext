@@ -152,7 +152,14 @@ class ClaudeNarrativeAnalysisProvider(NarrativeAnalysisProvider):
         )
 
     def _parse_wirkgefuege_suggestion(self, record: dict[str, Any]) -> WirkgefuegeSuggestion:
-        """Converts a raw wirkgefuege_suggestion record to a WirkgefuegeSuggestion."""
+        """Converts a raw wirkgefuege_suggestion record to a WirkgefuegeSuggestion.
+
+        Raises NarrativeAnalysisError if the record is not a JSON object.
+        """
+        if not isinstance(record, dict):
+            raise NarrativeAnalysisError(
+                f"wirkgefuege_suggestion must be a JSON object, got: {type(record)}"
+            )
         return WirkgefuegeSuggestion(
             suggestion_type=record.get("type", "slot_zustand"),
             slot=record.get("slot"),
