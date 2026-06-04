@@ -13,4 +13,4 @@ from dotenv import load_dotenv
 
 # Load api/.env — relative to this conftest, two levels up is the api/ directory
 _ENV_FILE = Path(__file__).parent.parent / ".env"
-load_dotenv(_ENV_FILE, override=False)
+load_dotenv(_ENV_FILE, override=True)
