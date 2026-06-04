@@ -41,3 +41,7 @@ class NarrativePersistenceError(RepositoryError):
 
 class NarrativeAnalysisError(ServiceError):
     """Raised when narrative analysis fails (e.g. provider error or invalid response)."""
+
+
+class WirkgefuegeSuggestionError(ServiceError):
+    """Raised when Wirkgefüge suggestion fails (e.g. provider error or invalid response)."""
