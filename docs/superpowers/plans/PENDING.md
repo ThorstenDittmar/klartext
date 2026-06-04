@@ -63,7 +63,17 @@ Steps 2–6 from `experiment_scope.md`:
 
 ## Other open items
 
+- **Migration 20260603000001 anwenden** — `supabase db push` oder `supabase migration up`
+  gegen die laufende Instanz ausführen. Ohne diesen Schritt schlägt jeder Actor/Claim-DB-Zugriff fehl
+  (neue Spaltenname `label`, `actor_type`, `notes`, `entity_ref` existieren noch nicht in der DB).
 - **N-01** (`clean_up.md`): `precondition-postcondition.md.rtf` als Markdown neu speichern
 - **N-04** (`clean_up.md`): CausalModelFederation vollständig spezifizieren
 - **N-06** (`clean_up.md`): Community Model Specs anlegen
 - **Fragment aus narrative_units.typ entfernen** — erst bei Phase-2-Migration zu `document_nodes`
+
+## Lessons Learned — Refactoring-Scope
+
+Bei Actor/Claim-Refactorings (Plan B) wurde `api/cli.py` zunächst vergessen —
+es enthält Seeddata-Code der dieselben Domain-Felder referenziert wie Service/Router.
+**Regel für künftige Pläne:** Bei Domain-Feld-Umbenennungen immer `api/cli.py` in die
+Dateiliste aufnehmen.

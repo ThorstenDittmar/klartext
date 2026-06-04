@@ -205,6 +205,12 @@ via DocumentLink referenziert wird.
 von narrativ-gebunden zu plattformweit. Bestehende `narrative_actors`-
 Einträge müssen zu DocumentAssets migriert werden.
 
+**Entity-Ref-Linking:** `UpdateActorRequest` enthält bewusst kein `entity_ref`.
+Das Verknüpfen eines Actors mit einer Causal-Model-Entity ist eine eigenständige
+Operation (geplant für Plan C) und gehört nicht in den allgemeinen PUT-Actor-Endpoint.
+`Actor.update()` im Domain-Objekt akzeptiert `entity_ref` als optionalen Parameter,
+damit spätere Service- und Repository-Layer ihn durchleiten können.
+
 ---
 
 ## 5. Claim
