@@ -61,32 +61,33 @@ class CreateSceneRequest(BaseModel):
 class CreateActorRequest(BaseModel):
     """Request body for POST /narratives/{id}/actors."""
 
-    name: str
-    typ: ActorType
-    description: str | None = None
+    label: str
+    actor_type: ActorType
+    notes: str | None = None
+    entity_ref: str | None = None
 
-    @field_validator("name")
+    @field_validator("label")
     @classmethod
-    def name_not_empty(cls, value: str) -> str:
-        """Rejects empty or whitespace-only names."""
+    def label_not_empty(cls, value: str) -> str:
+        """Rejects empty or whitespace-only labels."""
         if not value.strip():
-            raise ValueError("name must not be empty")
+            raise ValueError("label must not be empty")
         return value
 
 
 class UpdateActorRequest(BaseModel):
     """Request body for PUT /narratives/{id}/actors/{actor_id}."""
 
-    name: str
-    typ: ActorType
-    description: str | None = None
+    label: str
+    actor_type: ActorType
+    notes: str | None = None
 
-    @field_validator("name")
+    @field_validator("label")
     @classmethod
-    def name_not_empty(cls, value: str) -> str:
-        """Rejects empty or whitespace-only names."""
+    def label_not_empty(cls, value: str) -> str:
+        """Rejects empty or whitespace-only labels."""
         if not value.strip():
-            raise ValueError("name must not be empty")
+            raise ValueError("label must not be empty")
         return value
 
 
@@ -108,9 +109,10 @@ class ActorResponse(BaseModel):
     """A single actor as returned in the API response."""
 
     id: str
-    name: str
-    typ: str
-    description: str | None
+    label: str
+    actor_type: str
+    notes: str | None
+    entity_ref: str | None = None
 
 
 class SceneResponse(BaseModel):

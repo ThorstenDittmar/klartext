@@ -22,9 +22,12 @@ class ExtractClaimsRequest(BaseModel):
 class ClaimResponse(BaseModel):
     """Response shape for a single extracted Claim."""
 
+    label: str
     text: str
     typ: str
     confidence: float
+    status: str = "draft"
+    wirkgefuege_ref: str | None = None
 
 
 class ExtractClaimsResponse(BaseModel):

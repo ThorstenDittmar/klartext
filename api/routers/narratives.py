@@ -54,18 +54,22 @@ def _to_actor_response(actor: Actor) -> ActorResponse:
     """Converts an Actor domain object into an ActorResponse schema."""
     return ActorResponse(
         id=actor.id,  # type: ignore[arg-type]
-        name=actor.name,
-        typ=actor.typ.value,
-        description=actor.description,
+        label=actor.label,
+        actor_type=actor.actor_type.value,
+        notes=actor.notes,
+        entity_ref=actor.entity_ref,
     )
 
 
 def _to_claim_response(claim: Claim) -> ClaimResponse:
     """Converts a Claim domain object into a ClaimResponse schema."""
     return ClaimResponse(
+        label=claim.label,
         text=claim.text,
         typ=claim.typ.value,
         confidence=claim.confidence,
+        status=claim.status.value,
+        wirkgefuege_ref=claim.wirkgefuege_ref,
     )
 
 
@@ -161,7 +165,13 @@ async def add_actor(
     service: NarrativeService = Depends(get_narrative_service),
 ) -> ActorResponse:
     """Adds a new Actor to the Narrative with the given ID."""
-    actor = await service.add_actor(narrative_id, request.name, request.typ, request.description)
+    actor = await service.add_actor(
+        narrative_id,
+        request.label,
+        request.actor_type,
+        request.notes,
+        request.entity_ref,
+    )
     return _to_actor_response(actor)
 
 
@@ -175,9 +185,13 @@ async def update_actor(
     request: UpdateActorRequest,
     service: NarrativeService = Depends(get_narrative_service),
 ) -> ActorResponse:
-    """Updates the name, type and description of an existing Actor."""
+    """Updates the label, actor_type and notes of an existing Actor."""
     actor = await service.update_actor(
-        narrative_id, actor_id, request.name, request.typ, request.description
+        narrative_id,
+        actor_id,
+        request.label,
+        request.actor_type,
+        request.notes,
     )
     return _to_actor_response(actor)
 
