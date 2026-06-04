@@ -87,6 +87,7 @@ class Claim:
         """Reconstructs a Claim from a database record.
 
         Raises ClaimValidationError for an unrecognised typ value.
+        Missing status defaults to DRAFT (backward-compatible with pre-migration rows).
         """
         try:
             typ = ClaimType(record["typ"])

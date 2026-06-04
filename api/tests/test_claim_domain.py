@@ -119,6 +119,39 @@ def test_claim_from_record_restores_linked_status() -> None:
     assert claim.wirkgefuege_ref == "slot-uuid-789"
 
 
+def test_claim_from_record_defaults_status_to_draft_when_missing() -> None:
+    """Expects DRAFT status when the database record has no status key (pre-migration rows)."""
+    record = {
+        "id": "abc-123",
+        "label": "CO2 is rising",
+        "text": "Ein Claim.",
+        "typ": "empirical",
+        "confidence": 0.8,
+        "wirkgefuege_ref": None,
+    }
+
+    claim = Claim.from_record(record)
+
+    assert claim.status == ClaimStatus.DRAFT
+
+
+def test_claim_from_record_restores_unresolved_status() -> None:
+    """Expects UNRESOLVED status to be correctly restored from the DB record."""
+    record = {
+        "id": "abc-789",
+        "label": "Open gap",
+        "text": "Text.",
+        "typ": "empirical",
+        "confidence": 0.5,
+        "status": "unresolved",
+        "wirkgefuege_ref": None,
+    }
+
+    claim = Claim.from_record(record)
+
+    assert claim.status == ClaimStatus.UNRESOLVED
+
+
 # --- Confidence boundaries ---
 
 
@@ -143,6 +176,12 @@ def test_claim_create_raises_for_empty_label() -> None:
     """Expects ClaimValidationError because a claim without a label cannot be identified."""
     with pytest.raises(ClaimValidationError):
         Claim.create(label="", text="Ein Claim.", typ=ClaimType.EMPIRICAL, confidence=0.8)
+
+
+def test_claim_create_raises_for_whitespace_only_label() -> None:
+    """Expects ClaimValidationError because a whitespace-only label is equivalent to empty."""
+    with pytest.raises(ClaimValidationError):
+        Claim.create(label="   ", text="Ein Claim.", typ=ClaimType.EMPIRICAL, confidence=0.8)
 
 
 def test_claim_create_raises_for_empty_text() -> None:
