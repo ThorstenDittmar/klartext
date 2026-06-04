@@ -101,3 +101,54 @@ class FakeCausalModelRepository(CausalModelRepository):
             self._slots[causal_model_id] = [
                 s for s in self._slots[causal_model_id] if s.id != slot_id
             ]
+
+    async def add_relation(self, causal_model_id: str, relation: CausalRelation) -> CausalRelation:
+        """Adds a CausalRelation and returns it with an assigned ID."""
+        self.logger.info(
+            "FakeCausalModelRepository.add_relation: causal_model_id=%s, identifier=%s",
+            causal_model_id,
+            relation.identifier,
+        )
+        if causal_model_id not in self._store:
+            raise CausalModelNotFoundError(f"CausalModel not found: {causal_model_id}")
+        saved = CausalRelation(
+            id=str(uuid.uuid4()),
+            identifier=relation.identifier,
+            source=relation.source,
+            target=relation.target,
+            mechanism=relation.mechanism,
+            polarity=relation.polarity,
+            epistemic_status=relation.epistemic_status,
+        )
+        self._relations.setdefault(causal_model_id, []).append(saved)
+        return saved
+
+    async def find_relations_by_model_id(self, causal_model_id: str) -> list[CausalRelation]:
+        """Returns all CausalRelations for the given CausalModel ID."""
+        self.logger.debug(
+            "FakeCausalModelRepository.find_relations_by_model_id: causal_model_id=%s",
+            causal_model_id,
+        )
+        return list(self._relations.get(causal_model_id, []))
+
+    async def update_relation(self, relation: CausalRelation) -> CausalRelation:
+        """Persists the current state of a CausalRelation by replacing the stored entry."""
+        self.logger.info("FakeCausalModelRepository.update_relation: relation_id=%s", relation.id)
+        for relations in self._relations.values():
+            for i, r in enumerate(relations):
+                if r.id == relation.id:
+                    relations[i] = relation
+                    return relation
+        return relation
+
+    async def remove_relation(self, causal_model_id: str, relation_id: str) -> None:
+        """Removes a CausalRelation from the in-memory store."""
+        self.logger.info(
+            "FakeCausalModelRepository.remove_relation: causal_model_id=%s, relation_id=%s",
+            causal_model_id,
+            relation_id,
+        )
+        if causal_model_id in self._relations:
+            self._relations[causal_model_id] = [
+                r for r in self._relations[causal_model_id] if r.id != relation_id
+            ]

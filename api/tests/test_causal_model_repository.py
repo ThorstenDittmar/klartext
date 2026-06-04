@@ -10,7 +10,7 @@ from __future__ import annotations
 import pytest
 
 from api.exceptions.causal_model import CausalModelNotFoundError
-from api.models.causal_model import EpistemicStatus, Slot, SlotType
+from api.models.causal_model import CausalRelation, EpistemicStatus, Polarity, Slot, SlotType
 from tests.fakes.fake_causal_model_repository import FakeCausalModelRepository
 from tests.mothers.causal_model_mother import AxiomMother, CausalModelMother
 
@@ -190,6 +190,84 @@ async def test_slot_repository_add_slot_raises_for_unknown_model() -> None:
 
     with pytest.raises(CausalModelNotFoundError):
         await repo.add_slot("00000000-0000-0000-0000-000000000000", slot)
+
+
+# ---------------------------------------------------------------------------
+# CausalRelation repository contract
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_relation_repository_add_relation_assigns_id() -> None:
+    """Expects add_relation to return the CausalRelation with a non-None ID."""
+    repo = FakeCausalModelRepository()
+    cm = await repo.save(CausalModelMother.empty())
+    source = await repo.add_slot(cm.id, Slot.create("money_supply", SlotType.PHYSICAL_QUANTITY))  # type: ignore[arg-type]
+    target = await repo.add_slot(cm.id, Slot.create("inflation", SlotType.TREND))  # type: ignore[arg-type]
+    relation = CausalRelation.create(
+        identifier="money_supply_causes_inflation", source=source, target=target
+    )
+
+    saved = await repo.add_relation(cm.id, relation)  # type: ignore[arg-type]
+
+    assert saved.id is not None
+
+
+@pytest.mark.asyncio
+async def test_relation_repository_add_relation_makes_it_retrievable() -> None:
+    """Expects find_relations_by_model_id to return the added CausalRelation."""
+    repo = FakeCausalModelRepository()
+    cm = await repo.save(CausalModelMother.empty())
+    source = await repo.add_slot(cm.id, Slot.create("money_supply", SlotType.PHYSICAL_QUANTITY))  # type: ignore[arg-type]
+    target = await repo.add_slot(cm.id, Slot.create("inflation", SlotType.TREND))  # type: ignore[arg-type]
+    relation = CausalRelation.create("money_supply_causes_inflation", source=source, target=target)
+    await repo.add_relation(cm.id, relation)  # type: ignore[arg-type]
+
+    found = await repo.find_relations_by_model_id(cm.id)  # type: ignore[arg-type]
+
+    assert len(found) == 1
+    assert found[0].identifier == "money_supply_causes_inflation"
+
+
+@pytest.mark.asyncio
+async def test_relation_repository_update_relation_persists_mechanism() -> None:
+    """Expects update_relation to persist mechanism and polarity changes."""
+    repo = FakeCausalModelRepository()
+    cm = await repo.save(CausalModelMother.empty())
+    source = await repo.add_slot(cm.id, Slot.create("money_supply", SlotType.PHYSICAL_QUANTITY))  # type: ignore[arg-type]
+    target = await repo.add_slot(cm.id, Slot.create("inflation", SlotType.TREND))  # type: ignore[arg-type]
+    saved = await repo.add_relation(  # type: ignore[arg-type]
+        cm.id,
+        CausalRelation.create("money_supply_causes_inflation", source=source, target=target),
+    )
+    saved.update(
+        mechanism="quantity_theory",
+        polarity=Polarity.POSITIVE,
+        epistemic_status=EpistemicStatus.AXIOMATIC,
+    )
+
+    await repo.update_relation(saved)
+
+    found = await repo.find_relations_by_model_id(cm.id)  # type: ignore[arg-type]
+    assert found[0].mechanism == "quantity_theory"
+
+
+@pytest.mark.asyncio
+async def test_relation_repository_remove_relation_deletes_it() -> None:
+    """Expects remove_relation to make the CausalRelation no longer retrievable."""
+    repo = FakeCausalModelRepository()
+    cm = await repo.save(CausalModelMother.empty())
+    source = await repo.add_slot(cm.id, Slot.create("money_supply", SlotType.PHYSICAL_QUANTITY))  # type: ignore[arg-type]
+    target = await repo.add_slot(cm.id, Slot.create("inflation", SlotType.TREND))  # type: ignore[arg-type]
+    saved = await repo.add_relation(  # type: ignore[arg-type]
+        cm.id,
+        CausalRelation.create("money_supply_causes_inflation", source=source, target=target),
+    )
+
+    await repo.remove_relation(cm.id, saved.id)  # type: ignore[arg-type]
+
+    found = await repo.find_relations_by_model_id(cm.id)  # type: ignore[arg-type]
+    assert found == []
 
 
 # ---------------------------------------------------------------------------
