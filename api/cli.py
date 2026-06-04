@@ -9,6 +9,7 @@ Usage (after pip install -e .):
   klartext test --all         Run unit tests + integration tests
   klartext health             Call the /health endpoint and print results
   klartext testdata           Seed the database with a consistent test dataset
+  klartext flush              Delete all data rows without restarting anything
   klartext db start           Start the local Supabase instance
   klartext db reset           Reset the local Supabase database (re-applies migrations)
   klartext db status          Show the status of the local Supabase instance
@@ -480,6 +481,52 @@ def testdata(
     asyncio.run(_seed(url))
     typer.echo()
     typer.secho("Done. System is seeded with test data.", fg=typer.colors.GREEN, bold=True)
+
+
+# ---------------------------------------------------------------------------
+# flush
+# ---------------------------------------------------------------------------
+
+_FLUSH_SQL = """
+TRUNCATE TABLE
+    causal_relations,
+    slots,
+    axioms,
+    causal_models,
+    claims,
+    narrative_actors,
+    narrative_scenes,
+    narratives
+RESTART IDENTITY CASCADE;
+""".strip()
+
+
+@app.command()
+def flush(
+    yes: bool = typer.Option(False, "--yes", "-y", help="Skip confirmation prompt"),
+) -> None:
+    """Delete all data rows without restarting the API or Supabase.
+
+    Truncates all application tables and resets their ID sequences.
+    The running API server keeps working — the DB is just empty afterwards.
+    """
+    if not yes:
+        typer.confirm("Delete all data? This cannot be undone.", abort=True)
+
+    project_id = _supabase_project_id()
+    db_container = f"supabase_db_{project_id}"
+
+    result = subprocess.run(
+        ["docker", "exec", "-i", db_container, "psql", "-U", "postgres", "-d", "postgres"],
+        input=_FLUSH_SQL.encode(),
+        capture_output=True,
+    )
+
+    if result.returncode != 0:
+        typer.secho(f"✗  Flush failed:\n{result.stderr.decode()}", fg=typer.colors.RED)
+        raise typer.Exit(1)
+
+    typer.secho("✓  All tables flushed. Database is empty.", fg=typer.colors.GREEN)
 
 
 # ---------------------------------------------------------------------------

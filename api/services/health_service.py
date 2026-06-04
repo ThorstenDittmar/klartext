@@ -6,10 +6,12 @@ SupabaseHealthChecker is the adapter used in production.
 
 from __future__ import annotations
 
+import ssl
 from abc import ABC, abstractmethod
 from enum import StrEnum
 
 import anthropic
+import httpx
 from supabase import AsyncClient
 
 
@@ -64,10 +66,16 @@ class SupabaseHealthChecker(HealthChecker):
             return HealthResult(name="database", status=HealthStatus.ERROR, detail=str(exc))
 
     async def check_anthropic(self) -> HealthResult:
-        """Attempts to list models via the Anthropic SDK to confirm the API is reachable."""
+        """Sends a minimal message via the Anthropic SDK to confirm the API is reachable."""
         try:
-            client = anthropic.AsyncAnthropic()
-            await client.models.list()
+            client = anthropic.AsyncAnthropic(
+                http_client=httpx.AsyncClient(verify=ssl.create_default_context())
+            )
+            await client.messages.create(
+                model="claude-haiku-4-5",
+                max_tokens=1,
+                messages=[{"role": "user", "content": "hi"}],
+            )
             return HealthResult(name="anthropic", status=HealthStatus.OK)
         except Exception as exc:
             return HealthResult(name="anthropic", status=HealthStatus.ERROR, detail=str(exc))

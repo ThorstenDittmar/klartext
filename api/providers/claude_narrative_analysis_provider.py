@@ -64,7 +64,7 @@ class ClaudeNarrativeAnalysisProvider(NarrativeAnalysisProvider):
 
         message = await self._client.messages.create(
             model="claude-sonnet-4-5",
-            max_tokens=2048,
+            max_tokens=8192,
             system=_SYSTEM_PROMPT,
             messages=[
                 {

@@ -16,8 +16,10 @@ DI chain:
 from __future__ import annotations
 
 import os
+import ssl
 
 import anthropic
+import httpx
 from fastapi import Depends
 from supabase import AsyncClient, acreate_client
 
@@ -40,6 +42,19 @@ from api.services.narrative_analysis_service import NarrativeAnalysisService
 from api.services.narrative_import_service import NarrativeImportService
 from api.services.narrative_service import NarrativeService
 from api.services.wirkgefuege_suggestion_service import WirkgefuegeSuggestionService
+
+
+def _make_anthropic_client() -> anthropic.AsyncAnthropic:
+    """Creates an AsyncAnthropic client with the system SSL certificate bundle.
+
+    The default httpx client uses certifi's CA bundle which may not include
+    all certificates needed on this system. Passing the system SSL context
+    fixes connection errors on macOS.
+    """
+    return anthropic.AsyncAnthropic(
+        api_key=os.environ.get("ANTHROPIC_API_KEY"),
+        http_client=httpx.AsyncClient(verify=ssl.create_default_context()),
+    )
 
 
 async def get_supabase_client() -> AsyncClient:
@@ -92,7 +107,7 @@ async def get_health_checker(
 
 def get_claim_extractor_service() -> ClaimExtractorService:
     """Wires ClaudeClaimExtractionProvider into ClaimExtractorService."""
-    client = anthropic.AsyncAnthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+    client = _make_anthropic_client()
     provider = ClaudeClaimExtractionProvider(client=client)
     return ClaimExtractorService(provider=provider)
 
@@ -113,7 +128,7 @@ async def get_causal_model_repository(
 
 def get_consistency_checker() -> ConsistencyChecker:
     """Wires ClaudeConsistencyChecker with an Anthropic async client."""
-    client = anthropic.AsyncAnthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+    client = _make_anthropic_client()
     return ClaudeConsistencyChecker(client=client)
 
 
@@ -137,7 +152,7 @@ async def get_narrative_analysis_service(
         ClaudeNarrativeAnalysisProvider,  # noqa: PLC0415
     )
 
-    client = anthropic.AsyncAnthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+    client = _make_anthropic_client()
     provider = ClaudeNarrativeAnalysisProvider(client=client)
     return NarrativeAnalysisService(repository=repository, provider=provider)
 
@@ -155,7 +170,7 @@ async def get_wirkgefuege_suggestion_service(
         ClaudeWirkgefuegeSuggestionProvider,  # noqa: PLC0415
     )
 
-    client = anthropic.AsyncAnthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+    client = _make_anthropic_client()
     provider = ClaudeWirkgefuegeSuggestionProvider(client=client)
     return WirkgefuegeSuggestionService(
         narrative_repository=narrative_repository,
