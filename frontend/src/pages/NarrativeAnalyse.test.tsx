@@ -12,6 +12,7 @@ vi.mock("../lib/api", () => ({
         suggested_relations: [],
         from_claims: [],
       }),
+      addActor: vi.fn().mockResolvedValue({ id: "a1", label: "Test", actor_type: "individual", notes: null, entity_ref: null }),
     },
   },
 }));

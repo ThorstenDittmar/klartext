@@ -74,6 +74,24 @@ export default function NarrativeAnalyse() {
 
   const anyClaimAccepted = claimStates.some((s) => s === "accepted");
 
+  async function acceptActor(index: number) {
+    // Update local UI state immediately (optimistic)
+    setActorStates((prev) => prev.map((s, j) => (j === index ? "accepted" : s)));
+    // Persist to DB — non-critical, UI already shows accepted
+    const actor = analysis!.actors[index];
+    try {
+      await api.narratives.addActor(
+        narrativeId!,
+        actor.label,
+        actor.actor_type,
+        null,
+        actor.entity_suggestion ?? null,
+      );
+    } catch {
+      console.warn("Akteur konnte nicht gespeichert werden:", actor.label);
+    }
+  }
+
   async function generateSuggestions() {
     setSuggesting(true);
     setError(null);
@@ -119,9 +137,7 @@ export default function NarrativeAnalyse() {
             key={i}
             actor={actor}
             state={actorStates[i]}
-            onAccept={() =>
-              setActorStates((prev) => prev.map((s, j) => (j === i ? "accepted" : s)))
-            }
+            onAccept={() => acceptActor(i)}
             onReject={() =>
               setActorStates((prev) => prev.map((s, j) => (j === i ? "rejected" : s)))
             }
