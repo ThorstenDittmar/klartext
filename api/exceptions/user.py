@@ -13,3 +13,7 @@ class UserValidationError(UserError):
 
 class UserNotFoundError(RepositoryError):
     """Raised when a User cannot be found by the given identifier."""
+
+
+class UserPersistenceError(RepositoryError):
+    """Raised when a database operation on a User fails unexpectedly."""

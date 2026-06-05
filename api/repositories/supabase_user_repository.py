@@ -6,7 +6,7 @@ import logging
 
 from supabase import AsyncClient
 
-from api.exceptions.user import UserNotFoundError, UserValidationError
+from api.exceptions.user import UserNotFoundError, UserPersistenceError, UserValidationError
 from api.models.user import User
 from api.repositories._supabase import records
 from api.repositories.user_repository import UserRepository
@@ -28,9 +28,13 @@ class SupabaseUserRepository(UserRepository):
         """Returns the User with the given ID.
 
         Raises UserNotFoundError if no row exists for the given ID.
+        Raises UserPersistenceError on database failure.
         """
         self.logger.debug("SupabaseUserRepository.find_by_id: user_id=%s", user_id)
-        result = await self._client.table(_USER_TABLE).select("*").eq("id", user_id).execute()
+        try:
+            result = await self._client.table(_USER_TABLE).select("*").eq("id", user_id).execute()
+        except Exception as e:
+            raise UserPersistenceError(f"Failed to load user {user_id}: {e}") from e
         if not result.data:
             raise UserNotFoundError(f"User not found: {user_id}")
         return User.from_record(records(result.data)[0])
@@ -47,11 +51,15 @@ class SupabaseUserRepository(UserRepository):
         """Inserts a new User row and returns it with its assigned ID.
 
         Raises UserValidationError if the user name is empty.
+        Raises UserPersistenceError on database failure.
         """
         self.logger.info("SupabaseUserRepository.add: name=%s", user.name)
         if not user.name.strip():
             raise UserValidationError("name must not be empty")
-        result = await self._client.table(_USER_TABLE).insert({"name": user.name}).execute()
+        try:
+            result = await self._client.table(_USER_TABLE).insert({"name": user.name}).execute()
+        except Exception as e:
+            raise UserPersistenceError(f"Failed to add user: {e}") from e
         if not result.data:
             raise UserValidationError("Add returned no data for user.")
         return User.from_record(records(result.data)[0])
@@ -60,14 +68,18 @@ class SupabaseUserRepository(UserRepository):
         """Persists changes to an existing User. Returns the updated User.
 
         Raises UserNotFoundError if no row exists for the given ID.
+        Raises UserPersistenceError on database failure.
         """
         self.logger.info("SupabaseUserRepository.update: user_id=%s", user.id)
-        result = (
-            await self._client.table(_USER_TABLE)
-            .update({"name": user.name})
-            .eq("id", user.id)
-            .execute()
-        )
+        try:
+            result = (
+                await self._client.table(_USER_TABLE)
+                .update({"name": user.name})
+                .eq("id", user.id)
+                .execute()
+            )
+        except Exception as e:
+            raise UserPersistenceError(f"Failed to update user {user.id}: {e}") from e
         if not result.data:
             raise UserNotFoundError(f"User not found: {user.id}")
         return User.from_record(records(result.data)[0])
@@ -76,8 +88,12 @@ class SupabaseUserRepository(UserRepository):
         """Deletes the User with the given ID.
 
         Raises UserNotFoundError if no row exists for the given ID.
+        Raises UserPersistenceError on database failure.
         """
         self.logger.info("SupabaseUserRepository.remove: user_id=%s", user_id)
-        result = await self._client.table(_USER_TABLE).delete().eq("id", user_id).execute()
+        try:
+            result = await self._client.table(_USER_TABLE).delete().eq("id", user_id).execute()
+        except Exception as e:
+            raise UserPersistenceError(f"Failed to remove user {user_id}: {e}") from e
         if not result.data:
             raise UserNotFoundError(f"User not found: {user_id}")
