@@ -10,27 +10,31 @@ from httpx import ASGITransport, AsyncClient
 
 from api.dependencies import get_claim_extractor_service, get_claim_service
 from api.main import app
-from api.models.claim import Claim, ClaimType
+from api.models.claim import Claim, ClaimStatus, ClaimType
 from api.models.narrative import Scene
-from tests.mothers.claim_mother import ClaimMother
 
 
 class FakeClaimExtractorService:
     """Returns a fixed list of claims regardless of the scene content."""
 
     async def extract_from_scene(self, scene: Scene) -> list[Claim]:
+        # Return claims with real IDs as if they were saved to the database
         return [
-            Claim.create(
+            Claim(
+                id="claim-001",
                 label="Inflation durch Geldmenge",
                 text="Inflation entsteht durch Geldmenge.",
                 typ=ClaimType.CAUSAL,
                 confidence=0.9,
+                status=ClaimStatus.DRAFT,
             ),
-            Claim.create(
+            Claim(
+                id="claim-002",
                 label="Zinserhöhungen dämpfen Nachfrage",
                 text="Zinserhöhungen dämpfen die Nachfrage.",
                 typ=ClaimType.CAUSAL,
                 confidence=0.85,
+                status=ClaimStatus.DRAFT,
             ),
         ]
 
@@ -40,7 +44,14 @@ class FakeClaimService:
 
     async def link_to_wirkgefuege(self, claim_id: str, wirkgefuege_ref: str) -> Claim:
         """Returns a claim with LINKED status and the given wirkgefuege_ref."""
-        claim = ClaimMother.causal()
+        claim = Claim(
+            id=claim_id,
+            label="Money supply causes inflation",
+            text="Inflation entsteht durch eine Ausweitung der Geldmenge.",
+            typ=ClaimType.CAUSAL,
+            confidence=0.9,
+            status=ClaimStatus.DRAFT,
+        )
         claim.link_to_wirkgefuege(wirkgefuege_ref)
         return claim
 
