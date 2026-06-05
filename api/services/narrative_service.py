@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
-from api.models.narrative import Actor, ActorType, Narrative, Scene
+from api.models.narrative import Actor, ActorType, Narrative, NarrativeSummary, Scene
 from api.repositories.narrative_repository import NarrativeRepository
 from api.services.narrative_import_service import NarrativeImportService
 
@@ -89,6 +89,14 @@ class NarrativeService:
         """Returns all Narratives owned by the given user."""
         self.logger.debug("NarrativeService.list_for_user: user_id=%s", user_id)
         return await self._repository.list_for_user(user_id)
+
+    async def list_summaries_for_user(self, user_id: str) -> list[NarrativeSummary]:
+        """Returns NarrativeSummary objects with counts for the given user.
+
+        Raises NarrativePersistenceError on database failure.
+        """
+        self.logger.debug("NarrativeService.list_summaries_for_user: user_id=%s", user_id)
+        return await self._repository.list_summaries_for_user(user_id)
 
     async def add_actor(
         self,

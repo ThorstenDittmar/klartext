@@ -141,6 +141,9 @@ class NarrativeSummaryResponse(BaseModel):
     title: str
     causal_model_id: str | None = None
     user_id: str | None = None
+    scene_count: int = 0
+    actor_count: int = 0
+    claim_count: int = 0
 
 
 # ---------------------------------------------------------------------------

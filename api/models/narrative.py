@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from enum import StrEnum
 from typing import Any
 
@@ -267,3 +268,19 @@ class Narrative:
     @property
     def actors(self) -> list[Actor]:
         return self._actors
+
+
+@dataclass(frozen=True)
+class NarrativeSummary:
+    """Read-model: a Narrative with precomputed counts for list views.
+
+    Created only by the repository layer — never persisted.
+    """
+
+    id: str
+    title: str
+    causal_model_id: str | None
+    user_id: str | None
+    scene_count: int
+    actor_count: int
+    claim_count: int

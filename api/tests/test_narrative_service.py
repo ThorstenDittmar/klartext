@@ -560,3 +560,33 @@ async def test_narrative_service_link_to_causal_model_raises_for_empty_id() -> N
 
     with pytest.raises(NarrativeValidationError):
         await service.link_to_causal_model(narrative.id, "")  # type: ignore[arg-type]
+
+
+# ---------------------------------------------------------------------------
+# list_summaries_for_user
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_list_summaries_for_user_returns_counts() -> None:
+    """Expects list_summaries_for_user to return NarrativeSummary with scene/actor/claim counts."""
+    from api.models.narrative import Narrative, NarrativeSummary, Scene
+    from api.tests.fakes.fake_narrative_repository import FakeNarrativeRepository
+    from api.tests.fakes.fake_user_repository import DEFAULT_USER_ID
+
+    repo = FakeNarrativeRepository()
+    n = Narrative.create("Test")
+    n.assign_user(DEFAULT_USER_ID)
+    saved = await repo.save(n)
+    scene = Scene.create(title="Scene 1", text="Text", position=0)
+    await repo.add_scene(saved.id, scene)  # type: ignore[arg-type]
+
+    service = make_service(repository=repo)
+    summaries = await service.list_summaries_for_user(DEFAULT_USER_ID)
+
+    assert len(summaries) == 1
+    assert isinstance(summaries[0], NarrativeSummary)
+    assert summaries[0].title == "Test"
+    assert summaries[0].scene_count == 1
+    assert summaries[0].actor_count == 0
+    assert summaries[0].claim_count == 0

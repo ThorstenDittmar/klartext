@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
-from api.models.narrative import Actor, Narrative, Scene
+from api.models.narrative import Actor, Narrative, NarrativeSummary, Scene
 
 
 class NarrativeRepository(ABC):
@@ -94,6 +94,14 @@ class NarrativeRepository(ABC):
     @abstractmethod
     async def list_for_user(self, user_id: str) -> list[Narrative]:
         """Returns all Narratives owned by the given user.
+
+        Returns an empty list if no narratives exist for that user.
+        Raises NarrativePersistenceError on database failure.
+        """
+
+    @abstractmethod
+    async def list_summaries_for_user(self, user_id: str) -> list[NarrativeSummary]:
+        """Returns Narrative summaries with precomputed counts for the given user.
 
         Returns an empty list if no narratives exist for that user.
         Raises NarrativePersistenceError on database failure.

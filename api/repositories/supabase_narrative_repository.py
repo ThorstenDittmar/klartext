@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+from typing import Any
 
 from supabase import AsyncClient
 
@@ -11,7 +12,7 @@ from api.exceptions.narrative import (
     NarrativeNotFoundError,
     NarrativePersistenceError,
 )
-from api.models.narrative import Actor, Narrative, Scene
+from api.models.narrative import Actor, Narrative, NarrativeSummary, Scene
 from api.repositories._supabase import records
 from api.repositories.narrative_repository import NarrativeRepository
 
@@ -19,6 +20,14 @@ _NARRATIVE_TABLE = "narrative"
 _SCENE_TABLE = "narrative_units"
 _ACTOR_TABLE = "narrative_actors"
 _SCENE_TYPE = "scene"
+
+
+def _extract_count(row: dict[str, Any], key: str) -> int:
+    """Extracts the embedded count value returned by PostgREST for a relation."""
+    counts = row.get(key, [])
+    if counts and isinstance(counts, list) and "count" in counts[0]:
+        return int(counts[0]["count"])
+    return 0
 
 
 class SupabaseNarrativeRepository(NarrativeRepository):
@@ -226,6 +235,45 @@ class SupabaseNarrativeRepository(NarrativeRepository):
             )
             for row in records(result.data)
         ]
+
+    async def list_summaries_for_user(self, user_id: str) -> list[NarrativeSummary]:
+        """Returns Narrative summaries with counts via Supabase embedded count queries.
+
+        Uses PostgREST embedded resource counting to avoid N+1 queries.
+        Raises NarrativePersistenceError on database failure.
+        """
+        self.logger.debug(
+            "SupabaseNarrativeRepository.list_summaries_for_user: user_id=%s", user_id
+        )
+        try:
+            result = (
+                await self._client.table("narrative")
+                .select(
+                    "id, title, causal_model_id, user_id, "
+                    "narrative_units(count), narrative_actors(count), claims(count)"
+                )
+                .eq("user_id", user_id)
+                .execute()
+            )
+        except Exception as e:
+            raise NarrativePersistenceError(
+                f"Failed to load narrative summaries for user {user_id}: {e}"
+            ) from e
+
+        summaries = []
+        for row in records(result.data):
+            summaries.append(
+                NarrativeSummary(
+                    id=row["id"],
+                    title=row["title"],
+                    causal_model_id=row.get("causal_model_id"),
+                    user_id=row.get("user_id"),
+                    scene_count=_extract_count(row, "narrative_units"),
+                    actor_count=_extract_count(row, "narrative_actors"),
+                    claim_count=_extract_count(row, "claims"),
+                )
+            )
+        return summaries
 
     async def add_scene(self, narrative_id: str, scene: Scene) -> Scene:
         """Inserts a new Scene row for the given Narrative. Returns the Scene with an assigned ID.

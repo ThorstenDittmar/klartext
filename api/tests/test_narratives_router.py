@@ -117,6 +117,23 @@ class FakeNarrativeService:
     async def list_for_user(self, user_id: str) -> list[Narrative]:
         return self._saved
 
+    async def list_summaries_for_user(self, user_id: str) -> list:
+        """Returns summaries derived from _saved for router tests."""
+        from api.models.narrative import NarrativeSummary
+
+        return [
+            NarrativeSummary(
+                id=n.id,  # type: ignore[arg-type]
+                title=n.title,
+                causal_model_id=n.causal_model_id,
+                user_id=None,
+                scene_count=len(n.scenes),
+                actor_count=len(n.actors),
+                claim_count=0,
+            )
+            for n in self._saved
+        ]
+
     async def add_actor(
         self,
         narrative_id: str,

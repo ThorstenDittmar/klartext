@@ -6,7 +6,7 @@ import logging
 import uuid
 
 from api.exceptions.narrative import ActorNotFoundError, NarrativeNotFoundError
-from api.models.narrative import Actor, Narrative, Scene
+from api.models.narrative import Actor, Narrative, NarrativeSummary, Scene
 from api.repositories.narrative_repository import NarrativeRepository
 
 
@@ -129,3 +129,23 @@ class FakeNarrativeRepository(NarrativeRepository):
         """Returns all Narratives in the store owned by the given user."""
         self.logger.debug("FakeNarrativeRepository.list_for_user: user_id=%s", user_id)
         return [n for n in self._store.values() if n.user_id == user_id]
+
+    async def list_summaries_for_user(self, user_id: str) -> list[NarrativeSummary]:
+        """Returns NarrativeSummary objects with counts computed from the in-memory store."""
+        self.logger.debug("FakeNarrativeRepository.list_summaries_for_user: user_id=%s", user_id)
+        result = []
+        for narrative in self._store.values():
+            if narrative.user_id != user_id:
+                continue
+            result.append(
+                NarrativeSummary(
+                    id=narrative.id,  # type: ignore[arg-type]
+                    title=narrative.title,
+                    causal_model_id=narrative.causal_model_id,
+                    user_id=narrative.user_id,
+                    scene_count=len(narrative.scenes),
+                    actor_count=len(narrative.actors),
+                    claim_count=0,  # fake doesn't track claims
+                )
+            )
+        return result

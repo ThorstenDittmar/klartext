@@ -51,6 +51,9 @@ export interface NarrativeSummary {
   title: string;
   causal_model_id: string | null;
   user_id?: string | null;
+  scene_count: number;
+  actor_count: number;
+  claim_count: number;
 }
 
 export interface Claim {

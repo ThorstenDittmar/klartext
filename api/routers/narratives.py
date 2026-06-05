@@ -199,18 +199,21 @@ async def list_narratives(
     service: NarrativeService = Depends(get_narrative_service),
     user_service: UserService = Depends(get_user_service),
 ) -> list[NarrativeSummaryResponse]:
-    """Returns all Narratives belonging to the default user as a flat list without their scenes."""
+    """Returns all Narrative summaries with counts for the default user."""
     user = await user_service.get_default()
     assert user.id is not None, "default user has no id — seeding is incomplete"
-    narratives = await service.list_for_user(user.id)
+    summaries = await service.list_summaries_for_user(user.id)
     return [
         NarrativeSummaryResponse(
-            id=n.id,  # type: ignore[arg-type]
-            title=n.title,
-            causal_model_id=n.causal_model_id,
-            user_id=n.user_id,
+            id=s.id,
+            title=s.title,
+            causal_model_id=s.causal_model_id,
+            user_id=s.user_id,
+            scene_count=s.scene_count,
+            actor_count=s.actor_count,
+            claim_count=s.claim_count,
         )
-        for n in narratives
+        for s in summaries
     ]
 
 

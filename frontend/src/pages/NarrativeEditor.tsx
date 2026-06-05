@@ -123,7 +123,7 @@ export default function NarrativeEditor() {
     setError(null);
     try {
       const narrative = await api.narratives.importFromPath(importPath.trim());
-      setSummaries((prev) => [...prev, { id: narrative.id, title: narrative.title, causal_model_id: narrative.causal_model_id }]);
+      setSummaries((prev) => [...prev, { id: narrative.id, title: narrative.title, causal_model_id: narrative.causal_model_id, scene_count: 0, actor_count: 0, claim_count: 0 }]);
       setSelected(narrative);
       setSelectedSceneId(null);
       setShowAddScene(false);
@@ -140,7 +140,7 @@ export default function NarrativeEditor() {
     setLoading(true);
     try {
       const narrative = await api.narratives.create(newTitle.trim());
-      setSummaries((prev) => [...prev, { id: narrative.id, title: narrative.title, causal_model_id: narrative.causal_model_id }]);
+      setSummaries((prev) => [...prev, { id: narrative.id, title: narrative.title, causal_model_id: narrative.causal_model_id, scene_count: 0, actor_count: 0, claim_count: 0 }]);
       setSelected(narrative);
       setSelectedSceneId(null);
       setShowAddScene(false);
