@@ -41,3 +41,20 @@ class ClaimRepository(ABC):
     @abstractmethod
     async def update(self, claim: Claim) -> Claim:
         """Persists the current state of an existing Claim. Returns the updated Claim."""
+
+    @abstractmethod
+    async def save_for_narrative(self, claims: list[Claim], narrative_id: str) -> list[Claim]:
+        """Persists all given Claims for the specified Narrative (no scene context required).
+
+        Returns the Claims with IDs assigned.
+        An empty input list is valid and returns an empty list.
+        Raises ClaimPersistenceError on database failure.
+        """
+
+    @abstractmethod
+    async def find_by_narrative_id(self, narrative_id: str) -> list[Claim]:
+        """Returns all Claims that belong to the given Narrative.
+
+        Returns an empty list when no Claims have been saved for that Narrative.
+        Raises ClaimPersistenceError on database failure.
+        """

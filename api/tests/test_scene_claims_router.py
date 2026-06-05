@@ -118,6 +118,14 @@ class FakeClaimRepository(ClaimRepository):
                     return claim
         return claim
 
+    async def save_for_narrative(self, claims: list[Claim], narrative_id: str) -> list[Claim]:
+        """Not used in router tests — returns empty list."""
+        return []
+
+    async def find_by_narrative_id(self, narrative_id: str) -> list[Claim]:
+        """Not used in router tests — returns empty list."""
+        return []
+
 
 # ---------------------------------------------------------------------------
 # Helpers

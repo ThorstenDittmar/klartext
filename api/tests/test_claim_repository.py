@@ -10,7 +10,7 @@ from __future__ import annotations
 import pytest
 
 from api.exceptions.claim import ClaimNotFoundError
-from api.models.claim import Claim
+from api.models.claim import Claim, ClaimType
 from tests.fakes.fake_claim_repository import FakeClaimRepository
 from tests.mothers.claim_mother import ClaimMother
 
@@ -120,6 +120,41 @@ async def test_claim_repository_update_persists_status_and_wirkgefuege_ref() -> 
     refetched = await repo.find_by_id(updated.id)  # type: ignore[arg-type]
     assert refetched.status.value == "linked"
     assert refetched.wirkgefuege_ref == "slot-abc"
+
+
+# ---------------------------------------------------------------------------
+# Integration – requires a running Supabase instance
+# Run with: pytest -m integration
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_save_for_narrative_returns_claims_with_ids() -> None:
+    """Expects save_for_narrative to persist claims and return them with IDs assigned."""
+    repo = FakeClaimRepository()
+    claims = [Claim.create("Label", "Full text here", ClaimType.CAUSAL, 0.9)]
+    saved = await repo.save_for_narrative(claims, narrative_id="narr-001")
+    assert len(saved) == 1
+    assert saved[0].id is not None
+
+
+@pytest.mark.asyncio
+async def test_find_by_narrative_id_returns_saved_claims() -> None:
+    """Expects find_by_narrative_id to return all claims saved for the given narrative."""
+    repo = FakeClaimRepository()
+    claims = [Claim.create("Label", "Full text here", ClaimType.CAUSAL, 0.9)]
+    await repo.save_for_narrative(claims, narrative_id="narr-001")
+    found = await repo.find_by_narrative_id("narr-001")
+    assert len(found) == 1
+    assert found[0].label == "Label"
+
+
+@pytest.mark.asyncio
+async def test_find_by_narrative_id_returns_empty_for_unknown() -> None:
+    """Expects find_by_narrative_id to return an empty list for an unknown narrative."""
+    repo = FakeClaimRepository()
+    result = await repo.find_by_narrative_id("unknown-narrative")
+    assert result == []
 
 
 # ---------------------------------------------------------------------------

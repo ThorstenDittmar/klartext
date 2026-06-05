@@ -112,3 +112,66 @@ class SupabaseClaimRepository(ClaimRepository):
         if not result.data:
             raise ClaimPersistenceError(f"Update returned no data for claim {claim.id}")
         return Claim.from_record(records(result.data)[0])
+
+    async def save_for_narrative(self, claims: list[Claim], narrative_id: str) -> list[Claim]:
+        """Inserts Claims for a Narrative without scene context. Returns claims with IDs.
+
+        Raises ClaimPersistenceError on database failure.
+        """
+        self.logger.info(
+            "SupabaseClaimRepository.save_for_narrative: narrative_id=%s, count=%d",
+            narrative_id,
+            len(claims),
+        )
+        if not claims:
+            return []
+
+        rows = [
+            {
+                "narrative_id": narrative_id,
+                "label": claim.label,
+                "text": claim.text,
+                "typ": claim.typ.value,
+                "confidence": claim.confidence,
+                "status": claim.status.value,
+                "wirkgefuege_ref": claim.wirkgefuege_ref,
+            }
+            for claim in claims
+        ]
+
+        try:
+            result = await self._client.table(_CLAIM_TABLE).insert(rows).execute()
+        except Exception as e:
+            raise ClaimPersistenceError(
+                f"Failed to save claims for narrative {narrative_id}: {e}"
+            ) from e
+
+        if not result.data:
+            raise ClaimPersistenceError(
+                f"Save returned no data for claims of narrative {narrative_id}."
+            )
+
+        return [Claim.from_record(row) for row in records(result.data)]
+
+    async def find_by_narrative_id(self, narrative_id: str) -> list[Claim]:
+        """Returns all Claims stored for the given Narrative ID.
+
+        Returns an empty list when no claims exist.
+        Raises ClaimPersistenceError on database failure.
+        """
+        self.logger.debug(
+            "SupabaseClaimRepository.find_by_narrative_id: narrative_id=%s", narrative_id
+        )
+        try:
+            result = (
+                await self._client.table(_CLAIM_TABLE)
+                .select("*")
+                .eq("narrative_id", narrative_id)
+                .execute()
+            )
+        except Exception as e:
+            raise ClaimPersistenceError(
+                f"Failed to load claims for narrative {narrative_id}: {e}"
+            ) from e
+
+        return [Claim.from_record(row) for row in records(result.data)]

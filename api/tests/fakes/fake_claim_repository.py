@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import uuid
 
 from api.exceptions.claim import ClaimNotFoundError, ClaimPersistenceError
@@ -13,11 +14,15 @@ class FakeClaimRepository(ClaimRepository):
     """In-memory ClaimRepository for unit tests.
 
     Stores claims keyed by scene_id and indexed by claim ID for fast lookup.
+    Also supports narrative-level claim storage via _narrative_index.
     """
+
+    logger = logging.getLogger(__name__)
 
     def __init__(self) -> None:
         self._store: dict[str, list[Claim]] = {}  # scene_id → list[Claim]
         self._index: dict[str, Claim] = {}  # claim_id → Claim
+        self._narrative_index: dict[str, list[str]] = {}  # narrative_id → list[claim_id]
 
     async def save_all(self, claims: list[Claim], scene_id: str) -> list[Claim]:
         """Assigns a new UUID to each claim and stores them under the given scene_id."""
@@ -60,3 +65,35 @@ class FakeClaimRepository(ClaimRepository):
                     claims_list[i] = claim
                     break
         return claim
+
+    async def save_for_narrative(self, claims: list[Claim], narrative_id: str) -> list[Claim]:
+        """Persists Claims for a Narrative without scene context. Returns claims with IDs."""
+        self.logger.info(
+            "FakeClaimRepository.save_for_narrative: narrative_id=%s, count=%d",
+            narrative_id,
+            len(claims),
+        )
+        if not claims:
+            return []
+        saved = []
+        for claim in claims:
+            new_id = str(uuid.uuid4())
+            saved_claim = Claim(
+                id=new_id,
+                label=claim.label,
+                text=claim.text,
+                typ=claim.typ,
+                confidence=claim.confidence,
+                status=claim.status,
+                wirkgefuege_ref=claim.wirkgefuege_ref,
+            )
+            self._index[new_id] = saved_claim
+            self._narrative_index.setdefault(narrative_id, []).append(new_id)
+            saved.append(saved_claim)
+        return saved
+
+    async def find_by_narrative_id(self, narrative_id: str) -> list[Claim]:
+        """Returns all Claims saved for the given Narrative ID."""
+        self.logger.debug("FakeClaimRepository.find_by_narrative_id: narrative_id=%s", narrative_id)
+        claim_ids = self._narrative_index.get(narrative_id, [])
+        return [self._index[cid] for cid in claim_ids if cid in self._index]
