@@ -1,0 +1,10 @@
+{
+  "$description": "Klartext border-radius tokens — source of truth.",
+  "radius": {
+    "sm":   { "$value": "4px",  "$type": "borderRadius", "$description": "Chips, tags, small badges" },
+    "md":   { "$value": "6px",  "$type": "borderRadius", "$description": "Buttons, form inputs" },
+    "lg":   { "$value": "8px",  "$type": "borderRadius", "$description": "Cards, panels" },
+    "xl":   { "$value": "12px", "$type": "borderRadius", "$description": "Modals, drawers" },
+    "full": { "$value": "9999px", "$type": "borderRadius", "$description": "Pills, fully-rounded elements" }
+  }
+}

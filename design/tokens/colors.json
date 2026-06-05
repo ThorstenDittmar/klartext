@@ -1,0 +1,45 @@
+{
+  "$description": "Klartext color tokens — source of truth. CSS custom properties in frontend/src/index.css MUST mirror these values exactly.",
+  "color": {
+    "bg": {
+      "default": { "$value": "#FFFFFF", "$type": "color", "$css": "--color-bg" },
+      "subtle":  { "$value": "#F7F7F7", "$type": "color", "$css": "--color-bg-subtle" }
+    },
+    "border": {
+      "default": { "$value": "#E5E5E5", "$type": "color", "$css": "--color-border" },
+      "subtle":  { "$value": "#F0F0F0", "$type": "color", "$css": "--color-border-subtle" }
+    },
+    "text": {
+      "primary":   { "$value": "#1A1A1A", "$type": "color", "$css": "--color-text-primary" },
+      "secondary": { "$value": "#6B6B6B", "$type": "color", "$css": "--color-text-secondary" },
+      "tertiary":  { "$value": "#9B9B9B", "$type": "color", "$css": "--color-text-tertiary" }
+    },
+    "semantic": {
+      "green": {
+        "$description": "Success, confirmed, accepted states",
+        "bg":   { "$value": "#EAF3DE", "$type": "color", "$css": "--color-green-bg" },
+        "text": { "$value": "#3B6D11", "$type": "color", "$css": "--color-green-text" }
+      },
+      "amber": {
+        "$description": "Warning, incomplete, pending states",
+        "bg":   { "$value": "#FAEEDA", "$type": "color", "$css": "--color-amber-bg" },
+        "text": { "$value": "#854F0B", "$type": "color", "$css": "--color-amber-text" }
+      },
+      "red": {
+        "$description": "Error, rejected, danger states",
+        "bg":   { "$value": "#FCEBEB", "$type": "color", "$css": "--color-red-bg" },
+        "text": { "$value": "#A32D2D", "$type": "color", "$css": "--color-red-text" }
+      },
+      "blue": {
+        "$description": "Informational, neutral highlight",
+        "bg":   { "$value": "#E6F1FB", "$type": "color", "$css": "--color-blue-bg" },
+        "text": { "$value": "#0C447C", "$type": "color", "$css": "--color-blue-text" }
+      },
+      "teal": {
+        "$description": "Axiomatic, foundational, established states",
+        "bg":   { "$value": "#E1F5EE", "$type": "color", "$css": "--color-teal-bg" },
+        "text": { "$value": "#0F6E56", "$type": "color", "$css": "--color-teal-text" }
+      }
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "$description": "Klartext typography tokens — source of truth. CSS custom properties in frontend/src/index.css MUST mirror these values.",
+  "font": {
+    "family": {
+      "sans": {
+        "$value": "-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif",
+        "$type": "fontFamily",
+        "$css": "--font-sans",
+        "$description": "Primary font stack. Inter is preferred, system fonts as fallback."
+      }
+    },
+    "size": {
+      "xs":   { "$value": "11px", "$type": "fontSize" },
+      "sm":   { "$value": "12px", "$type": "fontSize" },
+      "base": { "$value": "14px", "$type": "fontSize", "$description": "Default body text size" },
+      "md":   { "$value": "15px", "$type": "fontSize" },
+      "lg":   { "$value": "16px", "$type": "fontSize" },
+      "xl":   { "$value": "18px", "$type": "fontSize" },
+      "2xl":  { "$value": "20px", "$type": "fontSize" },
+      "3xl":  { "$value": "24px", "$type": "fontSize" }
+    },
+    "weight": {
+      "normal":  { "$value": "400", "$type": "fontWeight" },
+      "medium":  { "$value": "500", "$type": "fontWeight" },
+      "semibold":{ "$value": "600", "$type": "fontWeight" }
+    },
+    "lineHeight": {
+      "tight":  { "$value": "1.3", "$type": "lineHeight" },
+      "normal": { "$value": "1.5", "$type": "lineHeight" },
+      "relaxed":{ "$value": "1.7", "$type": "lineHeight" }
+    }
+  }
+}

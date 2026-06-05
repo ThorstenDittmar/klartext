@@ -1,0 +1,11 @@
+{
+  "$description": "Klartext breakpoint tokens. Note: this is a desktop-first application — mobile breakpoints are secondary. No mobile-first assumption.",
+  "breakpoint": {
+    "sm":  { "$value": 640,  "$type": "dimension", "$description": "Minimum supported width" },
+    "md":  { "$value": 768,  "$type": "dimension", "$description": "Tablet landscape" },
+    "lg":  { "$value": 1024, "$type": "dimension", "$description": "Desktop (primary target)" },
+    "xl":  { "$value": 1280, "$type": "dimension", "$description": "Wide desktop" },
+    "2xl": { "$value": 1536, "$type": "dimension", "$description": "Ultra-wide" }
+  },
+  "$notes": "Use breakpoints as min-width media queries. Below sm (640px) is not supported — graceful degradation only, no dedicated mobile layouts."
+}

@@ -1,0 +1,16 @@
+{
+  "$description": "Klartext spacing tokens — source of truth. All padding, margin and gap values must use these named values.",
+  "$usage": "Use the $value directly (e.g. spacing.md = 12 → padding: '12px'). Never use arbitrary pixel values not listed here.",
+  "spacing": {
+    "xs":  { "$value": 4,  "$type": "dimension", "$description": "Tight: icon padding, chip inner gap" },
+    "sm":  { "$value": 8,  "$type": "dimension", "$description": "Small: button vertical padding, compact gaps" },
+    "md":  { "$value": 12, "$type": "dimension", "$description": "Medium: button horizontal padding, default inner padding" },
+    "lg":  { "$value": 16, "$type": "dimension", "$description": "Large: card padding, section inner spacing" },
+    "xl":  { "$value": 20, "$type": "dimension", "$description": "XL: page-level horizontal padding, nav padding" },
+    "2xl": { "$value": 24, "$type": "dimension", "$description": "2XL: section-to-section gap" },
+    "3xl": { "$value": 32, "$type": "dimension", "$description": "3XL: large section gaps" },
+    "4xl": { "$value": 40, "$type": "dimension", "$description": "4XL: page-level vertical rhythm" },
+    "5xl": { "$value": 48, "$type": "dimension" },
+    "6xl": { "$value": 64, "$type": "dimension" }
+  }
+}

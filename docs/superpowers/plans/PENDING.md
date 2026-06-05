@@ -83,9 +83,7 @@ Steps 2–6 from `experiment_scope.md`:
 
 ## Other open items
 
-- **Migration 20260603000001 anwenden** — `supabase db push` oder `supabase migration up`
-  gegen die laufende Instanz ausführen. Ohne diesen Schritt schlägt jeder Actor/Claim-DB-Zugriff fehl
-  (neue Spaltenname `label`, `actor_type`, `notes`, `entity_ref` existieren noch nicht in der DB).
+- ~~**Migration 20260603000001 anwenden**~~ — DONE. `supabase migration up --local` bestätigt: Local database is up to date.
 - ~~**Integration-Tests narrative_repository reparieren**~~ — DONE (2026-06-04). Alle 6 Tests grün.
 - **N-01** (`clean_up.md`): `precondition-postcondition.md.rtf` als Markdown neu speichern
 - **N-04** (`clean_up.md`): CausalModelFederation vollständig spezifizieren
