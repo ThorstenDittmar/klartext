@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { api, CausalModel, NarrativeSummary } from "../lib/api";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { api, CausalModel } from "../lib/api";
 import { EpistemicBadge } from "../components/EpistemicBadge";
 
 // ---------------------------------------------------------------------------
@@ -39,11 +39,11 @@ const TD: React.CSSProperties = {
 export default function CausalModelEditor() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { modelId } = useParams<{ modelId: string }>();
   const locationState = location.state as { selectedModelId?: string } | null;
 
   const [models, setModels] = useState<CausalModel[]>([]);
   const [selected, setSelected] = useState<CausalModel | null>(null);
-  const [narratives, setNarratives] = useState<NarrativeSummary[]>([]);
   const [newTitle, setNewTitle] = useState("");
   const [axiomLabel, setAxiomLabel] = useState("");
   const [axiomDescription, setAxiomDescription] = useState("");
@@ -51,21 +51,21 @@ export default function CausalModelEditor() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    Promise.all([api.causalModels.list(), api.narratives.list()])
-      .then(([cms, narrs]) => {
+    const targetId = modelId ?? locationState?.selectedModelId;
+    if (!targetId) {
+      // No model ID — just load the list so the user can pick one
+      api.causalModels.list()
+        .then(setModels)
+        .catch(() => setError("API nicht erreichbar"));
+      return;
+    }
+    Promise.all([api.causalModels.list(), api.causalModels.get(targetId)])
+      .then(([cms, model]) => {
         setModels(cms);
-        setNarratives(narrs);
-        // Auto-select model if navigated from Screen 3
-        const targetId = locationState?.selectedModelId;
-        if (targetId) {
-          const match = cms.find((m) => m.id === targetId);
-          if (match) {
-            loadModel(targetId);
-          }
-        }
+        setSelected(model);
       })
       .catch(() => setError("API nicht erreichbar"));
-  }, []);
+  }, [modelId]);
 
   async function loadModel(id: string) {
     try {
@@ -107,7 +107,7 @@ export default function CausalModelEditor() {
     }
   }
 
-  const linkedNarratives = narratives.filter((n) => n.causal_model_id === selected?.id);
+  const linkedNarratives = selected?.linked_narratives ?? [];
 
   return (
     <div style={{ display: "grid", gridTemplateColumns: "260px 1fr", minHeight: "calc(100vh - 4rem)" }}>
@@ -328,7 +328,7 @@ export default function CausalModelEditor() {
                 {linkedNarratives.map((n) => (
                   <li key={n.id} style={{ marginBottom: "0.4rem" }}>
                     <button
-                      onClick={() => navigate("/narrative")}
+                      onClick={() => navigate(`/narrative/${n.id}`)}
                       style={{
                         background: "none",
                         border: "1px solid var(--color-border)",

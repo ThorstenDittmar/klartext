@@ -7,7 +7,7 @@ vi.mock("../lib/api", () => ({
   api: {
     causalModels: {
       list: vi.fn().mockResolvedValue([
-        { id: "cm1", title: "Test Modell", status: "draft", axioms: [], slots: [], relations: [] },
+        { id: "cm1", title: "Test Modell", status: "draft", axioms: [], slots: [], relations: [], linked_narratives: [] },
       ]),
       get: vi.fn().mockResolvedValue({
         id: "cm1",
@@ -28,26 +28,19 @@ vi.mock("../lib/api", () => ({
             epistemic_status: "incomplete",
           },
         ],
+        linked_narratives: [
+          { id: "n1", title: "Klartext Narrativ" },
+        ],
       }),
-    },
-    narratives: {
-      list: vi.fn().mockResolvedValue([
-        { id: "n1", title: "Klartext Narrativ", causal_model_id: "cm1" },
-        { id: "n2", title: "Anderes Narrativ", causal_model_id: null },
-      ]),
     },
   },
 }));
 
-function renderWithSelectedModel(selectedModelId?: string) {
+function renderPage(modelId = "cm1") {
   return render(
-    <MemoryRouter
-      initialEntries={[
-        { pathname: "/causal-model", state: selectedModelId ? { selectedModelId } : null },
-      ]}
-    >
+    <MemoryRouter initialEntries={[`/causal-model/${modelId}`]}>
       <Routes>
-        <Route path="/causal-model" element={<CausalModelEditor />} />
+        <Route path="/causal-model/:modelId" element={<CausalModelEditor />} />
       </Routes>
     </MemoryRouter>
   );
@@ -58,37 +51,29 @@ describe("CausalModelEditor — extensions", () => {
     vi.clearAllMocks();
   });
 
-  it("auto-selects model from location state and shows its title as heading", async () => {
-    renderWithSelectedModel("cm1");
+  it("auto-selects model from URL param and shows its title as heading", async () => {
+    renderPage("cm1");
     expect(await screen.findByRole("heading", { name: "Test Modell" })).toBeInTheDocument();
   });
 
   it("shows Slots section with slot identifier", async () => {
-    renderWithSelectedModel("cm1");
+    renderPage("cm1");
     await waitFor(() => {
       expect(screen.getByText("co2_emissionen")).toBeInTheDocument();
     });
   });
 
   it("shows Kausalrelationen section with relation identifier", async () => {
-    renderWithSelectedModel("cm1");
+    renderPage("cm1");
     await waitFor(() => {
       expect(screen.getByText("co2_to_temp")).toBeInTheDocument();
     });
   });
 
-  it("shows Verknüpfte Narrative section with linked narrative", async () => {
-    renderWithSelectedModel("cm1");
+  it("shows Verknüpfte Narrative section with linked narrative from model API", async () => {
+    renderPage("cm1");
     await waitFor(() => {
       expect(screen.getByText("Klartext Narrativ")).toBeInTheDocument();
     });
-  });
-
-  it("does not show unlinked narratives in Verknüpfte Narrative", async () => {
-    renderWithSelectedModel("cm1");
-    await waitFor(() => {
-      expect(screen.getByText("Klartext Narrativ")).toBeInTheDocument();
-    });
-    expect(screen.queryByText("Anderes Narrativ")).not.toBeInTheDocument();
   });
 });
