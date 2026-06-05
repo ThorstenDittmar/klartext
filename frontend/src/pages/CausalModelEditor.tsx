@@ -1,32 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { api, CausalModel, NarrativeSummary } from "../lib/api";
-
-// ---------------------------------------------------------------------------
-// Colour constants for EpistemicStatus badges
-// ---------------------------------------------------------------------------
-const BADGE = {
-  incomplete: { bg: "var(--color-amber-bg)", text: "var(--color-amber-text)" },
-  axiomatic: { bg: "var(--color-green-bg)", text: "var(--color-green-text)" },
-} as const;
-
-function EpistemicBadge({ status }: { status: string }) {
-  const style = status === "axiomatic" ? BADGE.axiomatic : BADGE.incomplete;
-  return (
-    <span
-      style={{
-        fontSize: "11px",
-        background: style.bg,
-        color: style.text,
-        padding: "2px 8px",
-        borderRadius: "10px",
-        fontWeight: "500",
-      }}
-    >
-      {status}
-    </span>
-  );
-}
+import { EpistemicBadge } from "../components/EpistemicBadge";
 
 // ---------------------------------------------------------------------------
 // Table styles (font-size 12px, tertiary header, tertiary row border)
