@@ -50,6 +50,7 @@ export interface NarrativeSummary {
   id: string;
   title: string;
   causal_model_id: string | null;
+  user_id?: string | null;
 }
 
 export interface Claim {

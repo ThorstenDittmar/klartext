@@ -8,6 +8,7 @@ DI chain:
                        └─► get_claim_repository ────────► get_claim_service
                        └─► get_health_checker
                        └─► get_causal_model_repository ─► get_causal_model_service
+                       └─► get_user_repository ──────────► get_user_service
   get_narrative_import_service ────────────────────────► get_narrative_service
   get_consistency_checker ─────────────────────────────► get_causal_model_service
   (standalone) ────────────────────────────────────────► get_claim_extractor_service
@@ -34,6 +35,8 @@ from api.repositories.narrative_repository import NarrativeRepository
 from api.repositories.supabase_causal_model_repository import SupabaseCausalModelRepository
 from api.repositories.supabase_claim_repository import SupabaseClaimRepository
 from api.repositories.supabase_narrative_repository import SupabaseNarrativeRepository
+from api.repositories.supabase_user_repository import SupabaseUserRepository
+from api.repositories.user_repository import UserRepository
 from api.services.causal_model_service import CausalModelService
 from api.services.claim_extractor_service import ClaimExtractorService
 from api.services.claim_service import ClaimService
@@ -41,6 +44,7 @@ from api.services.health_service import HealthChecker, SupabaseHealthChecker
 from api.services.narrative_analysis_service import NarrativeAnalysisService
 from api.services.narrative_import_service import NarrativeImportService
 from api.services.narrative_service import NarrativeService
+from api.services.user_service import UserService
 from api.services.wirkgefuege_suggestion_service import WirkgefuegeSuggestionService
 
 
@@ -155,6 +159,20 @@ async def get_narrative_analysis_service(
     client = _make_anthropic_client()
     provider = ClaudeNarrativeAnalysisProvider(client=client)
     return NarrativeAnalysisService(repository=repository, provider=provider)
+
+
+async def get_user_repository(
+    client: AsyncClient = Depends(get_supabase_client),
+) -> UserRepository:
+    """Wires SupabaseUserRepository with the injected Supabase client."""
+    return SupabaseUserRepository(client=client)
+
+
+async def get_user_service(
+    repository: UserRepository = Depends(get_user_repository),
+) -> UserService:
+    """Wires UserRepository into UserService."""
+    return UserService(repository=repository)
 
 
 async def get_wirkgefuege_suggestion_service(

@@ -14,6 +14,7 @@ from httpx import ASGITransport, AsyncClient
 from api.dependencies import (
     get_narrative_analysis_service,
     get_narrative_service,
+    get_user_service,
     get_wirkgefuege_suggestion_service,
 )
 from api.exceptions.narrative import (
@@ -23,6 +24,7 @@ from api.exceptions.narrative import (
 )
 from api.main import app
 from api.models.narrative import Actor, ActorType, Narrative, Scene
+from api.models.user import User
 from api.providers.narrative_analysis_provider import (
     ActorSuggestion,
     ClaimSuggestion,
@@ -33,6 +35,7 @@ from api.providers.wirkgefuege_suggestion_provider import (
     SuggestedSlot,
     WirkgefuegeSuggestionResult,
 )
+from api.tests.fakes.fake_user_repository import DEFAULT_USER_ID
 
 # ---------------------------------------------------------------------------
 # Fake service
@@ -108,6 +111,9 @@ class FakeNarrativeService:
     async def list_all(self) -> list[Narrative]:
         return self._saved
 
+    async def list_for_user(self, user_id: str) -> list[Narrative]:
+        return self._saved
+
     async def add_actor(
         self,
         narrative_id: str,
@@ -155,12 +161,26 @@ class FakeNarrativeService:
 
 
 # ---------------------------------------------------------------------------
+# Fake user service
+# ---------------------------------------------------------------------------
+
+
+class FakeUserService:
+    """Returns the pre-seeded default user without hitting the database."""
+
+    async def get_default(self) -> User:
+        """Returns a User with the default ID used in test fixtures."""
+        return User(id=DEFAULT_USER_ID, name="Thorsten")
+
+
+# ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
 
 def override_with(service: FakeNarrativeService) -> None:
     app.dependency_overrides[get_narrative_service] = lambda: service
+    app.dependency_overrides[get_user_service] = lambda: FakeUserService()
 
 
 def clear_overrides() -> None:

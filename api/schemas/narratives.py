@@ -140,6 +140,7 @@ class NarrativeSummaryResponse(BaseModel):
     id: str
     title: str
     causal_model_id: str | None = None
+    user_id: str | None = None
 
 
 # ---------------------------------------------------------------------------

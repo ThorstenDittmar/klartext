@@ -12,6 +12,7 @@ from api.dependencies import (
     get_claim_repository,
     get_narrative_analysis_service,
     get_narrative_service,
+    get_user_service,
     get_wirkgefuege_suggestion_service,
 )
 from api.exceptions.narrative import SceneNotFoundError
@@ -41,6 +42,7 @@ from api.schemas.narratives import (
 from api.services.claim_extractor_service import ClaimExtractorService
 from api.services.narrative_analysis_service import NarrativeAnalysisService
 from api.services.narrative_service import NarrativeService
+from api.services.user_service import UserService
 from api.services.wirkgefuege_suggestion_service import WirkgefuegeSuggestionService
 
 router = APIRouter(prefix="/narratives")
@@ -194,11 +196,19 @@ async def import_narrative(
 @router.get("", response_model=list[NarrativeSummaryResponse])
 async def list_narratives(
     service: NarrativeService = Depends(get_narrative_service),
+    user_service: UserService = Depends(get_user_service),
 ) -> list[NarrativeSummaryResponse]:
-    """Returns all persisted Narratives as a flat list without their scenes."""
-    narratives = await service.list_all()
+    """Returns all Narratives belonging to the default user as a flat list without their scenes."""
+    user = await user_service.get_default()
+    assert user.id is not None, "default user has no id — seeding is incomplete"
+    narratives = await service.list_for_user(user.id)
     return [
-        NarrativeSummaryResponse(id=n.id, title=n.title, causal_model_id=n.causal_model_id)  # type: ignore[arg-type]
+        NarrativeSummaryResponse(
+            id=n.id,  # type: ignore[arg-type]
+            title=n.title,
+            causal_model_id=n.causal_model_id,
+            user_id=n.user_id,
+        )
         for n in narratives
     ]
 
