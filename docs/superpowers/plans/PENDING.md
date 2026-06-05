@@ -90,6 +90,47 @@ Steps 2–6 from `experiment_scope.md`:
 - **N-06** (`clean_up.md`): Community Model Specs anlegen
 - **Fragment aus narrative_units.typ entfernen** — erst bei Phase-2-Migration zu `document_nodes`
 
+---
+
+## Frontend-Infrastruktur — Offene Punkte (2026-06-05)
+
+### Sofort (beim nächsten Backend-Schema-Refactoring miterledigen)
+
+- **Backend → Frontend Workflow-Regel in CLAUDE.md ergänzen:**
+  Wer ein Pydantic-Response-Schema ändert, aktualisiert `frontend/src/lib/api.ts`
+  im selben Commit. `tsc --noEmit` lokal prüfen bevor committed wird.
+
+### Mittelfristig
+
+- **Vitest + React Testing Library einrichten**
+  Frontend hat aktuell null Tests. Minimaler Einstieg: Smoke-Tests die prüfen ob
+  Komponenten ohne Crash rendern. Angehen nachdem der Frontend-Skill getestet und
+  die erste isolierte Komponente gebaut wurde.
+  Analogie zum Backend: Domain → Service → Repository → Router;
+  Frontend-Entsprechung: Utils → Komponenten → Screens → E2E.
+
+- **OpenAPI → TypeScript-Generierung (Option B)**
+  FastAPI generiert `/openapi.json`. Das Tool `openapi-typescript` erzeugt daraus
+  TypeScript-Interfaces und eliminiert den manuellen Sync zwischen Pydantic-Schemas
+  und `api.ts`. Verhindert stillen API-Contract-Drift.
+  Aufwand: mittel. Priorität: hoch sobald das Interface größer wird.
+
+### Später (kein konkreter Termin)
+
+- **Style Dictionary einrichten**
+  JSON-Tokens in `design/tokens/*.json` automatisch nach `frontend/src/index.css`
+  und optional nach TypeScript-Konstanten generieren. Eliminiert den manuellen
+  Sync zwischen Token-JSON und CSS Custom Properties.
+
+- **Playwright für kritische User-Flows**
+  E2E-Tests für den Experiment-Workflow (NarrativeEditor → Analyse →
+  WirkgefügeVorschlag → CausalModelEditor). Erst sinnvoll wenn Workflow stabil ist.
+
+- **Design-System → Code Workflow (Workflow 3) vollständig definieren**
+  Wenn ein Token in `design/tokens/*.json` geändert wird: wer prüft welche
+  Komponenten betroffen sind, und wie wird sichergestellt dass `index.css` aktualisiert
+  wird? Aktuell: CHANGELOG.md-Eintrag + manuelles Pending Task — kein automatischer Guard.
+
 ## Lessons Learned — Refactoring-Scope
 
 Bei Actor/Claim-Refactorings (Plan B) wurde `api/cli.py` zunächst vergessen —

@@ -9,6 +9,15 @@
 ## Test-Driven Development
 Use the `tdd` skill. It extends the `superpowers:test-driven-development` skill with project-specific standards.
 
+## Frontend Development
+Use the `frontend` skill. It loads the project-level style guide and agent instructions from
+`docs/superpowers/skills/frontend.md`.
+
+### API Contract Rule
+When modifying a Pydantic response schema (`api/schemas/`), update the corresponding
+TypeScript interface in `frontend/src/lib/api.ts` in the same commit.
+Run `tsc --noEmit` in `frontend/` locally before committing to catch type drift early.
+
 ## Architecture
 
 ### Layer Structure
