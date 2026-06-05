@@ -12,6 +12,7 @@ import pytest
 from httpx import ASGITransport, AsyncClient
 
 from api.dependencies import (
+    get_claim_repository,
     get_narrative_analysis_service,
     get_narrative_service,
     get_user_service,
@@ -23,6 +24,7 @@ from api.exceptions.narrative import (
     NarrativeNotFoundError,
 )
 from api.main import app
+from api.models.claim import Claim, ClaimType
 from api.models.narrative import Actor, ActorType, Narrative, Scene
 from api.models.user import User
 from api.providers.narrative_analysis_provider import (
@@ -35,6 +37,7 @@ from api.providers.wirkgefuege_suggestion_provider import (
     SuggestedSlot,
     WirkgefuegeSuggestionResult,
 )
+from api.repositories.claim_repository import ClaimRepository
 from api.tests.fakes.fake_user_repository import DEFAULT_USER_ID
 
 # ---------------------------------------------------------------------------
@@ -1005,3 +1008,73 @@ async def test_suggest_wirkgefuege_returns_404_for_unknown_narrative() -> None:
         assert response.status_code == 404
     finally:
         clear_overrides()
+
+
+# ---------------------------------------------------------------------------
+# Fake claim repository for narrative claims tests
+# ---------------------------------------------------------------------------
+
+
+class FakeNarrativeClaimRepository(ClaimRepository):
+    """In-memory ClaimRepository with narrative-level storage for router tests."""
+
+    def __init__(self) -> None:
+        self._narrative_store: dict[str, list[Claim]] = {}
+
+    async def save_all(self, claims: list[Claim], scene_id: str) -> list[Claim]:
+        """Not used in these tests — returns empty list."""
+        return []
+
+    async def find_by_scene_id(self, scene_id: str) -> list[Claim]:
+        """Not used in these tests — returns empty list."""
+        return []
+
+    async def find_by_id(self, claim_id: str) -> Claim:
+        """Not used in these tests — raises ClaimNotFoundError."""
+        from api.exceptions.claim import ClaimNotFoundError
+
+        raise ClaimNotFoundError(f"Claim not found: {claim_id}")
+
+    async def update(self, claim: Claim) -> Claim:
+        """Not used in these tests — returns claim unchanged."""
+        return claim
+
+    async def save_for_narrative(self, claims: list[Claim], narrative_id: str) -> list[Claim]:
+        """Stores the given Claims under the given narrative ID."""
+        self._narrative_store[narrative_id] = list(claims)
+        return list(claims)
+
+    async def find_by_narrative_id(self, narrative_id: str) -> list[Claim]:
+        """Returns all Claims saved for the given Narrative ID."""
+        return self._narrative_store.get(narrative_id, [])
+
+
+# ---------------------------------------------------------------------------
+# Tests for GET /narratives/{id}/claims
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_get_narrative_claims_returns_200_with_one_item() -> None:
+    """Expects 200 and one claim when a claim has been saved for the narrative."""
+    repo = FakeNarrativeClaimRepository()
+    claim = Claim(
+        id="eeee-5555",
+        label="Test Claim",
+        text="This is a test claim.",
+        typ=ClaimType.CAUSAL,
+        confidence=0.8,
+    )
+    await repo.save_for_narrative([claim], "test-narrative-id")
+    app.dependency_overrides[get_claim_repository] = lambda: repo
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.get("/narratives/test-narrative-id/claims")
+    finally:
+        clear_overrides()
+
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 1
+    assert data[0]["label"] == "Test Claim"
+    assert "id" in data[0]

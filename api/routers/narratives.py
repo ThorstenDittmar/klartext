@@ -399,3 +399,19 @@ async def get_scene_claims(
     """Returns all Claims that have been extracted for the given Scene."""
     claims = await claim_repo.find_by_scene_id(scene_id)
     return [_to_claim_response(c) for c in claims]
+
+
+@router.get(
+    "/{narrative_id}/claims",
+    response_model=list[ClaimResponse],
+)
+async def get_narrative_claims(
+    narrative_id: str,
+    claim_repo: ClaimRepository = Depends(get_claim_repository),
+) -> list[ClaimResponse]:
+    """Returns all Claims that have been saved for the given Narrative.
+
+    Includes claims saved at narrative level (from analysis) and at scene level.
+    """
+    claims = await claim_repo.find_by_narrative_id(narrative_id)
+    return [_to_claim_response(c) for c in claims]
