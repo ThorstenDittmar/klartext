@@ -481,6 +481,30 @@ class SupabaseNarrativeRepository(NarrativeRepository):
         except Exception as e:
             raise NarrativePersistenceError(f"Failed to remove actor {actor_id}: {e}") from e
 
+    async def find_by_causal_model_id(self, causal_model_id: str) -> list[Narrative]:
+        """Returns all Narratives linked to the given CausalModel ID.
+
+        Returns thin Narrative objects (no scenes or actors loaded).
+        Raises NarrativePersistenceError on database failure.
+        """
+        self.logger.debug(
+            "SupabaseNarrativeRepository.find_by_causal_model_id: causal_model_id=%s",
+            causal_model_id,
+        )
+        try:
+            result = (
+                await self._client.table("narrative")
+                .select("id, title, causal_model_id, user_id")
+                .eq("causal_model_id", causal_model_id)
+                .execute()
+            )
+        except Exception as e:
+            raise NarrativePersistenceError(
+                f"Failed to load narratives for causal model {causal_model_id}: {e}"
+            ) from e
+
+        return [Narrative.from_record(row) for row in records(result.data)]
+
     async def link_to_causal_model(self, narrative_id: str, causal_model_id: str) -> Narrative:
         """Updates the causal_model_id column on the Narrative row. Returns the updated Narrative.
 

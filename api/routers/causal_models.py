@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, status
 
-from api.dependencies import get_causal_model_service
+from api.dependencies import get_causal_model_service, get_narrative_service
 from api.models.causal_model import CausalModel, CausalRelation
 from api.schemas.causal_models import (
     AddAxiomRequest,
@@ -17,12 +17,14 @@ from api.schemas.causal_models import (
     CreateCausalModelRequest,
     CreateRelationRequest,
     CreateSlotRequest,
+    LinkedNarrativeResponse,
     RelationResponse,
     SlotResponse,
     UpdateRelationRequest,
     UpdateSlotRequest,
 )
 from api.services.causal_model_service import CausalModelService
+from api.services.narrative_service import NarrativeService
 
 router = APIRouter(prefix="/causal-models")
 
@@ -94,10 +96,20 @@ async def list_causal_models(
 async def get_causal_model(
     causal_model_id: str,
     service: CausalModelService = Depends(get_causal_model_service),
+    narrative_service: NarrativeService = Depends(get_narrative_service),
 ) -> CausalModelResponse:
-    """Returns a CausalModel with all its Axioms."""
+    """Returns the CausalModel with all Slots, Relations and linked Narratives."""
     cm = await service.find_by_id(causal_model_id)
-    return _to_causal_model_response(cm)
+    linked = await narrative_service.find_by_causal_model_id(causal_model_id)
+    response = _to_causal_model_response(cm)
+    return response.model_copy(
+        update={
+            "linked_narratives": [
+                LinkedNarrativeResponse(id=n.id, title=n.title)  # type: ignore[arg-type]
+                for n in linked
+            ]
+        }
+    )
 
 
 @router.post(

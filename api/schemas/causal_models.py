@@ -76,6 +76,13 @@ class RelationResponse(BaseModel):
     epistemic_status: str
 
 
+class LinkedNarrativeResponse(BaseModel):
+    """A Narrative linked to a CausalModel — minimal view for the causal model detail screen."""
+
+    id: str
+    title: str
+
+
 class CausalModelResponse(BaseModel):
     """Response shape for a CausalModel with its Axioms, Slots and CausalRelations."""
 
@@ -85,6 +92,7 @@ class CausalModelResponse(BaseModel):
     axioms: list[AxiomResponse]
     slots: list[SlotResponse] = []
     relations: list[RelationResponse] = []
+    linked_narratives: list[LinkedNarrativeResponse] = []
 
 
 class CausalModelSummaryResponse(BaseModel):

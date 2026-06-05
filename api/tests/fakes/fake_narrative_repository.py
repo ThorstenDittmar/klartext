@@ -130,6 +130,14 @@ class FakeNarrativeRepository(NarrativeRepository):
         self.logger.debug("FakeNarrativeRepository.list_for_user: user_id=%s", user_id)
         return [n for n in self._store.values() if n.user_id == user_id]
 
+    async def find_by_causal_model_id(self, causal_model_id: str) -> list[Narrative]:
+        """Returns all Narratives whose causal_model_id matches the given ID."""
+        self.logger.debug(
+            "FakeNarrativeRepository.find_by_causal_model_id: causal_model_id=%s",
+            causal_model_id,
+        )
+        return [n for n in self._store.values() if n.causal_model_id == causal_model_id]
+
     async def list_summaries_for_user(self, user_id: str) -> list[NarrativeSummary]:
         """Returns NarrativeSummary objects with counts computed from the in-memory store."""
         self.logger.debug("FakeNarrativeRepository.list_summaries_for_user: user_id=%s", user_id)

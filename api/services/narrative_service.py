@@ -156,6 +156,16 @@ class NarrativeService:
         await self._repository.get_actor(narrative_id, actor_id)
         await self._repository.remove_actor(narrative_id, actor_id)
 
+    async def find_by_causal_model_id(self, causal_model_id: str) -> list[Narrative]:
+        """Returns all Narratives linked to the given CausalModel.
+
+        Returns an empty list when no Narratives are linked.
+        """
+        self.logger.debug(
+            "NarrativeService.find_by_causal_model_id: causal_model_id=%s", causal_model_id
+        )
+        return await self._repository.find_by_causal_model_id(causal_model_id)
+
     async def link_to_causal_model(self, narrative_id: str, causal_model_id: str) -> Narrative:
         """Links the Narrative to a CausalModel by ID.
 

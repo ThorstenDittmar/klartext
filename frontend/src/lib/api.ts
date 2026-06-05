@@ -154,6 +154,11 @@ export interface Relation {
   epistemic_status: string;
 }
 
+export interface LinkedNarrative {
+  id: string;
+  title: string;
+}
+
 export interface CausalModel {
   id: string;
   title: string;
@@ -161,6 +166,7 @@ export interface CausalModel {
   axioms: Axiom[];
   slots: Slot[];
   relations: Relation[];
+  linked_narratives: LinkedNarrative[];
 }
 
 export const api = {

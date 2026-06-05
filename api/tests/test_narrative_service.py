@@ -568,6 +568,24 @@ async def test_narrative_service_link_to_causal_model_raises_for_empty_id() -> N
 
 
 @pytest.mark.asyncio
+async def test_find_by_causal_model_id_returns_linked_narratives() -> None:
+    """Expects find_by_causal_model_id to return Narratives linked to the given CausalModel."""
+    from api.models.narrative import Narrative
+    from api.tests.fakes.fake_narrative_repository import FakeNarrativeRepository
+
+    repo = FakeNarrativeRepository()
+    n = Narrative.create("Linked Narrative")
+    saved = await repo.save(n)
+    await repo.link_to_causal_model(saved.id, "model-001")  # type: ignore[arg-type]
+
+    service = make_service(repository=repo)
+    results = await service.find_by_causal_model_id("model-001")
+
+    assert len(results) == 1
+    assert results[0].title == "Linked Narrative"
+
+
+@pytest.mark.asyncio
 async def test_list_summaries_for_user_returns_counts() -> None:
     """Expects list_summaries_for_user to return NarrativeSummary with scene/actor/claim counts."""
     from api.models.narrative import Narrative, NarrativeSummary, Scene

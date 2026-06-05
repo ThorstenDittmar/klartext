@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-from api.dependencies import get_causal_model_service
+from api.dependencies import get_causal_model_service, get_narrative_service
 from api.exceptions.causal_model import CausalModelNotFoundError
 from api.main import app
 from api.models.causal_model import (
@@ -18,11 +18,20 @@ from api.models.causal_model import (
     Slot,
     SlotType,
 )
+from api.models.narrative import Narrative
 from api.providers.consistency_checker import ConsistencyConflict, ConsistencyResult
 
 # ---------------------------------------------------------------------------
 # Fake service
 # ---------------------------------------------------------------------------
+
+
+class FakeNarrativeService:
+    """Minimal NarrativeService stub for causal_model router tests."""
+
+    async def find_by_causal_model_id(self, causal_model_id: str) -> list[Narrative]:
+        """Returns an empty list — no linked narratives in default stub."""
+        return []
 
 
 class FakeCausalModelService:
@@ -209,6 +218,7 @@ async def test_list_causal_models_returns_200() -> None:
 async def test_get_causal_model_returns_200() -> None:
     """Expects 200 when a CausalModel is found."""
     app.dependency_overrides[get_causal_model_service] = lambda: FakeCausalModelService()
+    app.dependency_overrides[get_narrative_service] = lambda: FakeNarrativeService()
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         response = await client.get("/causal-models/cm-001")
     app.dependency_overrides.clear()
@@ -219,6 +229,7 @@ async def test_get_causal_model_returns_200() -> None:
 async def test_get_causal_model_returns_title_and_axioms() -> None:
     """Expects the response to contain the title and axioms list."""
     app.dependency_overrides[get_causal_model_service] = lambda: FakeCausalModelService()
+    app.dependency_overrides[get_narrative_service] = lambda: FakeNarrativeService()
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         response = await client.get("/causal-models/cm-001")
     app.dependency_overrides.clear()
@@ -231,6 +242,7 @@ async def test_get_causal_model_returns_title_and_axioms() -> None:
 async def test_get_causal_model_returns_404_for_unknown_id() -> None:
     """Expects 404 when the CausalModel does not exist."""
     app.dependency_overrides[get_causal_model_service] = lambda: FakeCausalModelService()
+    app.dependency_overrides[get_narrative_service] = lambda: FakeNarrativeService()
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         response = await client.get("/causal-models/unknown")
     app.dependency_overrides.clear()
@@ -452,3 +464,21 @@ async def test_update_relation_returns_200() -> None:
     app.dependency_overrides.clear()
     assert response.status_code == 200
     assert response.json()["mechanism"] == "quantity_theory"
+
+
+# ---------------------------------------------------------------------------
+# GET /causal-models/{id} — linked_narratives
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_get_causal_model_includes_linked_narratives_key() -> None:
+    """Expects GET /causal-models/{id} response to contain a linked_narratives list."""
+    app.dependency_overrides[get_causal_model_service] = lambda: FakeCausalModelService()
+    app.dependency_overrides[get_narrative_service] = lambda: FakeNarrativeService()
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.get("/causal-models/cm-001")
+    app.dependency_overrides.clear()
+    body = response.json()
+    assert "linked_narratives" in body
+    assert isinstance(body["linked_narratives"], list)

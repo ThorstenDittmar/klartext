@@ -106,3 +106,11 @@ class NarrativeRepository(ABC):
         Returns an empty list if no narratives exist for that user.
         Raises NarrativePersistenceError on database failure.
         """
+
+    @abstractmethod
+    async def find_by_causal_model_id(self, causal_model_id: str) -> list[Narrative]:
+        """Returns all Narratives linked to the given CausalModel.
+
+        Returns an empty list when no Narratives are linked.
+        Raises NarrativePersistenceError on database failure.
+        """
