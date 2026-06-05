@@ -58,9 +58,12 @@ export interface NarrativeSummary {
 
 export interface Claim {
   id: string;
+  label: string;
   text: string;
   typ: string;
   confidence: number;
+  status: string;
+  wirkgefuege_ref: string | null;
 }
 
 export interface ConsistencyConflict {
@@ -215,6 +218,16 @@ export const api = {
         method: "PUT",
         body: JSON.stringify({ mechanism, polarity, epistemic_status }),
       }),
+    updateSlot: (
+      causal_model_id: string,
+      slot_id: string,
+      epistemic_status: string,
+      identifier?: string | null,
+    ) =>
+      request<Slot>(`/causal-models/${causal_model_id}/slots/${slot_id}`, {
+        method: "PUT",
+        body: JSON.stringify({ epistemic_status, identifier: identifier ?? null }),
+      }),
   },
   narratives: {
     list: () => request<NarrativeSummary[]>("/narratives"),
@@ -241,6 +254,8 @@ export const api = {
       ),
     getSceneClaims: (narrativeId: string, sceneId: string) =>
       request<Claim[]>(`/narratives/${narrativeId}/scenes/${sceneId}/claims`),
+    getClaims: (narrativeId: string) =>
+      request<Claim[]>(`/narratives/${narrativeId}/claims`),
     addActor: (
       narrativeId: string,
       label: string,
