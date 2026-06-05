@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { api, NarrativeSummary } from "../lib/api";
 
@@ -8,6 +8,7 @@ import { api, NarrativeSummary } from "../lib/api";
 
 export default function MeineWerke() {
   const [summaries, setSummaries] = useState<NarrativeSummary[]>([]);
+  const [loading, setLoading] = useState(true);
   const [newTitle, setNewTitle] = useState("");
   const [importPath, setImportPath] = useState("");
   const [creating, setCreating] = useState(false);
@@ -17,8 +18,8 @@ export default function MeineWerke() {
 
   useEffect(() => {
     api.narratives.list()
-      .then(setSummaries)
-      .catch(() => setError("API nicht erreichbar"));
+      .then((data) => { setSummaries(data); setLoading(false); })
+      .catch(() => { setError("API nicht erreichbar"); setLoading(false); });
   }, []);
 
   async function createNarrative() {
@@ -57,7 +58,7 @@ export default function MeineWerke() {
         Meine Werke
       </h1>
       <p style={{ fontSize: "14px", color: "var(--color-text-secondary)", margin: "0 0 32px" }}>
-        {summaries.length === 0 ? "Noch keine Werke vorhanden." : `${summaries.length} Narrative`}
+        {loading ? "Lade…" : summaries.length === 0 ? "Noch keine Werke vorhanden." : `${summaries.length} Narrative`}
       </p>
 
       {error && (
@@ -194,7 +195,7 @@ export default function MeineWerke() {
 // Sub-components and style helpers
 // ---------------------------------------------------------------------------
 
-function Chip({ children, variant = "default" }: { children: React.ReactNode; variant?: "default" | "teal" }) {
+function Chip({ children, variant = "default" }: { children: ReactNode; variant?: "default" | "teal" }) {
   const styles = {
     default: { bg: "var(--color-bg-subtle)", text: "var(--color-text-secondary)" },
     teal:    { bg: "var(--color-teal-bg)",   text: "var(--color-teal-text)" },
