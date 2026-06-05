@@ -8,13 +8,13 @@ import {
 } from "../lib/api";
 
 // ---------------------------------------------------------------------------
-// Colour constants from ui_experiment_scope.md
+// Colour constants — mapped to design tokens
 // ---------------------------------------------------------------------------
 const C = {
-  confirmed: { bg: "#EAF3DE", text: "#3B6D11" },
-  draft: { bg: "#FAEEDA", text: "#854F0B" },
-  rejected: { bg: "#FCEBEB", text: "#A32D2D" },
-  entity: { bg: "#E1F5EE", text: "#0F6E56" },
+  confirmed: { bg: "var(--color-green-bg)",  text: "var(--color-green-text)" },
+  draft:     { bg: "var(--color-amber-bg)",  text: "var(--color-amber-text)" },
+  rejected:  { bg: "var(--color-red-bg)",    text: "var(--color-red-text)" },
+  entity:    { bg: "var(--color-teal-bg)",   text: "var(--color-teal-text)" },
 } as const;
 
 type ConfirmState = "pending" | "accepted" | "rejected";
@@ -66,7 +66,7 @@ export default function NarrativeAnalyse() {
 
   if (!analysis || !narrative) {
     return (
-      <p style={{ color: "#888" }}>
+      <p style={{ color: "var(--color-text-tertiary)" }}>
         Bitte Analyse vom Narrativ-Editor starten.
       </p>
     );
@@ -109,7 +109,7 @@ export default function NarrativeAnalyse() {
       </p>
 
       {/* Actors */}
-      <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: "1rem", marginBottom: "2rem" }}>
+      <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: "16px", marginBottom: "32px" }}>
         <SectionHeader
           label="Akteure"
           onAcceptAll={() => setActorStates(analysis.actors.map(() => "accepted"))}
@@ -130,7 +130,7 @@ export default function NarrativeAnalyse() {
       </div>
 
       {/* Claims */}
-      <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: "1rem", marginBottom: "2rem" }}>
+      <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: "16px", marginBottom: "32px" }}>
         <SectionHeader
           label="Claims"
           onAcceptAll={() => setClaimStates(analysis.claims.map(() => "accepted"))}
@@ -151,7 +151,7 @@ export default function NarrativeAnalyse() {
       </div>
 
       {/* Generate button */}
-      <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: "1rem" }}>
+      <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: "16px" }}>
         {error && (
           <p style={{ color: "var(--color-red-text)", marginBottom: "8px", fontSize: "13px", margin: "0 0 8px" }}>
             {error}
@@ -161,8 +161,8 @@ export default function NarrativeAnalyse() {
           onClick={generateSuggestions}
           disabled={!anyClaimAccepted || suggesting}
           style={{
-            background: anyClaimAccepted ? "#1A1A1A" : "var(--color-bg-subtle)",
-            color: anyClaimAccepted ? "#FFFFFF" : "var(--color-text-tertiary)",
+            background: anyClaimAccepted ? "var(--color-text-primary)" : "var(--color-bg-subtle)",
+            color: anyClaimAccepted ? "var(--color-text-inverse)" : "var(--color-text-tertiary)",
             border: "none",
             borderRadius: "6px",
             padding: "10px 16px",
@@ -227,7 +227,7 @@ function ConfirmButtons({
         onClick={onAccept}
         style={{
           background: state === "accepted" ? "var(--color-green-bg)" : "var(--color-bg)",
-          border: state === "accepted" ? "1px solid #3B6D11" : "1px solid var(--color-border)",
+          border: state === "accepted" ? "1px solid var(--color-green-text)" : "1px solid var(--color-border)",
           borderRadius: "6px",
           padding: "0",
           cursor: "pointer",
@@ -246,7 +246,7 @@ function ConfirmButtons({
         onClick={onReject}
         style={{
           background: state === "rejected" ? "var(--color-red-bg)" : "var(--color-bg)",
-          border: state === "rejected" ? "1px solid #A32D2D" : "1px solid var(--color-border)",
+          border: state === "rejected" ? "1px solid var(--color-red-text)" : "1px solid var(--color-border)",
           borderRadius: "6px",
           padding: "0",
           cursor: "pointer",
@@ -280,7 +280,7 @@ function ActorCard({
     <div
       style={{
         border: "1px solid var(--color-border)",
-        borderLeft: state === "accepted" ? "3px solid #3B6D11" : "1px solid var(--color-border)",
+        borderLeft: state === "accepted" ? "3px solid var(--color-green-text)" : "1px solid var(--color-border)",
         borderRadius: "8px",
         padding: "14px 16px",
         marginBottom: "8px",
@@ -355,7 +355,7 @@ function ClaimCard({
     <div
       style={{
         border: "1px solid var(--color-border)",
-        borderLeft: state === "accepted" ? "3px solid #3B6D11" : "1px solid var(--color-border)",
+        borderLeft: state === "accepted" ? "3px solid var(--color-green-text)" : "1px solid var(--color-border)",
         borderRadius: "8px",
         padding: "14px 16px",
         marginBottom: "8px",

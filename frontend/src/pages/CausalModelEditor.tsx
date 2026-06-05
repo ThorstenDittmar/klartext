@@ -138,7 +138,7 @@ export default function CausalModelEditor() {
     <div style={{ display: "grid", gridTemplateColumns: "260px 1fr", minHeight: "calc(100vh - 4rem)" }}>
       <aside style={{ background: "var(--color-bg-subtle)", borderRight: "1px solid var(--color-border)", padding: "16px 12px", overflowY: "auto" }}>
         <h2 style={{ fontSize: "12px", fontWeight: "600", color: "var(--color-text-tertiary)", textTransform: "uppercase", letterSpacing: "0.06em", margin: "0 0 12px" }}>Wirkmodelle</h2>
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && <p style={{ color: "var(--color-red-text)" }}>{error}</p>}
         <ul style={{ listStyle: "none", padding: 0 }}>
           {models.map((m) => (
             <li key={m.id}>
@@ -164,7 +164,7 @@ export default function CausalModelEditor() {
           ))}
         </ul>
 
-        <div style={{ marginTop: "1rem", borderTop: "1px solid var(--color-border)", paddingTop: "1rem" }}>
+        <div style={{ marginTop: "16px", borderTop: "1px solid var(--color-border)", paddingTop: "16px" }}>
           <h3 style={{ fontSize: "11px", color: "var(--color-text-tertiary)", textTransform: "uppercase", letterSpacing: "0.06em", margin: "16px 0 8px", fontWeight: "600" }}>Neues Wirkmodell</h3>
           <input
             value={newTitle}
@@ -186,8 +186,8 @@ export default function CausalModelEditor() {
             onClick={createModel}
             disabled={loading || !newTitle.trim()}
             style={{
-              background: loading || !newTitle.trim() ? "var(--color-bg-subtle)" : "#1A1A1A",
-              color: loading || !newTitle.trim() ? "var(--color-text-tertiary)" : "#FFFFFF",
+              background: loading || !newTitle.trim() ? "var(--color-bg-subtle)" : "var(--color-text-primary)",
+              color: loading || !newTitle.trim() ? "var(--color-text-tertiary)" : "var(--color-text-inverse)",
               border: "none",
               borderRadius: "6px",
               padding: "8px 16px",
@@ -204,7 +204,7 @@ export default function CausalModelEditor() {
 
       <main style={{ padding: "24px 32px", background: "var(--color-bg)", overflowY: "auto" }}>
         {!selected ? (
-          <p style={{ color: "#888" }}>Wirkmodell auswählen oder neu anlegen.</p>
+          <p style={{ color: "var(--color-text-tertiary)" }}>Wirkmodell auswählen oder neu anlegen.</p>
         ) : (
           <>
             <h2 style={{ fontSize: "20px", fontWeight: "600", marginTop: "0", marginBottom: "4px" }}>{selected.title}</h2>
@@ -327,8 +327,8 @@ export default function CausalModelEditor() {
                 onClick={addAxiom}
                 disabled={loading || !axiomLabel.trim() || !axiomDescription.trim()}
                 style={{
-                  background: loading || !axiomLabel.trim() || !axiomDescription.trim() ? "var(--color-bg-subtle)" : "#1A1A1A",
-                  color: loading || !axiomLabel.trim() || !axiomDescription.trim() ? "var(--color-text-tertiary)" : "#FFFFFF",
+                  background: loading || !axiomLabel.trim() || !axiomDescription.trim() ? "var(--color-bg-subtle)" : "var(--color-text-primary)",
+                  color: loading || !axiomLabel.trim() || !axiomDescription.trim() ? "var(--color-text-tertiary)" : "var(--color-text-inverse)",
                   border: "none",
                   borderRadius: "6px",
                   padding: "8px 16px",

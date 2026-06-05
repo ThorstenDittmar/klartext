@@ -69,7 +69,7 @@ export default function WirkgefuegeVorschlag() {
 
   if (!suggestion || !narrative) {
     return (
-      <p style={{ color: "#888" }}>
+      <p style={{ color: "var(--color-text-tertiary)" }}>
         Bitte Wirkgefüge-Vorschlag vom Analyse-Screen starten.
       </p>
     );
@@ -159,7 +159,7 @@ export default function WirkgefuegeVorschlag() {
 
       {/* Slots */}
       <div
-        style={{ borderTop: "1px solid var(--color-border)", paddingTop: "1rem", marginBottom: "2rem" }}
+        style={{ borderTop: "1px solid var(--color-border)", paddingTop: "16px", marginBottom: "32px" }}
       >
         <h3
           style={{
@@ -264,7 +264,7 @@ export default function WirkgefuegeVorschlag() {
 
       {/* Relations */}
       <div
-        style={{ borderTop: "1px solid var(--color-border)", paddingTop: "1rem", marginBottom: "2rem" }}
+        style={{ borderTop: "1px solid var(--color-border)", paddingTop: "16px", marginBottom: "32px" }}
       >
         <h3
           style={{
@@ -399,7 +399,7 @@ export default function WirkgefuegeVorschlag() {
       </div>
 
       {/* Model name + save */}
-      <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: "1rem" }}>
+      <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: "16px" }}>
         <label
           style={{ fontSize: "12px", color: "var(--color-text-secondary)", display: "block", marginBottom: "6px" }}
         >
@@ -425,8 +425,8 @@ export default function WirkgefuegeVorschlag() {
           onClick={save}
           disabled={saving || !modelName.trim()}
           style={{
-            background: modelName.trim() ? "#1A1A1A" : "var(--color-bg-subtle)",
-            color: modelName.trim() ? "#FFFFFF" : "var(--color-text-tertiary)",
+            background: modelName.trim() ? "var(--color-text-primary)" : "var(--color-bg-subtle)",
+            color: modelName.trim() ? "var(--color-text-inverse)" : "var(--color-text-tertiary)",
             border: "none",
             borderRadius: "6px",
             padding: "10px 16px",

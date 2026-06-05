@@ -374,7 +374,7 @@ export default function NarrativeEditor() {
           ))}
         </ul>
 
-        <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: "1rem" }}>
+        <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: "16px" }}>
           <p style={{ margin: "0 0 6px", fontSize: "11px", color: "var(--color-text-tertiary)", textTransform: "uppercase" as const, letterSpacing: "0.06em" }}>
             Neues Narrativ
           </p>
@@ -400,8 +400,8 @@ export default function NarrativeEditor() {
             disabled={loading || !newTitle.trim()}
             style={{
               fontSize: "13px",
-              background: loading ? "var(--color-bg-subtle)" : "#1A1A1A",
-              color: loading ? "var(--color-text-tertiary)" : "#FFFFFF",
+              background: loading ? "var(--color-bg-subtle)" : "var(--color-text-primary)",
+              color: loading ? "var(--color-text-tertiary)" : "var(--color-text-inverse)",
               border: "none",
               borderRadius: "6px",
               padding: "8px 16px",
@@ -414,7 +414,7 @@ export default function NarrativeEditor() {
           </button>
         </div>
 
-        <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: "1rem", marginTop: "1rem" }}>
+        <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: "16px", marginTop: "16px" }}>
           <p style={{ margin: "0 0 6px", fontSize: "11px", color: "var(--color-text-tertiary)", textTransform: "uppercase" as const, letterSpacing: "0.06em" }}>
             Aus Datei importieren
           </p>
@@ -440,8 +440,8 @@ export default function NarrativeEditor() {
             disabled={importing || !importPath.trim()}
             style={{
               fontSize: "13px",
-              background: importing ? "var(--color-bg-subtle)" : "#1A1A1A",
-              color: importing ? "var(--color-text-tertiary)" : "#FFFFFF",
+              background: importing ? "var(--color-bg-subtle)" : "var(--color-text-primary)",
+              color: importing ? "var(--color-text-tertiary)" : "var(--color-text-inverse)",
               border: "none",
               borderRadius: "6px",
               padding: "8px 16px",
@@ -467,7 +467,7 @@ export default function NarrativeEditor() {
         }}
       >
         {!selected ? (
-          <p style={{ color: "#bbb", fontSize: "0.85rem" }}>Narrativ auswählen</p>
+          <p style={{ color: "var(--color-text-tertiary)", fontSize: "13px" }}>Narrativ auswählen</p>
         ) : (
           <>
             <p
@@ -500,7 +500,7 @@ export default function NarrativeEditor() {
                       color: selectedSceneId === scene.id ? "var(--color-blue-text)" : "var(--color-text-primary)",
                     }}
                   >
-                    <span style={{ color: "#bbb", marginRight: "0.4rem" }}>
+                    <span style={{ color: "var(--color-text-tertiary)", marginRight: "0.4rem" }}>
                       {scene.position}.
                     </span>
                     {scene.title}
@@ -533,7 +533,7 @@ export default function NarrativeEditor() {
             {/* ------------------------------------------------------------ */}
             {/* Actors                                                         */}
             {/* ------------------------------------------------------------ */}
-            <div style={{ borderTop: "1px solid var(--color-border)", marginTop: "1.5rem", paddingTop: "1rem" }}>
+            <div style={{ borderTop: "1px solid var(--color-border)", marginTop: "24px", paddingTop: "16px" }}>
               <p
                 style={{
                   margin: "0 0 8px",
@@ -622,10 +622,10 @@ export default function NarrativeEditor() {
       <main style={{ padding: "24px 32px", overflowY: "auto", background: "var(--color-bg)" }}>
         {/* Empty states */}
         {!selected && (
-          <p style={{ color: "#888" }}>Narrativ auswählen oder neu anlegen.</p>
+          <p style={{ color: "var(--color-text-tertiary)" }}>Narrativ auswählen oder neu anlegen.</p>
         )}
         {selected && !selectedScene && !showAddScene && (
-          <p style={{ color: "#888" }}>
+          <p style={{ color: "var(--color-text-tertiary)" }}>
             Szene auswählen oder neue Szene hinzufügen.
           </p>
         )}
@@ -687,7 +687,7 @@ export default function NarrativeEditor() {
               {selectedActorId ? "Akteur bearbeiten" : "Neuer Akteur"}
             </h2>
 
-            <label style={{ display: "block", fontSize: "0.85rem", marginBottom: "0.25rem" }}>
+            <label style={{ display: "block", fontSize: "13px", marginBottom: "0.25rem" }}>
               Name
             </label>
             <input
@@ -697,27 +697,27 @@ export default function NarrativeEditor() {
               style={{
                 width: "100%",
                 padding: "0.4rem",
-                marginBottom: "1rem",
+                marginBottom: "16px",
                 boxSizing: "border-box",
               }}
             />
 
-            <label style={{ display: "block", fontSize: "0.85rem", marginBottom: "0.25rem" }}>
+            <label style={{ display: "block", fontSize: "13px", marginBottom: "0.25rem" }}>
               Typ
             </label>
             <select
               value={actorType}
               onChange={(e) => setActorType(e.target.value)}
-              style={{ padding: "0.4rem", marginBottom: "1rem", fontSize: "0.85rem" }}
+              style={{ padding: "0.4rem", marginBottom: "16px", fontSize: "13px" }}
             >
               {ACTOR_TYPES.map(([value, label]) => (
                 <option key={value} value={value}>{label}</option>
               ))}
             </select>
 
-            <label style={{ display: "block", fontSize: "0.85rem", marginBottom: "0.25rem" }}>
+            <label style={{ display: "block", fontSize: "13px", marginBottom: "0.25rem" }}>
               Beschreibung{" "}
-              <span style={{ color: "#bbb", fontWeight: "normal" }}>(optional)</span>
+              <span style={{ color: "var(--color-text-tertiary)", fontWeight: "normal" }}>(optional)</span>
             </label>
             <textarea
               value={actorNotes}
@@ -727,7 +727,7 @@ export default function NarrativeEditor() {
               style={{
                 width: "100%",
                 padding: "0.4rem",
-                marginBottom: "1rem",
+                marginBottom: "16px",
                 boxSizing: "border-box",
                 resize: "vertical",
                 lineHeight: 1.6,
@@ -789,7 +789,7 @@ export default function NarrativeEditor() {
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "1rem",
+                  gap: "16px",
                   marginBottom: "0.75rem",
                 }}
               >
@@ -807,7 +807,7 @@ export default function NarrativeEditor() {
               </div>
 
               {selectedClaims !== null && selectedClaims.length === 0 && !extracting && (
-                <p style={{ color: "#888", fontSize: "0.85rem", margin: 0 }}>
+                <p style={{ color: "var(--color-text-tertiary)", fontSize: "13px", margin: 0 }}>
                   Noch keine Claims extrahiert.
                 </p>
               )}
@@ -851,7 +851,7 @@ export default function NarrativeEditor() {
               </h3>
 
               {causalModels.length === 0 ? (
-                <p style={{ color: "#888", fontSize: "0.85rem" }}>
+                <p style={{ color: "var(--color-text-tertiary)", fontSize: "13px" }}>
                   Kein Wirkmodell vorhanden. Im Wirkmodell-Editor anlegen.
                 </p>
               ) : (
@@ -923,19 +923,19 @@ export default function NarrativeEditor() {
                             fontSize: "13px",
                           }}
                         >
-                          <strong style={{ color: "#888", fontSize: "0.8rem" }}>
+                          <strong style={{ color: "var(--color-text-tertiary)", fontSize: "0.8rem" }}>
                             Axiom
                           </strong>
                           <p style={{ margin: "0.15rem 0 0.4rem", fontStyle: "italic" }}>
                             {c.axiom_label}
                           </p>
-                          <strong style={{ color: "#888", fontSize: "0.8rem" }}>
+                          <strong style={{ color: "var(--color-text-tertiary)", fontSize: "0.8rem" }}>
                             Problem
                           </strong>
                           <p style={{ margin: "0.15rem 0 0.4rem" }}>{c.description}</p>
                           {c.suggestion && (
                             <>
-                              <strong style={{ color: "#888", fontSize: "0.8rem" }}>
+                              <strong style={{ color: "var(--color-text-tertiary)", fontSize: "0.8rem" }}>
                                 Vorschlag
                               </strong>
                               <p style={{ margin: "0.15rem 0 0" }}>{c.suggestion}</p>
@@ -957,17 +957,17 @@ export default function NarrativeEditor() {
         {selected && !showAddScene && !showAddActor && !selectedActorId && (
           <div
             style={{
-              borderTop: "1px solid #eee",
-              paddingTop: "1.5rem",
-              marginTop: "2rem",
+              borderTop: "1px solid var(--color-border)",
+              paddingTop: "24px",
+              marginTop: "32px",
             }}
           >
             <button
               onClick={analyseNarrative}
               disabled={analysing}
               style={{
-                background: analysing ? "var(--color-bg-subtle)" : "#1A1A1A",
-                color: analysing ? "var(--color-text-tertiary)" : "#FFFFFF",
+                background: analysing ? "var(--color-bg-subtle)" : "var(--color-text-primary)",
+                color: analysing ? "var(--color-text-tertiary)" : "var(--color-text-inverse)",
                 border: "none",
                 borderRadius: "6px",
                 padding: "10px 16px",
@@ -980,7 +980,7 @@ export default function NarrativeEditor() {
               {analysing ? "⏳ Analyse läuft…" : "Analysieren →"}
             </button>
             {analyseError && (
-              <p style={{ color: "#A32D2D", fontSize: "0.85rem", marginTop: "0.5rem" }}>
+              <p style={{ color: "var(--color-red-text)", fontSize: "13px", marginTop: "8px" }}>
                 {analyseError}
               </p>
             )}

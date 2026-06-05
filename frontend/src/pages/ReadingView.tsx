@@ -59,13 +59,13 @@ export default function ReadingView() {
 
   return (
     <div style={{ maxWidth: 720, margin: "0 auto", padding: "0 1rem" }}>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p style={{ color: "var(--color-red-text)" }}>{error}</p>}
 
       {/* Narrative selector — only shown when more than one narrative exists */}
       {summaries.length > 1 && (
         <select
           onChange={(e) => loadNarrative(e.target.value)}
-          style={{ marginBottom: "2rem", padding: "0.4rem" }}
+          style={{ marginBottom: "32px", padding: "0.4rem" }}
         >
           {summaries.map((n) => (
             <option key={n.id} value={n.id}>
@@ -82,15 +82,15 @@ export default function ReadingView() {
           </h1>
 
           {narrative.scenes.length === 0 && (
-            <p style={{ color: "#888" }}>Dieses Narrativ enthält noch keine Szenen.</p>
+            <p style={{ color: "var(--color-text-tertiary)" }}>Dieses Narrativ enthält noch keine Szenen.</p>
           )}
 
           {narrative.scenes.map((scene) => {
             const claims = claimsByScene[scene.id];
             return (
               <div key={scene.id} style={{ marginBottom: "3rem" }}>
-                <h2 style={{ fontSize: "1.1rem", marginBottom: "0.75rem", color: "#222" }}>
-                  <span style={{ color: "#bbb", fontWeight: "normal", marginRight: "0.4rem" }}>
+                <h2 style={{ fontSize: "16px", marginBottom: "0.75rem", color: "var(--color-text-primary)" }}>
+                  <span style={{ color: "var(--color-text-tertiary)", fontWeight: "normal", marginRight: "0.4rem" }}>
                     {scene.position}.
                   </span>
                   {scene.title}
@@ -100,9 +100,9 @@ export default function ReadingView() {
                   style={{
                     whiteSpace: "pre-wrap",
                     lineHeight: 1.8,
-                    color: "#333",
-                    margin: "0 0 1rem",
-                    fontSize: "1rem",
+                    color: "var(--color-text-primary)",
+                    margin: "0 0 16px",
+                    fontSize: "16px",
                   }}
                 >
                   {scene.text}
@@ -112,7 +112,7 @@ export default function ReadingView() {
                 {claims && claims.length > 0 && (
                   <div
                     style={{
-                      borderTop: "1px solid #f0f0f0",
+                      borderTop: "1px solid var(--color-border-subtle)",
                       paddingTop: "0.75rem",
                       marginTop: "0.5rem",
                     }}
@@ -121,7 +121,7 @@ export default function ReadingView() {
                       style={{
                         margin: "0 0 0.5rem",
                         fontSize: "0.75rem",
-                        color: "#bbb",
+                        color: "var(--color-text-tertiary)",
                         textTransform: "uppercase",
                         letterSpacing: "0.05em",
                       }}
@@ -137,14 +137,15 @@ export default function ReadingView() {
                             gap: "0.5rem",
                             alignItems: "flex-start",
                             marginBottom: "0.4rem",
-                            fontSize: "0.85rem",
+                            fontSize: "13px",
                           }}
                         >
                           <span
                             style={{
                               flexShrink: 0,
-                              background: "#e8f0fe",
-                              color: "#3c5bb5",
+                              // TODO(token): needs color.semantic.blue variant — current tokens have --color-blue-bg (#E6F1FB) and --color-blue-text (#0C447C) but different shades
+                              background: "var(--color-blue-bg)",
+                              color: "var(--color-blue-text)",
                               borderRadius: 3,
                               padding: "0.1rem 0.4rem",
                               fontSize: "0.75rem",
@@ -153,7 +154,7 @@ export default function ReadingView() {
                           >
                             {CLAIM_TYPE_LABELS[c.typ] ?? c.typ}
                           </span>
-                          <span style={{ color: "#555" }}>{c.text}</span>
+                          <span style={{ color: "var(--color-text-secondary)" }}>{c.text}</span>
                         </li>
                       ))}
                     </ul>
