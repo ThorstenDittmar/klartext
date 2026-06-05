@@ -3,7 +3,8 @@
 ## Language
 - All code in English: variable names, function names, classes, comments, commit messages, API endpoints
 - Communication with the team in German
-- User-facing strings (UI text, error messages) in German
+- User-facing strings are externalized via i18n (`t('key')`) — never hardcoded in any language.
+  See `design/i18n.md` for rules. Backend error messages that reach the API response: German.
 
 ## Test-Driven Development
 Use the `tdd` skill. It extends the `superpowers:test-driven-development` skill with project-specific standards.
