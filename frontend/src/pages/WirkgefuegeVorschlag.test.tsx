@@ -104,10 +104,7 @@ describe("WirkgefuegeVorschlag", () => {
     const btn = screen.getByText(/CausalModel anlegen und speichern/i);
     fireEvent.click(btn);
     await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith(
-        "/causal-model",
-        expect.objectContaining({ state: { selectedModelId: "cm1" } })
-      );
+      expect(mockNavigate).toHaveBeenCalledWith("/causal-model/cm1");
     });
   });
 });

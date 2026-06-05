@@ -134,7 +134,7 @@ export default function WirkgefuegeVorschlag() {
       }
 
       // 6. Navigate to CausalModelEditor
-      navigate("/causal-model", { state: { selectedModelId: newModel.id } });
+      navigate(`/causal-model/${newModel.id}`);
     } catch {
       setError("Speichern fehlgeschlagen. Bitte erneut versuchen.");
     } finally {
