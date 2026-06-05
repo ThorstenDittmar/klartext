@@ -81,6 +81,8 @@ source api/.venv/bin/activate
 | `klartext test -v` | Run unit tests with verbose output |
 | `klartext health` | Call `/health` and print per-dependency status |
 | `klartext testdata` | Seed the database with a consistent test dataset (requires running API + Supabase) |
+| `klartext flush` | TRUNCATE all data tables without restarting anything — server keeps running, DB is empty after reload |
+| `klartext flush --yes` | Same, without confirmation prompt |
 | `klartext db reset` | Reset local database and re-apply all migrations |
 | `klartext db status` | Show status of the local Supabase instance |
 

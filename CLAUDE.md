@@ -169,6 +169,22 @@ All essential operations are scripted — no manual steps in terminals, dashboar
 - Deployment via scripts or CI/CD pipeline
 - Supabase configuration (RLS, Storage, Edge Functions) as code
 
+### Anthropic-Client auf macOS
+
+Der Standard-httpx-Client des Anthropic SDK verwendet certifi's CA-Bundle,
+das auf macOS möglicherweise nicht alle nötigen Zertifikate enthält.
+
+**Lösung:** `_make_anthropic_client()` in `api/dependencies.py` übergibt
+`http_client=httpx.AsyncClient(verify=ssl.create_default_context())`.
+Dieselbe Lösung gilt für `check_anthropic()` in `api/services/health_service.py`.
+
+**Symptom:** `APIConnectionError: Connection error.` beim ersten Analyse- oder
+Konsistenz-Aufruf, obwohl das Netzwerk erreichbar ist.
+
+**Ursache:** certifi bündelt ein eigenes CA-Bundle das nicht mit dem macOS-System
+synchronisiert wird. `ssl.create_default_context()` liest dagegen direkt aus
+`/private/etc/ssl/cert.pem`.
+
 ### Definition of Done — Infrastructure tasks
 
 Before closing any infrastructure-related task, verify each item:
