@@ -608,3 +608,22 @@ async def test_list_summaries_for_user_returns_counts() -> None:
     assert summaries[0].scene_count == 1
     assert summaries[0].actor_count == 0
     assert summaries[0].claim_count == 0
+
+
+@pytest.mark.asyncio
+async def test_list_summaries_for_user_returns_correct_claim_count() -> None:
+    """Expects list_summaries_for_user to reflect the claim count set on the fake repository."""
+    from api.models.narrative import Narrative
+    from api.tests.fakes.fake_narrative_repository import FakeNarrativeRepository
+    from api.tests.fakes.fake_user_repository import DEFAULT_USER_ID
+
+    repo = FakeNarrativeRepository()
+    n = Narrative.create("Test With Claims")
+    n.assign_user(DEFAULT_USER_ID)
+    saved = await repo.save(n)
+    repo.set_claim_count(saved.id, 7)  # type: ignore[arg-type]
+
+    service = make_service(repository=repo)
+    summaries = await service.list_summaries_for_user(DEFAULT_USER_ID)
+
+    assert summaries[0].claim_count == 7

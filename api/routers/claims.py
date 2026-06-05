@@ -18,6 +18,12 @@ from api.services.claim_service import ClaimService
 router = APIRouter()
 
 
+@router.get("/claims/health")
+async def health() -> dict[str, str]:
+    """Returns health status of the claims service. Public — no authentication required."""
+    return {"status": "ok"}
+
+
 @router.post("/claims/{claim_id}/link-to-wirkgefuege", response_model=ClaimResponse)
 async def link_claim_to_wirkgefuege(
     claim_id: str,

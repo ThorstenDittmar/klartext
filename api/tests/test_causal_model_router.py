@@ -95,19 +95,26 @@ class FakeCausalModelService:
         )
 
     async def update_slot(
-        self, causal_model_id: str, slot_id: str, epistemic_status: EpistemicStatus
+        self,
+        causal_model_id: str,
+        slot_id: str,
+        epistemic_status: EpistemicStatus,
+        identifier: str | None = None,
     ) -> Slot:
-        """Returns a stubbed updated Slot."""
+        """Raises CausalModelNotFoundError for unknown model; returns stubbed Slot otherwise."""
+        if causal_model_id == "unknown":
+            raise CausalModelNotFoundError("not found")
         return Slot(
             id=slot_id,
-            identifier="money_supply",
+            identifier=identifier or "money_supply",
             slot_type=SlotType.PHYSICAL_QUANTITY,
             epistemic_status=epistemic_status,
         )
 
     async def remove_slot(self, causal_model_id: str, slot_id: str) -> None:
-        """No-op for test stub."""
-        pass
+        """Raises CausalModelNotFoundError for unknown model; no-op otherwise."""
+        if causal_model_id == "unknown":
+            raise CausalModelNotFoundError("not found")
 
     async def add_relation(
         self,
@@ -152,8 +159,9 @@ class FakeCausalModelService:
         )
 
     async def remove_relation(self, causal_model_id: str, relation_id: str) -> None:
-        """No-op for test stub."""
-        pass
+        """Raises CausalModelNotFoundError for unknown model; no-op otherwise."""
+        if causal_model_id == "unknown":
+            raise CausalModelNotFoundError("not found")
 
 
 # ---------------------------------------------------------------------------
@@ -482,3 +490,71 @@ async def test_get_causal_model_includes_linked_narratives_key() -> None:
     body = response.json()
     assert "linked_narratives" in body
     assert isinstance(body["linked_narratives"], list)
+
+
+# ---------------------------------------------------------------------------
+# DELETE /causal-models/{id}/slots/{slot_id}
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_remove_slot_returns_204() -> None:
+    """Expects DELETE /causal-models/{id}/slots/{slot_id} to return HTTP 204."""
+    app.dependency_overrides[get_causal_model_service] = lambda: FakeCausalModelService()
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.delete("/causal-models/cm-001/slots/slot-001")
+    app.dependency_overrides.clear()
+    assert response.status_code == 204
+
+
+@pytest.mark.asyncio
+async def test_remove_slot_returns_404_for_unknown_model() -> None:
+    """Expects 404 when the CausalModel does not exist."""
+    app.dependency_overrides[get_causal_model_service] = lambda: FakeCausalModelService()
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.delete("/causal-models/unknown/slots/slot-001")
+    app.dependency_overrides.clear()
+    assert response.status_code == 404
+
+
+# ---------------------------------------------------------------------------
+# DELETE /causal-models/{id}/relations/{relation_id}
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_remove_relation_returns_204() -> None:
+    """Expects DELETE /causal-models/{id}/relations/{rid} to return HTTP 204."""
+    app.dependency_overrides[get_causal_model_service] = lambda: FakeCausalModelService()
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.delete("/causal-models/cm-001/relations/rel-001")
+    app.dependency_overrides.clear()
+    assert response.status_code == 204
+
+
+@pytest.mark.asyncio
+async def test_remove_relation_returns_404_for_unknown_model() -> None:
+    """Expects 404 when the CausalModel does not exist."""
+    app.dependency_overrides[get_causal_model_service] = lambda: FakeCausalModelService()
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.delete("/causal-models/unknown/relations/rel-001")
+    app.dependency_overrides.clear()
+    assert response.status_code == 404
+
+
+# ---------------------------------------------------------------------------
+# PUT /causal-models/{id}/slots/{slot_id} — 404 path
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_update_slot_returns_404_for_unknown_model() -> None:
+    """Expects 404 when the CausalModel does not exist."""
+    app.dependency_overrides[get_causal_model_service] = lambda: FakeCausalModelService()
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.put(
+            "/causal-models/unknown/slots/slot-001",
+            json={"epistemic_status": "incomplete"},
+        )
+    app.dependency_overrides.clear()
+    assert response.status_code == 404

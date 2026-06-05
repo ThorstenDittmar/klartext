@@ -20,6 +20,11 @@ class FakeNarrativeRepository(NarrativeRepository):
 
     def __init__(self) -> None:
         self._store: dict[str, Narrative] = {}
+        self._claim_counts: dict[str, int] = {}
+
+    def set_claim_count(self, narrative_id: str, count: int) -> None:
+        """Sets the claim count for a narrative. Used in tests to simulate saved claims."""
+        self._claim_counts[narrative_id] = count
 
     async def save(self, narrative: Narrative) -> Narrative:
         """Stores the narrative with a generated ID and returns it with IDs assigned."""
@@ -153,7 +158,7 @@ class FakeNarrativeRepository(NarrativeRepository):
                     user_id=narrative.user_id,
                     scene_count=len(narrative.scenes),
                     actor_count=len(narrative.actors),
-                    claim_count=0,  # fake doesn't track claims
+                    claim_count=self._claim_counts.get(narrative.id, 0),  # type: ignore[arg-type]
                 )
             )
         return result

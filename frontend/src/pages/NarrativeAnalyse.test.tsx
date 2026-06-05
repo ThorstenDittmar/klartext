@@ -109,4 +109,22 @@ describe("NarrativeAnalyse", () => {
       );
     });
   });
+
+  it("calls addActor API when actor is accepted", async () => {
+    const { api } = await import("../lib/api");
+    renderWithState(mockAnalysis);
+
+    const acceptButtons = screen.getAllByText("✓");
+    fireEvent.click(acceptButtons[0]); // first ✓ = actor
+
+    await waitFor(() => {
+      expect(api.narratives.addActor).toHaveBeenCalledWith(
+        "test-id",
+        "EZB",
+        "institution",
+        null,
+        "ecb",
+      );
+    });
+  });
 });

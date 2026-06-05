@@ -1,7 +1,13 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import CausalModelEditor from "./CausalModelEditor";
+
+const mockNavigate = vi.fn();
+vi.mock("react-router-dom", async () => {
+  const actual = await vi.importActual("react-router-dom");
+  return { ...actual, useNavigate: () => mockNavigate };
+});
 
 vi.mock("../lib/api", () => ({
   api: {
@@ -49,6 +55,7 @@ function renderPage(modelId = "cm1") {
 describe("CausalModelEditor — extensions", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockNavigate.mockReset();
   });
 
   it("auto-selects model from URL param and shows its title as heading", async () => {
@@ -75,5 +82,12 @@ describe("CausalModelEditor — extensions", () => {
     await waitFor(() => {
       expect(screen.getByText("Klartext Narrativ")).toBeInTheDocument();
     });
+  });
+
+  it("navigates to narrative detail when linked narrative is clicked", async () => {
+    renderPage("cm1");
+    const link = await screen.findByText("Klartext Narrativ");
+    fireEvent.click(link);
+    expect(mockNavigate).toHaveBeenCalledWith("/narrative/n1");
   });
 });

@@ -1125,3 +1125,17 @@ async def test_get_narrative_claims_returns_200_with_one_item() -> None:
     assert len(data) == 1
     assert data[0]["label"] == "Test Claim"
     assert "id" in data[0]
+
+
+# ---------------------------------------------------------------------------
+# GET /narratives/health
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_narratives_health_returns_200() -> None:
+    """Expects GET /narratives/health to return HTTP 200 with status ok."""
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.get("/narratives/health")
+    assert response.status_code == 200
+    assert response.json()["status"] == "ok"

@@ -159,3 +159,15 @@ async def test_link_claim_to_wirkgefuege_returns_200(override_claim_service) -> 
     assert response.status_code == 200
     assert response.json()["status"] == "linked"
     assert response.json()["wirkgefuege_ref"] == "slot-abc"
+
+
+# --- Health ---
+
+
+@pytest.mark.asyncio
+async def test_claims_health_returns_200() -> None:
+    """Expects GET /claims/health to return HTTP 200 with status ok."""
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.get("/claims/health")
+    assert response.status_code == 200
+    assert response.json()["status"] == "ok"

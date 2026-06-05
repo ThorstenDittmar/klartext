@@ -224,6 +224,75 @@ Every new migration file must pass these checks before committing:
 **Why `klartext db reset` and not incremental apply:**
 Incremental apply runs the new migration on top of an existing schema that already has all prior renames and additions. This hides references to old names. `db reset` replays every migration from scratch — the only way to catch stale references.
 
+## Testing Standards
+
+### Router test completeness
+
+Every router endpoint must have at least one router test. No endpoint ships without a test.
+
+**Checklist — when adding a new endpoint:**
+- [ ] Happy path: correct HTTP status and response body
+- [ ] Error path: 404 or 422 for invalid input (where applicable)
+- [ ] Health endpoint: `GET /<resource>/health` returns 200 with `{"status": "ok"}`
+
+**Why:** Router tests are the only layer that verifies the HTTP contract (status codes, JSON shape, dependency wiring). A missing router test means the endpoint has never been called programmatically — the first caller is the user.
+
+### Supabase integration tests for complex queries
+
+Every repository method that uses JOINs, embedded PostgREST counts, or multiple tables must have a `@pytest.mark.integration` test against the real database.
+
+Simple CRUD (single table, no aggregation) is covered by the fake. Complex queries are not.
+
+**Signals that a test is needed:**
+- Query uses PostgREST embedded counts (`table(count)`)
+- Query joins across multiple tables
+- Query relies on FK relationships in the PostgREST schema cache
+
+Add the test to `api/tests/test_<resource>_repository.py` and mark it `@pytest.mark.integration`.
+
+**Why:** PostgREST embedded counts fail silently at the fake layer — the fake returns `0` always. The only way to verify the query works is to run it against the real database.
+
+### Fake contract completeness
+
+Fake repositories must implement the full interface contract. Silent constants that mask missing functionality are not allowed.
+
+**Allowed:**
+```python
+claim_count=self._claim_counts.get(narrative.id, 0)  # test-controllable via set_claim_count()
+```
+
+**Not allowed:**
+```python
+claim_count=0  # silent constant — tests can never verify this is wrong
+```
+
+If a fake cannot implement a method meaningfully, it must raise `NotImplementedError` explicitly — never silently return a default that hides the gap.
+
+For computed fields (e.g. counts derived from related objects), provide a test helper to set the expected value:
+```python
+def set_claim_count(self, narrative_id: str, count: int) -> None:
+    """Sets the claim count for a narrative. Used in tests to simulate saved claims."""
+    self._claim_counts[narrative_id] = count
+```
+
+**Why:** A fake that always returns `claim_count=0` lets tests pass even when the service ignores the count entirely. The gap is only caught when the real database returns a wrong value.
+
+### Health endpoint enforcement
+
+The health endpoint rule (`GET /<resource>/health` on every router) is enforced by test, not by review comment.
+
+Every router test file must include:
+```python
+async def test_<resource>_health_returns_200() -> None:
+    """Expects GET /<resource>/health to return HTTP 200 with status ok."""
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.get("/<resource>/health")
+    assert response.status_code == 200
+    assert response.json()["status"] == "ok"
+```
+
+**Why:** A review comment is forgotten under time pressure. A failing test is not.
+
 ## Comments
 - Every non-trivial method gets a docstring
 - Methods describe what they do

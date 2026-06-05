@@ -166,6 +166,17 @@ def _to_suggest_response(result: Any) -> SuggestWirkgefuegeResponse:
 
 
 # ---------------------------------------------------------------------------
+# Health
+# ---------------------------------------------------------------------------
+
+
+@router.get("/health")
+async def health() -> dict[str, str]:
+    """Returns health status of the narratives service. Public — no authentication required."""
+    return {"status": "ok"}
+
+
+# ---------------------------------------------------------------------------
 # Narrative endpoints
 # ---------------------------------------------------------------------------
 

@@ -71,4 +71,30 @@ describe("MeineWerke", () => {
       expect(mockNavigate).toHaveBeenCalledWith("/narrative/n2");
     });
   });
+
+  it("imports narrative and navigates to it", async () => {
+    const { api } = await import("../lib/api");
+    renderPage();
+    await screen.findByText("Mein Narrativ"); // wait for load
+
+    const input = screen.getByPlaceholderText("Pfad zur .docx oder .md");
+    fireEvent.change(input, { target: { value: "/some/path.md" } });
+
+    const btn = screen.getByRole("button", { name: /Importieren/i });
+    fireEvent.click(btn);
+
+    await waitFor(() => {
+      expect(api.narratives.importFromPath).toHaveBeenCalledWith("/some/path.md");
+      expect(mockNavigate).toHaveBeenCalledWith("/narrative/n3");
+    });
+  });
+
+  it("shows empty state when no narratives exist", async () => {
+    const { api } = await import("../lib/api");
+    vi.mocked(api.narratives.list).mockResolvedValueOnce([]);
+
+    renderPage();
+
+    expect(await screen.findByText("Noch keine Werke vorhanden.")).toBeInTheDocument();
+  });
 });

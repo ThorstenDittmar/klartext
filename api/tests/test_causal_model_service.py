@@ -327,3 +327,70 @@ async def test_update_slot_renames_identifier() -> None:
     )
 
     assert updated.identifier == "new_name"
+
+
+# ---------------------------------------------------------------------------
+# remove_slot
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_remove_slot_deletes_slot_from_model() -> None:
+    """Expects remove_slot to make the slot no longer retrievable."""
+    service = make_service()
+    cm = await service.create("Test Model")
+    slot = await service.add_slot(
+        causal_model_id=cm.id,  # type: ignore[arg-type]
+        identifier="co2_level",
+        slot_type=SlotType.PHYSICAL_QUANTITY,
+        epistemic_status=EpistemicStatus.INCOMPLETE,
+    )
+
+    await service.remove_slot(causal_model_id=cm.id, slot_id=slot.id)  # type: ignore[arg-type]
+
+    refreshed = await service.find_by_id(cm.id)  # type: ignore[arg-type]
+    assert all(s.id != slot.id for s in refreshed.get_slots())
+
+
+@pytest.mark.asyncio
+async def test_remove_slot_raises_for_unknown_causal_model() -> None:
+    """Expects CausalModelNotFoundError when the model does not exist."""
+    service = make_service()
+
+    with pytest.raises(CausalModelNotFoundError):
+        await service.remove_slot(
+            causal_model_id="00000000-0000-0000-0000-000000000000",
+            slot_id="any-slot-id",
+        )
+
+
+# ---------------------------------------------------------------------------
+# remove_relation
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_remove_relation_deletes_relation_from_model() -> None:
+    """Expects remove_relation to make the relation no longer retrievable."""
+    service = make_service()
+    cm = await service.create("Test Model")
+    source = await service.add_slot(cm.id, "co2", SlotType.PHYSICAL_QUANTITY)  # type: ignore[arg-type]
+    target = await service.add_slot(cm.id, "temp", SlotType.TREND)  # type: ignore[arg-type]
+    rel = await service.add_relation(cm.id, "co2_causes_temp", source.id, target.id)  # type: ignore[arg-type]
+
+    await service.remove_relation(causal_model_id=cm.id, relation_id=rel.id)  # type: ignore[arg-type]
+
+    refreshed = await service.find_by_id(cm.id)  # type: ignore[arg-type]
+    assert all(r.id != rel.id for r in refreshed.get_relations())
+
+
+@pytest.mark.asyncio
+async def test_remove_relation_raises_for_unknown_causal_model() -> None:
+    """Expects CausalModelNotFoundError when the model does not exist."""
+    service = make_service()
+
+    with pytest.raises(CausalModelNotFoundError):
+        await service.remove_relation(
+            causal_model_id="00000000-0000-0000-0000-000000000000",
+            relation_id="any-rel-id",
+        )

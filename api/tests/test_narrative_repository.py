@@ -483,3 +483,50 @@ async def test_supabase_narrative_repository_link_to_causal_model() -> None:
     finally:
         await client.table("narrative").delete().eq("id", saved_narrative.id).execute()
         await client.table("causal_models").delete().eq("id", saved_model.id).execute()
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
+async def test_supabase_narrative_repository_list_summaries_for_user() -> None:
+    """Calls the real database. Expects list_summaries_for_user to resolve all embedded counts.
+
+    This test uses the PostgREST embedded-count query (scenes, actors, claims) that
+    requires FK relationships to be present in the schema cache. If any migration that
+    adds or renames those FK columns was not applied correctly, this test fails with
+    a PGRST200 error before reaching the assertions.
+
+    Requires SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY to be set.
+    """
+    import os
+
+    from supabase import acreate_client
+
+    from api.repositories.supabase_narrative_repository import SupabaseNarrativeRepository
+    from api.repositories.supabase_user_repository import SupabaseUserRepository
+    from tests.fakes.fake_user_repository import DEFAULT_USER_ID
+
+    client = await acreate_client(
+        os.environ["SUPABASE_URL"],
+        os.environ["SUPABASE_SERVICE_ROLE_KEY"],
+    )
+    narrative_repo = SupabaseNarrativeRepository(client=client)
+    user_repo = SupabaseUserRepository(client=client)
+
+    user = await user_repo.find_default()
+    narrative = NarrativeMother.empty()
+    narrative.assign_user(user.id)  # type: ignore[arg-type]
+    saved = await narrative_repo.save(narrative)
+
+    try:
+        summaries = await narrative_repo.list_summaries_for_user(DEFAULT_USER_ID)
+
+        ids = [s.id for s in summaries]
+        assert saved.id in ids
+
+        summary = next(s for s in summaries if s.id == saved.id)
+        assert summary.title == saved.title
+        assert summary.scene_count == 0
+        assert summary.actor_count == 0
+        assert summary.claim_count == 0
+    finally:
+        await client.table("narrative").delete().eq("id", saved.id).execute()
