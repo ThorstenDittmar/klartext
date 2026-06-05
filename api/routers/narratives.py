@@ -78,6 +78,7 @@ def _to_actor_response(actor: Actor) -> ActorResponse:
 def _to_claim_response(claim: Claim) -> ClaimResponse:
     """Converts a Claim domain object into a ClaimResponse schema."""
     return ClaimResponse(
+        id=claim.id,  # type: ignore[arg-type]
         label=claim.label,
         text=claim.text,
         typ=claim.typ.value,

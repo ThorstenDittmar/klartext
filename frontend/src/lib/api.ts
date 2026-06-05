@@ -54,6 +54,7 @@ export interface NarrativeSummary {
 }
 
 export interface Claim {
+  id: string;
   text: string;
   typ: string;
   confidence: number;

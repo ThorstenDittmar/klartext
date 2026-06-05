@@ -22,6 +22,7 @@ class ExtractClaimsRequest(BaseModel):
 class ClaimResponse(BaseModel):
     """Response shape for a single extracted Claim."""
 
+    id: str
     label: str
     text: str
     typ: str

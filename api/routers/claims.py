@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import uuid
+
 from fastapi import APIRouter, Depends
 
 from api.dependencies import get_claim_extractor_service, get_claim_service
@@ -33,6 +35,7 @@ async def link_claim_to_wirkgefuege(
         wirkgefuege_ref=request.wirkgefuege_ref,
     )
     return ClaimResponse(
+        id=claim.id or str(uuid.uuid4()),
         label=claim.label,
         text=claim.text,
         typ=claim.typ.value,
@@ -57,6 +60,7 @@ async def extract_claims(
     return ExtractClaimsResponse(
         claims=[
             ClaimResponse(
+                id=c.id or str(uuid.uuid4()),
                 label=c.label,
                 text=c.text,
                 typ=c.typ.value,

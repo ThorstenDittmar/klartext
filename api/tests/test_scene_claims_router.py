@@ -273,3 +273,23 @@ async def test_get_scene_claims_returns_empty_list_when_no_claims_exist() -> Non
 
     assert response.status_code == 200
     assert response.json() == []
+
+
+# ---------------------------------------------------------------------------
+# ClaimResponse schema – id field
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_claim_response_includes_id_field() -> None:
+    """Expects the claim response to include an id field."""
+    setup_overrides()
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.post(EXTRACT_URL)
+    finally:
+        clear_overrides()
+
+    claim = response.json()["claims"][0]
+    assert "id" in claim
+    assert isinstance(claim["id"], str)
