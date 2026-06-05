@@ -405,3 +405,26 @@ def test_narrative_remove_actor_is_noop_for_unknown_id() -> None:
     narrative.remove_actor("does-not-exist")
 
     assert len(narrative.actors) == 1
+
+
+# --- Narrative + user_id ---
+
+
+def test_narrative_has_no_user_id_by_default() -> None:
+    """Expects a newly created Narrative to have user_id None before assignment."""
+    narrative = Narrative.create("My Narrative")
+    assert narrative.user_id is None
+
+
+def test_assign_user_sets_user_id() -> None:
+    """Expects assign_user() to set the user_id on the narrative."""
+    narrative = Narrative.create("My Narrative")
+    narrative.assign_user("00000000-0000-0000-0000-000000000001")
+    assert narrative.user_id == "00000000-0000-0000-0000-000000000001"
+
+
+def test_from_record_loads_user_id() -> None:
+    """Expects from_record() to reconstruct a Narrative with its user_id."""
+    record = {"id": "abc", "title": "Test", "user_id": "00000000-0000-0000-0000-000000000001"}
+    narrative = Narrative.from_record(record)
+    assert narrative.user_id == "00000000-0000-0000-0000-000000000001"

@@ -191,10 +191,12 @@ class Narrative:
         id: str | None,
         title: str,
         causal_model_id: str | None = None,
+        user_id: str | None = None,
     ) -> None:
         self._id = id
         self._title = title
         self._causal_model_id = causal_model_id
+        self._user_id = user_id
         self._scenes: list[Scene] = []
         self._actors: list[Actor] = []
 
@@ -212,6 +214,7 @@ class Narrative:
             id=record["id"],
             title=record["title"],
             causal_model_id=record.get("causal_model_id"),
+            user_id=record.get("user_id"),
         )
 
     def add_scene(self, scene: Scene) -> None:
@@ -237,6 +240,10 @@ class Narrative:
             raise NarrativeValidationError("causal_model_id must not be empty")
         self._causal_model_id = causal_model_id
 
+    def assign_user(self, user_id: str) -> None:
+        """Associates this Narrative with a User."""
+        self._user_id = user_id
+
     @property
     def id(self) -> str | None:
         return self._id
@@ -248,6 +255,10 @@ class Narrative:
     @property
     def causal_model_id(self) -> str | None:
         return self._causal_model_id
+
+    @property
+    def user_id(self) -> str | None:
+        return self._user_id
 
     @property
     def scenes(self) -> list[Scene]:

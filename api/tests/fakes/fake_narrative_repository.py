@@ -25,7 +25,7 @@ class FakeNarrativeRepository(NarrativeRepository):
         """Stores the narrative with a generated ID and returns it with IDs assigned."""
         self.logger.info("FakeNarrativeRepository.save: title=%s", narrative.title)
         narrative_id = str(uuid.uuid4())
-        saved = Narrative(id=narrative_id, title=narrative.title)
+        saved = Narrative(id=narrative_id, title=narrative.title, user_id=narrative.user_id)
         for scene in narrative.scenes:
             saved.add_scene(
                 Scene(
@@ -124,3 +124,8 @@ class FakeNarrativeRepository(NarrativeRepository):
         # Always apply — covers both direct repository calls (tests) and service-mediated calls.
         self._store[narrative_id].link_to_causal_model(causal_model_id)
         return self._store[narrative_id]
+
+    async def list_for_user(self, user_id: str) -> list[Narrative]:
+        """Returns all Narratives in the store owned by the given user."""
+        self.logger.debug("FakeNarrativeRepository.list_for_user: user_id=%s", user_id)
+        return [n for n in self._store.values() if n.user_id == user_id]

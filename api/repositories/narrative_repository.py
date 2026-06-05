@@ -90,3 +90,11 @@ class NarrativeRepository(ABC):
         Raises NarrativeNotFoundError if no Narrative exists for that ID.
         Raises NarrativePersistenceError on database failure.
         """
+
+    @abstractmethod
+    async def list_for_user(self, user_id: str) -> list[Narrative]:
+        """Returns all Narratives owned by the given user.
+
+        Returns an empty list if no narratives exist for that user.
+        Raises NarrativePersistenceError on database failure.
+        """

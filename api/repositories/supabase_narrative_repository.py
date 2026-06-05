@@ -176,7 +176,7 @@ class SupabaseNarrativeRepository(NarrativeRepository):
         try:
             result = (
                 await self._client.table(_NARRATIVE_TABLE)
-                .select("id, title")
+                .select("id, title, causal_model_id, user_id")
                 .order("created_at")
                 .execute()
             )
@@ -184,7 +184,46 @@ class SupabaseNarrativeRepository(NarrativeRepository):
             raise NarrativePersistenceError(f"Failed to list narratives: {e}") from e
 
         return [
-            Narrative.from_record({"id": row["id"], "title": row["title"]})
+            Narrative.from_record(
+                {
+                    "id": row["id"],
+                    "title": row["title"],
+                    "causal_model_id": row.get("causal_model_id"),
+                    "user_id": row.get("user_id"),
+                }
+            )
+            for row in records(result.data)
+        ]
+
+    async def list_for_user(self, user_id: str) -> list[Narrative]:
+        """Returns all Narrative rows owned by the given user, without their scenes.
+
+        Returns an empty list if no narratives exist for that user.
+        Raises NarrativePersistenceError on database failure.
+        """
+        self.logger.debug("SupabaseNarrativeRepository.list_for_user: user_id=%s", user_id)
+        try:
+            result = (
+                await self._client.table(_NARRATIVE_TABLE)
+                .select("id, title, causal_model_id, user_id")
+                .eq("user_id", user_id)
+                .order("created_at")
+                .execute()
+            )
+        except Exception as e:
+            raise NarrativePersistenceError(
+                f"Failed to list narratives for user {user_id}: {e}"
+            ) from e
+
+        return [
+            Narrative.from_record(
+                {
+                    "id": row["id"],
+                    "title": row["title"],
+                    "causal_model_id": row.get("causal_model_id"),
+                    "user_id": row.get("user_id"),
+                }
+            )
             for row in records(result.data)
         ]
 
