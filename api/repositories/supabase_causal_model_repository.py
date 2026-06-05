@@ -197,12 +197,17 @@ class SupabaseCausalModelRepository(CausalModelRepository):
         return [Slot.from_record(row) for row in records(result.data)]
 
     async def update_slot(self, slot: Slot) -> Slot:
-        """Updates the epistemic_status of an existing Slot."""
+        """Updates the identifier and epistemic_status of an existing Slot."""
         self.logger.info("SupabaseCausalModelRepository.update_slot: slot_id=%s", slot.id)
         try:
             result = (
                 await self._client.table("slots")
-                .update({"epistemic_status": slot.epistemic_status.value})
+                .update(
+                    {
+                        "identifier": slot.identifier,
+                        "epistemic_status": slot.epistemic_status.value,
+                    }
+                )
                 .eq("id", slot.id)
                 .execute()
             )

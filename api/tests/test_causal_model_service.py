@@ -300,3 +300,30 @@ async def test_service_update_relation_changes_mechanism() -> None:
 
     assert updated.mechanism == "quantity_theory"
     assert updated.polarity == Polarity.POSITIVE
+
+
+# ---------------------------------------------------------------------------
+# update_slot — identifier rename
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_update_slot_renames_identifier() -> None:
+    """Expects update_slot with a new identifier to rename the Slot."""
+    service = make_service()
+    cm = await service.create("Test Model")
+    slot = await service.add_slot(
+        causal_model_id=cm.id,  # type: ignore[arg-type]
+        identifier="old_name",
+        slot_type=SlotType.PHYSICAL_QUANTITY,
+        epistemic_status=EpistemicStatus.INCOMPLETE,
+    )
+
+    updated = await service.update_slot(
+        causal_model_id=cm.id,  # type: ignore[arg-type]
+        slot_id=slot.id,  # type: ignore[arg-type]
+        epistemic_status=EpistemicStatus.INCOMPLETE,
+        identifier="new_name",
+    )
+
+    assert updated.identifier == "new_name"

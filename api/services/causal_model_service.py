@@ -79,8 +79,9 @@ class CausalModelService:
         causal_model_id: str,
         slot_id: str,
         epistemic_status: EpistemicStatus,
+        identifier: str | None = None,
     ) -> Slot:
-        """Updates the epistemic_status of a Slot.
+        """Updates the epistemic_status and optionally renames the identifier of a Slot.
 
         Raises CausalModelNotFoundError or SlotNotFoundError if either is absent.
         """
@@ -89,7 +90,7 @@ class CausalModelService:
         slot = next((s for s in slots if s.id == slot_id), None)
         if slot is None:
             raise SlotNotFoundError(f"Slot not found: {slot_id}")
-        slot.update(epistemic_status=epistemic_status)
+        slot.update(epistemic_status=epistemic_status, identifier=identifier)
         return await self._repository.update_slot(slot)
 
     async def remove_slot(self, causal_model_id: str, slot_id: str) -> None:

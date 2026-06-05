@@ -178,6 +178,7 @@ async def update_slot(
         causal_model_id=causal_model_id,
         slot_id=slot_id,
         epistemic_status=request.epistemic_status,
+        identifier=request.identifier,
     )
     return SlotResponse(
         id=slot.id,  # type: ignore[arg-type]

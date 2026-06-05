@@ -112,9 +112,18 @@ class CreateSlotRequest(BaseModel):
 
 
 class UpdateSlotRequest(BaseModel):
-    """Request body for updating a Slot's epistemic_status."""
+    """Request body for updating a Slot's epistemic_status and optionally its identifier."""
 
     epistemic_status: EpistemicStatus
+    identifier: str | None = None
+
+    @field_validator("identifier")
+    @classmethod
+    def identifier_not_blank(cls, v: str | None) -> str | None:
+        """Rejects empty or whitespace-only identifiers if provided."""
+        if v is not None and not v.strip():
+            raise ValueError("identifier must not be empty")
+        return v
 
 
 class CreateRelationRequest(BaseModel):

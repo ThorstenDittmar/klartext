@@ -133,8 +133,20 @@ class Slot:
         """True when this element is set as a premise in the current model."""
         return self._epistemic_status == EpistemicStatus.AXIOMATIC
 
-    def update(self, epistemic_status: EpistemicStatus) -> None:
-        """Updates the epistemic_status of this Slot."""
+    def update(
+        self,
+        epistemic_status: EpistemicStatus,
+        identifier: str | None = None,
+    ) -> None:
+        """Updates the epistemic_status and optionally renames the identifier of this Slot.
+
+        If identifier is None, the current identifier is preserved.
+        Raises ValueError if the new identifier is empty.
+        """
+        if identifier is not None:
+            if not identifier.strip():
+                raise ValueError("identifier must not be empty")
+            self._identifier = identifier
         self._epistemic_status = epistemic_status
 
 
