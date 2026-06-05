@@ -115,6 +115,55 @@ Steps 2–6 from `experiment_scope.md`:
   und `api.ts`. Verhindert stillen API-Contract-Drift.
   Aufwand: mittel. Priorität: hoch sobald das Interface größer wird.
 
+### Skills und Tooling
+
+- **`verify`-Skill für das Backend anlegen**
+  Gegenstück zu `docs/superpowers/skills/verify.md`. Protokoll: `klartext health`,
+  relevante API-Endpoints aufrufen, `klartext test` für den geänderten Layer.
+  Ablage: `docs/superpowers/skills/verify-backend.md` + Wrapper `~/.claude/skills/verify-backend/`.
+
+---
+
+## Architectural Linting — Plan (2026-06-05)
+
+**Entscheidung:** ADR 0006 — alle Patterns aus CLAUDE.md und Skills werden automatisch geprüft.
+**Primäres Tool:** Semgrep (strukturelle Muster, language-agnostic, YAML-Regeln)
+**Ergänzend:** custom ruff rules (Python), custom eslint rules (TypeScript)
+**Ablage:** `.semgrep/rules/` im Repo
+
+### Phase 1 — Semgrep aufsetzen + höchste Priorität
+
+Setup:
+- `pip install semgrep` in dev dependencies
+- `.semgrep/rules/` Ordner anlegen
+- Semgrep in pre-commit + CI (`lint.yml`) einbinden
+
+Erste Regeln (höchster Wert, sofort sichtbar):
+
+**Backend:**
+- `klartext/repo-logs-first` — jede Methode in `*Repository`-Klassen muss `self.logger` vor dem ersten nicht-logger Statement aufrufen
+- `klartext/no-hex-in-style` (Python-seitig) — kein hardcoded Hex in Python-Code
+- `klartext/exception-naming` — Exception-Klassen müssen auf `Error` enden
+- `klartext/factory-methods` — Klassen in `models/` müssen `create()` und `from_record()` haben
+
+**Frontend:**
+- `klartext/no-hex-in-style` (TypeScript) — kein `"#XXXXXX"` in `style={{...}}`
+- `klartext/async-finally` — jeder `async` Event-Handler muss `finally` enthalten
+
+### Phase 2 — Weitere Regeln
+
+- `klartext/repo-log-level` — `debug` für Reads, `info` für Writes
+- `klartext/service-naming` — Service-Klassen enden auf `Service`
+- `klartext/repository-naming` — Repository-Klassen enden auf `Repository`
+- `klartext/no-db-in-service` — kein `supabase`-Import in `services/`
+- `klartext/router-health` — jeder Router hat mindestens eine `/health`-Route
+- `klartext/no-jsx-strings` — keine String-Literale im JSX (außer technische Werte)
+
+### Neue Pattern-Regel
+
+Ab jetzt gilt: Wenn ein neues Pattern in CLAUDE.md oder einem Skill etabliert wird,
+wird im selben Commit eine entsprechende Semgrep-Regel angelegt. Kein Pattern ohne Regel.
+
 ### Später (kein konkreter Termin)
 
 - **Style Dictionary einrichten**

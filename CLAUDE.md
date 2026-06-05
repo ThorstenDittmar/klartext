@@ -9,6 +9,13 @@
 ## Test-Driven Development
 Use the `tdd` skill. It extends the `superpowers:test-driven-development` skill with project-specific standards.
 
+## Architectural Linting
+Every pattern documented here or in a skill file must have a corresponding automated check.
+See ADR 0006 and `docs/superpowers/plans/PENDING.md` for the rule set and implementation plan.
+
+**Rule:** When establishing a new pattern, add the Semgrep/eslint rule in the same commit.
+Patterns without automated enforcement are documentation, not standards.
+
 ## Frontend Development
 Use the `frontend` skill. It loads the project-level style guide and agent instructions from
 `docs/superpowers/skills/frontend.md`.
