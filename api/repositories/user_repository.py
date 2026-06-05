@@ -27,3 +27,24 @@ class UserRepository(ABC):
 
         Raises UserNotFoundError if the default user has not been seeded.
         """
+
+    @abstractmethod
+    async def add(self, user: User) -> User:
+        """Persists a new User and returns it with its assigned ID.
+
+        Raises UserValidationError if the user is invalid.
+        """
+
+    @abstractmethod
+    async def update(self, user: User) -> User:
+        """Persists changes to an existing User and returns the updated User.
+
+        Raises UserNotFoundError if no User exists for the given ID.
+        """
+
+    @abstractmethod
+    async def remove(self, user_id: str) -> None:
+        """Removes the User with the given ID.
+
+        Raises UserNotFoundError if no User exists for that ID.
+        """
