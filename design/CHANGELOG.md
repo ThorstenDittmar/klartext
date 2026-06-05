@@ -32,6 +32,25 @@ bereits korrekt. Keine Code-Änderungen nötig.
 
 ---
 
+## 2026-06-05 — Token-Ergänzungen für Screen-Compliance
+
+**Was:**
+- `design/tokens/colors.json`: `color.text.inverse` (#FFFFFF) hinzugefügt
+- `design/tokens/typography.json`: `font.size.sm2` (13px) hinzugefügt
+- `frontend/src/index.css`: `--color-text-inverse: #FFFFFF` hinzugefügt
+
+**Warum:** Screens aus Plan E verwenden `#1A1A1A`/`#FFFFFF` als Raw-Hex für Primary-Buttons
+und `13px` an 15+ Stellen. Diese Token fehlten, weshalb kein compliance-konformer Ersatz
+möglich war. `#888`/`#bbb` wurden als Mapping-Entscheidung auf `--color-text-tertiary` festgelegt.
+
+**Betroffene Komponenten:** Alle 4 Experiment-Workflow-Screens (Token-Compliance-Pass folgt).
+
+**Pending Task:** GitHub Issue #TODO —
+"Token-Compliance-Pass: Raw-Hex-Werte in NarrativeEditor, NarrativeAnalyse,
+WirkgefuegeVorschlag, CausalModelEditor, ReadingView durch CSS Custom Properties ersetzen."
+
+---
+
 <!--
   TEMPLATE für neue Einträge:
 

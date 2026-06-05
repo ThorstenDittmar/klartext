@@ -12,7 +12,10 @@
     "text": {
       "primary":   { "$value": "#1A1A1A", "$type": "color", "$css": "--color-text-primary" },
       "secondary": { "$value": "#6B6B6B", "$type": "color", "$css": "--color-text-secondary" },
-      "tertiary":  { "$value": "#9B9B9B", "$type": "color", "$css": "--color-text-tertiary" }
+      "tertiary":  { "$value": "#9B9B9B", "$type": "color", "$css": "--color-text-tertiary",
+                     "$description": "Muted text: placeholders, empty states, #888 and #bbb map here" },
+      "inverse":   { "$value": "#FFFFFF", "$type": "color", "$css": "--color-text-inverse",
+                     "$description": "White text on dark backgrounds (primary buttons, dark surfaces)" }
     },
     "semantic": {
       "green": {
