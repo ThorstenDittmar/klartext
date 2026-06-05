@@ -1,7 +1,6 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-// @ts-expect-error — NarrativeDetail component not yet implemented (TDD phase)
 import NarrativeDetail from "./NarrativeDetail";
 
 const mockNavigate = vi.fn();
