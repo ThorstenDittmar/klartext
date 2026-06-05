@@ -47,7 +47,7 @@ class SupabaseNarrativeRepository(NarrativeRepository):
         try:
             narrative_result = (
                 await self._client.table(_NARRATIVE_TABLE)
-                .insert({"title": narrative.title})
+                .insert({"title": narrative.title, "user_id": narrative.user_id})
                 .execute()
             )
         except Exception as e:
@@ -57,7 +57,7 @@ class SupabaseNarrativeRepository(NarrativeRepository):
             raise NarrativePersistenceError("Save returned no data for narrative.")
 
         narrative_id: str = records(narrative_result.data)[0]["id"]
-        saved = Narrative(id=narrative_id, title=narrative.title)
+        saved = Narrative(id=narrative_id, title=narrative.title, user_id=narrative.user_id)
 
         for scene in narrative.scenes:
             try:

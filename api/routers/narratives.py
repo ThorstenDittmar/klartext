@@ -174,9 +174,12 @@ def _to_suggest_response(result: Any) -> SuggestWirkgefuegeResponse:
 async def create_narrative(
     request: CreateNarrativeRequest,
     service: NarrativeService = Depends(get_narrative_service),
+    user_service: UserService = Depends(get_user_service),
 ) -> NarrativeResponse:
-    """Creates a new empty Narrative with the given title."""
-    narrative = await service.create(request.title)
+    """Creates a new empty Narrative with the given title, assigned to the default user."""
+    user = await user_service.get_default()
+    assert user.id is not None, "default user has no id — seeding is incomplete"
+    narrative = await service.create(request.title, user_id=user.id)
     return _to_narrative_response(narrative)
 
 
@@ -188,9 +191,12 @@ async def create_narrative(
 async def import_narrative(
     request: ImportNarrativeRequest,
     service: NarrativeService = Depends(get_narrative_service),
+    user_service: UserService = Depends(get_user_service),
 ) -> NarrativeResponse:
-    """Imports a Narrative from the given file path, saves it and returns it with IDs."""
-    narrative = await service.import_from_file(Path(request.path))
+    """Imports a Narrative from the given file path, assigned to the default user."""
+    user = await user_service.get_default()
+    assert user.id is not None, "default user has no id — seeding is incomplete"
+    narrative = await service.import_from_file(Path(request.path), user_id=user.id)
     return _to_narrative_response(narrative)
 
 
