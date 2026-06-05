@@ -29,6 +29,7 @@ from api.parsers.markdown_narrative_parser import MarkdownNarrativeParser
 from api.providers.claude_claim_extraction_provider import ClaudeClaimExtractionProvider
 from api.providers.claude_consistency_checker import ClaudeConsistencyChecker
 from api.providers.consistency_checker import ConsistencyChecker
+from api.providers.narrative_analysis_provider import NarrativeAnalysisProvider
 from api.repositories.causal_model_repository import CausalModelRepository
 from api.repositories.claim_repository import ClaimRepository
 from api.repositories.narrative_repository import NarrativeRepository
@@ -144,21 +145,34 @@ async def get_causal_model_service(
     return CausalModelService(repository=repository, consistency_checker=checker)
 
 
-async def get_narrative_analysis_service(
-    repository: NarrativeRepository = Depends(get_narrative_repository),
-) -> NarrativeAnalysisService:
-    """Wires NarrativeRepository and ClaudeNarrativeAnalysisProvider into NarrativeAnalysisService.
+def get_narrative_analysis_provider() -> NarrativeAnalysisProvider:
+    """Wires ClaudeNarrativeAnalysisProvider with an Anthropic async client.
 
-    Uses a lazy import for ClaudeNarrativeAnalysisProvider so the module can be loaded
-    even before the Claude provider file is created (Task 6).
+    Uses a lazy import so the module can be loaded even before the Claude
+    provider file is created.
     """
     from api.providers.claude_narrative_analysis_provider import (
         ClaudeNarrativeAnalysisProvider,  # noqa: PLC0415
     )
 
     client = _make_anthropic_client()
-    provider = ClaudeNarrativeAnalysisProvider(client=client)
-    return NarrativeAnalysisService(repository=repository, provider=provider)
+    return ClaudeNarrativeAnalysisProvider(client=client)
+
+
+async def get_narrative_analysis_service(
+    repository: NarrativeRepository = Depends(get_narrative_repository),
+    provider: NarrativeAnalysisProvider = Depends(get_narrative_analysis_provider),
+    claim_repository: ClaimRepository = Depends(get_claim_repository),
+) -> NarrativeAnalysisService:
+    """Wires NarrativeRepository, ClaudeNarrativeAnalysisProvider, and ClaimRepository.
+
+    Claims are now persisted inside the service, so ClaimRepository is required.
+    """
+    return NarrativeAnalysisService(
+        repository=repository,
+        provider=provider,
+        claim_repository=claim_repository,
+    )
 
 
 async def get_user_repository(

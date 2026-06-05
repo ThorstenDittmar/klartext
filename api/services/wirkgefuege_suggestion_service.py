@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from api.models.claim import Claim, ClaimStatus
+from api.models.claim import ClaimStatus
 from api.providers.wirkgefuege_suggestion_provider import (
     WirkgefuegeSuggestionProvider,
     WirkgefuegeSuggestionResult,
@@ -31,16 +31,14 @@ class WirkgefuegeSuggestionService:
     async def suggest_for_narrative(self, narrative_id: str) -> WirkgefuegeSuggestionResult:
         """Suggests a minimal Wirkgefüge from all DRAFT Claims of the Narrative.
 
-        Loads the Narrative to get scene IDs, then fetches DRAFT Claims for each scene.
+        Loads DRAFT Claims directly by narrative_id (no scene iteration required).
         Returns an empty result when no DRAFT Claims exist (no API call made).
         Raises NarrativeNotFoundError if no Narrative exists for the given ID.
         """
-        narrative = await self._narrative_repository.find_by_id(narrative_id)
+        await self._narrative_repository.find_by_id(narrative_id)  # raises if not found
 
-        draft_claims: list[Claim] = []
-        for scene in narrative.scenes:
-            claims = await self._claim_repository.find_by_scene_id(scene.id)  # type: ignore[arg-type]
-            draft_claims.extend(c for c in claims if c.status == ClaimStatus.DRAFT)
+        all_claims = await self._claim_repository.find_by_narrative_id(narrative_id)
+        draft_claims = [c for c in all_claims if c.status == ClaimStatus.DRAFT]
 
         if not draft_claims:
             return WirkgefuegeSuggestionResult()

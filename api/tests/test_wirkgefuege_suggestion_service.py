@@ -25,8 +25,7 @@ async def test_wirkgefuege_suggestion_service_returns_result() -> None:
     narrative_repo = FakeNarrativeRepository()
     claim_repo = FakeClaimRepository()
     saved_narrative = await narrative_repo.save(NarrativeMother.with_one_scene())
-    scene_id: str = saved_narrative.scenes[0].id  # type: ignore[assignment]
-    await claim_repo.save_all(ClaimMother.collection(), scene_id=scene_id)
+    await claim_repo.save_for_narrative(ClaimMother.collection(), narrative_id=saved_narrative.id)  # type: ignore[arg-type]
 
     service = WirkgefuegeSuggestionService(
         narrative_repository=narrative_repo,
@@ -46,8 +45,9 @@ async def test_wirkgefuege_suggestion_service_includes_claim_ids_in_result() -> 
     narrative_repo = FakeNarrativeRepository()
     claim_repo = FakeClaimRepository()
     saved_narrative = await narrative_repo.save(NarrativeMother.with_one_scene())
-    scene_id: str = saved_narrative.scenes[0].id  # type: ignore[assignment]
-    saved_claims = await claim_repo.save_all(ClaimMother.collection(), scene_id=scene_id)
+    saved_claims = await claim_repo.save_for_narrative(
+        ClaimMother.collection(), narrative_id=saved_narrative.id
+    )  # type: ignore[arg-type]
 
     service = WirkgefuegeSuggestionService(
         narrative_repository=narrative_repo,
@@ -66,10 +66,11 @@ async def test_wirkgefuege_suggestion_service_returns_empty_when_no_draft_claims
     narrative_repo = FakeNarrativeRepository()
     claim_repo = FakeClaimRepository()
     saved_narrative = await narrative_repo.save(NarrativeMother.with_one_scene())
-    scene_id: str = saved_narrative.scenes[0].id  # type: ignore[assignment]
 
     # Save one claim and mark it LINKED — not DRAFT
-    [saved_claim] = await claim_repo.save_all([ClaimMother.causal()], scene_id=scene_id)
+    [saved_claim] = await claim_repo.save_for_narrative(
+        [ClaimMother.causal()], narrative_id=saved_narrative.id
+    )  # type: ignore[arg-type]
     saved_claim.link_to_wirkgefuege("slot-xyz")
     await claim_repo.update(saved_claim)
 
@@ -101,10 +102,10 @@ async def test_wirkgefuege_suggestion_service_only_passes_draft_claims() -> None
     narrative_repo = FakeNarrativeRepository()
     claim_repo = FakeClaimRepository()
     saved_narrative = await narrative_repo.save(NarrativeMother.with_one_scene())
-    scene_id: str = saved_narrative.scenes[0].id  # type: ignore[assignment]
 
-    [draft_claim, linked_claim, unresolved_claim] = await claim_repo.save_all(
-        ClaimMother.collection(), scene_id=scene_id
+    [draft_claim, linked_claim, unresolved_claim] = await claim_repo.save_for_narrative(
+        ClaimMother.collection(),
+        narrative_id=saved_narrative.id,  # type: ignore[arg-type]
     )
     linked_claim.link_to_wirkgefuege("slot-abc")
     await claim_repo.update(linked_claim)
