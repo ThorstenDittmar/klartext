@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 
 from api.models.narrative import Actor, ActorType, Narrative, Scene
@@ -17,8 +18,10 @@ class NarrativeService:
     - Adds Scenes to existing Narratives via add_scene().
     - Delegates file reading and parsing to NarrativeImportService.
     - Delegates persistence to NarrativeRepository.
-    - Provides find_by_id and list_all for read access.
+    - Provides find_by_id, list_all, and list_for_user for read access.
     """
+
+    logger = logging.getLogger(__name__)
 
     def __init__(
         self,
@@ -28,14 +31,18 @@ class NarrativeService:
         self._import_service = import_service
         self._repository = repository
 
-    async def create(self, title: str) -> Narrative:
+    async def create(self, title: str, user_id: str | None = None) -> Narrative:
         """Creates and persists a new empty Narrative with the given title.
 
+        If user_id is provided, the Narrative is assigned to that user before saving.
         Returns the saved Narrative with an assigned ID and no scenes.
         Raises NarrativeValidationError if the title is empty.
         Raises NarrativePersistenceError on database failure.
         """
+        self.logger.debug("NarrativeService.create: title=%s, user_id=%s", title, user_id)
         narrative = Narrative.create(title)
+        if user_id is not None:
+            narrative.assign_user(user_id)
         return await self._repository.save(narrative)
 
     async def add_scene(self, narrative_id: str, title: str, text: str) -> Scene:
@@ -52,15 +59,19 @@ class NarrativeService:
         scene = Scene.create(title=title, text=text, position=position)
         return await self._repository.add_scene(narrative_id, scene)
 
-    async def import_from_file(self, path: Path) -> Narrative:
+    async def import_from_file(self, path: Path, user_id: str | None = None) -> Narrative:
         """Reads, parses and persists a Narrative from the given file path.
 
+        If user_id is provided, the Narrative is assigned to that user before saving.
         Returns the saved Narrative with IDs assigned to it and all its Scenes.
         Raises NarrativeFileNotFoundError if the file does not exist.
         Raises NarrativeParseError if the file is empty or contains no scenes.
         Raises NarrativePersistenceError on database failure.
         """
+        self.logger.debug("NarrativeService.import_from_file: path=%s, user_id=%s", path, user_id)
         narrative = self._import_service.import_from_file(path)
+        if user_id is not None:
+            narrative.assign_user(user_id)
         return await self._repository.save(narrative)
 
     async def find_by_id(self, narrative_id: str) -> Narrative:
@@ -73,6 +84,11 @@ class NarrativeService:
     async def list_all(self) -> list[Narrative]:
         """Returns all persisted Narratives without their Scenes."""
         return await self._repository.list_all()
+
+    async def list_for_user(self, user_id: str) -> list[Narrative]:
+        """Returns all Narratives owned by the given user."""
+        self.logger.debug("NarrativeService.list_for_user: user_id=%s", user_id)
+        return await self._repository.list_for_user(user_id)
 
     async def add_actor(
         self,

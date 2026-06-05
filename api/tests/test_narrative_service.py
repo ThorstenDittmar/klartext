@@ -463,6 +463,58 @@ async def test_narrative_service_remove_actor_raises_for_unknown_actor_id() -> N
 
 
 # ---------------------------------------------------------------------------
+# list_for_user
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_narrative_service_list_for_user_returns_narratives_for_user() -> None:
+    """Expects list_for_user() to return only narratives owned by the given user."""
+    from api.models.narrative import Narrative
+    from tests.fakes.fake_user_repository import DEFAULT_USER_ID
+
+    repository = FakeNarrativeRepository()
+    service = make_service(repository=repository)
+
+    narrative = Narrative.create("User Narrative")
+    narrative.assign_user(DEFAULT_USER_ID)
+    await repository.save(narrative)
+
+    results = await service.list_for_user(DEFAULT_USER_ID)
+    assert len(results) == 1
+    assert results[0].title == "User Narrative"
+
+
+@pytest.mark.asyncio
+async def test_narrative_service_create_assigns_user_id() -> None:
+    """Expects create() with user_id to assign that user to the narrative."""
+    from tests.fakes.fake_user_repository import DEFAULT_USER_ID
+
+    service = make_service()
+    narrative = await service.create("New Narrative", user_id=DEFAULT_USER_ID)
+    assert narrative.user_id == DEFAULT_USER_ID
+
+
+@pytest.mark.asyncio
+async def test_narrative_service_import_assigns_user_id() -> None:
+    """Expects import_from_file() with user_id to assign that user to the narrative."""
+    import os
+    import tempfile
+
+    from tests.fakes.fake_user_repository import DEFAULT_USER_ID
+
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".md", delete=False) as f:
+        f.write("# Test\nContent")
+        path = Path(f.name)
+    try:
+        service = make_service()
+        narrative = await service.import_from_file(path, user_id=DEFAULT_USER_ID)
+        assert narrative.user_id == DEFAULT_USER_ID
+    finally:
+        os.unlink(str(path))
+
+
+# ---------------------------------------------------------------------------
 # link_to_causal_model
 # ---------------------------------------------------------------------------
 
