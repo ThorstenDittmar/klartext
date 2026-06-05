@@ -176,8 +176,10 @@ Go through this list item by item. Do not commit until all boxes are checked.
 - [ ] Every new component has a spec file in `design/components/` (stub is acceptable)
 
 ### Pending Items
-- [ ] All `TODO(token)`, `TODO(backend)`, `TODO(pattern)`, `TODO(design)` comments
-      have corresponding GitHub Issues with the correct label
+- [ ] For every `TODO(token)`, `TODO(backend)`, `TODO(pattern)`, `TODO(design)`, `TODO(i18n)`
+      comment **added in this task**: create a GitHub Issue with the correct label and
+      update the comment to include the issue number: `// TODO(token): ... — Issue #<nr>`
+      Do not commit with unlinked TODOs.
 
 ---
 
