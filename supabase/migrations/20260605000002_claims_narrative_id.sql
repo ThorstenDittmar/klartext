@@ -5,10 +5,11 @@
 ALTER TABLE claims ADD COLUMN IF NOT EXISTS narrative_id UUID REFERENCES narrative(id) ON DELETE CASCADE;
 
 -- Step 2: Backfill from scene relationship
+-- narrative_einheiten was renamed to narrative_units in 20260529000001_english_naming.sql
 UPDATE claims c
-SET narrative_id = ne.narrative_id
-FROM narrative_einheiten ne
-WHERE c.scene_id = ne.id
+SET narrative_id = nu.narrative_id
+FROM narrative_units nu
+WHERE c.scene_id = nu.id
   AND c.narrative_id IS NULL;
 
 -- Step 3: Make scene_id nullable (analysis-level claims have no scene)

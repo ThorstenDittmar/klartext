@@ -212,6 +212,18 @@ Before closing any infrastructure-related task, verify each item:
 - [ ] `klartext health` reflects the current infrastructure state (new dependencies → new health check)
 - [ ] The CI smoke-test workflow passes (`setup-smoke-test.yml`)
 
+### Definition of Done — Database migrations
+
+Every new migration file must pass these checks before committing:
+
+- [ ] `klartext db reset` completes without errors — this is the only test that counts; an incremental apply on an existing DB is not sufficient
+- [ ] All table and column names in the migration match the **current** schema state (check against the most recent migration, not the initial schema)
+- [ ] The migration is idempotent where possible (`IF NOT EXISTS`, `IF EXISTS`, `ALTER TABLE … ADD COLUMN IF NOT EXISTS`)
+- [ ] The corresponding infrastructure test in `api/tests/infrastructure/` verifies the expected schema shape (e.g. new column exists, FK resolved by PostgREST)
+
+**Why `klartext db reset` and not incremental apply:**
+Incremental apply runs the new migration on top of an existing schema that already has all prior renames and additions. This hides references to old names. `db reset` replays every migration from scratch — the only way to catch stale references.
+
 ## Comments
 - Every non-trivial method gets a docstring
 - Methods describe what they do
