@@ -90,10 +90,11 @@ class FakeNarrativeService:
         self._raise_on_link_to_causal_model = raise_on_link_to_causal_model
         self._saved: list[Narrative] = [make_saved_narrative()]
 
-    async def create(self, title: str) -> Narrative:
+    async def create(self, title: str, user_id: str | None = None) -> Narrative:
         if self._raise_on_create:
             raise self._raise_on_create
-        narrative = Narrative(id=SAVED_NARRATIVE_ID, title=title)
+        self.last_create_user_id = user_id
+        narrative = Narrative(id=SAVED_NARRATIVE_ID, title=title, user_id=user_id)
         return narrative
 
     async def add_scene(self, narrative_id: str, title: str, text: str) -> Scene:
@@ -101,9 +102,10 @@ class FakeNarrativeService:
             raise self._raise_on_add_scene
         return Scene(id=SAVED_SCENE_2_ID, title=title, text=text, position=2)
 
-    async def import_from_file(self, path: Path) -> Narrative:
+    async def import_from_file(self, path: Path, user_id: str | None = None) -> Narrative:
         if self._raise_on_import:
             raise self._raise_on_import
+        self.last_import_user_id = user_id
         return make_saved_narrative()
 
     async def find_by_id(self, narrative_id: str) -> Narrative:
@@ -264,6 +266,20 @@ async def test_narratives_import_response_contains_scenes() -> None:
     assert data["scenes"][0]["id"] == SAVED_SCENE_ID
 
 
+@pytest.mark.asyncio
+async def test_narratives_import_assigns_default_user() -> None:
+    """Expects import_from_file to be called with the default user's ID so user_id is persisted."""
+    service = FakeNarrativeService()
+    override_with(service)
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            await client.post("/narratives/import", json={"path": "/some/narrative.md"})
+    finally:
+        clear_overrides()
+
+    assert service.last_import_user_id == DEFAULT_USER_ID
+
+
 # ---------------------------------------------------------------------------
 # POST /narratives/import – error cases
 # ---------------------------------------------------------------------------
@@ -414,6 +430,20 @@ async def test_narratives_create_response_contains_id_and_title() -> None:
     assert data["id"] == SAVED_NARRATIVE_ID
     assert data["title"] == "My Narrative"
     assert data["scenes"] == []
+
+
+@pytest.mark.asyncio
+async def test_narratives_create_assigns_default_user() -> None:
+    """Expects create to be called with the default user's ID so user_id is persisted."""
+    service = FakeNarrativeService()
+    override_with(service)
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            await client.post("/narratives", json={"title": "My Narrative"})
+    finally:
+        clear_overrides()
+
+    assert service.last_create_user_id == DEFAULT_USER_ID
 
 
 # ---------------------------------------------------------------------------

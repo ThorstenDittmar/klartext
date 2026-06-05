@@ -16,6 +16,17 @@ class TestNarrativeRepositoryUser:
         self._repo = FakeNarrativeRepository()
 
     @pytest.mark.asyncio
+    async def test_save_preserves_user_id(self) -> None:
+        """Expects save() to return a narrative that still carries the assigned user_id."""
+        from api.models.narrative import Narrative
+
+        narrative = Narrative.create(DEFAULT_TITLE)
+        narrative.assign_user(DEFAULT_USER_ID)
+        saved = await self._repo.save(narrative)
+
+        assert saved.user_id == DEFAULT_USER_ID
+
+    @pytest.mark.asyncio
     async def test_list_for_user_returns_narratives_for_that_user(self) -> None:
         """Expects list_for_user() to return only narratives owned by the given user."""
         from api.models.narrative import Narrative
