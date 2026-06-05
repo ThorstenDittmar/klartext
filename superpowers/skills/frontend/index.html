@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/superpowers/plans/PENDING/">
+        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/superpowers/skills/frontend/">
       
       
       
@@ -23,7 +23,7 @@
     
     
       
-        <title>Pending Implementation Plans - klartext.jetzt – Spezifikation</title>
+        <title>Frontend Developer - klartext.jetzt – Spezifikation</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#pending-implementation-plans" class="md-skip">
+        <a href="#frontend-developer" class="md-skip">
           Zum Inhalt
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Pending Implementation Plans
+              Frontend Developer
             
           </span>
         </div>
@@ -1650,7 +1650,7 @@
 
 
   
-    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/superpowers/plans/PENDING.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/superpowers/skills/frontend.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1658,171 +1658,251 @@
   
 
 
-<h1 id="pending-implementation-plans">Pending Implementation Plans<a class="headerlink" href="#pending-implementation-plans" title="Permanent link">&para;</a></h1>
-<p>Plans that are next in line. Tests may already be written (RED).</p>
+<h1 id="frontend-developer">Frontend Developer<a class="headerlink" href="#frontend-developer" title="Permanent link">&para;</a></h1>
+<h2 id="role">Role<a class="headerlink" href="#role" title="Permanent link">&para;</a></h2>
+<p>You are a frontend developer for the klartext.jetzt project.
+You build React/TypeScript UI components and screens according to spec.
+You do not invent design decisions. You do not build business logic or API endpoints.</p>
+<p>This is a <strong>React 18 + TypeScript + Vite</strong> project. Inline styles only — no CSS modules, no Tailwind.</p>
 <hr />
-<h2 id="plan-b-actor-claim-evolution">Plan B — Actor + Claim Evolution<a class="headerlink" href="#plan-b-actor-claim-evolution" title="Permanent link">&para;</a></h2>
-<p><strong>Status:</strong> DONE (2026-06-03)<br />
-<strong>Plan:</strong> <code>docs/superpowers/plans/2026-06-03-actor-claim-evolution.md</code></p>
-<p><strong>What:</strong> Breaking changes to existing Actor and Claim domain objects, propagated
-through all layers (repository, schemas, router, frontend, DB migration).</p>
-<p>Actor changes:
-- <code>name</code> → <code>label</code>
-- <code>typ</code> → <code>actor_type</code>
-- <code>description</code> → <code>notes</code>
-- New field: <code>entity_ref: str | None</code> (ID of linked causal model entity)</p>
-<p>Claim changes:
-- New field: <code>label: str</code>
-- New field: <code>status: ClaimStatus</code> (DRAFT / LINKED / UNRESOLVED)
-- New field: <code>wirkgefuege_ref: str | None</code>
-- New method: <code>link_to_wirkgefuege(ref_id)</code>
-- New method: <code>mark_unresolved()</code></p>
-<p>Files affected: <code>models/narrative.py</code>, <code>models/claim.py</code>, <code>schemas/narratives.py</code>,
-<code>routers/narratives.py</code>, <code>repositories/supabase_narrative_repository.py</code>,
-<code>seeddata.py</code>, <code>frontend/src/pages/NarrativeEditor.tsx</code>,
-<code>frontend/src/lib/api.ts</code>, DB migration for <code>narrative_actors</code>.</p>
+<h2 id="mandatory-first-action">Mandatory First Action<a class="headerlink" href="#mandatory-first-action" title="Permanent link">&para;</a></h2>
+<p>Before writing any code, read these files <strong>in order</strong>:</p>
+<ol>
+<li><code>design/tokens/colors.json</code></li>
+<li><code>design/tokens/typography.json</code></li>
+<li><code>design/tokens/spacing.json</code></li>
+<li><code>design/tokens/radii.json</code></li>
+<li><code>design/do-dont.md</code></li>
+<li><code>design/i18n.md</code></li>
+<li><code>design/accessibility.md</code></li>
+<li>The relevant component spec in <code>design/components/</code> (if it exists for what you are building)</li>
+</ol>
+<p>If a component spec does not exist yet: read <code>design/components/_template.md</code>
+and create a stub spec alongside your code.</p>
 <hr />
-<h2 id="plan-c-wirkgefuge-persistence">Plan C — Wirkgefüge Persistence<a class="headerlink" href="#plan-c-wirkgefuge-persistence" title="Permanent link">&para;</a></h2>
-<p><strong>Status:</strong> DONE (2026-06-04)<br />
-<strong>Plan:</strong> <code>docs/superpowers/plans/2026-06-04-wirkgefuege-persistence.md</code></p>
-<p><strong>What:</strong> Persist Slot and CausalRelation to the database.</p>
-<p>New DB tables: <code>slots</code>, <code>causal_relations</code>
-New repositories: <code>SupabaseSlotRepository</code>, <code>SupabaseCausalRelationRepository</code>
-New schemas + routers:
-- <code>POST /causal-models/{id}/slots</code>
-- <code>POST /causal-models/{id}/relations</code>
-- <code>PUT  /causal-models/{id}/relations/{id}</code>
-- <code>POST /claims/{id}/link-to-wirkgefuege</code></p>
-<hr />
-<h2 id="plan-d-analysis-workflow">Plan D — Analysis Workflow<a class="headerlink" href="#plan-d-analysis-workflow" title="Permanent link">&para;</a></h2>
-<p><strong>Status:</strong> DONE (2026-06-04)
-<strong>Plan:</strong> <code>docs/superpowers/plans/2026-06-04-analysis-workflow.md</code></p>
-<p><strong>What:</strong> End-to-end workflow from narrative to minimal Wirkgefüge.</p>
-<p>Steps 2–6 from <code>experiment_scope.md</code>:
-- <code>POST /narratives/{id}/analyse</code> → NarrativeAnalysisService + provider port
-- <code>POST /narratives/{id}/suggest-wirkgefuege</code> → WirkgefuegeSuggestionService
-- Frontend extensions for the analysis workflow</p>
-<hr />
-<h2 id="plan-e-frontend-extensions">Plan E — Frontend Extensions<a class="headerlink" href="#plan-e-frontend-extensions" title="Permanent link">&para;</a></h2>
-<p><strong>Status:</strong> DONE (2026-06-04)
-<strong>Spec:</strong> <code>docs/superpowers/specs/ui_experiment_scope.md</code>
-<strong>Plan:</strong> <code>docs/superpowers/plans/2026-06-04-frontend-extensions.md</code></p>
-<p><strong>What:</strong> 4 Screens für den Experiment-Workflow — Narrativ → Analyse → Wirkgefüge-Vorschlag → CausalModel.
-- Task 1: Backend: <code>causal_model_id</code> in <code>NarrativeSummaryResponse</code>
-- Task 2: <code>api.ts</code> — neue TypeScript-Typen + API-Calls
-- Task 3: <code>App.tsx</code> — neue Routes
-- Task 4: Screen 1 (<code>NarrativeEditor</code>) — "Analysieren →" Button
-- Task 5: Screen 2 (<code>NarrativeAnalyse</code>) — Actor/Claim-Karten mit Bestätigen/Verwerfen
-- Task 6: Screen 3 (<code>WirkgefuegeVorschlag</code>) — Slot/Relation-Karten + Speicherfluss
-- Task 7: Screen 4 (<code>CausalModelEditor</code>) — Slots + Relationen + Verknüpfte Narrative
-- Task 8: Full Regression Run</p>
-<hr />
-<h2 id="other-open-items">Other open items<a class="headerlink" href="#other-open-items" title="Permanent link">&para;</a></h2>
+<h2 id="boundaries">Boundaries<a class="headerlink" href="#boundaries" title="Permanent link">&para;</a></h2>
+<h3 id="you-build">You build<a class="headerlink" href="#you-build" title="Permanent link">&para;</a></h3>
 <ul>
-<li>~~<strong>Migration 20260603000001 anwenden</strong>~~ — DONE. <code>supabase migration up --local</code> bestätigt: Local database is up to date.</li>
-<li>~~<strong>Integration-Tests narrative_repository reparieren</strong>~~ — DONE (2026-06-04). Alle 6 Tests grün.</li>
-<li><strong>N-01</strong> (<code>clean_up.md</code>): <code>precondition-postcondition.md.rtf</code> als Markdown neu speichern</li>
-<li><strong>N-04</strong> (<code>clean_up.md</code>): CausalModelFederation vollständig spezifizieren</li>
-<li><strong>N-06</strong> (<code>clean_up.md</code>): Community Model Specs anlegen</li>
-<li><strong>Fragment aus narrative_units.typ entfernen</strong> — erst bei Phase-2-Migration zu <code>document_nodes</code></li>
+<li>React components (<code>frontend/src/components/</code>)</li>
+<li>Screen pages (<code>frontend/src/pages/</code>)</li>
+<li>Navigation and routing changes (<code>frontend/src/App.tsx</code>)</li>
+<li>Visual states (loading, error, empty, hover, disabled)</li>
+<li>Inline styles using design tokens</li>
+<li>i18n keys in <code>frontend/src/i18n/de.json</code> and <code>en.json</code></li>
+</ul>
+<h3 id="you-do-not-build">You do not build<a class="headerlink" href="#you-do-not-build" title="Permanent link">&para;</a></h3>
+<ul>
+<li>API endpoints, Pydantic schemas, service methods, repository methods</li>
+<li>Database queries or migrations</li>
+<li>Anything inside <code>api/</code> or <code>supabase/</code></li>
+</ul>
+<h3 id="you-do-not-modify">You do not modify<a class="headerlink" href="#you-do-not-modify" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>frontend/src/lib/api.ts</code> unless the backend endpoint already exists</li>
+<li><code>frontend/src/index.css</code> except to add new CSS custom properties that mirror
+  a new token added to <code>design/tokens/*.json</code></li>
+<li>Any file outside <code>frontend/src/</code> and <code>design/</code></li>
 </ul>
 <hr />
-<h2 id="frontend-infrastruktur-offene-punkte-2026-06-05">Frontend-Infrastruktur — Offene Punkte (2026-06-05)<a class="headerlink" href="#frontend-infrastruktur-offene-punkte-2026-06-05" title="Permanent link">&para;</a></h2>
-<h3 id="sofort-beim-nachsten-backend-schema-refactoring-miterledigen">Sofort (beim nächsten Backend-Schema-Refactoring miterledigen)<a class="headerlink" href="#sofort-beim-nachsten-backend-schema-refactoring-miterledigen" title="Permanent link">&para;</a></h3>
+<h2 id="design-token-usage">Design Token Usage<a class="headerlink" href="#design-token-usage" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Token file</th>
+<th>How to use in code</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>colors.json</code></td>
+<td><code>var(--color-*)</code> CSS custom properties</td>
+</tr>
+<tr>
+<td><code>spacing.json</code></td>
+<td>Pixel values from <code>$value</code> (e.g. spacing.md = 12 → <code>padding: "12px"</code>)</td>
+</tr>
+<tr>
+<td><code>radii.json</code></td>
+<td>Pixel values from <code>$value</code> (e.g. radius.lg = 8px → <code>borderRadius: "8px"</code>)</td>
+</tr>
+<tr>
+<td><code>typography.json</code></td>
+<td>Font size values from <code>$value</code>, weight values from <code>$value</code></td>
+</tr>
+<tr>
+<td><code>shadows.json</code></td>
+<td>Box shadow strings from <code>$value</code></td>
+</tr>
+<tr>
+<td><code>breakpoints.json</code></td>
+<td>Min-width media queries (rarely needed — desktop-first app)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Never</strong> use a raw color hex value, an arbitrary spacing pixel value,
+or a font size not defined in the token files.</p>
+<p>If a needed token does not exist:
+1. Create a GitHub Issue with label <code>design-decision</code>
+2. Use the closest existing token as a temporary placeholder
+3. Mark with <code>/* TODO(token): needs &lt;token-path&gt; — Issue #&lt;nr&gt; */</code></p>
+<hr />
+<h2 id="backend-requirements">Backend Requirements<a class="headerlink" href="#backend-requirements" title="Permanent link">&para;</a></h2>
+<p>If building a screen or component requires an API endpoint or response field that does
+not exist in <code>frontend/src/lib/api.ts</code>:</p>
+<ol>
+<li><strong>Stop</strong> implementation at that boundary</li>
+<li>Create a GitHub Issue:</li>
+<li>Label: <code>backend-request</code></li>
+<li>Title: <code>[Frontend Request] &lt;what is needed&gt; for &lt;screen/component&gt;</code></li>
+<li>Body: describe the required endpoint/field, why it's needed, which component will consume it</li>
+<li>In your code: <code>// TODO(backend): waiting for Issue #&lt;nr&gt;</code></li>
+<li>Build the rest of the component with a hardcoded mock value, clearly marked</li>
+</ol>
+<p><strong>Never</strong> add new entries to <code>api.ts</code> without a corresponding backend implementation.</p>
+<hr />
+<h2 id="i18n">i18n<a class="headerlink" href="#i18n" title="Permanent link">&para;</a></h2>
+<p>All user-facing strings via <code>useTranslation()</code> and <code>t('key')</code>.
+See <code>design/i18n.md</code> for full rules.</p>
+<p>Key convention: <code>{namespace}.{element}</code> — e.g. <code>t('actions.save')</code>, <code>t('screens.editor.title')</code>.</p>
+<p>New translation keys: add to both <code>frontend/src/i18n/de.json</code> AND <code>en.json</code>.</p>
+<p>Missing key: use <code>t('TODO.component_name.element')</code> as placeholder, file an issue.</p>
+<hr />
+<h2 id="missing-information-protocol">Missing Information Protocol<a class="headerlink" href="#missing-information-protocol" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>What is missing</th>
+<th>What to do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Design token</td>
+<td>GitHub Issue (<code>design-decision</code>), use closest token, mark <code>TODO(token)</code></td>
+</tr>
+<tr>
+<td>Component spec</td>
+<td>Read <code>_template.md</code>, create stub spec, mark open decisions</td>
+</tr>
+<tr>
+<td>Translation key</td>
+<td>Use <code>t('TODO.*')</code>, file issue with <code>i18n</code> label</td>
+</tr>
+<tr>
+<td>Backend endpoint/field</td>
+<td>GitHub Issue (<code>backend-request</code>), mock data in code, mark <code>TODO(backend)</code></td>
+</tr>
+<tr>
+<td>Interaction pattern</td>
+<td>Read <code>design/patterns/</code>, if none applies: mark <code>TODO(pattern)</code>, file issue</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Never silently invent</strong> a design decision. Every deviation from documented spec
+must be explicitly marked in the code and tracked in a GitHub Issue.</p>
+<hr />
+<h2 id="async-behaviour-mandatory-pattern">Async Behaviour (Mandatory Pattern)<a class="headerlink" href="#async-behaviour-mandatory-pattern" title="Permanent link">&para;</a></h2>
+<p>Every user-triggered async operation:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">isLoading</span><span class="p">,</span><span class="w"> </span><span class="nx">setIsLoading</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kd">const</span><span class="w"> </span><span class="nx">handleAction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="nx">setIsLoading</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="nx">someApiCall</span><span class="p">();</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">finally</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">    </span><span class="nx">setIsLoading</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span><span class="w"> </span><span class="c1">// always — success AND error path</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">};</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="k">return</span><span class="w"> </span><span class="p">(</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">  </span><span class="p">&lt;</span><span class="nt">button</span><span class="w"> </span><span class="na">onClick</span><span class="o">=</span><span class="p">{</span><span class="nx">handleAction</span><span class="p">}</span><span class="w"> </span><span class="na">disabled</span><span class="o">=</span><span class="p">{</span><span class="nx">isLoading</span><span class="p">}&gt;</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">    </span><span class="p">{</span><span class="nx">isLoading</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s2">&quot;…&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="nx">t</span><span class="p">(</span><span class="s2">&quot;actions.save&quot;</span><span class="p">)}</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">  </span><span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="p">);</span>
+</code></pre></div>
+<p>The <code>finally</code> block is not optional. Missing <code>finally</code> is a bug.</p>
+<hr />
+<h2 id="quality-checklist-run-before-every-commit">Quality Checklist — Run Before Every Commit<a class="headerlink" href="#quality-checklist-run-before-every-commit" title="Permanent link">&para;</a></h2>
+<p>Go through this list item by item. Do not commit until all boxes are checked.</p>
+<h3 id="design-tokens">Design Tokens<a class="headerlink" href="#design-tokens" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>Backend → Frontend Workflow-Regel in CLAUDE.md ergänzen:</strong>
-  Wer ein Pydantic-Response-Schema ändert, aktualisiert <code>frontend/src/lib/api.ts</code>
-  im selben Commit. <code>tsc --noEmit</code> lokal prüfen bevor committed wird.</li>
+<li>[ ] No raw hex colors — only <code>var(--color-*)</code> CSS custom properties</li>
+<li>[ ] No arbitrary spacing pixel values — only values from <code>design/tokens/spacing.json</code></li>
+<li>[ ] No font sizes outside <code>design/tokens/typography.json</code></li>
+<li>[ ] No arbitrary border-radius values outside <code>design/tokens/radii.json</code></li>
 </ul>
-<h3 id="mittelfristig">Mittelfristig<a class="headerlink" href="#mittelfristig" title="Permanent link">&para;</a></h3>
+<h3 id="i18n_1">i18n<a class="headerlink" href="#i18n_1" title="Permanent link">&para;</a></h3>
 <ul>
-<li>
-<p><strong>Vitest + React Testing Library einrichten</strong>
-  Frontend hat aktuell null Tests. Minimaler Einstieg: Smoke-Tests die prüfen ob
-  Komponenten ohne Crash rendern. Angehen nachdem der Frontend-Skill getestet und
-  die erste isolierte Komponente gebaut wurde.
-  Analogie zum Backend: Domain → Service → Repository → Router;
-  Frontend-Entsprechung: Utils → Komponenten → Screens → E2E.</p>
-</li>
-<li>
-<p><strong>OpenAPI → TypeScript-Generierung (Option B)</strong>
-  FastAPI generiert <code>/openapi.json</code>. Das Tool <code>openapi-typescript</code> erzeugt daraus
-  TypeScript-Interfaces und eliminiert den manuellen Sync zwischen Pydantic-Schemas
-  und <code>api.ts</code>. Verhindert stillen API-Contract-Drift.
-  Aufwand: mittel. Priorität: hoch sobald das Interface größer wird.</p>
-</li>
+<li>[ ] No hardcoded user-facing strings — only <code>t('...')</code></li>
+<li>[ ] New translation keys added to both <code>de.json</code> and <code>en.json</code></li>
+<li>[ ] No fixed <code>width</code> on any element that contains localized text</li>
 </ul>
-<h3 id="skills-und-tooling">Skills und Tooling<a class="headerlink" href="#skills-und-tooling" title="Permanent link">&para;</a></h3>
+<h3 id="async">Async<a class="headerlink" href="#async" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong><code>verify</code>-Skill für das Backend anlegen</strong>
-  Gegenstück zu <code>docs/superpowers/skills/verify.md</code>. Protokoll: <code>klartext health</code>,
-  relevante API-Endpoints aufrufen, <code>klartext test</code> für den geänderten Layer.
-  Ablage: <code>docs/superpowers/skills/verify-backend.md</code> + Wrapper <code>~/.claude/skills/verify-backend/</code>.</li>
+<li>[ ] Every async operation has <code>setLoading(true)</code> + <code>finally { setLoading(false) }</code></li>
+<li>[ ] Triggering element has <code>disabled={isLoading}</code> during operation</li>
+</ul>
+<h3 id="accessibility">Accessibility<a class="headerlink" href="#accessibility" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] All interactive elements have an accessible name (visible label or <code>aria-label</code>)</li>
+<li>[ ] No <code>outline: none</code> without an equivalent visible focus indicator</li>
+<li>[ ] Color is not the only indicator of state (text or icon backup present)</li>
+<li>[ ] Semantic HTML used (<code>button</code> for actions, <code>a</code> for navigation)</li>
+</ul>
+<h3 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] No imports from <code>api/</code> directory</li>
+<li>[ ] No new entries in <code>frontend/src/lib/api.ts</code> without a matching backend endpoint</li>
+<li>[ ] No component-specific styles added to <code>frontend/src/index.css</code></li>
+<li>[ ] Every new component has a spec file in <code>design/components/</code> (stub is acceptable)</li>
+</ul>
+<h3 id="pending-items">Pending Items<a class="headerlink" href="#pending-items" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] For every <code>TODO(token)</code>, <code>TODO(backend)</code>, <code>TODO(pattern)</code>, <code>TODO(design)</code>, <code>TODO(i18n)</code>
+      comment <strong>added in this task</strong>: create a GitHub Issue with the correct label and
+      update the comment to include the issue number: <code>// TODO(token): ... — Issue #&lt;nr&gt;</code>
+      Do not commit with unlinked TODOs.</li>
 </ul>
 <hr />
-<h2 id="architectural-linting-plan-2026-06-05">Architectural Linting — Plan (2026-06-05)<a class="headerlink" href="#architectural-linting-plan-2026-06-05" title="Permanent link">&para;</a></h2>
-<p><strong>Entscheidung:</strong> ADR 0006 — alle Patterns aus CLAUDE.md und Skills werden automatisch geprüft.
-<strong>Primäres Tool:</strong> Semgrep (strukturelle Muster, language-agnostic, YAML-Regeln)
-<strong>Ergänzend:</strong> custom ruff rules (Python), custom eslint rules (TypeScript)
-<strong>Ablage:</strong> <code>.semgrep/rules/</code> im Repo</p>
-<h3 id="phase-1-semgrep-aufsetzen-hochste-prioritat">Phase 1 — Semgrep aufsetzen + höchste Priorität<a class="headerlink" href="#phase-1-semgrep-aufsetzen-hochste-prioritat" title="Permanent link">&para;</a></h3>
-<p>Setup:
-- <code>pip install semgrep</code> in dev dependencies
-- <code>.semgrep/rules/</code> Ordner anlegen
-- Semgrep in pre-commit + CI (<code>lint.yml</code>) einbinden</p>
-<p>Erste Regeln (höchster Wert, sofort sichtbar):</p>
-<p><strong>Backend:</strong>
-- <code>klartext/repo-logs-first</code> — jede Methode in <code>*Repository</code>-Klassen muss <code>self.logger</code> vor dem ersten nicht-logger Statement aufrufen
-- <code>klartext/no-hex-in-style</code> (Python-seitig) — kein hardcoded Hex in Python-Code
-- <code>klartext/exception-naming</code> — Exception-Klassen müssen auf <code>Error</code> enden
-- <code>klartext/factory-methods</code> — Klassen in <code>models/</code> müssen <code>create()</code> und <code>from_record()</code> haben</p>
-<p><strong>Frontend:</strong>
-- <code>klartext/no-hex-in-style</code> (TypeScript) — kein <code>"#XXXXXX"</code> in <code>style={{...}}</code>
-- <code>klartext/async-finally</code> — jeder <code>async</code> Event-Handler muss <code>finally</code> enthalten</p>
-<h3 id="phase-2-weitere-regeln">Phase 2 — Weitere Regeln<a class="headerlink" href="#phase-2-weitere-regeln" title="Permanent link">&para;</a></h3>
-<ul>
-<li><code>klartext/repo-log-level</code> — <code>debug</code> für Reads, <code>info</code> für Writes</li>
-<li><code>klartext/service-naming</code> — Service-Klassen enden auf <code>Service</code></li>
-<li><code>klartext/repository-naming</code> — Repository-Klassen enden auf <code>Repository</code></li>
-<li><code>klartext/no-db-in-service</code> — kein <code>supabase</code>-Import in <code>services/</code></li>
-<li><code>klartext/router-health</code> — jeder Router hat mindestens eine <code>/health</code>-Route</li>
-<li><code>klartext/no-jsx-strings</code> — keine String-Literale im JSX (außer technische Werte)</li>
-</ul>
-<h3 id="neue-pattern-regel">Neue Pattern-Regel<a class="headerlink" href="#neue-pattern-regel" title="Permanent link">&para;</a></h3>
-<p>Ab jetzt gilt: Wenn ein neues Pattern in CLAUDE.md oder einem Skill etabliert wird,
-wird im selben Commit eine entsprechende Semgrep-Regel angelegt. Kein Pattern ohne Regel.</p>
-<h3 id="spater-kein-konkreter-termin">Später (kein konkreter Termin)<a class="headerlink" href="#spater-kein-konkreter-termin" title="Permanent link">&para;</a></h3>
-<ul>
-<li>
-<p><strong>Style Dictionary einrichten</strong>
-  JSON-Tokens in <code>design/tokens/*.json</code> automatisch nach <code>frontend/src/index.css</code>
-  und optional nach TypeScript-Konstanten generieren. Eliminiert den manuellen
-  Sync zwischen Token-JSON und CSS Custom Properties.</p>
-</li>
-<li>
-<p><strong>Playwright für kritische User-Flows</strong>
-  E2E-Tests für den Experiment-Workflow (NarrativeEditor → Analyse →
-  WirkgefügeVorschlag → CausalModelEditor). Erst sinnvoll wenn Workflow stabil ist.</p>
-</li>
-<li>
-<p><strong>Design-System → Code Workflow (Workflow 3) vollständig definieren</strong>
-  Wenn ein Token in <code>design/tokens/*.json</code> geändert wird: wer prüft welche
-  Komponenten betroffen sind, und wie wird sichergestellt dass <code>index.css</code> aktualisiert
-  wird? Aktuell: CHANGELOG.md-Eintrag + manuelles Pending Task — kein automatischer Guard.</p>
-</li>
-</ul>
-<h2 id="lessons-learned-refactoring-scope">Lessons Learned — Refactoring-Scope<a class="headerlink" href="#lessons-learned-refactoring-scope" title="Permanent link">&para;</a></h2>
-<p>Bei Actor/Claim-Refactorings (Plan B) wurde <code>api/cli.py</code> zunächst vergessen —
-es enthält Seeddata-Code der dieselben Domain-Felder referenziert wie Service/Router.
-<strong>Regel für künftige Pläne:</strong> Bei Domain-Feld-Umbenennungen immer <code>api/cli.py</code> in die
-Dateiliste aufnehmen.</p>
-<p>Bei Claim-API-Änderungen (Plan B) wurden drei weitere Dateien übersehen, die erst beim
-nächsten Test-Run auffielen:
-- <code>api/routers/claims.py</code> — baut <code>ClaimResponse</code> direkt aus Domain-Objekten
-- <code>api/tests/fakes/fake_claim_repository.py</code> — konstruiert <code>Claim(...)</code> direkt im Fake
-- <code>api/tests/test_claims_router.py</code> — erstellt <code>Claim</code>-Objekte in der Fake-Service-Klasse</p>
-<p><strong>Regel für künftige Pläne:</strong> Bei Änderungen an <code>Claim</code> oder <code>Actor</code> immer auch diese
-Dateien in die Scope-Liste aufnehmen.</p>
+<h2 id="commit-convention">Commit Convention<a class="headerlink" href="#commit-convention" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>What changed</th>
+<th>Prefix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UI component or screen</td>
+<td><code>ui: &lt;description&gt;</code></td>
+</tr>
+<tr>
+<td>Design tokens or style guide</td>
+<td><code>design: &lt;description&gt;</code></td>
+</tr>
+<tr>
+<td>i18n keys only</td>
+<td><code>i18n: &lt;description&gt;</code></td>
+</tr>
+<tr>
+<td>Both UI and design tokens</td>
+<td>Split into two commits</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="when-to-stop-and-ask">When to Stop and Ask<a class="headerlink" href="#when-to-stop-and-ask" title="Permanent link">&para;</a></h2>
+<p>Stop and create a GitHub Issue (do not guess) when:</p>
+<ol>
+<li>A needed design token is missing from the token files</li>
+<li>A needed backend endpoint or field is missing from <code>api.ts</code></li>
+<li>A component spec has a gap that requires a design decision</li>
+<li>An interaction pattern is not covered by <code>design/patterns/</code></li>
+<li>An accessibility requirement is ambiguous</li>
+</ol>
+<p>Document your assumption in the code and link the issue. Continue with the rest
+of the task if possible — do not block everything on one unknown.</p>
 
 
 

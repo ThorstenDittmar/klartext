@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/superpowers/plans/PENDING/">
+        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/superpowers/specs/ui_spec/">
       
       
       
@@ -23,7 +23,7 @@
     
     
       
-        <title>Pending Implementation Plans - klartext.jetzt – Spezifikation</title>
+        <title>UI-Spezifikation: klartext.jetzt - klartext.jetzt – Spezifikation</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#pending-implementation-plans" class="md-skip">
+        <a href="#ui-spezifikation-klartextjetzt" class="md-skip">
           Zum Inhalt
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Pending Implementation Plans
+              UI-Spezifikation: klartext.jetzt
             
           </span>
         </div>
@@ -1650,7 +1650,7 @@
 
 
   
-    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/superpowers/plans/PENDING.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/superpowers/specs/ui_spec.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1658,171 +1658,281 @@
   
 
 
-<h1 id="pending-implementation-plans">Pending Implementation Plans<a class="headerlink" href="#pending-implementation-plans" title="Permanent link">&para;</a></h1>
-<p>Plans that are next in line. Tests may already be written (RED).</p>
+<h1 id="ui-spezifikation-klartextjetzt">UI-Spezifikation: klartext.jetzt<a class="headerlink" href="#ui-spezifikation-klartextjetzt" title="Permanent link">&para;</a></h1>
+<p><strong>Datum:</strong> 2026-06-04
+<strong>Status:</strong> Arbeitsstand — erste Iteration
+<strong>Scope:</strong> Literat-Perspektive und Wissenschaftler-Perspektive.
+Leseansicht ist noch nicht spezifiziert.</p>
 <hr />
-<h2 id="plan-b-actor-claim-evolution">Plan B — Actor + Claim Evolution<a class="headerlink" href="#plan-b-actor-claim-evolution" title="Permanent link">&para;</a></h2>
-<p><strong>Status:</strong> DONE (2026-06-03)<br />
-<strong>Plan:</strong> <code>docs/superpowers/plans/2026-06-03-actor-claim-evolution.md</code></p>
-<p><strong>What:</strong> Breaking changes to existing Actor and Claim domain objects, propagated
-through all layers (repository, schemas, router, frontend, DB migration).</p>
-<p>Actor changes:
-- <code>name</code> → <code>label</code>
-- <code>typ</code> → <code>actor_type</code>
-- <code>description</code> → <code>notes</code>
-- New field: <code>entity_ref: str | None</code> (ID of linked causal model entity)</p>
-<p>Claim changes:
-- New field: <code>label: str</code>
-- New field: <code>status: ClaimStatus</code> (DRAFT / LINKED / UNRESOLVED)
-- New field: <code>wirkgefuege_ref: str | None</code>
-- New method: <code>link_to_wirkgefuege(ref_id)</code>
-- New method: <code>mark_unresolved()</code></p>
-<p>Files affected: <code>models/narrative.py</code>, <code>models/claim.py</code>, <code>schemas/narratives.py</code>,
-<code>routers/narratives.py</code>, <code>repositories/supabase_narrative_repository.py</code>,
-<code>seeddata.py</code>, <code>frontend/src/pages/NarrativeEditor.tsx</code>,
-<code>frontend/src/lib/api.ts</code>, DB migration for <code>narrative_actors</code>.</p>
+<h2 id="1-designprinzipien">1. Designprinzipien<a class="headerlink" href="#1-designprinzipien" title="Permanent link">&para;</a></h2>
+<p><strong>Look &amp; Feel:</strong> Novelcrafter als primäres Vorbild.
+Farbsparsamkeit, klare Typographie, viel Whitespace.
+Farben nur semantisch einsetzen — nie dekorativ.</p>
+<p><strong>Farbkonventionen (semantisch):</strong>
+- Grün (<code>#EAF3DE / #3B6D11</code>) — linked, vollständig, bestätigt
+- Amber (<code>#FAEEDA / #854F0B</code>) — draft, offen, unvollständig
+- Rot (<code>#FCEBEB / #A32D2D</code>) — Issue, Fehler, blockiert
+- Blau (<code>#E6F1FB / #0C447C</code>) — Fokus-Knoten, aktive Auswahl, Info
+- Lila (<code>#EEEDFE / #3C3489</code>) — Wirkgefüge-Referenz, epistemic link</p>
+<p><strong>Keine Farbe ohne Bedeutung.</strong> Neutrale Elemente sind immer
+<code>var(--color-background-secondary)</code> mit <code>var(--color-border-tertiary)</code>.</p>
 <hr />
-<h2 id="plan-c-wirkgefuge-persistence">Plan C — Wirkgefüge Persistence<a class="headerlink" href="#plan-c-wirkgefuge-persistence" title="Permanent link">&para;</a></h2>
-<p><strong>Status:</strong> DONE (2026-06-04)<br />
-<strong>Plan:</strong> <code>docs/superpowers/plans/2026-06-04-wirkgefuege-persistence.md</code></p>
-<p><strong>What:</strong> Persist Slot and CausalRelation to the database.</p>
-<p>New DB tables: <code>slots</code>, <code>causal_relations</code>
-New repositories: <code>SupabaseSlotRepository</code>, <code>SupabaseCausalRelationRepository</code>
-New schemas + routers:
-- <code>POST /causal-models/{id}/slots</code>
-- <code>POST /causal-models/{id}/relations</code>
-- <code>PUT  /causal-models/{id}/relations/{id}</code>
-- <code>POST /claims/{id}/link-to-wirkgefuege</code></p>
-<hr />
-<h2 id="plan-d-analysis-workflow">Plan D — Analysis Workflow<a class="headerlink" href="#plan-d-analysis-workflow" title="Permanent link">&para;</a></h2>
-<p><strong>Status:</strong> DONE (2026-06-04)
-<strong>Plan:</strong> <code>docs/superpowers/plans/2026-06-04-analysis-workflow.md</code></p>
-<p><strong>What:</strong> End-to-end workflow from narrative to minimal Wirkgefüge.</p>
-<p>Steps 2–6 from <code>experiment_scope.md</code>:
-- <code>POST /narratives/{id}/analyse</code> → NarrativeAnalysisService + provider port
-- <code>POST /narratives/{id}/suggest-wirkgefuege</code> → WirkgefuegeSuggestionService
-- Frontend extensions for the analysis workflow</p>
-<hr />
-<h2 id="plan-e-frontend-extensions">Plan E — Frontend Extensions<a class="headerlink" href="#plan-e-frontend-extensions" title="Permanent link">&para;</a></h2>
-<p><strong>Status:</strong> DONE (2026-06-04)
-<strong>Spec:</strong> <code>docs/superpowers/specs/ui_experiment_scope.md</code>
-<strong>Plan:</strong> <code>docs/superpowers/plans/2026-06-04-frontend-extensions.md</code></p>
-<p><strong>What:</strong> 4 Screens für den Experiment-Workflow — Narrativ → Analyse → Wirkgefüge-Vorschlag → CausalModel.
-- Task 1: Backend: <code>causal_model_id</code> in <code>NarrativeSummaryResponse</code>
-- Task 2: <code>api.ts</code> — neue TypeScript-Typen + API-Calls
-- Task 3: <code>App.tsx</code> — neue Routes
-- Task 4: Screen 1 (<code>NarrativeEditor</code>) — "Analysieren →" Button
-- Task 5: Screen 2 (<code>NarrativeAnalyse</code>) — Actor/Claim-Karten mit Bestätigen/Verwerfen
-- Task 6: Screen 3 (<code>WirkgefuegeVorschlag</code>) — Slot/Relation-Karten + Speicherfluss
-- Task 7: Screen 4 (<code>CausalModelEditor</code>) — Slots + Relationen + Verknüpfte Narrative
-- Task 8: Full Regression Run</p>
-<hr />
-<h2 id="other-open-items">Other open items<a class="headerlink" href="#other-open-items" title="Permanent link">&para;</a></h2>
+<h2 id="2-globale-struktur">2. Globale Struktur<a class="headerlink" href="#2-globale-struktur" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>AppShell
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  ├── TopBar
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  ├── Body
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  │     ├── Sidebar (links, 154px)
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  │     ├── MainArea (flex: 1)
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  │     └── RightPanel (rechts, 160px)
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>  └── StatusBar (optional, für Hinweise)
+</code></pre></div>
+<h3 id="topbar">TopBar<a class="headerlink" href="#topbar" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>[Logo] [Projektname · Kontext] .............. [PerspectiveToggle]
+</code></pre></div>
 <ul>
-<li>~~<strong>Migration 20260603000001 anwenden</strong>~~ — DONE. <code>supabase migration up --local</code> bestätigt: Local database is up to date.</li>
-<li>~~<strong>Integration-Tests narrative_repository reparieren</strong>~~ — DONE (2026-06-04). Alle 6 Tests grün.</li>
-<li><strong>N-01</strong> (<code>clean_up.md</code>): <code>precondition-postcondition.md.rtf</code> als Markdown neu speichern</li>
-<li><strong>N-04</strong> (<code>clean_up.md</code>): CausalModelFederation vollständig spezifizieren</li>
-<li><strong>N-06</strong> (<code>clean_up.md</code>): Community Model Specs anlegen</li>
-<li><strong>Fragment aus narrative_units.typ entfernen</strong> — erst bei Phase-2-Migration zu <code>document_nodes</code></li>
+<li>Projektname wechselt mit Perspektive:
+  Literat → <code>Narrativ: {title}</code>, Wirkgefüge → <code>Gefüge: {modelTitle}</code></li>
+<li><code>PerspectiveToggle</code>: zwei Buttons <code>Literat</code> / <code>Wirkgefüge</code>
+  Aktiver Button: <code>background-info + text-info + font-weight:500</code></li>
 </ul>
+<h3 id="sidebar">Sidebar<a class="headerlink" href="#sidebar" title="Permanent link">&para;</a></h3>
+<p>Zwei Varianten je nach Perspektive (siehe §3 und §4).
+Gemeinsames Muster:
+- Sektions-Labels: 10px, <code>color-text-tertiary</code>, letter-spacing
+- Items: 12px, mit Icon + Label + optionalem Zähler-Badge
+- Aktives Item: <code>background-primary</code>, <code>font-weight:500</code>
+- Szenen-Einrückung: <code>padding-left:23px</code>, aktive Szene mit
+  <code>border-left:2px solid color-border-primary</code>
+- Zähler-Badge: 10px, <code>border + background-primary</code>, border-radius:8px</p>
+<h3 id="rightpanel">RightPanel<a class="headerlink" href="#rightpanel" title="Permanent link">&para;</a></h3>
+<p>Zwei Varianten je nach Perspektive (siehe §3 und §4).
+Gemeinsames Muster:
+- Tab-Bar oben: 2 Tabs, aktiver Tab mit <code>border-bottom:2px solid</code>
+- Panel-Body: 9px padding, flex column, gap:1px
+- Sektion-Labels: 10px, <code>color-text-tertiary</code>
+- Einträge: 11px, Icon + Label + Badge (margin-left:auto)</p>
 <hr />
-<h2 id="frontend-infrastruktur-offene-punkte-2026-06-05">Frontend-Infrastruktur — Offene Punkte (2026-06-05)<a class="headerlink" href="#frontend-infrastruktur-offene-punkte-2026-06-05" title="Permanent link">&para;</a></h2>
-<h3 id="sofort-beim-nachsten-backend-schema-refactoring-miterledigen">Sofort (beim nächsten Backend-Schema-Refactoring miterledigen)<a class="headerlink" href="#sofort-beim-nachsten-backend-schema-refactoring-miterledigen" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>Backend → Frontend Workflow-Regel in CLAUDE.md ergänzen:</strong>
-  Wer ein Pydantic-Response-Schema ändert, aktualisiert <code>frontend/src/lib/api.ts</code>
-  im selben Commit. <code>tsc --noEmit</code> lokal prüfen bevor committed wird.</li>
-</ul>
-<h3 id="mittelfristig">Mittelfristig<a class="headerlink" href="#mittelfristig" title="Permanent link">&para;</a></h3>
-<ul>
-<li>
-<p><strong>Vitest + React Testing Library einrichten</strong>
-  Frontend hat aktuell null Tests. Minimaler Einstieg: Smoke-Tests die prüfen ob
-  Komponenten ohne Crash rendern. Angehen nachdem der Frontend-Skill getestet und
-  die erste isolierte Komponente gebaut wurde.
-  Analogie zum Backend: Domain → Service → Repository → Router;
-  Frontend-Entsprechung: Utils → Komponenten → Screens → E2E.</p>
-</li>
-<li>
-<p><strong>OpenAPI → TypeScript-Generierung (Option B)</strong>
-  FastAPI generiert <code>/openapi.json</code>. Das Tool <code>openapi-typescript</code> erzeugt daraus
-  TypeScript-Interfaces und eliminiert den manuellen Sync zwischen Pydantic-Schemas
-  und <code>api.ts</code>. Verhindert stillen API-Contract-Drift.
-  Aufwand: mittel. Priorität: hoch sobald das Interface größer wird.</p>
-</li>
-</ul>
-<h3 id="skills-und-tooling">Skills und Tooling<a class="headerlink" href="#skills-und-tooling" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong><code>verify</code>-Skill für das Backend anlegen</strong>
-  Gegenstück zu <code>docs/superpowers/skills/verify.md</code>. Protokoll: <code>klartext health</code>,
-  relevante API-Endpoints aufrufen, <code>klartext test</code> für den geänderten Layer.
-  Ablage: <code>docs/superpowers/skills/verify-backend.md</code> + Wrapper <code>~/.claude/skills/verify-backend/</code>.</li>
-</ul>
+<h2 id="3-literat-perspektive">3. Literat-Perspektive<a class="headerlink" href="#3-literat-perspektive" title="Permanent link">&para;</a></h2>
+<h3 id="31-sidebar-literat">3.1 Sidebar (Literat)<a class="headerlink" href="#31-sidebar-literat" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Struktur
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  [file-text] Kapitel 1
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    Szene 1 — Anfang     ← aktiv, border-left
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    Szene 2 — Wendung
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>  [file-text] Kapitel 2
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    Szene 3 — Ende
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>Narrativ-Assets
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>  [users]          Actors    [4]
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>  [message-circle] Claims    [7]
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>Wirkgefüge
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>  [git-branch] Klimawandel   ← aktiv
+</code></pre></div>
+<p>Actors und Claims sind Navigationspunkte — ein Klick öffnet
+die vollständige Asset-Liste, nicht das rechte Panel.</p>
+<h3 id="32-mainarea-literat">3.2 MainArea (Literat)<a class="headerlink" href="#32-mainarea-literat" title="Permanent link">&para;</a></h3>
+<p><strong>Toolbar:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>[Szenenname]  ..................  [Schreiben] [Analyse]
+</code></pre></div>
+Aktiver View-Tab: <code>background-primary + border-secondary</code>.</p>
+<p><strong>Schreiben-View:</strong>
+Fließtext mit inline Actor- und Claim-Tags.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>Actor-Tag:  [user-icon] Name     background:#E1F5EE  color:#0F6E56
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>Claim linked: [message-icon] Text  background:#EAF3DE  color:#3B6D11
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>Claim draft:  [message-icon] Text  background:#FAEEDA  color:#854F0B
+</code></pre></div>
+<p>Tags sind klickbar → öffnet <code>ActorPopup</code> oder <code>ClaimPopup</code> als Overlay.</p>
+<p><strong>Analyse-View:</strong> (Phase 2) Extrahierte Claims und Actors zur Bestätigung.</p>
+<h3 id="33-rightpanel-literat">3.3 RightPanel (Literat)<a class="headerlink" href="#33-rightpanel-literat" title="Permanent link">&para;</a></h3>
+<p>Tab 1: <strong>In dieser Szene</strong> (reaktiv auf aktuelle Szene)</p>
+<p>Zeigt nur Actors und Claims die in der aktuellen Szene vorkommen.
+Gefiltert über <code>DocumentLink</code> → <code>occurrences()</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>Actors
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>  [user] Maria S.     [3×]
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>  [user] Zentralbank  [→ Entity]
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>Claims
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>  [message] CO₂ steigt    [linked]
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>  [message] Folgen unklar [draft]
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>Nicht in dieser Szene: 2 Actors, 5 Claims.
+</code></pre></div>
+<p>Tab 2: <strong>Wirkgefüge</strong> — kompakte Ansicht des verknüpften Modells.</p>
+<h3 id="34-actorpopup-overlay">3.4 ActorPopup (Overlay)<a class="headerlink" href="#34-actorpopup-overlay" title="Permanent link">&para;</a></h3>
+<p>Öffnet sich über dem Text als Modal-Overlay.
+Hintergrund: <code>rgba(0,0,0,0.18)</code>.
+Popup-Breite: 260px, <code>background-primary</code>, <code>border-secondary</code>, <code>border-radius-lg</code>.</p>
+<p><strong>Header:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>Actor · {actor_type}                          [×]
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>{label}
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>{N} Vorkommen im Narrativ
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>[Hüllkurve — SVG-Balkendiagramm der Vorkommen über den Textverlauf]
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>[Details] [Relationen] [Vorkommen] [Tracking]
+</code></pre></div></p>
+<p><strong>Hüllkurve:</strong> SVG Polyline, Höhe 28px, Breite 100%.
+Jeder Zacken = ein Vorkommen. X-Achse = Textverlauf (Position),
+Y-Achse = Amplitude (immer gleich, nur Präsenz/Absenz).
+Stroke: <code>color-border-primary</code>, keine Fill.</p>
+<p><strong>Details-Tab:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>Typ         {actor_type}
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>Entity-Link {entity_ref.label} oder —
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>Szenen      {komma-separierte Liste}
+</code></pre></div>
+Notizfeld: 11px, <code>color-text-secondary</code>, immer <code>AuthorOnly</code>.</p>
 <hr />
-<h2 id="architectural-linting-plan-2026-06-05">Architectural Linting — Plan (2026-06-05)<a class="headerlink" href="#architectural-linting-plan-2026-06-05" title="Permanent link">&para;</a></h2>
-<p><strong>Entscheidung:</strong> ADR 0006 — alle Patterns aus CLAUDE.md und Skills werden automatisch geprüft.
-<strong>Primäres Tool:</strong> Semgrep (strukturelle Muster, language-agnostic, YAML-Regeln)
-<strong>Ergänzend:</strong> custom ruff rules (Python), custom eslint rules (TypeScript)
-<strong>Ablage:</strong> <code>.semgrep/rules/</code> im Repo</p>
-<h3 id="phase-1-semgrep-aufsetzen-hochste-prioritat">Phase 1 — Semgrep aufsetzen + höchste Priorität<a class="headerlink" href="#phase-1-semgrep-aufsetzen-hochste-prioritat" title="Permanent link">&para;</a></h3>
-<p>Setup:
-- <code>pip install semgrep</code> in dev dependencies
-- <code>.semgrep/rules/</code> Ordner anlegen
-- Semgrep in pre-commit + CI (<code>lint.yml</code>) einbinden</p>
-<p>Erste Regeln (höchster Wert, sofort sichtbar):</p>
-<p><strong>Backend:</strong>
-- <code>klartext/repo-logs-first</code> — jede Methode in <code>*Repository</code>-Klassen muss <code>self.logger</code> vor dem ersten nicht-logger Statement aufrufen
-- <code>klartext/no-hex-in-style</code> (Python-seitig) — kein hardcoded Hex in Python-Code
-- <code>klartext/exception-naming</code> — Exception-Klassen müssen auf <code>Error</code> enden
-- <code>klartext/factory-methods</code> — Klassen in <code>models/</code> müssen <code>create()</code> und <code>from_record()</code> haben</p>
-<p><strong>Frontend:</strong>
-- <code>klartext/no-hex-in-style</code> (TypeScript) — kein <code>"#XXXXXX"</code> in <code>style={{...}}</code>
-- <code>klartext/async-finally</code> — jeder <code>async</code> Event-Handler muss <code>finally</code> enthalten</p>
-<h3 id="phase-2-weitere-regeln">Phase 2 — Weitere Regeln<a class="headerlink" href="#phase-2-weitere-regeln" title="Permanent link">&para;</a></h3>
-<ul>
-<li><code>klartext/repo-log-level</code> — <code>debug</code> für Reads, <code>info</code> für Writes</li>
-<li><code>klartext/service-naming</code> — Service-Klassen enden auf <code>Service</code></li>
-<li><code>klartext/repository-naming</code> — Repository-Klassen enden auf <code>Repository</code></li>
-<li><code>klartext/no-db-in-service</code> — kein <code>supabase</code>-Import in <code>services/</code></li>
-<li><code>klartext/router-health</code> — jeder Router hat mindestens eine <code>/health</code>-Route</li>
-<li><code>klartext/no-jsx-strings</code> — keine String-Literale im JSX (außer technische Werte)</li>
-</ul>
-<h3 id="neue-pattern-regel">Neue Pattern-Regel<a class="headerlink" href="#neue-pattern-regel" title="Permanent link">&para;</a></h3>
-<p>Ab jetzt gilt: Wenn ein neues Pattern in CLAUDE.md oder einem Skill etabliert wird,
-wird im selben Commit eine entsprechende Semgrep-Regel angelegt. Kein Pattern ohne Regel.</p>
-<h3 id="spater-kein-konkreter-termin">Später (kein konkreter Termin)<a class="headerlink" href="#spater-kein-konkreter-termin" title="Permanent link">&para;</a></h3>
-<ul>
-<li>
-<p><strong>Style Dictionary einrichten</strong>
-  JSON-Tokens in <code>design/tokens/*.json</code> automatisch nach <code>frontend/src/index.css</code>
-  und optional nach TypeScript-Konstanten generieren. Eliminiert den manuellen
-  Sync zwischen Token-JSON und CSS Custom Properties.</p>
-</li>
-<li>
-<p><strong>Playwright für kritische User-Flows</strong>
-  E2E-Tests für den Experiment-Workflow (NarrativeEditor → Analyse →
-  WirkgefügeVorschlag → CausalModelEditor). Erst sinnvoll wenn Workflow stabil ist.</p>
-</li>
-<li>
-<p><strong>Design-System → Code Workflow (Workflow 3) vollständig definieren</strong>
-  Wenn ein Token in <code>design/tokens/*.json</code> geändert wird: wer prüft welche
-  Komponenten betroffen sind, und wie wird sichergestellt dass <code>index.css</code> aktualisiert
-  wird? Aktuell: CHANGELOG.md-Eintrag + manuelles Pending Task — kein automatischer Guard.</p>
-</li>
-</ul>
-<h2 id="lessons-learned-refactoring-scope">Lessons Learned — Refactoring-Scope<a class="headerlink" href="#lessons-learned-refactoring-scope" title="Permanent link">&para;</a></h2>
-<p>Bei Actor/Claim-Refactorings (Plan B) wurde <code>api/cli.py</code> zunächst vergessen —
-es enthält Seeddata-Code der dieselben Domain-Felder referenziert wie Service/Router.
-<strong>Regel für künftige Pläne:</strong> Bei Domain-Feld-Umbenennungen immer <code>api/cli.py</code> in die
-Dateiliste aufnehmen.</p>
-<p>Bei Claim-API-Änderungen (Plan B) wurden drei weitere Dateien übersehen, die erst beim
-nächsten Test-Run auffielen:
-- <code>api/routers/claims.py</code> — baut <code>ClaimResponse</code> direkt aus Domain-Objekten
-- <code>api/tests/fakes/fake_claim_repository.py</code> — konstruiert <code>Claim(...)</code> direkt im Fake
-- <code>api/tests/test_claims_router.py</code> — erstellt <code>Claim</code>-Objekte in der Fake-Service-Klasse</p>
-<p><strong>Regel für künftige Pläne:</strong> Bei Änderungen an <code>Claim</code> oder <code>Actor</code> immer auch diese
-Dateien in die Scope-Liste aufnehmen.</p>
+<h2 id="4-wissenschaftler-perspektive">4. Wissenschaftler-Perspektive<a class="headerlink" href="#4-wissenschaftler-perspektive" title="Permanent link">&para;</a></h2>
+<h3 id="41-sidebar-wissenschaftler">4.1 Sidebar (Wissenschaftler)<a class="headerlink" href="#41-sidebar-wissenschaftler" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>Modelle
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>  [git-branch] Klimawandel   ← aktiv
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>Elemente
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>  [variable]         Slots       [6]
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>  [arrows-right-left] Relationen [4]
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>  [layers-difference] Mixins     [1]
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>Verwendung
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>  [book]         Narrative  [2]
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>  [alert-circle] Issues     [1]  ← Issue-Badge: rot
+</code></pre></div>
+<p>Issue-Badge: <code>background:#FCEBEB</code>, <code>color:#A32D2D</code>, <code>border:#F09595</code>.</p>
+<h3 id="42-mainarea-wissenschaftler-graph-view">4.2 MainArea (Wissenschaftler) — Graph-View<a class="headerlink" href="#42-mainarea-wissenschaftler-graph-view" title="Permanent link">&para;</a></h3>
+<p><strong>Toolbar:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>[Elementname · Typ · slot_type]  .....  [Graph] [Text] [Timeline] [Tabelle]
+</code></pre></div></p>
+<p><strong>Graph-View (primär — TheBrain + Tinderbox Inspiration):</strong></p>
+<p>Focus-Node-Prinzip:
+- Ein Knoten ist immer der Fokus-Knoten (zuletzt angeklickt)
+- Fokus-Knoten: <code>background:#E6F1FB</code>, <code>border:1.5px solid #185FA5</code>,
+  <code>font-weight:500</code>, <code>color:#0C447C</code>
+- Direkte Nachbarn: volle Opacity, normale Darstellung
+- Nachbarn der Nachbarn: <code>opacity:0.4</code>, kleinere Schrift</p>
+<p>CausalModel-Grenze:
+- Gestrichelter Rahmen um alle Elemente des aktiven CausalModels
+- <code>stroke:color-border-tertiary</code>, <code>stroke-dasharray:5 3</code>, <code>rx:8</code>
+- Label oben links: <code>CausalModel: {title} · {zeitscheibe}</code>, 10px</p>
+<p>Verbindungslinien:
+- Normale CausalRelation: <code>stroke:color-border-secondary</code>, <code>stroke-width:1</code>
+- Mit Issue: <code>stroke:#185FA5</code>, <code>stroke-width:1</code>, <code>stroke-dasharray:4 2</code>
+- Pfeilspitzen: marker-end, 5×5px</p>
+<p>Mechanismus-Label: 9px, <code>color-text-tertiary</code>, auf der Linie rotiert.</p>
+<p>Doppelklick auf Knoten → Knoten wird neuer Fokus-Knoten,
+Graph reorganisiert sich um ihn.</p>
+<p><strong>Text-View:</strong> Alle Elemente des Modells als strukturierte Liste.
+<strong>Timeline-View:</strong> Zeitscheiben als horizontale Sequenz.
+<strong>Tabelle-View:</strong> Slots und Relationen als sortierbare Tabelle.</p>
+<h3 id="43-rightpanel-wissenschaftler">4.3 RightPanel (Wissenschaftler)<a class="headerlink" href="#43-rightpanel-wissenschaftler" title="Permanent link">&para;</a></h3>
+<p>Tab 1: <strong>Dieses Element</strong> (reaktiv auf Fokus-Knoten)</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>{label}
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>{element_type} · {slot_type}
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>[EpistemicStatus-Badge]
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>Eingehende
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>  [arrow-right] Source → Fokus
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>Ausgehende
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>  [arrow-right] Fokus → Target
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>
+<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a>Verwendet in
+<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a>  [book] {narrativ_title}  [Sz. N]
+</code></pre></div>
+<p>EpistemicStatus-Badges:
+- <code>incomplete</code>: amber (<code>#FAEEDA / #854F0B</code>)
+- <code>axiomatic</code>: grün (<code>#EAF3DE / #3B6D11</code>)
+- <code>derived</code>: lila (<code>#EEEDFE / #3C3489</code>)</p>
+<p>Tab 2: <strong>Issues</strong> — alle offenen ModelIssues des Modells.</p>
+<hr />
+<h2 id="5-state-modell">5. State-Modell<a class="headerlink" href="#5-state-modell" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="kd">interface</span><span class="w"> </span><span class="nx">AppState</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">  </span><span class="nx">perspective</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;literat&#39;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s1">&#39;wirkgefuge&#39;</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">  </span><span class="c1">// Literat</span>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">  </span><span class="nx">currentNarrativeId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span>
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="w">  </span><span class="nx">currentSceneId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span>
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="w">  </span><span class="nx">openPopup</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kr">type</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;actor&#39;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s1">&#39;claim&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">null</span>
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>
+<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="w">  </span><span class="c1">// Wissenschaftler</span>
+<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="w">  </span><span class="nx">currentModelId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span>
+<a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a><span class="w">  </span><span class="nx">focusNodeId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span>
+<a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a><span class="w">  </span><span class="nx">activeView</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;graph&#39;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s1">&#39;text&#39;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s1">&#39;timeline&#39;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s1">&#39;tabelle&#39;</span>
+<a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a><span class="p">}</span>
+</code></pre></div>
+<p><strong>Reaktivitätsregeln:</strong>
+- <code>currentSceneId</code> → RightPanel filtert Actors und Claims
+- <code>focusNodeId</code> → Graph zentriert, RightPanel zeigt Element-Details
+- <code>perspective</code> → Sidebar, MainArea, RightPanel wechseln komplett
+- <code>openPopup</code> → Overlay erscheint über MainArea</p>
+<hr />
+<h2 id="6-komponenten-hierarchie">6. Komponenten-Hierarchie<a class="headerlink" href="#6-komponenten-hierarchie" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>AppShell
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>  TopBar
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>    Logo
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>    ProjectLabel          ← reaktiv auf perspective + currentId
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>    PerspectiveToggle
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>  Body
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>    Sidebar
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>      LiteratSidebar      ← wenn perspective === &#39;literat&#39;
+<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>      WissenschaftlerSidebar ← wenn perspective === &#39;wirkgefuge&#39;
+<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>
+<a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a>    MainArea
+<a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a>      MainToolbar
+<a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a>        NodeTitle
+<a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a>        ViewTabs
+<a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a>      LiteratEditor       ← Schreiben / Analyse
+<a id="__codelineno-12-17" name="__codelineno-12-17" href="#__codelineno-12-17"></a>        InlineActorTag    ← klickbar → openPopup
+<a id="__codelineno-12-18" name="__codelineno-12-18" href="#__codelineno-12-18"></a>        InlineClaimTag    ← klickbar → openPopup
+<a id="__codelineno-12-19" name="__codelineno-12-19" href="#__codelineno-12-19"></a>        ActorPopup        ← Overlay, wenn openPopup gesetzt
+<a id="__codelineno-12-20" name="__codelineno-12-20" href="#__codelineno-12-20"></a>          WaveformChart   ← SVG, occurrences als Hüllkurve
+<a id="__codelineno-12-21" name="__codelineno-12-21" href="#__codelineno-12-21"></a>      WirkgefuegeGraph    ← Graph / Text / Timeline / Tabelle
+<a id="__codelineno-12-22" name="__codelineno-12-22" href="#__codelineno-12-22"></a>        FocusNode
+<a id="__codelineno-12-23" name="__codelineno-12-23" href="#__codelineno-12-23"></a>        NeighborNode
+<a id="__codelineno-12-24" name="__codelineno-12-24" href="#__codelineno-12-24"></a>        ModelBoundary     ← gestrichelter CausalModel-Rahmen
+<a id="__codelineno-12-25" name="__codelineno-12-25" href="#__codelineno-12-25"></a>        RelationLine
+<a id="__codelineno-12-26" name="__codelineno-12-26" href="#__codelineno-12-26"></a>
+<a id="__codelineno-12-27" name="__codelineno-12-27" href="#__codelineno-12-27"></a>    RightPanel
+<a id="__codelineno-12-28" name="__codelineno-12-28" href="#__codelineno-12-28"></a>      LiteratPanel        ← gefiltert auf currentSceneId
+<a id="__codelineno-12-29" name="__codelineno-12-29" href="#__codelineno-12-29"></a>      WissenschaftlerPanel ← gefiltert auf focusNodeId
+<a id="__codelineno-12-30" name="__codelineno-12-30" href="#__codelineno-12-30"></a>
+<a id="__codelineno-12-31" name="__codelineno-12-31" href="#__codelineno-12-31"></a>  StatusBar               ← Hinweise und Kontext
+</code></pre></div>
+<hr />
+<h2 id="7-noch-nicht-spezifiziert">7. Noch nicht spezifiziert<a class="headerlink" href="#7-noch-nicht-spezifiziert" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Thema</th>
+<th>Priorität</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Leseansicht (dritte Perspektive)</td>
+<td>Phase 2</td>
+</tr>
+<tr>
+<td>Matrix-View Szenen × Assets</td>
+<td>Phase 2</td>
+</tr>
+<tr>
+<td>Übergangsanimation beim Perspektiv-Wechsel</td>
+<td>Phase 2</td>
+</tr>
+<tr>
+<td>Präsentationsmodus</td>
+<td>Phase 3</td>
+</tr>
+<tr>
+<td>Mobile-Strategie</td>
+<td>Phase 3</td>
+</tr>
+<tr>
+<td>Onboarding-Flow</td>
+<td>Phase 3</td>
+</tr>
+</tbody>
+</table>
 
 
 

@@ -1828,6 +1828,11 @@ via DocumentLink referenziert wird.</p>
 <p><strong>Migrationslücke:</strong> Fundamentale Architekturänderung — Actor wechselt
 von narrativ-gebunden zu plattformweit. Bestehende <code>narrative_actors</code>-
 Einträge müssen zu DocumentAssets migriert werden.</p>
+<p><strong>Entity-Ref-Linking:</strong> <code>UpdateActorRequest</code> enthält bewusst kein <code>entity_ref</code>.
+Das Verknüpfen eines Actors mit einer Causal-Model-Entity ist eine eigenständige
+Operation (geplant für Plan C) und gehört nicht in den allgemeinen PUT-Actor-Endpoint.
+<code>Actor.update()</code> im Domain-Objekt akzeptiert <code>entity_ref</code> als optionalen Parameter,
+damit spätere Service- und Repository-Layer ihn durchleiten können.</p>
 <hr />
 <h2 id="5-claim">5. Claim<a class="headerlink" href="#5-claim" title="Permanent link">&para;</a></h2>
 <h3 id="claimstatus">ClaimStatus<a class="headerlink" href="#claimstatus" title="Permanent link">&para;</a></h3>

@@ -2058,6 +2058,14 @@
 <td>Seed the database with a consistent test dataset (requires running API + Supabase)</td>
 </tr>
 <tr>
+<td><code>klartext flush</code></td>
+<td>TRUNCATE all data tables without restarting anything — server keeps running, DB is empty after reload</td>
+</tr>
+<tr>
+<td><code>klartext flush --yes</code></td>
+<td>Same, without confirmation prompt</td>
+</tr>
+<tr>
 <td><code>klartext db reset</code></td>
 <td>Reset local database and re-apply all migrations</td>
 </tr>
