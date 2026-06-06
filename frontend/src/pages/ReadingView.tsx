@@ -143,7 +143,7 @@ export default function ReadingView() {
                           <span
                             style={{
                               flexShrink: 0,
-                              // TODO(token): needs color.semantic.blue variant — current tokens have --color-blue-bg (#E6F1FB) and --color-blue-text (#0C447C) but different shades
+                              // TODO(token): needs color.semantic.blue variant — current tokens have --color-blue-bg (E6F1FB) and --color-blue-text (0C447C) but different shades
                               background: "var(--color-blue-bg)",
                               color: "var(--color-blue-text)",
                               borderRadius: 3,

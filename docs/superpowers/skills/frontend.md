@@ -144,6 +144,34 @@ The `finally` block is not optional. Missing `finally` is a bug.
 
 ---
 
+## State Consistency Rule — Persisted Data
+
+**Every UI state update for persisted data must be paired with an API call.**
+
+Updating React state without calling the API is a silent data loss bug. The user sees
+their change reflected in the UI, but nothing was saved. The next page reload reverts
+the change with no error message.
+
+```tsx
+// WRONG — UI updates, DB stays empty
+const onAcceptAll = () => {
+  setStates(states.map(() => "accepted"));
+};
+
+// CORRECT — UI update AND API call per item
+const onAcceptAll = () => {
+  items.forEach((_, i) => {
+    if (states[i] !== "accepted") acceptItem(i); // acceptItem calls the API
+  });
+};
+```
+
+**Rule:** If a user action changes the state of something that is (or will be) persisted,
+the action handler must call the API. The only exception is genuinely local UI state
+(e.g. accordion open/closed, active tab) that is never sent to the server.
+
+---
+
 ## Quality Checklist — Run Before Every Commit
 
 Go through this list item by item. Do not commit until all boxes are checked.
@@ -162,6 +190,9 @@ Go through this list item by item. Do not commit until all boxes are checked.
 ### Async
 - [ ] Every async operation has `setLoading(true)` + `finally { setLoading(false) }`
 - [ ] Triggering element has `disabled={isLoading}` during operation
+
+### State Consistency
+- [ ] Every handler that changes persisted data calls the API — no state-only updates
 
 ### Accessibility
 - [ ] All interactive elements have an accessible name (visible label or `aria-label`)

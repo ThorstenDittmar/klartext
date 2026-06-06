@@ -1,0 +1,24 @@
+rules:
+  - id: klartext-exception-naming
+    # All exception classes in api/exceptions/ must end with 'Error'.
+    # Pattern: find any class declaration that does NOT end with 'Error'.
+    patterns:
+      - pattern: |
+          class $CLASS($BASE):
+              ...
+      - metavariable-pattern:
+          metavariable: $CLASS
+          patterns:
+            - pattern-not-regex: ".*Error$"
+    message: >
+      Exception class '$CLASS' must end with 'Error'.
+      CLAUDE.md naming convention: Exceptions → Error suffix (e.g. InvalidEmailError, NarrativeNotFoundError).
+    severity: ERROR
+    languages: [python]
+    paths:
+      include:
+        - "**/api/exceptions/**"
+    metadata:
+      category: maintainability
+      references:
+        - CLAUDE.md

@@ -132,16 +132,40 @@ Service        → ServiceError  (EmailAlreadyExistsError, PermissionError)
 Repository     → RepositoryError (RecordNotFoundError, DatabaseError)
 Router         → no try/except — central exception handlers translate to HTTP status codes
 ```
-- Exception handlers registered centrally via `@app.exception_handler`
-- **In development**: handlers inactive — errors propagate with full stack trace
-- **In production**: handlers active — controlled error responses for users
+
+### Grundregel: Kein Fehler darf still verschwinden
+
+**Fachliche Exceptions** (NarrativeNotFoundError, SceneNotFoundError, etc.) werden **immer** behandelt
+und dem User als sinnvolle Fehlermeldung angezeigt — kein generisches „Etwas ist schiefgelaufen".
 
 ```python
-if settings.environment == "production":
-    @app.exception_handler(RecordNotFoundError)
-    def handle_not_found(request: Request, exc: RecordNotFoundError):
-        return JSONResponse(status_code=404, content={"error": str(exc)})
+@app.exception_handler(NarrativeNotFoundError)
+async def handle_narrative_not_found(request: Request, exc: NarrativeNotFoundError) -> JSONResponse:
+    """Returns 404 with a human-readable message — always active."""
+    return JSONResponse(status_code=404, content={"error": str(exc)})
 ```
+
+Frontend: API-Fehler werden abgefangen und als sinnvolle deutsche Meldung dargestellt.
+Ein 404 zeigt „Narrativ nicht gefunden", kein leeres UI oder endloser Spinner.
+
+**Infrastruktur-/unerwartete Exceptions** (DatabaseError, connection errors, unhandled exceptions):
+- In **Development**: kein Handler — voller Stack Trace schlägt durch, ist im Terminal sichtbar
+- In **Production**: erst wenn nötig einen generischen 500-Handler hinzufügen
+- Niemals still schlucken (leeres `except: pass`, `catch (e) {}` ohne Reaktion)
+
+```python
+# WRONG — silently swallows infrastructure errors
+try:
+    result = await db.query(...)
+except Exception:
+    pass  # developer sees nothing, user sees nothing
+
+# CORRECT — let it propagate; developer sees full stack trace in development
+result = await db.query(...)
+```
+
+**Regel:** Kein catch-all Handler. Kein stilles Schlucken. Fachliche Fehler → sinnvolle Meldung
+für den User. Infrastruktur-Fehler → in Development sichtbar durchschlagen.
 
 ## Type Hints
 - Mandatory everywhere: parameters, return values, class attributes

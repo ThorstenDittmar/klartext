@@ -1,0 +1,22 @@
+rules:
+  - id: klartext-no-hex-in-style
+    # Matches hardcoded CSS hex color values (#RGB or #RRGGBB) anywhere in frontend source.
+    # The negative lookahead (?![0-9a-zA-Z_]) prevents false positives on non-color hex-like
+    # identifiers (e.g. UUIDs or CSS class suffixes that happen to have hex chars).
+    # Inline suppression for known missing tokens: // nosemgrep: klartext-no-hex-in-style
+    pattern-regex: '#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?(?![0-9a-zA-Z_])'
+    message: >
+      Hardcoded hex color found.
+      Use a CSS custom property from design/tokens/colors.json instead
+      (e.g. "var(--color-border)" instead of "#E5E5E5", "var(--color-text-primary)" instead of "#1A1A1A").
+      To suppress a known missing token: add // nosemgrep: klartext-no-hex-in-style
+    severity: ERROR
+    languages: [typescript]
+    paths:
+      include:
+        - "**/frontend/src/**"
+    metadata:
+      category: maintainability
+      references:
+        - design/tokens/colors.json
+        - design/do-dont.md

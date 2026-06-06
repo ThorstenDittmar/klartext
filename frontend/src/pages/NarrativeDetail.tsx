@@ -39,9 +39,9 @@ const CLAIM_TYPE_LABELS: Record<string, string> = {
   uncertainty:    "Unsicherheit",
 };
 
-// TODO(token): needs color.semantic.actor-underline (#1D9E75) — no exact token exists,
-// using hardcoded hex as specified. Closest existing token: --color-teal-text (#0F6E56).
-const ACTOR_UNDERLINE_COLOR = "#1D9E75";
+// TODO(token): needs color.semantic.actor-underline (1D9E75) — no exact token exists,
+// using hardcoded hex as specified. Closest existing token: --color-teal-text (0F6E56).
+const ACTOR_UNDERLINE_COLOR = "#1D9E75"; // nosemgrep: klartext-no-hex-in-style
 
 type ViewMode = "scenes" | "fulltext";
 

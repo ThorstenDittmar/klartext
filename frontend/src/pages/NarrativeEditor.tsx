@@ -670,7 +670,7 @@ export default function NarrativeEditor() {
               </button>
               <button
                 onClick={() => setShowAddScene(false)}
-                style={{ background: "none", border: "1px solid #ddd" }}
+                style={{ background: "none", border: "1px solid var(--color-border)" }}
               >
                 Abbrechen
               </button>
@@ -743,7 +743,7 @@ export default function NarrativeEditor() {
               </button>
               <button
                 onClick={cancelActorForm}
-                style={{ background: "none", border: "1px solid #ddd" }}
+                style={{ background: "none", border: "1px solid var(--color-border)" }}
               >
                 Abbrechen
               </button>

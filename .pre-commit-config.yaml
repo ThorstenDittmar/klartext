@@ -65,3 +65,16 @@ repos:
         language: system
         types_or: [ts, tsx]
         pass_filenames: false
+
+  # ---------------------------------------------------------------------------
+  # Architectural linting: semgrep (custom rules in .semgrep/rules/)
+  # ---------------------------------------------------------------------------
+  - repo: local
+    hooks:
+      - id: semgrep
+        name: semgrep (architectural rules)
+        entry: api/.venv/bin/semgrep
+        language: system
+        args: [scan, --config=.semgrep/rules/, --error, --metrics=off]
+        pass_filenames: false
+        types_or: [python, ts, tsx]
