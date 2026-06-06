@@ -1920,7 +1920,45 @@ Kein ClaimStatus, kein Wirkgefüge-Link, keine DocumentLink-Navigation.</p>
 - Automatische Erstanalyse nach Import
 - JATS XML, BibTeX, OWL/RDF (→ Wirkgefüge-Import, separates Thema)</p>
 <hr />
-<h2 id="7-offene-todos">7. Offene Todos<a class="headerlink" href="#7-offene-todos" title="Permanent link">&para;</a></h2>
+<h2 id="7-offset-konzept-phase-1-phase-2">7. Offset-Konzept (Phase 1 → Phase 2)<a class="headerlink" href="#7-offset-konzept-phase-1-phase-2" title="Permanent link">&para;</a></h2>
+<h3 id="kontext">Kontext<a class="headerlink" href="#kontext" title="Permanent link">&para;</a></h3>
+<p>In Phase 1 (aktuelle Implementierung) werden Actors und Claims im flachen
+<code>narrative_units</code>-Modell verwaltet. Der LLM-Analyse-Endpunkt
+(<code>POST /narratives/{id}/analyse</code>) gibt für jedes Actor-Vorkommen und für
+jeden Claim optionale Zeichenpositionen zurück:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>start_offset: int | None   # 0-indexed, relativ zum Szenentext
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>end_offset: int | None     # exklusiv (Python-Slice-Konvention)
+</code></pre></div>
+<h3 id="was-die-offsets-bedeuten">Was die Offsets bedeuten<a class="headerlink" href="#was-die-offsets-bedeuten" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Zeigen auf eine Textstelle im Szentext: <code>scene_text[start:end]</code></li>
+<li>0-indexed, <code>end</code> ist exklusiv: <code>"Hallo"[0:5]</code> → <code>"Hallo"</code></li>
+<li><code>None</code> bedeutet: kein direkter Textbezug (z.B. implizite Gruppen)</li>
+</ul>
+<h3 id="wozu-sie-dienen">Wozu sie dienen<a class="headerlink" href="#wozu-sie-dienen" title="Permanent link">&para;</a></h3>
+<p>Die Offsets sind ein <strong>einseitiges Werkzeug für Phase 2</strong>. Wenn die Migration
+von <code>narrative_units</code> zu <code>document_nodes</code> stattfindet, können sie genutzt werden
+um automatisch <code>DocumentLink</code>-Objekte zwischen Actors/Claims und den
+entsprechenden <code>DocumentNode</code>-Blattknoten zu konstruieren.</p>
+<p><strong>Sie werden nicht direkt persistiert.</strong> Der Analyse-Endpunkt gibt sie zurück,
+der Aufrufer kann sie nutzen — aber sie erzeugen keine eigene Tabelle.</p>
+<h3 id="implicit-actors">Implicit Actors<a class="headerlink" href="#implicit-actors" title="Permanent link">&para;</a></h3>
+<p>Actors mit <code>actor_type='group'</code> können ohne direkten Textbezug vorkommen.
+Das LLM erkennt diese als implizite Gruppen aus dem Kontext.
+In diesem Fall ist <code>occurrences=[]</code> (leere Liste).</p>
+<p>Auf Actor-Occurrence-Ebene kann <code>start_offset</code> und <code>end_offset</code> beide <code>None</code> sein,
+wenn der Actor zwar in einer Szene vorkommt, aber nicht direkt namentlich erwähnt wird.</p>
+<h3 id="phase-2-vorgesehene-nutzung">Phase 2: Vorgesehene Nutzung<a class="headerlink" href="#phase-2-vorgesehene-nutzung" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Migration: <code>narrative_units</code> → <code>document_nodes</code>-Baum</li>
+<li>LLM gibt Offsets für jedes Actor-Vorkommen und jeden Claim zurück</li>
+<li>Migration-Skript nutzt Offsets um <code>DocumentLink</code>-Objekte zu erstellen:
+   <code>Actor/Claim → DocumentNode(Paragraph/Sentence)</code></li>
+<li>Nach Migration: Offsets werden nicht mehr im API-Response exponiert,
+   da Navigation über <code>DocumentLink.occurrences()</code> möglich ist</li>
+</ol>
+<hr />
+<h2 id="8-offene-todos">8. Offene Todos<a class="headerlink" href="#8-offene-todos" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
