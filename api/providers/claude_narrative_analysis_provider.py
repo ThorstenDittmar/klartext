@@ -31,19 +31,32 @@ _SYSTEM_PROMPT = (
     '"actors": Array von Objekten mit:\n'
     '- "label": Name oder Bezeichnung des Akteurs\n'
     f'- "actor_type": Einer von: {_ACTOR_TYPES}\n'
-    '- "occurrences": Array von Objekten für jede Nennung im Text'
-    " — ALLE Vorkommen, nicht nur das erste:\n"
+    '- "occurrences": Array von Objekten für JEDE Nennung im Text'
+    " — direkte Namen UND Pronomen, ALLE Vorkommen:\n"
     '    { "scene_title": "<Szenenname>", "start_offset": <int>, "end_offset": <int> }\n'
     "  start_offset und end_offset sind 0-indexierte Zeichenpositionen relativ zum Szenentext.\n"
     "  end_offset ist exklusiv (erstes Zeichen nach dem Match).\n"
     "  Für implizite Gruppen ohne direkte Textstelle: occurrences = []\n"
     '- "entity_suggestion": Englischer snake_case-Bezeichner für ein'
     ' Kausalmodell-Element (z.B. "central_bank"), null falls unbekannt\n\n'
-    "WICHTIG — Implizite Gruppen: Suche auch nach kollektiven Akteuren die aus dem Kontext\n"
-    "erschlossen werden können, auch wenn sie nicht namentlich genannt sind.\n"
-    "Beispiele: 'die schweigenden Anwohner', 'die Entwickler dieser Plattform',"
-    " 'Klimaaktivisten'.\n"
-    "Für diese: actor_type = 'group', occurrences = []\n\n"
+    "AKTEURSERKENNUNG — vier Kategorien:\n"
+    "1. Benannte Einzelpersonen (actor_type='individual'):"
+    " namentlich genannte Personen, z.B. 'Maria Müller', 'der Minister'\n"
+    "2. Benannte Gruppen (actor_type='group'):"
+    " explizit im Text genannte Kollektive, z.B. 'die Bevölkerung',"
+    " 'Klimaaktivisten', 'die Demonstranten', 'Verbraucher'\n"
+    "3. Benannte Institutionen/Organisationen (actor_type='institution'):"
+    " 'die Regierung', 'das Parlament', 'die EZB', 'das Bundesministerium',"
+    " Firmen, Behörden, Parteien — auch wenn sie als 'sie/er/es' weiterreferenziert werden\n"
+    "4. Implizite Akteure (actor_type='group' oder 'abstract_entity'):"
+    " aus dem Kontext erschlossene Gruppen ohne direkten Textbezug — occurrences = []\n\n"
+    "PRONOMENERKENNUNG — PFLICHT:\n"
+    "Wenn ein Akteur im weiteren Text durch ein Pronomen referenziert wird"
+    " (er/sie/es/du/ihr/wir/man/ihm/ihr/ihn/uns/euch/deren/dessen),"
+    " füge diese Pronomen-Stellen EBENFALLS zur occurrences-Liste des Akteurs hinzu.\n"
+    "start_offset/end_offset zeigen dabei auf das Pronomen selbst im Szenentext.\n"
+    "Beispiel: 'Die Regierung beschloss...' → occurrence bei 'Die Regierung'\n"
+    "          '...dann verkündete sie den Beschluss...' → WEITERE occurrence bei 'sie'\n\n"
     '"claims": Array von Objekten mit:\n'
     '- "label": Kurzer englischer Titel (max. 80 Zeichen)\n'
     '- "text": Die extrahierte Aussage als wörtliches Zitat'
@@ -58,7 +71,7 @@ _SYSTEM_PROMPT = (
     '  - Für "slot_state": "slot" (snake_case, englisch), "slot_state" (Zustandsbeschreibung)\n'
     '  - Für "causal_relation": "source_slot", "source_condition", "target_slot",'
     ' "target_effect", "mechanism" (alles snake_case/englisch)\n\n'
-    "Maximal 5 Akteure und 10 Claims."
+    "Maximal 8 Akteure und 10 Claims."
     " Nur was explizit oder klar implizit im Text vorhanden ist."
 )
 

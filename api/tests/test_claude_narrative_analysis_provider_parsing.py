@@ -282,6 +282,61 @@ def test_parse_claim_clamps_confidence_below_zero() -> None:
     assert claim.confidence == pytest.approx(0.0)
 
 
+def test_parse_actor_named_institution_with_direct_text_occurrence() -> None:
+    """Expects a named institution ('die Regierung') to be parsed with actor_type 'institution'.
+
+    Verifies that its direct text occurrence is correctly extracted from the record.
+    """
+    provider = make_provider()
+    record = {
+        "label": "Die Regierung",
+        "actor_type": "institution",
+        "occurrences": [
+            {"scene_title": "Einleitung", "start_offset": 0, "end_offset": 13},
+        ],
+        "entity_suggestion": "government",
+    }
+
+    actor = provider._parse_actor(record)
+
+    assert actor.label == "Die Regierung"
+    assert actor.actor_type == "institution"
+    assert len(actor.occurrences) == 1
+    assert actor.occurrences[0].scene_title == "Einleitung"
+    assert actor.occurrences[0].start_offset == 0
+    assert actor.occurrences[0].end_offset == 13
+    assert actor.entity_suggestion == "government"
+
+
+def test_parse_actor_pronoun_occurrences_are_included_as_regular_occurrences() -> None:
+    """Expects pronoun references ('sie', 'er') to appear as regular occurrences.
+
+    They should appear alongside the direct name reference of the same actor.
+    """
+    provider = make_provider()
+    record = {
+        "label": "Die Regierung",
+        "actor_type": "institution",
+        "occurrences": [
+            # Direct name reference
+            {"scene_title": "Szene 1", "start_offset": 0, "end_offset": 13},
+            # Pronoun "sie" referring back to "Die Regierung"
+            {"scene_title": "Szene 1", "start_offset": 42, "end_offset": 45},
+            # Pronoun "sie" in a different scene
+            {"scene_title": "Szene 2", "start_offset": 8, "end_offset": 11},
+        ],
+        "entity_suggestion": "government",
+    }
+
+    actor = provider._parse_actor(record)
+
+    assert len(actor.occurrences) == 3
+    assert actor.occurrences[0].start_offset == 0  # direct name
+    assert actor.occurrences[1].start_offset == 42  # pronoun in scene 1
+    assert actor.occurrences[2].start_offset == 8  # pronoun in scene 2
+    assert actor.occurrences[2].scene_title == "Szene 2"
+
+
 def test_parse_claim_uses_text_as_label_fallback() -> None:
     """Expects label to be truncated text when label is missing or empty."""
     provider = make_provider()
