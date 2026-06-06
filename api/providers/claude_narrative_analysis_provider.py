@@ -92,7 +92,7 @@ class ClaudeNarrativeAnalysisProvider(NarrativeAnalysisProvider):
 
         message = await self._client.messages.create(
             model="claude-sonnet-4-5",
-            max_tokens=8192,
+            max_tokens=16384,
             system=_SYSTEM_PROMPT,
             messages=[
                 {
@@ -101,6 +101,12 @@ class ClaudeNarrativeAnalysisProvider(NarrativeAnalysisProvider):
                 }
             ],
         )
+
+        if message.stop_reason == "max_tokens":
+            raise NarrativeAnalysisError(
+                "Die Analyse wurde abgebrochen: Antwort durch max_tokens-Limit abgeschnitten."
+                " Der Narrativ ist möglicherweise zu lang für eine vollständige Analyse."
+            )
 
         first_block = message.content[0]
         if not isinstance(first_block, anthropic.types.TextBlock):

@@ -337,6 +337,41 @@ def test_parse_actor_pronoun_occurrences_are_included_as_regular_occurrences() -
     assert actor.occurrences[2].scene_title == "Szene 2"
 
 
+@pytest.mark.asyncio
+async def test_analyse_raises_error_when_stop_reason_is_max_tokens() -> None:
+    """Expects NarrativeAnalysisError when Claude stops due to max_tokens.
+
+    When the model hits its output token limit the response JSON is truncated.
+    The provider must detect this via stop_reason and raise a meaningful error
+    instead of letting the JSON parse error bubble up with a cryptic message.
+    """
+    from unittest.mock import AsyncMock, MagicMock
+
+    import anthropic
+
+    from api.exceptions.narrative import NarrativeAnalysisError
+    from api.models.narrative import Narrative, Scene
+
+    mock_message = MagicMock()
+    mock_message.stop_reason = "max_tokens"
+    mock_message.content = [
+        MagicMock(
+            spec=anthropic.types.TextBlock,
+            text='{"actors": [{"label": "Mara", "actor_type": "individual", "occurrences": [',
+        )
+    ]
+    mock_client = MagicMock()
+    mock_client.messages = MagicMock()
+    mock_client.messages.create = AsyncMock(return_value=mock_message)
+
+    provider = ClaudeNarrativeAnalysisProvider(client=mock_client)  # type: ignore[arg-type]
+    narrative = Narrative(id="test", title="Test")
+    narrative.add_scene(Scene(id="s1", title="Szene 1", text="Ein Text.", position=1))
+
+    with pytest.raises(NarrativeAnalysisError, match="max_tokens"):
+        await provider.analyse(narrative)
+
+
 def test_parse_claim_uses_text_as_label_fallback() -> None:
     """Expects label to be truncated text when label is missing or empty."""
     provider = make_provider()

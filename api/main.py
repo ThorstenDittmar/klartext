@@ -14,6 +14,7 @@ from api.dependencies import get_health_checker
 from api.exceptions.causal_model import CausalModelNotFoundError
 from api.exceptions.narrative import (
     ActorNotFoundError,
+    NarrativeAnalysisError,
     NarrativeFileNotFoundError,
     NarrativeNotFoundError,
     SceneNotFoundError,
@@ -78,6 +79,18 @@ async def handle_causal_model_not_found(
 ) -> JSONResponse:
     """Translates CausalModelNotFoundError into a 404 response."""
     return JSONResponse(status_code=404, content={"error": str(exc)})
+
+
+@app.exception_handler(NarrativeAnalysisError)
+async def handle_narrative_analysis_error(
+    request: Request, exc: NarrativeAnalysisError
+) -> JSONResponse:
+    """Translates NarrativeAnalysisError into a 503 response.
+
+    503 signals that the analysis service itself (Claude API) is temporarily
+    unable to complete the request — not a client error.
+    """
+    return JSONResponse(status_code=503, content={"error": str(exc)})
 
 
 # ---------------------------------------------------------------------------
