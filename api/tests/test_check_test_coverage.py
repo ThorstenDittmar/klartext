@@ -53,6 +53,52 @@ class TestCheckTestFilesExist:
         missing = check_test_files_exist(root=api_tree)
         assert missing == []
 
+    def test_accepts_test_file_with_layer_suffix(self, api_tree: Path) -> None:
+        """Expects no missing when test file has a layer suffix like _domain or _service."""
+        (api_tree / "api" / "models" / "user.py").touch()
+        (api_tree / "api" / "tests" / "test_user_domain.py").touch()
+        missing = check_test_files_exist(root=api_tree)
+        assert missing == []
+
+    def test_accepts_any_test_file_starting_with_stem(self, api_tree: Path) -> None:
+        """Expects no missing when a test file starts with test_<stem> regardless of suffix."""
+        (api_tree / "api" / "routers" / "claims.py").touch()
+        (api_tree / "api" / "tests" / "test_claims_router.py").touch()
+        missing = check_test_files_exist(root=api_tree)
+        assert missing == []
+
+    def test_excludes_supabase_repository_implementations(self, api_tree: Path) -> None:
+        """Expects supabase_*.py in repositories/ to be excluded (covered by integration checks)."""
+        (api_tree / "api" / "repositories" / "supabase_user_repository.py").touch()
+        missing = check_test_files_exist(root=api_tree)
+        assert missing == []
+
+    def test_excludes_base_supabase_helper(self, api_tree: Path) -> None:
+        """Expects _supabase.py to be excluded (infrastructure helper, no domain logic)."""
+        (api_tree / "api" / "repositories" / "_supabase.py").touch()
+        missing = check_test_files_exist(root=api_tree)
+        assert missing == []
+
+    def test_excludes_health_service(self, api_tree: Path) -> None:
+        """Expects health_service.py to be excluded (tested indirectly through health router)."""
+        (api_tree / "api" / "services" / "health_service.py").touch()
+        missing = check_test_files_exist(root=api_tree)
+        assert missing == []
+
+    def test_uses_override_for_causal_models_router(self, api_tree: Path) -> None:
+        """Expects causal_models.py to match test_causal_model_router.py via TEST_FILE_OVERRIDES."""
+        (api_tree / "api" / "routers" / "causal_models.py").touch()
+        (api_tree / "api" / "tests" / "test_causal_model_router.py").touch()
+        missing = check_test_files_exist(root=api_tree)
+        assert missing == []
+
+    def test_reports_missing_when_no_prefix_match_exists(self, api_tree: Path) -> None:
+        """Expects source file flagged when no test_<stem>*.py file exists."""
+        (api_tree / "api" / "models" / "widget.py").touch()
+        missing = check_test_files_exist(root=api_tree)
+        assert len(missing) == 1
+        assert "widget.py" in missing[0]
+
 
 class TestCheckRouterHealthTests:
     def test_returns_empty_when_health_test_present(self, api_tree: Path) -> None:
@@ -80,21 +126,25 @@ class TestCheckRouterHealthTests:
 
 class TestCheckSupabaseIntegrationMarkers:
     def test_returns_empty_when_integration_marker_present(self, api_tree: Path) -> None:
-        """Expects no missing files when the Supabase repo test has @pytest.mark.integration."""
-        (api_tree / "api" / "repositories" / "supabase_user_repository.py").touch()
-        test_file = api_tree / "api" / "tests" / "test_supabase_user_repository.py"
+        """Expects no missing files when the Supabase repo test has @pytest.mark.integration.
+
+        Test file uses the abstract name (without supabase_ prefix), which is the
+        actual naming convention in this project.
+        """
+        (api_tree / "api" / "repositories" / "supabase_claim_repository.py").touch()
+        test_file = api_tree / "api" / "tests" / "test_claim_repository.py"
         test_file.write_text("@pytest.mark.integration\nasync def test_save(): pass\n")
         missing = check_supabase_integration_markers(root=api_tree)
         assert missing == []
 
     def test_returns_file_when_integration_marker_absent(self, api_tree: Path) -> None:
         """Expects the test file path when @pytest.mark.integration is missing."""
-        (api_tree / "api" / "repositories" / "supabase_user_repository.py").touch()
-        test_file = api_tree / "api" / "tests" / "test_supabase_user_repository.py"
+        (api_tree / "api" / "repositories" / "supabase_claim_repository.py").touch()
+        test_file = api_tree / "api" / "tests" / "test_claim_repository.py"
         test_file.write_text("async def test_save(): pass\n")
         missing = check_supabase_integration_markers(root=api_tree)
         assert len(missing) == 1
-        assert "test_supabase_user_repository.py" in missing[0]
+        assert "test_claim_repository.py" in missing[0]
 
     def test_skips_repo_if_test_file_missing(self, api_tree: Path) -> None:
         """Expects no error if the test file does not exist.
@@ -110,5 +160,17 @@ class TestCheckSupabaseIntegrationMarkers:
         (api_tree / "api" / "repositories" / "user_repository.py").touch()
         test_file = api_tree / "api" / "tests" / "test_user_repository.py"
         test_file.write_text("def test_something(): pass\n")
+        missing = check_supabase_integration_markers(root=api_tree)
+        assert missing == []
+
+    def test_uses_override_mapping_for_user_repository(self, api_tree: Path) -> None:
+        """Expects supabase_user_repository.py to resolve to test_users_repository.py.
+
+        test_users_repository.py uses plural 'users' and does not match the standard
+        test_user_repository*.py glob — so an explicit override is required.
+        """
+        (api_tree / "api" / "repositories" / "supabase_user_repository.py").touch()
+        test_file = api_tree / "api" / "tests" / "test_users_repository.py"
+        test_file.write_text("@pytest.mark.integration\nasync def test_find(): pass\n")
         missing = check_supabase_integration_markers(root=api_tree)
         assert missing == []
