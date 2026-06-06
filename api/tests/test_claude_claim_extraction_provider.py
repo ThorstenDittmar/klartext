@@ -158,6 +158,7 @@ async def test_claude_provider_raises_for_unknown_claim_type_in_response(scene: 
 
 
 @pytest.mark.integration
+@pytest.mark.claude
 @pytest.mark.asyncio
 async def test_claude_provider_extracts_claims_from_real_scene() -> None:
     """Calls the real Claude API. Expects at least one Claim with valid fields.

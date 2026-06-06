@@ -39,7 +39,10 @@ include = ["api*"]
 asyncio_mode = "auto"
 testpaths = ["tests"]
 pythonpath = ["..", "."]
-markers = ["integration: calls external services (deselect with '-m not integration')"]
+markers = [
+    "integration: calls external services — Supabase or Claude (deselect with '-m not integration')",
+    "claude: calls the real Anthropic API — requires ANTHROPIC_API_KEY (subset of integration)",
+]
 addopts = "-m 'not integration'"
 
 [tool.ruff]

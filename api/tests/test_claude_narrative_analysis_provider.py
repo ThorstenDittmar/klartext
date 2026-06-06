@@ -13,6 +13,7 @@ from api.providers.narrative_analysis_provider import NarrativeAnalysisResult
 
 
 @pytest.mark.integration
+@pytest.mark.claude
 @pytest.mark.asyncio
 async def test_claude_narrative_analysis_provider_returns_actors_and_claims() -> None:
     """Calls the real Claude API. Expects at least one actor and one claim to be returned."""

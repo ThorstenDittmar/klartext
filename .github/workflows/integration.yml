@@ -37,8 +37,11 @@ jobs:
 
       - name: Run integration tests
         # pyproject.toml addopts excludes integration tests by default.
-        # We override that here with an explicit -m integration flag.
-        run: python -m pytest -m integration --tb=short -q
+        # We run only Supabase tests here: "integration and not claude".
+        # Tests marked @pytest.mark.claude call the real Anthropic API and are
+        # excluded because they require ANTHROPIC_API_KEY and incur API costs.
+        # Run those manually: pytest -m "integration and claude"
+        run: python -m pytest -m "integration and not claude" --tb=short -q
         working-directory: api
         env:
           # Local Supabase always listens on port 54321.

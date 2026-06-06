@@ -12,6 +12,7 @@ from api.providers.wirkgefuege_suggestion_provider import WirkgefuegeSuggestionR
 
 
 @pytest.mark.integration
+@pytest.mark.claude
 @pytest.mark.asyncio
 async def test_claude_wirkgefuege_suggestion_provider_returns_slots_and_relations() -> None:
     """Calls the real Claude API. Expects at least one slot and one relation."""

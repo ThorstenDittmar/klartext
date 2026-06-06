@@ -207,6 +207,7 @@ async def test_claude_checker_returns_conflict_for_conflicting_scene() -> None:
 
 
 @pytest.mark.integration
+@pytest.mark.claude
 @pytest.mark.asyncio
 async def test_claude_checker_detects_conflict_with_real_api() -> None:
     """Calls the real Claude API. Expects a conflict for a scene that contradicts A-01.
