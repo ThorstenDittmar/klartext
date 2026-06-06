@@ -20,6 +20,7 @@ from api.exceptions.narrative import (
 )
 from api.routers import claims, narratives
 from api.routers.causal_models import router as causal_models_router
+from api.routers.debug import router as debug_router
 from api.routers.users import router as users_router
 from api.services.health_service import HealthChecker, HealthStatus
 
@@ -87,6 +88,7 @@ app.include_router(claims.router, tags=["claims"])
 app.include_router(narratives.router, tags=["narratives"])
 app.include_router(causal_models_router, tags=["causal-models"])
 app.include_router(users_router)
+app.include_router(debug_router)
 
 
 @app.get("/health")

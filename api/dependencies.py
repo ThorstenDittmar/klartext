@@ -41,6 +41,7 @@ from api.repositories.user_repository import UserRepository
 from api.services.causal_model_service import CausalModelService
 from api.services.claim_extractor_service import ClaimExtractorService
 from api.services.claim_service import ClaimService
+from api.services.debug_graph_service import DebugGraphService
 from api.services.health_service import HealthChecker, SupabaseHealthChecker
 from api.services.narrative_analysis_service import NarrativeAnalysisService
 from api.services.narrative_import_service import NarrativeImportService
@@ -187,6 +188,21 @@ async def get_user_service(
 ) -> UserService:
     """Wires UserRepository into UserService."""
     return UserService(repository=repository)
+
+
+async def get_debug_graph_service(
+    user_repository: UserRepository = Depends(get_user_repository),
+    narrative_repository: NarrativeRepository = Depends(get_narrative_repository),
+    claim_repository: ClaimRepository = Depends(get_claim_repository),
+    causal_model_repository: CausalModelRepository = Depends(get_causal_model_repository),
+) -> DebugGraphService:
+    """Wires all repositories into DebugGraphService."""
+    return DebugGraphService(
+        user_repository=user_repository,
+        narrative_repository=narrative_repository,
+        claim_repository=claim_repository,
+        causal_model_repository=causal_model_repository,
+    )
 
 
 async def get_wirkgefuege_suggestion_service(
