@@ -26,5 +26,5 @@ rules:
     metadata:
       category: correctness
       references:
-        - CLAUDE.md (Error Handling — Router: no try/except)
+        - "CLAUDE.md (Error Handling — Router: no try/except)"
         - docs/superpowers/specs/2026-06-06-qa-agent-design.md
