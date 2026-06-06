@@ -115,11 +115,17 @@ class LinkType(str, Enum):
 
 ---
 
-## 3. Narrativ und Szene (aktueller Stand)
+## 3. Narrativ und Szene
 
-**Hinweis:** Die aktuelle Implementierung nutzt noch nicht das
-DocumentNode-Modell. Sie verwendet `Narrative` + `Scene` als direkte
-Domain-Objekte. Migration zur DocumentNode-Architektur steht aus.
+### Terminologie-Prinzip
+
+Im UI und in der Kommunikation mit dem Autor heißt es weiter **„Szene"** —
+das ist das Domänenvokabular. Intern mappt eine Szene auf `NodeType.SECTION`.
+
+### Phase 1 — aktueller Stand
+
+Die aktuelle Implementierung nutzt noch nicht das DocumentNode-Modell.
+Sie verwendet `Narrative` + `Scene` als direkte Domain-Objekte:
 
 ```python
 @dataclass
@@ -134,25 +140,53 @@ class Narrative:
 class Scene:
     id: str | None
     title: str
-    text: str
+    text: str       # vollständiger Szenentext als ein Block
     position: int
 ```
 
 Datenbankschema: `narrative` + `narrative_units` (Polymorphtabelle,
 aktuell nur `typ='scene'` genutzt).
 
+In Phase 1 ist `Scene` ein **Leaf-Node** — sie hat keinen internen
+Strukturbaum, der gesamte Text liegt als String vor.
+
+### Phase 2 — Migrationsziel
+
+`Scene` (Phase 1) und `Section` (Phase 2) sind **konzeptionell gleich**,
+aber strukturell unterschiedlich:
+
+| | Phase 1 `Scene` | Phase 2 `Section` |
+|---|---|---|
+| NodeType | — (kein DocumentNode) | `NodeType.SECTION` |
+| Kinder | keine (Leaf) | Paragraph → Sentence → String → Character |
+| Text | `text: str` (ein Block) | über Kinder zusammengesetzt |
+| Migrationsziel | → wird zu Section-Knoten | ✓ |
+
+Der Import-Parser (`### Szene N` in Markdown, `^Szene\s+\d+$` in DOCX)
+erzeugt in Phase 2 `DocumentNode(node_type=SECTION, title="Szene 1")`.
+
+### Wo Actors und Claims hängen
+
+In der Zielarchitektur hängen Actors und Claims **nicht an der Section**,
+sondern an der **präzisesten verfügbaren Textstelle** — typisch `Sentence`
+oder `String`. Die Section ist nur der Container.
+
+```
+Section "Szene 1"
+  └── Paragraph
+        └── Sentence  ← DocumentLink(Actor)
+        └── Sentence  ← DocumentLink(Claim)
+```
+
+Das ist der Kern des Offset-Konzepts (siehe Abschnitt 7): Die Offsets
+die das LLM heute zurückgibt zeigen auf Zeichenpositionen innerhalb des
+Szenentexts — in Phase 2 werden sie genutzt um den passenden
+Sentence/String-Knoten zu finden und den DocumentLink zu setzen.
+
 **Architekturentscheidung: Fragment wird gestrichen.**
-Explizit entschieden: `Fragment` hat keine eigene Funktion im Composite Pattern —
-es hat keinen eigenen Lebenszyklus, keine eigenen Operationen und kein Verhalten
-das sich von `Scene` unterscheidet. Die Hierarchie lautet deshalb:
-
-```
-Werk → Teil → Kapitel → Szene (Leaf)
-```
-
-Claims, Akteure und Zeitachsen hängen an der **Szene** als atomare Einheit.
-`Fragment` wird aus dem `typ`-Enum der `narrative_units`-Tabelle entfernt
-sobald die Migration zu `document_nodes` (Phase 2) stattfindet.
+`Fragment` hat keine eigene Funktion im Composite Pattern und wird aus dem
+`typ`-Enum der `narrative_units`-Tabelle entfernt sobald die Migration zu
+`document_nodes` (Phase 2) stattfindet.
 
 ---
 
@@ -345,7 +379,8 @@ wenn der Actor zwar in einer Szene vorkommt, aber nicht direkt namentlich erwäh
 1. Migration: `narrative_units` → `document_nodes`-Baum
 2. LLM gibt Offsets für jedes Actor-Vorkommen und jeden Claim zurück
 3. Migration-Skript nutzt Offsets um `DocumentLink`-Objekte zu erstellen:
-   `Actor/Claim → DocumentNode(Paragraph/Sentence)`
+   `Actor/Claim → DocumentNode(node_type=SENTENCE | STRING)`
+   (präziseste Textstelle, nicht die Section selbst)
 4. Nach Migration: Offsets werden nicht mehr im API-Response exponiert,
    da Navigation über `DocumentLink.occurrences()` möglich ist
 
