@@ -17,7 +17,8 @@ vi.mock("../lib/api", () => ({
         title: "Test Narrativ",
         causal_model_id: null,
         scenes: [
-          { id: "s1", title: "Szene 1", text: "Szenentext.", position: 1 },
+          { id: "s1", title: "Szene 1", text: "Max Mustermann war dabei.", position: 1 },
+          { id: "s2", title: "Szene 2", text: "Eine zweite Szene ohne Akteur.", position: 2 },
         ],
         actors: [
           { id: "a1", label: "Max Mustermann", actor_type: "individual", notes: null, entity_ref: null },
@@ -85,5 +86,71 @@ describe("NarrativeDetail", () => {
         expect.objectContaining({ state: expect.objectContaining({ narrative: { id: "n1", title: "Test Narrativ" } }) })
       );
     });
+  });
+
+  // --- Volltext-Modus ---
+
+  it("renders Szenen / Volltext toggle", async () => {
+    renderPage();
+    await screen.findByText("Test Narrativ");
+    expect(screen.getByRole("button", { name: "Szenen" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Volltext" })).toBeInTheDocument();
+  });
+
+  it("scenes mode shows accordion items, not raw text", async () => {
+    renderPage();
+    await screen.findByText("Test Narrativ");
+    // Scene title visible as button, but raw text not visible (collapsed)
+    expect(screen.getByText("Szene 1")).toBeInTheDocument();
+    expect(screen.queryByText("Max Mustermann war dabei.")).not.toBeInTheDocument();
+  });
+
+  it("switching to Volltext shows scene text directly", async () => {
+    renderPage();
+    await screen.findByText("Test Narrativ");
+
+    fireEvent.click(screen.getByRole("button", { name: "Volltext" }));
+
+    // Both scene texts visible as prose. Scene 1 may be split across <mark>/text nodes
+    // so we check body.textContent which concatenates all descendant text.
+    expect(document.body.textContent).toContain("Max Mustermann war dabei.");
+    expect(document.body.textContent).toContain("Eine zweite Szene ohne Akteur.");
+  });
+
+  it("Volltext hides the accordion buttons for individual scenes", async () => {
+    renderPage();
+    await screen.findByText("Test Narrativ");
+
+    fireEvent.click(screen.getByRole("button", { name: "Volltext" }));
+
+    // "Szene 1" accordion button no longer rendered — text rendered directly
+    expect(screen.queryByText("Szene 1")).not.toBeInTheDocument();
+  });
+
+  it("actor name appears as highlighted mark in Volltext mode", async () => {
+    renderPage();
+    await screen.findByText("Test Narrativ");
+
+    fireEvent.click(screen.getByRole("button", { name: "Volltext" }));
+
+    // The actor "Max Mustermann" appears in scene text → rendered as <mark>
+    const marks = document.querySelectorAll("mark");
+    const actorMark = Array.from(marks).find((m) => m.textContent === "Max Mustermann");
+    expect(actorMark).toBeTruthy();
+    // Tooltip includes actor label and status
+    expect(actorMark?.getAttribute("title")).toContain("Max Mustermann");
+  });
+
+  it("switching back to Szenen restores accordion", async () => {
+    renderPage();
+    await screen.findByText("Test Narrativ");
+
+    fireEvent.click(screen.getByRole("button", { name: "Volltext" }));
+    fireEvent.click(screen.getByRole("button", { name: "Szenen" }));
+
+    // Accordion button for Szene 1 visible again
+    expect(screen.getByText("Szene 1")).toBeInTheDocument();
+    // Scene prose gone — body text no longer contains the raw scene text
+    expect(document.body.textContent).not.toContain("Max Mustermann war dabei.");
   });
 });

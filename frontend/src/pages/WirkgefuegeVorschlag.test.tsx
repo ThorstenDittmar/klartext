@@ -14,6 +14,7 @@ vi.mock("../lib/api", () => ({
     },
     narratives: {
       linkToCausalModel: vi.fn().mockResolvedValue({}),
+      getClaims: vi.fn().mockResolvedValue([]),
     },
     claims: {
       linkToWirkgefuege: vi.fn().mockResolvedValue(undefined),
@@ -86,9 +87,24 @@ describe("WirkgefuegeVorschlag", () => {
     expect(screen.getByDisplayValue("global_temperatur")).toBeInTheDocument();
   });
 
-  it("renders relation source → target text", () => {
+  it("renders relation formula with bewirkt arrow between source and target", () => {
     renderWithState(mockSuggestion);
-    expect(screen.getByText(/co2_emissionen → global_temperatur/)).toBeInTheDocument();
+    // The formula shows source and target on separate lines, joined by "→ bewirkt →"
+    expect(screen.getByText("→ bewirkt →")).toBeInTheDocument();
+    // Verify both slot identifiers are visible in the relation card
+    const arrow = screen.getByText("→ bewirkt →");
+    const card = arrow.closest("div")!;
+    expect(card.textContent).toContain("co2_emissionen");
+    expect(card.textContent).toContain("global_temperatur");
+  });
+
+  it("shows source_condition and target_effect in the relation card", () => {
+    renderWithState(mockSuggestion);
+    // source_condition "hoch" and target_effect "steigend" should appear in the card
+    const arrow = screen.getByText("→ bewirkt →");
+    const card = arrow.closest("div")!;
+    expect(card.textContent).toContain("(hoch)");
+    expect(card.textContent).toContain("(steigend)");
   });
 
   it("save button is disabled when model name is empty", () => {

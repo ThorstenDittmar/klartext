@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { api, type Claim, type Narrative } from "../lib/api";
+import { api, type Actor, type Claim, type Narrative } from "../lib/api";
 
 // ---------------------------------------------------------------------------
 // Label maps
@@ -39,6 +39,107 @@ const CLAIM_TYPE_LABELS: Record<string, string> = {
   uncertainty:    "Unsicherheit",
 };
 
+type ViewMode = "scenes" | "fulltext";
+
+// ---------------------------------------------------------------------------
+// Text highlighting — marks actor names (green) and claim texts (amber)
+// within a plain text string. Returns React nodes.
+// Only active in fulltext mode.
+// ---------------------------------------------------------------------------
+
+function highlightText(
+  text: string,
+  actors: Actor[],
+  claims: Claim[],
+): ReactNode[] {
+  type Highlight = {
+    start: number;
+    end: number;
+    label: string;
+    status: string;
+    kind: "actor" | "claim";
+  };
+
+  const highlights: Highlight[] = [];
+
+  // Actor names — case-insensitive substring search
+  for (const actor of actors) {
+    if (!actor.label) continue;
+    const escaped = actor.label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const re = new RegExp(escaped, "gi");
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(text)) !== null) {
+      highlights.push({
+        start: m.index,
+        end: m.index + m[0].length,
+        label: actor.label,
+        status: "confirmed",
+        kind: "actor",
+      });
+    }
+  }
+
+  // Claim original texts — exact substring search
+  for (const claim of claims) {
+    if (!claim.text) continue;
+    let idx = 0;
+    while ((idx = text.indexOf(claim.text, idx)) !== -1) {
+      highlights.push({
+        start: idx,
+        end: idx + claim.text.length,
+        label: claim.label,
+        status: claim.status,
+        kind: "claim",
+      });
+      idx += claim.text.length;
+    }
+  }
+
+  // Sort by start position; prefer longer match on ties
+  highlights.sort((a, b) => a.start - b.start || b.end - a.end);
+
+  // Remove overlapping highlights (keep first non-overlapping match)
+  const noOverlap: Highlight[] = [];
+  let cursor = 0;
+  for (const h of highlights) {
+    if (h.start >= cursor) {
+      noOverlap.push(h);
+      cursor = h.end;
+    }
+  }
+
+  // Build React nodes: plain text between marks, <mark> for highlights
+  const nodes: ReactNode[] = [];
+  let pos = 0;
+  for (const h of noOverlap) {
+    if (h.start > pos) {
+      nodes.push(text.slice(pos, h.start));
+    }
+    const bg    = h.kind === "actor" ? "var(--color-green-bg)"  : "var(--color-amber-bg)";
+    const color = h.kind === "actor" ? "var(--color-green-text)" : "var(--color-amber-text)";
+    const statusLabel = STATUS_LABELS[h.status] ?? h.status;
+    nodes.push(
+      <mark
+        key={`${h.start}-${h.end}`}
+        title={`${h.label} · ${statusLabel}`}
+        style={{
+          background: bg,
+          color,
+          borderRadius: "2px",
+          padding: "1px 0",
+          cursor: "help",
+          fontStyle: "inherit",
+        }}
+      >
+        {text.slice(h.start, h.end)}
+      </mark>,
+    );
+    pos = h.end;
+  }
+  if (pos < text.length) nodes.push(text.slice(pos));
+  return nodes;
+}
+
 // ---------------------------------------------------------------------------
 // NarrativeDetail — Screen 1
 // ---------------------------------------------------------------------------
@@ -50,6 +151,7 @@ export default function NarrativeDetail() {
   const [narrative, setNarrative] = useState<Narrative | null>(null);
   const [claims, setClaims] = useState<Claim[]>([]);
   const [expandedSceneId, setExpandedSceneId] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<ViewMode>("scenes");
   const [analysing, setAnalysing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -89,6 +191,9 @@ export default function NarrativeDetail() {
     return <p style={{ color: "var(--color-text-tertiary)", padding: "32px 24px" }}>Lade…</p>;
   }
 
+  const sortedScenes = [...narrative.scenes].sort((a, b) => a.position - b.position);
+  const hasHighlightableContent = narrative.actors.length > 0 || claims.length > 0;
+
   return (
     <div style={{ maxWidth: "760px", margin: "0 auto", padding: "32px 24px" }}>
       {/* Back */}
@@ -115,13 +220,61 @@ export default function NarrativeDetail() {
         {narrative.causal_model_id && " · 🔗 Wirkgefüge verknüpft"}
       </p>
 
-      {/* Scenes */}
-      <SectionHeader label={`Szenen (${narrative.scenes.length})`} />
+      {/* ------------------------------------------------------------------ */}
+      {/* Scenes section — with view-mode toggle                             */}
+      {/* ------------------------------------------------------------------ */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "16px", borderTop: "1px solid var(--color-border)", marginBottom: "10px" }}>
+        <h3 style={{
+          fontSize: "11px", fontWeight: "600", textTransform: "uppercase",
+          letterSpacing: "0.06em", color: "var(--color-text-tertiary)", margin: "0",
+        }}>
+          Szenen ({narrative.scenes.length})
+        </h3>
+
+        {/* Segmented toggle: Szenen / Volltext */}
+        {narrative.scenes.length > 0 && (
+          <div
+            role="group"
+            aria-label="Ansichtsmodus"
+            style={{
+              display: "flex",
+              gap: "2px",
+              background: "var(--color-bg-subtle)",
+              borderRadius: "6px",
+              padding: "2px",
+            }}
+          >
+            {(["scenes", "fulltext"] as ViewMode[]).map((mode) => (
+              <button
+                key={mode}
+                onClick={() => setViewMode(mode)}
+                aria-pressed={viewMode === mode}
+                style={{
+                  padding: "4px 12px",
+                  fontSize: "12px",
+                  border: "none",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                  background: viewMode === mode ? "var(--color-bg)" : "transparent",
+                  color: viewMode === mode ? "var(--color-text-primary)" : "var(--color-text-secondary)",
+                  fontWeight: viewMode === mode ? "500" : "400",
+                  boxShadow: viewMode === mode ? "0 1px 2px rgba(0,0,0,0.08)" : "none",
+                  transition: "background 0.1s, color 0.1s",
+                }}
+              >
+                {mode === "scenes" ? "Szenen" : "Volltext"}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
       {narrative.scenes.length === 0 ? (
         <EmptyHint>Keine Szenen vorhanden.</EmptyHint>
-      ) : (
+      ) : viewMode === "scenes" ? (
+        /* ---- Szenen-Modus: aufklappbare Liste ---- */
         <ul style={{ listStyle: "none", padding: 0, margin: "0 0 28px" }}>
-          {narrative.scenes.map((scene) => (
+          {sortedScenes.map((scene) => (
             <li key={scene.id} style={{ marginBottom: "6px" }}>
               <button
                 onClick={() => setExpandedSceneId(expandedSceneId === scene.id ? null : scene.id)}
@@ -156,6 +309,34 @@ export default function NarrativeDetail() {
             </li>
           ))}
         </ul>
+      ) : (
+        /* ---- Volltext-Modus: kontinuierlicher Fliesstext ---- */
+        <div style={{ marginBottom: "28px" }}>
+          {hasHighlightableContent && (
+            <p style={{
+              fontSize: "11px", color: "var(--color-text-tertiary)",
+              margin: "0 0 12px", fontStyle: "italic",
+            }}>
+              Akteure und Claims sind im Text markiert — hover für Details.
+            </p>
+          )}
+          {sortedScenes.map((scene) => (
+            <p
+              key={scene.id}
+              style={{
+                fontSize: "15px",
+                lineHeight: "1.8",
+                color: "var(--color-text-primary)",
+                margin: "0 0 20px",
+                whiteSpace: "pre-wrap",
+              }}
+            >
+              {hasHighlightableContent
+                ? highlightText(scene.text, narrative.actors, claims)
+                : scene.text}
+            </p>
+          ))}
+        </div>
       )}
 
       {/* Actors */}

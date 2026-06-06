@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
-import { api, SuggestWirkgefuegeResponse } from "../lib/api";
+import { api, type Claim, type SuggestWirkgefuegeResponse } from "../lib/api";
 
 const SLOT_TYPES = [
   "physical_quantity",
@@ -21,6 +21,8 @@ type SlotEdit = {
 type RelationEdit = {
   source: string;
   target: string;
+  source_condition: string | null;
+  target_effect: string | null;
   mechanism: string;
   epistemic_status: string;
   rejected: boolean;
@@ -57,6 +59,8 @@ export default function WirkgefuegeVorschlag() {
       (suggestion?.suggested_relations ?? []).map((r) => ({
         source: r.source,
         target: r.target,
+        source_condition: r.source_condition ?? null,
+        target_effect: r.target_effect ?? null,
         mechanism: r.mechanism ?? "",
         epistemic_status: r.epistemic_status,
         rejected: false,
@@ -67,6 +71,18 @@ export default function WirkgefuegeVorschlag() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Load claim texts for "Aus dem Text" references.
+  // from_claims contains the IDs of claims used to generate this suggestion.
+  const [claimMap, setClaimMap] = useState<Map<string, Claim>>(new Map());
+
+  useEffect(() => {
+    if (!narrativeId) return;
+    api.narratives
+      .getClaims(narrativeId)
+      .then((cs) => setClaimMap(new Map(cs.map((c) => [c.id, c]))))
+      .catch(() => {}); // non-critical — display degrades gracefully
+  }, [narrativeId]);
+
   if (!suggestion || !narrative) {
     return (
       <p style={{ color: "var(--color-text-tertiary)" }}>
@@ -76,6 +92,11 @@ export default function WirkgefuegeVorschlag() {
   }
 
   const fromClaims = suggestion.from_claims;
+  // Claims that generated this suggestion — resolve IDs to full Claim objects
+  const sourceClaims = fromClaims
+    .map((id) => claimMap.get(id))
+    .filter((c): c is Claim => !!c);
+
   const acceptedSlotCount = slots.filter((s) => !s.rejected).length;
   const acceptedRelationCount = relations.filter((r) => !r.rejected).length;
 
@@ -143,7 +164,7 @@ export default function WirkgefuegeVorschlag() {
   }
 
   return (
-    <div style={{ maxWidth: 720, margin: "0 auto" }}>
+    <div style={{ maxWidth: 720, margin: "0 auto", padding: "32px 24px" }}>
       <button
         onClick={() => navigate(-1)}
         style={{
@@ -155,19 +176,17 @@ export default function WirkgefuegeVorschlag() {
         ← Zurück zur Analyse
       </button>
 
-      <h2 style={{ fontSize: "22px", fontWeight: "600", marginTop: "0", marginBottom: "24px" }}>Wirkgefüge-Vorschlag für: {narrative.title}</h2>
+      <h2 style={{ fontSize: "22px", fontWeight: "600", marginTop: "0", marginBottom: "24px" }}>
+        Wirkgefüge-Vorschlag für: {narrative.title}
+      </h2>
 
       {/* Slots */}
-      <div
-        style={{ borderTop: "1px solid var(--color-border)", paddingTop: "16px", marginBottom: "32px" }}
-      >
-        <h3
-          style={{
-            textTransform: "uppercase" as const, fontSize: "11px", letterSpacing: "0.06em",
-            color: "var(--color-text-tertiary)", marginTop: "0", fontWeight: "600",
-            padding: "16px 0 8px", borderTop: "1px solid var(--color-border)",
-          }}
-        >
+      <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: "16px", marginBottom: "32px" }}>
+        <h3 style={{
+          textTransform: "uppercase" as const, fontSize: "11px", letterSpacing: "0.06em",
+          color: "var(--color-text-tertiary)", marginTop: "0", fontWeight: "600",
+          padding: "16px 0 8px", borderTop: "1px solid var(--color-border)",
+        }}>
           Slots ({acceptedSlotCount})
         </h3>
 
@@ -240,6 +259,7 @@ export default function WirkgefuegeVorschlag() {
                   prev.map((s, j) => (j === i ? { ...s, rejected: !s.rejected } : s))
                 )
               }
+              aria-label={slot.rejected ? "Slot wiederherstellen" : "Slot verwerfen"}
               style={{
                 background: slot.rejected ? "var(--color-red-bg)" : "none",
                 border: "1px solid var(--color-border)",
@@ -263,16 +283,12 @@ export default function WirkgefuegeVorschlag() {
       </div>
 
       {/* Relations */}
-      <div
-        style={{ borderTop: "1px solid var(--color-border)", paddingTop: "16px", marginBottom: "32px" }}
-      >
-        <h3
-          style={{
-            textTransform: "uppercase" as const, fontSize: "11px", letterSpacing: "0.06em",
-            color: "var(--color-text-tertiary)", marginTop: "0", fontWeight: "600",
-            padding: "16px 0 8px", borderTop: "1px solid var(--color-border)",
-          }}
-        >
+      <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: "16px", marginBottom: "32px" }}>
+        <h3 style={{
+          textTransform: "uppercase" as const, fontSize: "11px", letterSpacing: "0.06em",
+          color: "var(--color-text-tertiary)", marginTop: "0", fontWeight: "600",
+          padding: "16px 0 8px", borderTop: "1px solid var(--color-border)",
+        }}>
           Kausalrelationen ({acceptedRelationCount})
         </h3>
 
@@ -288,27 +304,47 @@ export default function WirkgefuegeVorschlag() {
               background: "var(--color-bg)",
             }}
           >
-            <p
-              style={{
-                margin: "0 0 10px",
-                fontFamily: "var(--font-sans)",
-                fontSize: "14px",
-                fontWeight: "500",
+            {/* Relation formula: source (condition) → bewirkt → target (effect) */}
+            <div style={{ marginBottom: "10px", fontFamily: "var(--font-sans)" }}>
+              <p style={{
+                margin: "0 0 2px",
+                fontSize: "14px", fontWeight: "500",
                 color: "var(--color-text-primary)",
-              }}
-            >
-              {rel.source} → {rel.target}
-            </p>
+              }}>
+                {rel.source}
+                {rel.source_condition && (
+                  <span style={{ fontWeight: "400", color: "var(--color-text-secondary)" }}>
+                    {" "}({rel.source_condition})
+                  </span>
+                )}
+              </p>
+              <p style={{
+                margin: "0 0 2px",
+                fontSize: "12px",
+                color: "var(--color-text-tertiary)",
+                paddingLeft: "12px",
+              }}>
+                → bewirkt →
+              </p>
+              <p style={{
+                margin: "0",
+                fontSize: "14px", fontWeight: "500",
+                color: "var(--color-text-primary)",
+              }}>
+                {rel.target}
+                {rel.target_effect && (
+                  <span style={{ fontWeight: "400", color: "var(--color-text-secondary)" }}>
+                    {" "}({rel.target_effect})
+                  </span>
+                )}
+              </p>
+            </div>
 
-            <div
-              style={{
-                display: "flex",
-                gap: "0.75rem",
-                alignItems: "center",
-                marginBottom: "0.25rem",
-              }}
-            >
-              <label style={{ fontSize: "12px", color: "var(--color-text-secondary)", flexShrink: 0 }}>
+            {/* Mechanism input */}
+            <div style={{ display: "flex", gap: "12px", alignItems: "center", marginBottom: "8px" }}>
+              <label style={{
+                fontSize: "12px", color: "var(--color-text-secondary)", flexShrink: 0,
+              }}>
                 Mechanismus:
               </label>
               <input
@@ -333,15 +369,12 @@ export default function WirkgefuegeVorschlag() {
               />
             </div>
 
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-                <label style={{ fontSize: "12px", color: "var(--color-text-secondary)" }}>EpistemicStatus:</label>
+            {/* EpistemicStatus + reject button */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: sourceClaims.length > 0 ? "8px" : "0" }}>
+              <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                <label style={{ fontSize: "12px", color: "var(--color-text-secondary)" }}>
+                  EpistemicStatus:
+                </label>
                 <select
                   value={rel.epistemic_status}
                   onChange={(e) =>
@@ -375,6 +408,7 @@ export default function WirkgefuegeVorschlag() {
                     prev.map((r, j) => (j === i ? { ...r, rejected: !r.rejected } : r))
                   )
                 }
+                aria-label={rel.rejected ? "Relation wiederherstellen" : "Relation verwerfen"}
                 style={{
                   background: rel.rejected ? "var(--color-red-bg)" : "none",
                   border: "1px solid var(--color-border)",
@@ -394,15 +428,40 @@ export default function WirkgefuegeVorschlag() {
                 ✗
               </button>
             </div>
+
+            {/* Source claims — "Aus dem Text" — shown when claim texts are loaded */}
+            {sourceClaims.length > 0 && (
+              <div style={{
+                borderTop: "1px solid var(--color-border-subtle)",
+                paddingTop: "8px",
+                marginTop: "4px",
+              }}>
+                {sourceClaims.map((claim) => (
+                  <p key={claim.id} style={{
+                    margin: "0 0 4px",
+                    fontSize: "12px",
+                    color: "var(--color-text-secondary)",
+                    fontStyle: "italic",
+                    lineHeight: "1.5",
+                  }}>
+                    <span style={{ fontStyle: "normal", color: "var(--color-text-tertiary)" }}>
+                      Aus dem Text:{" "}
+                    </span>
+                    „{claim.text}"
+                  </p>
+                ))}
+              </div>
+            )}
           </div>
         ))}
       </div>
 
       {/* Model name + save */}
       <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: "16px" }}>
-        <label
-          style={{ fontSize: "12px", color: "var(--color-text-secondary)", display: "block", marginBottom: "6px" }}
-        >
+        <label style={{
+          fontSize: "12px", color: "var(--color-text-secondary)",
+          display: "block", marginBottom: "6px",
+        }}>
           Modellname
         </label>
         <input
