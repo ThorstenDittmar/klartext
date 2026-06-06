@@ -153,4 +153,95 @@ describe("NarrativeDetail", () => {
     // Scene prose gone — body text no longer contains the raw scene text
     expect(document.body.textContent).not.toContain("Max Mustermann war dabei.");
   });
+
+  // --- Dezente Highlights (Änderung 1) ---
+
+  it("actor mark uses dotted underline, no background color", async () => {
+    renderPage();
+    await screen.findByText("Test Narrativ");
+
+    fireEvent.click(screen.getByRole("button", { name: "Volltext" }));
+
+    const marks = document.querySelectorAll("mark");
+    const actorMark = Array.from(marks).find((m) => m.textContent === "Max Mustermann");
+    expect(actorMark).toBeTruthy();
+
+    // Must have dotted underline decoration
+    expect(actorMark?.getAttribute("style")).toContain("text-decoration");
+    expect(actorMark?.getAttribute("style")).toContain("dotted");
+
+    // Must NOT have a solid background color — either empty or explicitly "none"
+    const style = (actorMark as HTMLElement)?.style;
+    expect(style?.backgroundColor).toBe("");
+    // background: "none" is the correct way to suppress the default mark yellow
+    const bg = style?.background ?? "";
+    expect(bg === "" || bg === "none").toBe(true);
+  });
+
+  // --- Claim-Markierungen im Text (Änderung 2) ---
+
+  it("claim text appears as highlighted mark in Volltext mode", async () => {
+    // The mock claim has text "Die Geldmenge hat Einfluss auf die Inflation."
+    // but that text is NOT in any scene text, so we need a scene that contains it.
+    // Re-mock with matching scene text.
+    const { api: mockApi } = await import("../lib/api");
+    (mockApi.narratives.get as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+      id: "n1",
+      title: "Test Narrativ",
+      causal_model_id: null,
+      scenes: [
+        { id: "s1", title: "Szene 1", text: "Die Geldmenge hat Einfluss auf die Inflation.", position: 1 },
+      ],
+      actors: [],
+    });
+    (mockApi.narratives.getClaims as ReturnType<typeof vi.fn>).mockResolvedValueOnce([
+      {
+        id: "c1",
+        label: "Geldmenge treibt Inflation",
+        text: "Die Geldmenge hat Einfluss auf die Inflation.",
+        typ: "causal",
+        confidence: 0.9,
+        status: "draft",
+        wirkgefuege_ref: null,
+      },
+    ]);
+
+    renderPage();
+    await screen.findByText("Test Narrativ");
+
+    fireEvent.click(screen.getByRole("button", { name: "Volltext" }));
+
+    const marks = document.querySelectorAll("mark");
+    const claimMark = Array.from(marks).find((m) =>
+      m.textContent === "Die Geldmenge hat Einfluss auf die Inflation."
+    );
+    expect(claimMark).toBeTruthy();
+    expect(claimMark?.getAttribute("title")).toContain("Geldmenge treibt Inflation");
+  });
+
+  // --- Zwei-Spalten-Layout mit Kacheln (Änderung 3) ---
+
+  it("Volltext mode shows actor tile in left panel", async () => {
+    renderPage();
+    await screen.findByText("Test Narrativ");
+
+    fireEvent.click(screen.getByRole("button", { name: "Volltext" }));
+
+    // The left panel must contain a tile for "Max Mustermann"
+    // Use data-testid or check for the tile structure
+    const tiles = document.querySelectorAll("[data-testid='actor-tile']");
+    expect(tiles.length).toBeGreaterThan(0);
+    expect(tiles[0].textContent).toContain("Max Mustermann");
+  });
+
+  it("Volltext mode shows claim tile in left panel", async () => {
+    renderPage();
+    await screen.findByText("Test Narrativ");
+
+    fireEvent.click(screen.getByRole("button", { name: "Volltext" }));
+
+    const tiles = document.querySelectorAll("[data-testid='claim-tile']");
+    expect(tiles.length).toBeGreaterThan(0);
+    expect(tiles[0].textContent).toContain("Geldmenge treibt Inflation");
+  });
 });

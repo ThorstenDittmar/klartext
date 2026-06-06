@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { api, type Actor, type Claim, type Narrative } from "../lib/api";
 
@@ -39,18 +39,34 @@ const CLAIM_TYPE_LABELS: Record<string, string> = {
   uncertainty:    "Unsicherheit",
 };
 
+// TODO(token): needs color.semantic.actor-underline (#1D9E75) — no exact token exists,
+// using hardcoded hex as specified. Closest existing token: --color-teal-text (#0F6E56).
+const ACTOR_UNDERLINE_COLOR = "#1D9E75";
+
 type ViewMode = "scenes" | "fulltext";
+
+/** Hover state for connection-line drawing */
+type ActiveHighlight = {
+  kind: "actor" | "claim";
+  id: string;
+  markEl: HTMLElement;
+} | null;
 
 // ---------------------------------------------------------------------------
 // Text highlighting — marks actor names (green) and claim texts (amber)
 // within a plain text string. Returns React nodes.
 // Only active in fulltext mode.
+//
+// Änderung 1: dezente dotted underline statt farbigem Hintergrund
+// Änderung 3: onMarkEnter/onMarkLeave für Hover-Verbindungslinien
 // ---------------------------------------------------------------------------
 
 function highlightText(
   text: string,
   actors: Actor[],
   claims: Claim[],
+  onMarkEnter: (kind: "actor" | "claim", id: string, el: HTMLElement) => void,
+  onMarkLeave: () => void,
 ): ReactNode[] {
   type Highlight = {
     start: number;
@@ -58,6 +74,7 @@ function highlightText(
     label: string;
     status: string;
     kind: "actor" | "claim";
+    id: string;
   };
 
   const highlights: Highlight[] = [];
@@ -75,6 +92,7 @@ function highlightText(
         label: actor.label,
         status: "confirmed",
         kind: "actor",
+        id: actor.id,
       });
     }
   }
@@ -90,6 +108,7 @@ function highlightText(
         label: claim.label,
         status: claim.status,
         kind: "claim",
+        id: claim.id,
       });
       idx += claim.text.length;
     }
@@ -109,27 +128,34 @@ function highlightText(
   }
 
   // Build React nodes: plain text between marks, <mark> for highlights
+  // Änderung 1: dotted underline instead of background color
   const nodes: ReactNode[] = [];
   let pos = 0;
   for (const h of noOverlap) {
     if (h.start > pos) {
       nodes.push(text.slice(pos, h.start));
     }
-    const bg    = h.kind === "actor" ? "var(--color-green-bg)"  : "var(--color-amber-bg)";
-    const color = h.kind === "actor" ? "var(--color-green-text)" : "var(--color-amber-text)";
+    const underlineColor = h.kind === "actor"
+      ? ACTOR_UNDERLINE_COLOR
+      : "var(--color-amber-text)";
     const statusLabel = STATUS_LABELS[h.status] ?? h.status;
+    const hId = h.id;
+    const hKind = h.kind;
     nodes.push(
       <mark
         key={`${h.start}-${h.end}`}
         title={`${h.label} · ${statusLabel}`}
         style={{
-          background: bg,
-          color,
-          borderRadius: "2px",
-          padding: "1px 0",
+          background: "none",
+          textDecoration: "underline",
+          textDecorationStyle: "dotted",
+          textDecorationColor: underlineColor,
+          textDecorationThickness: "2px",
+          textUnderlineOffset: "3px",
           cursor: "help",
-          fontStyle: "inherit",
         }}
+        onMouseEnter={(e) => onMarkEnter(hKind, hId, e.currentTarget)}
+        onMouseLeave={onMarkLeave}
       >
         {text.slice(h.start, h.end)}
       </mark>,
@@ -154,6 +180,13 @@ export default function NarrativeDetail() {
   const [viewMode, setViewMode] = useState<ViewMode>("scenes");
   const [analysing, setAnalysing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [activeHighlight, setActiveHighlight] = useState<ActiveHighlight>(null);
+
+  // Refs for two-column layout and connection lines (Änderung 3)
+  const containerRef = useRef<HTMLDivElement>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+  const actorTileRefs = useRef<Map<string, HTMLElement>>(new Map());
+  const claimTileRefs = useRef<Map<string, HTMLElement>>(new Map());
 
   useEffect(() => {
     if (!narrativeId) return;
@@ -167,6 +200,54 @@ export default function NarrativeDetail() {
       })
       .catch(() => setError("Narrativ konnte nicht geladen werden."));
   }, [narrativeId]);
+
+  /** Draws or clears the SVG connection line based on activeHighlight. */
+  useEffect(() => {
+    const svg = svgRef.current;
+    if (!svg) return;
+
+    // Clear all previous paths
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+    if (!activeHighlight) return;
+
+    const container = containerRef.current;
+    if (!container) return;
+
+    const tileEl = activeHighlight.kind === "actor"
+      ? actorTileRefs.current.get(activeHighlight.id)
+      : claimTileRefs.current.get(activeHighlight.id);
+    if (!tileEl) return;
+
+    const containerRect = container.getBoundingClientRect();
+    const markRect = activeHighlight.markEl.getBoundingClientRect();
+    const tileRect = tileEl.getBoundingClientRect();
+
+    // Start: right edge of the mark, vertically centred
+    const x1 = markRect.right - containerRect.left;
+    const y1 = markRect.top - containerRect.top + markRect.height / 2;
+    // End: right edge of the tile, vertically centred
+    const x2 = tileRect.right - containerRect.left;
+    const y2 = tileRect.top - containerRect.top + tileRect.height / 2;
+
+    // Cubic bezier — control points extend right from both endpoints
+    const offset = Math.abs(x1 - x2) * 0.5;
+    const cp1x = x1 + offset;
+    const cp1y = y1;
+    const cp2x = x2 + offset;
+    const cp2y = y2;
+
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    const d = `M ${x1} ${y1} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${x2} ${y2}`;
+    const color = activeHighlight.kind === "actor" ? ACTOR_UNDERLINE_COLOR : "var(--color-amber-text)";
+    path.setAttribute("d", d);
+    path.setAttribute("fill", "none");
+    path.setAttribute("stroke", color);
+    path.setAttribute("stroke-width", "1.5");
+    path.setAttribute("opacity", "0.6");
+    path.setAttribute("stroke-dasharray", "4 3");
+    svg.appendChild(path);
+  }, [activeHighlight]);
 
   async function analyseNarrative() {
     if (!narrativeId || !narrative) return;
@@ -193,6 +274,16 @@ export default function NarrativeDetail() {
 
   const sortedScenes = [...narrative.scenes].sort((a, b) => a.position - b.position);
   const hasHighlightableContent = narrative.actors.length > 0 || claims.length > 0;
+
+  /** Callback from mark hover — updates active highlight state. */
+  function handleMarkEnter(kind: "actor" | "claim", id: string, el: HTMLElement) {
+    setActiveHighlight({ kind, id, markEl: el });
+  }
+
+  /** Callback from mark mouse-leave — clears active highlight. */
+  function handleMarkLeave() {
+    setActiveHighlight(null);
+  }
 
   return (
     <div style={{ maxWidth: "760px", margin: "0 auto", padding: "32px 24px" }}>
@@ -310,7 +401,7 @@ export default function NarrativeDetail() {
           ))}
         </ul>
       ) : (
-        /* ---- Volltext-Modus: kontinuierlicher Fliesstext ---- */
+        /* ---- Volltext-Modus: Zwei-Spalten-Layout mit Verbindungslinien ---- */
         <div style={{ marginBottom: "28px" }}>
           {hasHighlightableContent && (
             <p style={{
@@ -320,22 +411,142 @@ export default function NarrativeDetail() {
               Akteure und Claims sind im Text markiert — hover für Details.
             </p>
           )}
-          {sortedScenes.map((scene) => (
-            <p
-              key={scene.id}
+          {hasHighlightableContent ? (
+            /* Two-column layout: left panel (tiles) + right column (text) */
+            <div
+              ref={containerRef}
               style={{
-                fontSize: "15px",
-                lineHeight: "1.8",
-                color: "var(--color-text-primary)",
-                margin: "0 0 20px",
-                whiteSpace: "pre-wrap",
+                position: "relative",
+                overflow: "visible",
+                display: "flex",
+                gap: "16px",
+                alignItems: "flex-start",
               }}
             >
-              {hasHighlightableContent
-                ? highlightText(scene.text, narrative.actors, claims)
-                : scene.text}
-            </p>
-          ))}
+              {/* SVG overlay for connection lines */}
+              <svg
+                ref={svgRef}
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "100%",
+                  pointerEvents: "none",
+                  overflow: "visible",
+                }}
+              />
+
+              {/* Left panel — actor and claim tiles */}
+              <div
+                style={{
+                  width: "200px",
+                  flexShrink: 0,
+                  position: "sticky",
+                  top: "32px",
+                }}
+              >
+                {narrative.actors.map((actor) => (
+                  <div
+                    key={actor.id}
+                    data-testid="actor-tile"
+                    ref={(el) => {
+                      if (el) actorTileRefs.current.set(actor.id, el);
+                      else actorTileRefs.current.delete(actor.id);
+                    }}
+                    style={{
+                      background: "var(--color-bg)",
+                      border: "1px solid var(--color-border)",
+                      borderLeft: `3px solid ${ACTOR_UNDERLINE_COLOR}`,
+                      borderRadius: "6px",
+                      padding: "8px 10px",
+                      marginBottom: "6px",
+                      fontSize: "12px",
+                    }}
+                  >
+                    <div style={{ fontWeight: "500", color: "var(--color-text-primary)" }}>
+                      {actor.label}
+                    </div>
+                    <div style={{ fontSize: "11px", color: "var(--color-text-tertiary)" }}>
+                      {ACTOR_TYPE_LABELS[actor.actor_type] ?? actor.actor_type}
+                    </div>
+                  </div>
+                ))}
+                {claims.map((claim) => (
+                  <div
+                    key={claim.id}
+                    data-testid="claim-tile"
+                    ref={(el) => {
+                      if (el) claimTileRefs.current.set(claim.id, el);
+                      else claimTileRefs.current.delete(claim.id);
+                    }}
+                    style={{
+                      background: "var(--color-bg)",
+                      border: "1px solid var(--color-border)",
+                      borderLeft: "3px solid var(--color-amber-text)",
+                      borderRadius: "6px",
+                      padding: "8px 10px",
+                      marginBottom: "6px",
+                      fontSize: "12px",
+                    }}
+                  >
+                    <div style={{ fontWeight: "500", color: "var(--color-text-primary)" }}>
+                      {claim.label}
+                    </div>
+                    <span style={{
+                      fontSize: "10px",
+                      padding: "1px 6px",
+                      borderRadius: "8px",
+                      background: "var(--color-amber-bg)",
+                      color: "var(--color-amber-text)",
+                    }}>
+                      {STATUS_LABELS[claim.status] ?? claim.status}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Right column — full text with highlights */}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                {sortedScenes.map((scene) => (
+                  <p
+                    key={scene.id}
+                    style={{
+                      fontSize: "15px",
+                      lineHeight: "1.8",
+                      color: "var(--color-text-primary)",
+                      margin: "0 0 20px",
+                      whiteSpace: "pre-wrap",
+                    }}
+                  >
+                    {highlightText(
+                      scene.text,
+                      narrative.actors,
+                      claims,
+                      handleMarkEnter,
+                      handleMarkLeave,
+                    )}
+                  </p>
+                ))}
+              </div>
+            </div>
+          ) : (
+            /* No highlightable content — plain single-column text */
+            sortedScenes.map((scene) => (
+              <p
+                key={scene.id}
+                style={{
+                  fontSize: "15px",
+                  lineHeight: "1.8",
+                  color: "var(--color-text-primary)",
+                  margin: "0 0 20px",
+                  whiteSpace: "pre-wrap",
+                }}
+              >
+                {scene.text}
+              </p>
+            ))
+          )}
         </div>
       )}
 
