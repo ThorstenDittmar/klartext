@@ -1757,10 +1757,13 @@ aus sichtbar und abfragbar.</p>
 <a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>    <span class="n">ASSET_REF</span>  <span class="o">=</span> <span class="s2">&quot;asset_ref&quot;</span>
 </code></pre></div>
 <hr />
-<h2 id="3-narrativ-und-szene-aktueller-stand">3. Narrativ und Szene (aktueller Stand)<a class="headerlink" href="#3-narrativ-und-szene-aktueller-stand" title="Permanent link">&para;</a></h2>
-<p><strong>Hinweis:</strong> Die aktuelle Implementierung nutzt noch nicht das
-DocumentNode-Modell. Sie verwendet <code>Narrative</code> + <code>Scene</code> als direkte
-Domain-Objekte. Migration zur DocumentNode-Architektur steht aus.</p>
+<h2 id="3-narrativ-und-szene">3. Narrativ und Szene<a class="headerlink" href="#3-narrativ-und-szene" title="Permanent link">&para;</a></h2>
+<h3 id="terminologie-prinzip">Terminologie-Prinzip<a class="headerlink" href="#terminologie-prinzip" title="Permanent link">&para;</a></h3>
+<p>Im UI und in der Kommunikation mit dem Autor heißt es weiter <strong>„Szene"</strong> —
+das ist das Domänenvokabular. Intern mappt eine Szene auf <code>NodeType.SECTION</code>.</p>
+<h3 id="phase-1-aktueller-stand">Phase 1 — aktueller Stand<a class="headerlink" href="#phase-1-aktueller-stand" title="Permanent link">&para;</a></h3>
+<p>Die aktuelle Implementierung nutzt noch nicht das DocumentNode-Modell.
+Sie verwendet <code>Narrative</code> + <code>Scene</code> als direkte Domain-Objekte:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nd">@dataclass</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">Narrative</span><span class="p">:</span>
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
@@ -1773,20 +1776,66 @@ Domain-Objekte. Migration zur DocumentNode-Architektur steht aus.</p>
 <a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="k">class</span><span class="w"> </span><span class="nc">Scene</span><span class="p">:</span>
 <a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
 <a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span>
-<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span>       <span class="c1"># vollständiger Szenentext als ein Block</span>
 <a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>    <span class="n">position</span><span class="p">:</span> <span class="nb">int</span>
 </code></pre></div>
 <p>Datenbankschema: <code>narrative</code> + <code>narrative_units</code> (Polymorphtabelle,
 aktuell nur <code>typ='scene'</code> genutzt).</p>
-<p><strong>Architekturentscheidung: Fragment wird gestrichen.</strong>
-Explizit entschieden: <code>Fragment</code> hat keine eigene Funktion im Composite Pattern —
-es hat keinen eigenen Lebenszyklus, keine eigenen Operationen und kein Verhalten
-das sich von <code>Scene</code> unterscheidet. Die Hierarchie lautet deshalb:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>Werk → Teil → Kapitel → Szene (Leaf)
+<p>In Phase 1 ist <code>Scene</code> ein <strong>Leaf-Node</strong> — sie hat keinen internen
+Strukturbaum, der gesamte Text liegt als String vor.</p>
+<h3 id="phase-2-migrationsziel">Phase 2 — Migrationsziel<a class="headerlink" href="#phase-2-migrationsziel" title="Permanent link">&para;</a></h3>
+<p><code>Scene</code> (Phase 1) und <code>Section</code> (Phase 2) sind <strong>konzeptionell gleich</strong>,
+aber strukturell unterschiedlich:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Phase 1 <code>Scene</code></th>
+<th>Phase 2 <code>Section</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NodeType</td>
+<td>— (kein DocumentNode)</td>
+<td><code>NodeType.SECTION</code></td>
+</tr>
+<tr>
+<td>Kinder</td>
+<td>keine (Leaf)</td>
+<td>Paragraph → Sentence → String → Character</td>
+</tr>
+<tr>
+<td>Text</td>
+<td><code>text: str</code> (ein Block)</td>
+<td>über Kinder zusammengesetzt</td>
+</tr>
+<tr>
+<td>Migrationsziel</td>
+<td>→ wird zu Section-Knoten</td>
+<td>✓</td>
+</tr>
+</tbody>
+</table>
+<p>Der Import-Parser (<code>### Szene N</code> in Markdown, <code>^Szene\s+\d+$</code> in DOCX)
+erzeugt in Phase 2 <code>DocumentNode(node_type=SECTION, title="Szene 1")</code>.</p>
+<h3 id="wo-actors-und-claims-hangen">Wo Actors und Claims hängen<a class="headerlink" href="#wo-actors-und-claims-hangen" title="Permanent link">&para;</a></h3>
+<p>In der Zielarchitektur hängen Actors und Claims <strong>nicht an der Section</strong>,
+sondern an der <strong>präzisesten verfügbaren Textstelle</strong> — typisch <code>Sentence</code>
+oder <code>String</code>. Die Section ist nur der Container.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>Section &quot;Szene 1&quot;
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  └── Paragraph
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>        └── Sentence  ← DocumentLink(Actor)
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>        └── Sentence  ← DocumentLink(Claim)
 </code></pre></div>
-<p>Claims, Akteure und Zeitachsen hängen an der <strong>Szene</strong> als atomare Einheit.
-<code>Fragment</code> wird aus dem <code>typ</code>-Enum der <code>narrative_units</code>-Tabelle entfernt
-sobald die Migration zu <code>document_nodes</code> (Phase 2) stattfindet.</p>
+<p>Das ist der Kern des Offset-Konzepts (siehe Abschnitt 7): Die Offsets
+die das LLM heute zurückgibt zeigen auf Zeichenpositionen innerhalb des
+Szenentexts — in Phase 2 werden sie genutzt um den passenden
+Sentence/String-Knoten zu finden und den DocumentLink zu setzen.</p>
+<p><strong>Architekturentscheidung: Fragment wird gestrichen.</strong>
+<code>Fragment</code> hat keine eigene Funktion im Composite Pattern und wird aus dem
+<code>typ</code>-Enum der <code>narrative_units</code>-Tabelle entfernt sobald die Migration zu
+<code>document_nodes</code> (Phase 2) stattfindet.</p>
 <hr />
 <h2 id="4-actor">4. Actor<a class="headerlink" href="#4-actor" title="Permanent link">&para;</a></h2>
 <h3 id="zielarchitektur">Zielarchitektur<a class="headerlink" href="#zielarchitektur" title="Permanent link">&para;</a></h3>
@@ -1953,7 +2002,8 @@ wenn der Actor zwar in einer Szene vorkommt, aber nicht direkt namentlich erwäh
 <li>Migration: <code>narrative_units</code> → <code>document_nodes</code>-Baum</li>
 <li>LLM gibt Offsets für jedes Actor-Vorkommen und jeden Claim zurück</li>
 <li>Migration-Skript nutzt Offsets um <code>DocumentLink</code>-Objekte zu erstellen:
-   <code>Actor/Claim → DocumentNode(Paragraph/Sentence)</code></li>
+   <code>Actor/Claim → DocumentNode(node_type=SENTENCE | STRING)</code>
+   (präziseste Textstelle, nicht die Section selbst)</li>
 <li>Nach Migration: Offsets werden nicht mehr im API-Response exponiert,
    da Navigation über <code>DocumentLink.occurrences()</code> möglich ist</li>
 </ol>
