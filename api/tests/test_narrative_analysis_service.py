@@ -9,6 +9,7 @@ import pytest
 
 from api.exceptions.narrative import NarrativeNotFoundError
 from api.providers.narrative_analysis_provider import (
+    ActorOccurrence,
     NarrativeAnalysisResult,
 )
 from api.services.narrative_analysis_service import NarrativeAnalysisService
@@ -115,6 +116,50 @@ async def test_narrative_analysis_service_raises_for_unknown_narrative() -> None
 
     with pytest.raises(NarrativeNotFoundError):
         await service.analyse("00000000-0000-0000-0000-000000000000")
+
+
+@pytest.mark.asyncio
+async def test_narrative_analysis_service_preserves_actor_occurrences() -> None:
+    """Expects actor occurrences with scene_title and offsets to be passed through unchanged."""
+    from tests.fakes.fake_claim_repository import FakeClaimRepository
+
+    repo = FakeNarrativeRepository()
+    saved = await repo.save(NarrativeMother.with_one_scene())
+    service = NarrativeAnalysisService(
+        repository=repo,
+        provider=FakeNarrativeAnalysisProvider(),
+        claim_repository=FakeClaimRepository(),
+    )
+
+    result = await service.analyse(saved.id)  # type: ignore[arg-type]
+
+    assert len(result.actors[0].occurrences) == 1
+    occ = result.actors[0].occurrences[0]
+    assert isinstance(occ, ActorOccurrence)
+    assert occ.scene_title == "Scene 1"
+    assert occ.start_offset == 0
+    assert occ.end_offset == 12
+
+
+@pytest.mark.asyncio
+async def test_narrative_analysis_service_preserves_claim_offsets() -> None:
+    """Expects claim scene_title and start/end offsets to be passed through unchanged."""
+    from tests.fakes.fake_claim_repository import FakeClaimRepository
+
+    repo = FakeNarrativeRepository()
+    saved = await repo.save(NarrativeMother.with_one_scene())
+    service = NarrativeAnalysisService(
+        repository=repo,
+        provider=FakeNarrativeAnalysisProvider(),
+        claim_repository=FakeClaimRepository(),
+    )
+
+    result = await service.analyse(saved.id)  # type: ignore[arg-type]
+
+    claim = result.claims[0]
+    assert claim.scene_title == "Scene 1"
+    assert claim.start_offset == 0
+    assert claim.end_offset == 52
 
 
 @pytest.mark.asyncio

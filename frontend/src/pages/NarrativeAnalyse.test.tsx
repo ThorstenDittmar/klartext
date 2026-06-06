@@ -130,4 +130,50 @@ describe("NarrativeAnalyse", () => {
       );
     });
   });
+
+  it("displays scene title for actor occurrences", () => {
+    // Expects the scene title to appear below the actor label as a comma-separated list
+    renderWithState(mockAnalysis);
+    expect(screen.getByText("Szene 1")).toBeInTheDocument();
+  });
+
+  it("does not display a scene line when actor has no occurrences", () => {
+    // Expects no scene title line for implicit group actors (occurrences=[])
+    const analysisWithImplicitGroup: AnalyseNarrativeResponse = {
+      actors: [
+        {
+          label: "Klimaaktivisten",
+          actor_type: "group",
+          occurrences: [],
+          entity_suggestion: null,
+        },
+      ],
+      claims: [],
+    };
+    renderWithState(analysisWithImplicitGroup);
+    // Label is shown
+    expect(screen.getByText("Klimaaktivisten")).toBeInTheDocument();
+    // No scene line (the <p> with scene titles only renders when occurrences.length > 0)
+    expect(screen.queryByText(/Szene/)).not.toBeInTheDocument();
+  });
+
+  it("displays multiple scene titles as comma-separated list", () => {
+    // Expects two occurrence scene titles to appear joined with comma and space
+    const analysisWithMultipleOccurrences: AnalyseNarrativeResponse = {
+      actors: [
+        {
+          label: "Minister",
+          actor_type: "individual",
+          occurrences: [
+            { scene_title: "Szene 1", start_offset: 0, end_offset: 8 },
+            { scene_title: "Szene 3", start_offset: 12, end_offset: 20 },
+          ],
+          entity_suggestion: null,
+        },
+      ],
+      claims: [],
+    };
+    renderWithState(analysisWithMultipleOccurrences);
+    expect(screen.getByText("Szene 1, Szene 3")).toBeInTheDocument();
+  });
 });

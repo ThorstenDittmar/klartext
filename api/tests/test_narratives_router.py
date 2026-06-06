@@ -911,26 +911,41 @@ async def test_narratives_link_to_causal_model_returns_404_for_unknown_narrative
 
 
 class FakeNarrativeAnalysisService:
-    """Returns preset analysis results without hitting the DB or Claude API."""
+    """Returns preset analysis results without hitting the DB or Claude API.
+
+    Use empty_actor_occurrences=True to simulate an implicit group actor (occurrences=[]).
+    Use null_claim_offsets=True to simulate a claim where scene position is unknown.
+    """
 
     def __init__(
         self,
         *,
         raise_on_analyse: Exception | None = None,
+        empty_actor_occurrences: bool = False,
+        null_claim_offsets: bool = False,
     ) -> None:
         self._raise_on_analyse = raise_on_analyse
+        self._empty_actor_occurrences = empty_actor_occurrences
+        self._null_claim_offsets = null_claim_offsets
 
     async def analyse(self, narrative_id: str) -> NarrativeAnalysisResult:
+        """Returns one actor and one claim. Supports edge-case variants via constructor flags."""
         if self._raise_on_analyse:
             raise self._raise_on_analyse
+        occurrences = (
+            []
+            if self._empty_actor_occurrences
+            else [ActorOccurrence(scene_title="Scene 1", start_offset=0, end_offset=12)]
+        )
+        claim_scene_title = None if self._null_claim_offsets else "Scene 1"
+        claim_start = None if self._null_claim_offsets else 0
+        claim_end = None if self._null_claim_offsets else 38
         return NarrativeAnalysisResult(
             actors=[
                 ActorSuggestion(
                     label="Central Bank",
                     actor_type="institution",
-                    occurrences=[
-                        ActorOccurrence(scene_title="Scene 1", start_offset=0, end_offset=12)
-                    ],
+                    occurrences=occurrences,
                     entity_suggestion="central_bank",
                 )
             ],
@@ -941,9 +956,9 @@ class FakeNarrativeAnalysisService:
                     claim_type="causal",
                     confidence=0.87,
                     wirkgefuege_suggestion=None,
-                    scene_title="Scene 1",
-                    start_offset=0,
-                    end_offset=38,
+                    scene_title=claim_scene_title,
+                    start_offset=claim_start,
+                    end_offset=claim_end,
                 )
             ],
         )
@@ -1000,6 +1015,80 @@ async def test_analyse_narrative_returns_actors_and_claims() -> None:
         assert body["actors"][0]["label"] == "Central Bank"
         assert len(body["claims"]) == 1
         assert body["claims"][0]["claim_type"] == "causal"
+    finally:
+        clear_overrides()
+
+
+@pytest.mark.asyncio
+async def test_analyse_narrative_serializes_actor_occurrences() -> None:
+    """Expects actor occurrences to contain scene_title, start_offset and end_offset fields."""
+    app.dependency_overrides[get_narrative_analysis_service] = (
+        lambda: FakeNarrativeAnalysisService()
+    )
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.post(f"/narratives/{SAVED_NARRATIVE_ID}/analyse")
+
+        body = response.json()
+        occurrences = body["actors"][0]["occurrences"]
+        assert len(occurrences) == 1
+        assert occurrences[0]["scene_title"] == "Scene 1"
+        assert occurrences[0]["start_offset"] == 0
+        assert occurrences[0]["end_offset"] == 12
+    finally:
+        clear_overrides()
+
+
+@pytest.mark.asyncio
+async def test_analyse_narrative_serializes_claim_offsets() -> None:
+    """Expects claims to include scene_title, start_offset and end_offset when present."""
+    app.dependency_overrides[get_narrative_analysis_service] = (
+        lambda: FakeNarrativeAnalysisService()
+    )
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.post(f"/narratives/{SAVED_NARRATIVE_ID}/analyse")
+
+        body = response.json()
+        claim = body["claims"][0]
+        assert claim["scene_title"] == "Scene 1"
+        assert claim["start_offset"] == 0
+        assert claim["end_offset"] == 38
+    finally:
+        clear_overrides()
+
+
+@pytest.mark.asyncio
+async def test_analyse_narrative_serializes_empty_actor_occurrences() -> None:
+    """Expects occurrences to be an empty list for implicit group actors."""
+    app.dependency_overrides[get_narrative_analysis_service] = lambda: FakeNarrativeAnalysisService(
+        empty_actor_occurrences=True
+    )
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.post(f"/narratives/{SAVED_NARRATIVE_ID}/analyse")
+
+        body = response.json()
+        assert body["actors"][0]["occurrences"] == []
+    finally:
+        clear_overrides()
+
+
+@pytest.mark.asyncio
+async def test_analyse_narrative_serializes_null_claim_offsets() -> None:
+    """Expects scene_title, start_offset and end_offset to be null when unknown."""
+    app.dependency_overrides[get_narrative_analysis_service] = lambda: FakeNarrativeAnalysisService(
+        null_claim_offsets=True
+    )
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.post(f"/narratives/{SAVED_NARRATIVE_ID}/analyse")
+
+        body = response.json()
+        claim = body["claims"][0]
+        assert claim["scene_title"] is None
+        assert claim["start_offset"] is None
+        assert claim["end_offset"] is None
     finally:
         clear_overrides()
 
