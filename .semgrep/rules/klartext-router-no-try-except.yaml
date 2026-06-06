@@ -1,0 +1,30 @@
+rules:
+  - id: klartext-router-no-try-except
+    # Router functions must not catch exceptions.
+    # All error handling is delegated to central exception handlers registered in main.py.
+    # Catching in the router bypasses the handler chain and can return unexpected
+    # response shapes or swallow errors silently.
+    #
+    # If you need conditional logic based on a service result, use return values or
+    # check the domain object state — do not use exceptions for flow control.
+    #
+    # To suppress a legitimate case: # nosemgrep: klartext-router-no-try-except
+    pattern: |
+      try:
+          ...
+      except ...:
+          ...
+    message: >
+      Router function contains a try/except block. Routers must not catch exceptions
+      — let them propagate to the central exception handlers in main.py, which translate
+      them to the correct HTTP response. To suppress: # nosemgrep: klartext-router-no-try-except
+    severity: ERROR
+    languages: [python]
+    paths:
+      include:
+        - "**/routers/*.py"
+    metadata:
+      category: correctness
+      references:
+        - CLAUDE.md (Error Handling — Router: no try/except)
+        - docs/superpowers/specs/2026-06-06-qa-agent-design.md

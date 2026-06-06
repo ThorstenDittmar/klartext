@@ -1,0 +1,46 @@
+rules:
+  - id: klartext-fake-silent-constant
+    # Fake repository methods must not return silent placeholder values.
+    # A method whose entire body is 'return 0', 'return []', 'return None',
+    # 'return False', or 'return ""' hides missing functionality — tests pass
+    # even when the code under test ignores the returned value.
+    #
+    # Use a test-controllable helper (set_claim_count()) or raise NotImplementedError.
+    # Conditional returns (inside if/else) are fine — only standalone single-statement
+    # bodies are flagged.
+    #
+    # To suppress a legitimate case: add  # nosemgrep: klartext-fake-silent-constant
+    patterns:
+      - pattern-inside: |
+          class $CLASS(...):
+              ...
+      - metavariable-regex:
+          metavariable: $CLASS
+          regex: "^Fake"
+      - pattern: |
+          def $METHOD(self, ...):
+              return $VALUE
+      - metavariable-pattern:
+          metavariable: $VALUE
+          patterns:
+            - pattern-either:
+                - pattern: "0"
+                - pattern: "[]"
+                - pattern: '""'
+                - pattern: "False"
+                - pattern: "None"
+    message: >
+      Fake.$METHOD returns silent placeholder '$VALUE' as its entire body.
+      This hides a test gap — the calling test can never verify this value is wrong.
+      Use a test-controllable helper (e.g. set_$METHOD_result()) or raise NotImplementedError.
+      To suppress a legitimate case: # nosemgrep: klartext-fake-silent-constant
+    severity: ERROR
+    languages: [python]
+    paths:
+      include:
+        - "**/tests/fakes/*.py"
+    metadata:
+      category: correctness
+      references:
+        - CLAUDE.md (Fake contract completeness)
+        - docs/superpowers/specs/2026-06-06-qa-agent-design.md
