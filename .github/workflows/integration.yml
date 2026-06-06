@@ -1,0 +1,49 @@
+name: Integration Tests
+
+# Runs the @pytest.mark.integration tests against a real local Supabase instance.
+# These tests are excluded from the regular test.yml run (see pyproject.toml addopts)
+# because they require a running database. This workflow provides the database.
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  integration:
+    name: Integration Tests (Supabase)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: api/pyproject.toml
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Start Supabase and apply migrations
+        # supabase start applies all migrations automatically on Linux.
+        # The macOS workaround in cli.py (_db_reset) is not needed here.
+        run: supabase start
+
+      - name: Install Python dependencies
+        run: pip install -e '.[dev]'
+        working-directory: api
+
+      - name: Run integration tests
+        # pyproject.toml addopts excludes integration tests by default.
+        # We override that here with an explicit -m integration flag.
+        run: python -m pytest -m integration --tb=short -q
+        working-directory: api
+        env:
+          # Local Supabase always listens on port 54321.
+          SUPABASE_URL: http://127.0.0.1:54321
+          # Deterministic service role key derived from the default JWT secret
+          # "super-secret-jwt-token-with-at-least-32-characters-long".
+          # This key is identical for every local Supabase instance — it is not a secret.
+          SUPABASE_SERVICE_ROLE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU

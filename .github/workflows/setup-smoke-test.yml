@@ -38,9 +38,9 @@ jobs:
         run: "! command -v supabase"
 
       - name: Run setup.sh
-        # Skip supabase start — Docker-in-Docker is not available in GitHub Actions.
-        # We verify that setup.sh installs the CLI and all dependencies correctly.
-        # The supabase start step is covered by the integration tests in the Codespace.
+        # Skip supabase start — this job only verifies the install and dependency setup.
+        # A running Supabase instance is not needed here; integration tests (integration.yml)
+        # cover that path with a real local Supabase instance.
         env:
           SKIP_SUPABASE_START: "true"
         run: bash setup.sh
