@@ -164,12 +164,25 @@ class WirkgefuegeSuggestionResponse(BaseModel):
     mechanism: str | None = None
 
 
+class ActorOccurrenceResponse(BaseModel):
+    """A single occurrence of an Actor in a scene, with character offsets.
+
+    start_offset and end_offset are 0-indexed character positions relative to
+    the scene text. Both are None for implicit actors (e.g. inferred groups)
+    that have no direct text reference.
+    """
+
+    scene_title: str
+    start_offset: int | None = None
+    end_offset: int | None = None
+
+
 class ActorSuggestionResponse(BaseModel):
     """Schema for a suggested Actor in the analysis response."""
 
     label: str
     actor_type: str
-    occurrences: list[str]
+    occurrences: list[ActorOccurrenceResponse]
     entity_suggestion: str | None = None
 
 
@@ -181,6 +194,10 @@ class ClaimSuggestionResponse(BaseModel):
     claim_type: str
     confidence: float
     wirkgefuege_suggestion: WirkgefuegeSuggestionResponse | None = None
+    # Character offsets within the scene text — one-way tool for Phase 2 DocumentLink creation.
+    scene_title: str | None = None
+    start_offset: int | None = None
+    end_offset: int | None = None
 
 
 class AnalyseNarrativeResponse(BaseModel):

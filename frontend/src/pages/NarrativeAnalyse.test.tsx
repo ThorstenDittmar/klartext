@@ -28,7 +28,7 @@ const mockAnalysis: AnalyseNarrativeResponse = {
     {
       label: "EZB",
       actor_type: "institution",
-      occurrences: ["Szene 1"],
+      occurrences: [{ scene_title: "Szene 1", start_offset: null, end_offset: null }],
       entity_suggestion: "ecb",
     },
   ],
@@ -39,6 +39,9 @@ const mockAnalysis: AnalyseNarrativeResponse = {
       claim_type: "empirical",
       confidence: 0.9,
       wirkgefuege_suggestion: null,
+      scene_title: "Szene 1",
+      start_offset: null,
+      end_offset: null,
     },
   ],
 };

@@ -92,10 +92,16 @@ export interface WirkgefuegeSuggestionInClaim {
   mechanism: string | null;
 }
 
+export interface ActorOccurrence {
+  scene_title: string;
+  start_offset: number | null;
+  end_offset: number | null;
+}
+
 export interface ActorSuggestion {
   label: string;
   actor_type: string;
-  occurrences: string[];
+  occurrences: ActorOccurrence[];
   entity_suggestion: string | null;
 }
 
@@ -105,6 +111,9 @@ export interface ClaimSuggestion {
   claim_type: string;
   confidence: number;
   wirkgefuege_suggestion: WirkgefuegeSuggestionInClaim | null;
+  scene_title: string | null;
+  start_offset: number | null;
+  end_offset: number | null;
 }
 
 export interface AnalyseNarrativeResponse {

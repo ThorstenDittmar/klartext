@@ -332,7 +332,7 @@ function ActorCard({
         </div>
         {actor.occurrences.length > 0 && (
           <p style={{ margin: "4px 0 0", fontSize: "12px", color: "var(--color-text-secondary)" }}>
-            {actor.occurrences.join(", ")}
+            {actor.occurrences.map((o) => o.scene_title).join(", ")}
           </p>
         )}
         {actor.entity_suggestion && (

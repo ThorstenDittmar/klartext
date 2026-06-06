@@ -301,7 +301,57 @@ API: `POST /narratives/import {path: str}` — Server-Dateisystempfad.
 
 ---
 
-## 7. Offene Todos
+## 7. Offset-Konzept (Phase 1 → Phase 2)
+
+### Kontext
+
+In Phase 1 (aktuelle Implementierung) werden Actors und Claims im flachen
+`narrative_units`-Modell verwaltet. Der LLM-Analyse-Endpunkt
+(`POST /narratives/{id}/analyse`) gibt für jedes Actor-Vorkommen und für
+jeden Claim optionale Zeichenpositionen zurück:
+
+```
+start_offset: int | None   # 0-indexed, relativ zum Szenentext
+end_offset: int | None     # exklusiv (Python-Slice-Konvention)
+```
+
+### Was die Offsets bedeuten
+
+- Zeigen auf eine Textstelle im Szentext: `scene_text[start:end]`
+- 0-indexed, `end` ist exklusiv: `"Hallo"[0:5]` → `"Hallo"`
+- `None` bedeutet: kein direkter Textbezug (z.B. implizite Gruppen)
+
+### Wozu sie dienen
+
+Die Offsets sind ein **einseitiges Werkzeug für Phase 2**. Wenn die Migration
+von `narrative_units` zu `document_nodes` stattfindet, können sie genutzt werden
+um automatisch `DocumentLink`-Objekte zwischen Actors/Claims und den
+entsprechenden `DocumentNode`-Blattknoten zu konstruieren.
+
+**Sie werden nicht direkt persistiert.** Der Analyse-Endpunkt gibt sie zurück,
+der Aufrufer kann sie nutzen — aber sie erzeugen keine eigene Tabelle.
+
+### Implicit Actors
+
+Actors mit `actor_type='group'` können ohne direkten Textbezug vorkommen.
+Das LLM erkennt diese als implizite Gruppen aus dem Kontext.
+In diesem Fall ist `occurrences=[]` (leere Liste).
+
+Auf Actor-Occurrence-Ebene kann `start_offset` und `end_offset` beide `None` sein,
+wenn der Actor zwar in einer Szene vorkommt, aber nicht direkt namentlich erwähnt wird.
+
+### Phase 2: Vorgesehene Nutzung
+
+1. Migration: `narrative_units` → `document_nodes`-Baum
+2. LLM gibt Offsets für jedes Actor-Vorkommen und jeden Claim zurück
+3. Migration-Skript nutzt Offsets um `DocumentLink`-Objekte zu erstellen:
+   `Actor/Claim → DocumentNode(Paragraph/Sentence)`
+4. Nach Migration: Offsets werden nicht mehr im API-Response exponiert,
+   da Navigation über `DocumentLink.occurrences()` möglich ist
+
+---
+
+## 8. Offene Todos
 
 | Thema | Status |
 |---|---|

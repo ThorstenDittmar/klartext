@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from api.models.narrative import Narrative
 from api.providers.narrative_analysis_provider import (
+    ActorOccurrence,
     ActorSuggestion,
     ClaimSuggestion,
     NarrativeAnalysisProvider,
@@ -25,7 +26,13 @@ class FakeNarrativeAnalysisProvider(NarrativeAnalysisProvider):
                 ActorSuggestion(
                     label="Central Bank",
                     actor_type="institution",
-                    occurrences=["Scene 1"],
+                    occurrences=[
+                        ActorOccurrence(
+                            scene_title="Scene 1",
+                            start_offset=0,
+                            end_offset=12,
+                        )
+                    ],
                     entity_suggestion="central_bank",
                 )
             ],
@@ -43,6 +50,9 @@ class FakeNarrativeAnalysisProvider(NarrativeAnalysisProvider):
                         target_effect="rising",
                         mechanism="quantity_theory",
                     ),
+                    scene_title="Scene 1",
+                    start_offset=0,
+                    end_offset=52,
                 )
             ],
         )

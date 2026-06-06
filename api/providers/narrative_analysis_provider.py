@@ -23,13 +23,30 @@ class WirkgefuegeSuggestion:
 
 
 @dataclass
+class ActorOccurrence:
+    """A single occurrence of an Actor in a scene, with character offsets.
+
+    Offsets are 0-indexed character positions relative to the scene text.
+    They are a one-way tool: used to construct DocumentLinks in Phase 2,
+    then discarded. Implicit actors (actor_type='group' inferred from context)
+    have no direct text reference and therefore leave start_offset/end_offset as None.
+    """
+
+    scene_title: str
+    start_offset: int | None = None  # None for implicit actors without a direct text reference
+    end_offset: int | None = None  # None for implicit actors without a direct text reference
+
+
+@dataclass
 class ActorSuggestion:
     """A suggested Actor extracted from a Narrative."""
 
     label: str
     actor_type: str  # ActorType.value
-    occurrences: list[str] = field(default_factory=list)  # scene titles
-    entity_suggestion: str | None = None  # causal model identifier (snake_case)
+    # All occurrences in the text with character offsets.
+    # Empty list for implicit groups inferred from context without a direct text reference.
+    occurrences: list[ActorOccurrence] = field(default_factory=list)
+    entity_suggestion: str | None = None
 
 
 @dataclass
@@ -41,6 +58,11 @@ class ClaimSuggestion:
     claim_type: str  # ClaimType.value
     confidence: float
     wirkgefuege_suggestion: WirkgefuegeSuggestion | None = None
+    # Character offsets of the claim text within the scene.
+    # One-way tool for DocumentLink construction in Phase 2.
+    scene_title: str | None = None
+    start_offset: int | None = None
+    end_offset: int | None = None
 
 
 @dataclass

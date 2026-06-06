@@ -28,6 +28,7 @@ from api.models.claim import Claim, ClaimType
 from api.models.narrative import Actor, ActorType, Narrative, Scene
 from api.models.user import User
 from api.providers.narrative_analysis_provider import (
+    ActorOccurrence,
     ActorSuggestion,
     ClaimSuggestion,
     NarrativeAnalysisResult,
@@ -927,7 +928,9 @@ class FakeNarrativeAnalysisService:
                 ActorSuggestion(
                     label="Central Bank",
                     actor_type="institution",
-                    occurrences=["Scene 1"],
+                    occurrences=[
+                        ActorOccurrence(scene_title="Scene 1", start_offset=0, end_offset=12)
+                    ],
                     entity_suggestion="central_bank",
                 )
             ],
@@ -938,6 +941,9 @@ class FakeNarrativeAnalysisService:
                     claim_type="causal",
                     confidence=0.87,
                     wirkgefuege_suggestion=None,
+                    scene_title="Scene 1",
+                    start_offset=0,
+                    end_offset=38,
                 )
             ],
         )

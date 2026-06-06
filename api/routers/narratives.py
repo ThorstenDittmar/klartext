@@ -21,6 +21,7 @@ from api.models.narrative import Actor, Narrative, Scene
 from api.repositories.claim_repository import ClaimRepository
 from api.schemas.claims import ClaimResponse, ExtractClaimsResponse
 from api.schemas.narratives import (
+    ActorOccurrenceResponse,
     ActorResponse,
     ActorSuggestionResponse,
     AnalyseNarrativeResponse,
@@ -121,7 +122,14 @@ def _to_analyse_response(result: Any) -> AnalyseNarrativeResponse:
             ActorSuggestionResponse(
                 label=a.label,
                 actor_type=a.actor_type,
-                occurrences=a.occurrences,
+                occurrences=[
+                    ActorOccurrenceResponse(
+                        scene_title=occ.scene_title,
+                        start_offset=occ.start_offset,
+                        end_offset=occ.end_offset,
+                    )
+                    for occ in a.occurrences
+                ],
                 entity_suggestion=a.entity_suggestion,
             )
             for a in result.actors
@@ -137,6 +145,9 @@ def _to_analyse_response(result: Any) -> AnalyseNarrativeResponse:
                     if c.wirkgefuege_suggestion
                     else None
                 ),
+                scene_title=c.scene_title,
+                start_offset=c.start_offset,
+                end_offset=c.end_offset,
             )
             for c in result.claims
         ],

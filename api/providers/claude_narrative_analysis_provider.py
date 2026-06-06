@@ -11,6 +11,7 @@ from api.exceptions.narrative import NarrativeAnalysisError
 from api.models.claim import ClaimType
 from api.models.narrative import ActorType, Narrative
 from api.providers.narrative_analysis_provider import (
+    ActorOccurrence,
     ActorSuggestion,
     ClaimSuggestion,
     NarrativeAnalysisProvider,
@@ -30,14 +31,28 @@ _SYSTEM_PROMPT = (
     '"actors": Array von Objekten mit:\n'
     '- "label": Name oder Bezeichnung des Akteurs\n'
     f'- "actor_type": Einer von: {_ACTOR_TYPES}\n'
-    '- "occurrences": Array von Szenen-Titeln in denen der Akteur vorkommt\n'
+    '- "occurrences": Array von Objekten für jede Nennung im Text'
+    " — ALLE Vorkommen, nicht nur das erste:\n"
+    '    { "scene_title": "<Szenenname>", "start_offset": <int>, "end_offset": <int> }\n'
+    "  start_offset und end_offset sind 0-indexierte Zeichenpositionen relativ zum Szenentext.\n"
+    "  end_offset ist exklusiv (erstes Zeichen nach dem Match).\n"
+    "  Für implizite Gruppen ohne direkte Textstelle: occurrences = []\n"
     '- "entity_suggestion": Englischer snake_case-Bezeichner für ein'
     ' Kausalmodell-Element (z.B. "central_bank"), null falls unbekannt\n\n'
+    "WICHTIG — Implizite Gruppen: Suche auch nach kollektiven Akteuren die aus dem Kontext\n"
+    "erschlossen werden können, auch wenn sie nicht namentlich genannt sind.\n"
+    "Beispiele: 'die schweigenden Anwohner', 'die Entwickler dieser Plattform',"
+    " 'Klimaaktivisten'.\n"
+    "Für diese: actor_type = 'group', occurrences = []\n\n"
     '"claims": Array von Objekten mit:\n'
     '- "label": Kurzer englischer Titel (max. 80 Zeichen)\n'
-    '- "text": Die extrahierte Aussage (vollständiger Satz, max. 200 Zeichen)\n'
+    '- "text": Die extrahierte Aussage als wörtliches Zitat'
+    " oder enger Paraphrase (max. 200 Zeichen)\n"
     f'- "claim_type": Einer von: {_CLAIM_TYPES}\n'
     '- "confidence": Float zwischen 0.0 und 1.0\n'
+    '- "scene_title": Titel der Szene aus der der Claim stammt\n'
+    '- "start_offset": Zeichenposition im Szenentext wo die Aussage beginnt (0-indexiert)\n'
+    '- "end_offset": Zeichenposition im Szenentext wo die Aussage endet (exklusiv)\n'
     '- "wirkgefuege_suggestion": null oder Objekt mit:\n'
     '  - "type": "slot_state" oder "causal_relation"\n'
     '  - Für "slot_state": "slot" (snake_case, englisch), "slot_state" (Zustandsbeschreibung)\n'
@@ -96,7 +111,11 @@ class ClaudeNarrativeAnalysisProvider(NarrativeAnalysisProvider):
         )
 
     def _format_narrative(self, narrative: Narrative) -> str:
-        """Formats all scenes into a single text block with scene headers."""
+        """Formats all scenes into a single text block with scene headers.
+
+        Offsets returned by the LLM are relative to the scene text (the content
+        after the ## header), not the full formatted output.
+        """
         parts = [f"# {narrative.title}"]
         for scene in narrative.scenes:
             parts.append(f"\n## {scene.title}\n\n{scene.text}")
@@ -113,16 +132,28 @@ class ClaudeNarrativeAnalysisProvider(NarrativeAnalysisProvider):
         """Converts a raw actor record to an ActorSuggestion.
 
         Falls back to 'abstract_entity' for unrecognised actor_type values.
+        Parses all occurrences with their character offsets.
         """
         try:
             ActorType(record.get("actor_type", ""))
             actor_type = record["actor_type"]
         except ValueError:
             actor_type = "abstract_entity"
+
+        occurrences = [
+            ActorOccurrence(
+                scene_title=occ.get("scene_title", ""),
+                start_offset=occ.get("start_offset"),
+                end_offset=occ.get("end_offset"),
+            )
+            for occ in record.get("occurrences", [])
+            if isinstance(occ, dict)
+        ]
+
         return ActorSuggestion(
             label=record.get("label", "Unknown"),
             actor_type=actor_type,
-            occurrences=record.get("occurrences", []),
+            occurrences=occurrences,
             entity_suggestion=record.get("entity_suggestion"),
         )
 
@@ -130,7 +161,7 @@ class ClaudeNarrativeAnalysisProvider(NarrativeAnalysisProvider):
         """Converts a raw claim record to a ClaimSuggestion.
 
         Falls back to 'empirical' for unrecognised claim_type values.
-        Clamps confidence to 0.0–1.0.
+        Clamps confidence to 0.0–1.0. Captures scene offsets when present.
         """
         try:
             ClaimType(record.get("claim_type", ""))
@@ -149,6 +180,9 @@ class ClaudeNarrativeAnalysisProvider(NarrativeAnalysisProvider):
             claim_type=claim_type,
             confidence=confidence,
             wirkgefuege_suggestion=wirkgefuege_suggestion,
+            scene_title=record.get("scene_title"),
+            start_offset=record.get("start_offset"),
+            end_offset=record.get("end_offset"),
         )
 
     def _parse_wirkgefuege_suggestion(self, record: dict[str, Any]) -> WirkgefuegeSuggestion:
