@@ -130,7 +130,11 @@ export default function NarrativeAnalyse() {
       <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: "16px", marginBottom: "32px" }}>
         <SectionHeader
           label="Akteure"
-          onAcceptAll={() => setActorStates(analysis.actors.map(() => "accepted"))}
+          onAcceptAll={() => {
+            analysis.actors.forEach((_, i) => {
+              if (actorStates[i] !== "accepted") acceptActor(i);
+            });
+          }}
         />
         {analysis.actors.map((actor, i) => (
           <ActorCard

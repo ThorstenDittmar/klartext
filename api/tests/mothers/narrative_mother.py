@@ -5,9 +5,16 @@ from __future__ import annotations
 from api.models.narrative import Actor, ActorType, Narrative, Scene
 from tests.mothers.scene_mother import SceneMother
 
+# The default test user seeded by the migration backfill (20260605000001_add_users.sql).
+# This user exists in both the real DB and the FakeUserRepository.
+TEST_USER_ID = "00000000-0000-0000-0000-000000000001"
+
 
 class NarrativeMother:
     """Factory for Narrative test objects.
+
+    All factory methods assign TEST_USER_ID so the objects can be saved to the real
+    Supabase database (narrative.user_id is NOT NULL with an FK to users).
 
     Use empty() for tests that only need a valid narrative container.
     Use with_two_scenes() for the most common case — a narrative with content.
@@ -17,13 +24,16 @@ class NarrativeMother:
 
     @staticmethod
     def empty() -> Narrative:
-        """Simplest valid narrative — no scenes, title only."""
-        return Narrative.create(title="Klartext")
+        """Simplest valid narrative — no scenes, title only. Assigned to TEST_USER_ID."""
+        narrative = Narrative.create(title="Klartext")
+        narrative.assign_user(TEST_USER_ID)
+        return narrative
 
     @staticmethod
     def with_one_scene() -> Narrative:
         """Narrative with a single scene — for minimal content tests."""
         narrative = Narrative.create(title="Klartext")
+        narrative.assign_user(TEST_USER_ID)
         narrative.add_scene(SceneMother.minimal())
         return narrative
 
@@ -31,6 +41,7 @@ class NarrativeMother:
     def with_two_scenes() -> Narrative:
         """Narrative with two scenes — the standard test case for most service and repo tests."""
         narrative = Narrative.create(title="Klartext")
+        narrative.assign_user(TEST_USER_ID)
         narrative.add_scene(SceneMother.at_position(1))
         narrative.add_scene(SceneMother.at_position(2))
         return narrative
@@ -42,6 +53,7 @@ class NarrativeMother:
         Use for serialisation and mapping tests.
         """
         narrative = Narrative.create(title="Klartext – Eine Geschichte über eine Geschichte")
+        narrative.assign_user(TEST_USER_ID)
         for scene in SceneMother.collection():
             narrative.add_scene(scene)
         return narrative
@@ -49,7 +61,9 @@ class NarrativeMother:
     @staticmethod
     def with_title(title: str) -> Narrative:
         """Narrative with a custom title — for title-specific tests."""
-        return Narrative.create(title=title)
+        narrative = Narrative.create(title=title)
+        narrative.assign_user(TEST_USER_ID)
+        return narrative
 
     @staticmethod
     def with_actors() -> Narrative:
@@ -58,6 +72,7 @@ class NarrativeMother:
         Use for actor-related tests.
         """
         narrative = Narrative.create(title="Klartext")
+        narrative.assign_user(TEST_USER_ID)
         narrative.add_scene(SceneMother.minimal())
         narrative.add_actor(Actor.create(label="Max", actor_type=ActorType.INDIVIDUAL))
         narrative.add_actor(Actor.create(label="CDU", actor_type=ActorType.ORGANISATION))
@@ -71,6 +86,7 @@ class NarrativeMother:
         Use for consistency checking and Transparenzbericht tests.
         """
         narrative = Narrative.create(title="Klartext")
+        narrative.assign_user(TEST_USER_ID)
         narrative.add_scene(SceneMother.minimal())
         narrative.link_to_causal_model(causal_model_id)
         return narrative
@@ -82,6 +98,7 @@ class NarrativeMother:
         narratives = []
         for title in titles:
             n = Narrative.create(title=title)
+            n.assign_user(TEST_USER_ID)
             n.add_scene(Scene.create(title="Szene 1", text=f"Inhalt von {title}.", position=1))
             narratives.append(n)
         return narratives
