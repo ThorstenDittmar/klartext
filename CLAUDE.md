@@ -235,6 +235,7 @@ Before closing any infrastructure-related task, verify each item:
 - [ ] Every new environment variable is added to `.env.example` AND documented in `developer-guide.md`
 - [ ] `klartext health` reflects the current infrastructure state (new dependencies → new health check)
 - [ ] The CI smoke-test workflow passes (`setup-smoke-test.yml`)
+- [ ] Infrastructure tests for the change exist in `api/tests/infrastructure/` and QA has reviewed them via `qa-review`
 
 ### Definition of Done — Database migrations
 
@@ -377,6 +378,73 @@ called on CausalModel, never on a component.
 **Explicitness over implicitness.** Interpretive decisions may be made during modelling
 but must not remain as unresolved ambiguity in the finished model. Ambiguities must be
 explicitly marked as variants, conflicts, gaps or open questions.
+
+## Agent Roles & Boundaries
+
+The klartext project uses specialized Claude Code agents. Each agent has a defined domain —
+files outside that domain require a DevOps Briefing or explicit coordination.
+
+**Jeder Agent liest beim Session-Start seine Hoheitswissen-Datei:**
+`agents/<name>/claude.md` — enthält Domain, Write-Access, domänenspezifische Regeln, Skills.
+
+Each agent has its own directory: `agents/<name>/`
+- `agents/<name>/start.sh` — startet die Session mit den richtigen Permissions
+- `agents/<name>/claude.md` — Hoheitswissen und domänenspezifische Regeln
+
+Project-level baseline permissions (all agents): `.claude/settings.json`
+
+| Agent | Domain |
+|---|---|
+| OE | Multi-Agent-Struktur, Onboarding, Zusammenarbeit (`agents/` vollständig) |
+| DevOps | Infrastructure, CI/CD, Tooling — Gatekeeper |
+| System Architect | Architecture decisions, Coding Standards (CLAUDE.md, ADRs) |
+| UX/UI | React components, frontend (`frontend/src/`) |
+| QA | Tests, coverage (`api/tests/`, `frontend/**/*.test.*`, `.semgrep/rules/qa/`, `api/tests/infrastructure/` shared) |
+| Narrative Expert | Narrative domain backend (`api/*/narrative*`) |
+| Causal Model Expert | Wirkgefüge backend (`api/*/causal_model*`) |
+| Audit Expert | Verification procedures, claim extraction (`api/providers/`) |
+| Community Expert | User/community backend (`api/*/user*`) |
+
+### Infrastructure Perimeter — DevOps exclusive
+
+No other agent may modify these without a DevOps Briefing:
+
+```
+.github/workflows/
+setup.sh
+.pre-commit-config.yaml
+tach.toml
+api/pyproject.toml
+frontend/package.json
+frontend/package-lock.json
+frontend/vite.config.ts
+frontend/tsconfig*.json
+frontend/eslint.config.js
+api/cli.py
+.claude/settings.json
+```
+
+### DevOps Briefing Protocol
+
+When any agent needs an infrastructure change, they send a briefing — DevOps decides how:
+
+```
+Need:      [What is needed]
+Why:       [Technical or business reason]
+Domain:    [Dependencies / CI/CD / Config / CLI / Database / Other]
+Approach:  [Optional suggestion]
+Impact:    [Which agents/environments affected]
+```
+
+### System Architect ↔ DevOps Collaboration
+
+SA defines rules (Semgrep, tach, ruff, layer boundaries) → DevOps enforces technically (CI steps, hooks).
+Neither acts alone: a rule without enforcement is documentation, not a standard.
+
+### Adding a new agent
+
+Use the `agent-onboarding` skill (OE-Domain). OE defines the domain and creates the knowledge file.
+DevOps creates the start script with appropriate permissions (via DevOps Briefing from OE).
 
 ## Ports & Adapters
 Isolate technical components (e.g. verification procedures) via abstract interfaces:
