@@ -22,4 +22,6 @@ claude \
   --allowedTools "Bash(git add CLAUDE.md)" \
   --allowedTools "Bash(git add docs/superpowers/skills/agent-onboarding.md)" \
   --allowedTools "Bash(git commit *)" \
-  --allowedTools "Bash(chmod +x agents/*/start.sh)"
+  --allowedTools "Bash(chmod +x agents/*/start.sh)" \
+  --allowedTools "Edit($HOME/.claude/skills/pre-compact/)" \
+  --allowedTools "Write($HOME/.claude/skills/pre-compact/)"
