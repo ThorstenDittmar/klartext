@@ -104,6 +104,36 @@ QA gibt sie frei via `qa-review` bevor die Infra-Aufgabe als "done" gilt.
 
 ---
 
+## Wissens-Routing Protokoll
+
+Wissen das in einer Agent-Session entsteht, gehört nicht immer zu diesem Agent.
+Damit es trotzdem beim richtigen Eigentümer landet, gibt es das Wissens-Routing —
+ein fester Schritt in jedem pre-compact aller Agents.
+
+**Skill:** `knowledge-routing` — läuft bei jedem pre-compact, in jeder Agent-Session.
+
+### Drei Wissens-Typen die ein Briefing auslösen
+
+| Typ | Was es bedeutet | Ziel |
+|---|---|---|
+| **Fremdwissen** | Gehört vollständig zu einem anderen Agent | Briefing an den Ziel-Agent |
+| **Grenzwissen** | Betrifft zwei Agents gleichzeitig | Briefing an beide Agents |
+| **Organisationswissen** | Betrifft Struktur oder Zusammenarbeit im System | Briefing an OE |
+
+### Grundregel
+**Der User ist immer der Kanal.** Kein Agent schreibt direkt in die Dateien eines anderen Agents —
+auch nicht wenn er Write-Rechte auf `agents/` hätte. Wissens-Briefings werden dem User präsentiert,
+der entscheidet und in der Ziel-Agent-Session eingibt.
+
+### Was OE mit einem Wissens-Briefing macht
+1. Wenn es die **Struktur des Systems** betrifft (neue Abgrenzung, neues Kollaborationsmuster):
+   OE aktualisiert `agents/<name>/claude.md` oder `CLAUDE.md § Agent Roles` — mit User-Zustimmung.
+2. Wenn es **Hoheitswissen eines anderen Agents** ist:
+   OE leitet an den Agent weiter (User öffnet dessen Session).
+3. Wenn unklar: OE fragt den User.
+
+---
+
 ## Feedback-Loop bei Blind Spots
 
 Wenn etwas im manuellen Test auffliegt obwohl alle Tests grün sind:

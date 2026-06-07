@@ -146,6 +146,11 @@ Infrastruktur-Änderungen (CI, Dependencies, Scripts, settings.json):
 
 Gemeinsame Coding-Standards: CLAUDE.md (für alle Agents gleich)
 Dein Hoheitswissen erweitern: trage domain-spezifisches Wissen in agents/<name>/claude.md ein
+
+Wissens-Routing: Bei jedem pre-compact prüfst du ob Wissen entstanden ist, das einem
+  anderen Agent gehört — Schritt 6 / Teil C führt dich durch den Prozess.
+  Fremdwissen, Grenzwissen und Organisationswissen werden als Wissens-Briefings
+  formuliert und dem User übergeben. Kein Agent schreibt direkt in fremde Dateien.
 ```
 
 ---
