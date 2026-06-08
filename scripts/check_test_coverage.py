@@ -35,6 +35,7 @@ EXCLUDED_FILES: set[str] = {
     "supabase_causal_model_repository.py",
     "supabase_claim_repository.py",
     "supabase_narrative_repository.py",
+    "supabase_narrative_unit_repository.py",
     "supabase_user_repository.py",
     # HealthService is thin and tested indirectly through the health router (test_health_router.py).
     "health_service.py",
