@@ -12,8 +12,7 @@
 #   - ~/.claude/skills/qa-review/             (QA review skill)
 #   - ~/.claude/skills/qa-retro/              (QA retro skill)
 #
-# DevOps Perimeter: This file is maintained by DevOps only.
-# To request a permission change, send a DevOps Briefing.
+# OE Perimeter: This file is maintained by OE only.
 
 cd "$(dirname "$0")/../.." || exit 1
 
@@ -32,5 +31,11 @@ claude \
   --allowedTools "Write($HOME/.claude/skills/qa-review/)" \
   --allowedTools "Edit($HOME/.claude/skills/qa-retro/)" \
   --allowedTools "Write($HOME/.claude/skills/qa-retro/)" \
+  --allowedTools "Edit(docs/superpowers/skills/verify.md)" \
+  --allowedTools "Write(docs/superpowers/skills/verify.md)" \
+  --allowedTools "Edit(docs/superpowers/skills/frontend-testing.md)" \
+  --allowedTools "Write(docs/superpowers/skills/frontend-testing.md)" \
+  --allowedTools "Edit(docs/superpowers/plans/PENDING.md)" \
+  --allowedTools "Write(docs/superpowers/plans/PENDING.md)" \
   --allowedTools "Edit(agents/qa/)" \
   --allowedTools "Write(agents/qa/)"

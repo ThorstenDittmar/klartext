@@ -20,11 +20,15 @@ Alle Wissens-Briefings gehen durch den User, der entscheidet und weiterleitet.
 
 ## Schritt 1 — Jeden Wissenspunkt klassifizieren
 
-Für jeden Kandidaten aus dem Persistenz-Check fragen:
+Für jeden Kandidaten aus dem Persistenz-Check zwei Fragen stellen:
 
-> *"Liegt dieses Wissen in meinem Domain — oder bin ich nur zufällig derjenige, in dessen Session es aufgetaucht ist?"*
+> **1. Liegt das Wissen in meinem Domain?**
+> **2. Wer hat fachliche Autorität darüber?** Wer entscheidet was hier "richtig" ist?
 
-**Drei Typen:**
+Frage 2 bezieht sich auf **Expertise und Autorität**, nicht auf Datei-Eigentümerschaft.
+Wenn Frage 2 einen anderen Agent nennt: mindestens Grenzwissen — auch wenn das Thema nach dem eigenen Domain klingt.
+
+**Vier Typen:**
 
 | Typ | Beschreibung | Beispiel |
 |---|---|---|

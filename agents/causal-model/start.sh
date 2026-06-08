@@ -34,5 +34,7 @@ claude \
   --allowedTools "Write(api/exceptions/causal_model*)" \
   --allowedTools "Edit(api/tests/test_causal_model*)" \
   --allowedTools "Write(api/tests/test_causal_model*)" \
+  --allowedTools "Edit(docs/superpowers/plans/PENDING.md)" \
+  --allowedTools "Write(docs/superpowers/plans/PENDING.md)" \
   --allowedTools "Edit(agents/causal-model/)" \
   --allowedTools "Write(agents/causal-model/)"

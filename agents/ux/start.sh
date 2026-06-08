@@ -4,14 +4,12 @@
 # Domain: React components, frontend (frontend/src/)
 #
 # Grants write access to:
-#   - frontend/src/     (alle React-Komponenten, Pages, Hooks, Styles)
-#   - frontend/public/  (statische Assets)
+#   - frontend/src/                           (alle React-Komponenten, Pages, Hooks, Styles)
+#   - frontend/public/                        (statische Assets)
+#   - docs/superpowers/skills/frontend.md     (eigener Skill — Self-Write)
 #
 # Read/Analyse permissions are granted project-wide in .claude/settings.json.
-# DevOps Perimeter: This file is maintained by DevOps only.
-# To request a permission change, send a DevOps Briefing.
-#
-# TODO: Permissions to be finalized when UX/UI agent is onboarded.
+# OE Perimeter: This file is maintained by OE only.
 
 cd "$(dirname "$0")/../.." || exit 1
 
@@ -22,5 +20,9 @@ claude \
   --allowedTools "Write(frontend/public/)" \
   --allowedTools "Edit(frontend/src/lib/api.ts)" \
   --allowedTools "Write(frontend/src/lib/api.ts)" \
+  --allowedTools "Edit(docs/superpowers/skills/frontend.md)" \
+  --allowedTools "Write(docs/superpowers/skills/frontend.md)" \
+  --allowedTools "Edit(docs/superpowers/plans/PENDING.md)" \
+  --allowedTools "Write(docs/superpowers/plans/PENDING.md)" \
   --allowedTools "Edit(agents/ux/)" \
   --allowedTools "Write(agents/ux/)"

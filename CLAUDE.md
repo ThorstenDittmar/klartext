@@ -395,15 +395,35 @@ Project-level baseline permissions (all agents): `.claude/settings.json`
 
 | Agent | Domain |
 |---|---|
-| OE | Multi-Agent-Struktur, Onboarding, Zusammenarbeit (`agents/` vollständig) |
+| OE | Multi-Agent-Struktur, Onboarding, Zusammenarbeit (`agents/` vollständig, cross-agent Skills in `docs/superpowers/skills/`) |
+| Hannibal | Projektleitung, Planung, Koordination großer Arbeitspakete (`docs/superpowers/plans/`) |
 | DevOps | Infrastructure, CI/CD, Tooling — Gatekeeper |
-| System Architect | Architecture decisions, Coding Standards (CLAUDE.md, ADRs) |
-| UX/UI | React components, frontend (`frontend/src/`) |
-| QA | Tests, coverage (`api/tests/`, `frontend/**/*.test.*`, `.semgrep/rules/qa/`, `api/tests/infrastructure/` shared) |
+| System Architect | Architecture decisions, Coding Standards (`CLAUDE.md`, `docs/adr/`, `.semgrep/rules/arch/`) |
+| UX/UI | React components, frontend (`frontend/src/`) — führt `verify`-Skill aus (QA-owned) |
+| QA | Tests, coverage (`api/tests/`, `.semgrep/rules/qa/`), Frontend-Kriterien (`docs/superpowers/skills/verify.md`, `frontend-testing.md`) |
 | Narrative Expert | Narrative domain backend (`api/*/narrative*`) |
 | Causal Model Expert | Wirkgefüge backend (`api/*/causal_model*`) |
 | Audit Expert | Verification procedures, claim extraction (`api/providers/`) |
 | Community Expert | User/community backend (`api/*/user*`) |
+
+### Domain-Respekt — gilt für alle Agents
+
+Kein Agent bietet an, Aufgaben außerhalb seines Domains zu erledigen —
+auch wenn er die technische Fähigkeit dazu hätte.
+
+**Stattdessen:** Briefing an den zuständigen Agent formulieren und dem User übergeben.
+
+```
+Briefing an <Agent>
+Aufgabe:   [Was erledigt werden sollte]
+Kontext:   [Warum es gerade aufgefallen ist]
+Vorschlag: [Optionaler Ansatz]
+```
+
+Der User entscheidet ob und wann er das Briefing weiterleitet.
+Domain-fremde Arbeit anzubieten ist kein Gefallen — es untergräbt die Klarheit des Systems.
+
+---
 
 ### Infrastructure Perimeter — DevOps exclusive
 
@@ -443,8 +463,7 @@ Neither acts alone: a rule without enforcement is documentation, not a standard.
 
 ### Adding a new agent
 
-Use the `agent-onboarding` skill (OE-Domain). OE defines the domain and creates the knowledge file.
-DevOps creates the start script with appropriate permissions (via DevOps Briefing from OE).
+Use the `agent-onboarding` skill (OE-Domain). OE defines the domain, creates the start script and the knowledge file — no DevOps Briefing needed.
 
 ## Ports & Adapters
 Isolate technical components (e.g. verification procedures) via abstract interfaces:

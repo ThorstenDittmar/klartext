@@ -33,5 +33,7 @@ claude \
   --allowedTools "Write(api/tests/test_narrative*)" \
   --allowedTools "Edit(api/tests/test_scene*)" \
   --allowedTools "Write(api/tests/test_scene*)" \
+  --allowedTools "Edit(docs/superpowers/plans/PENDING.md)" \
+  --allowedTools "Write(docs/superpowers/plans/PENDING.md)" \
   --allowedTools "Edit(agents/narrative/)" \
   --allowedTools "Write(agents/narrative/)"

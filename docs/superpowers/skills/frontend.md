@@ -51,6 +51,70 @@ and create a stub spec alongside your code.
 
 ---
 
+## Architecture Vocabulary
+
+These definitions apply across all frontend work — code, tests, and component specs.
+
+### Page
+A route-level screen component. Each page corresponds to one URL route in `App.tsx`.
+
+- Lives in `frontend/src/pages/`
+- Loads its own data (via API call or hook)
+- Is never imported by another component — only by the router
+- Example: `NarrativeListPage`, `EditorPage`, `LoginPage`
+
+### Component
+A reusable UI element. Components receive data via props — they do not fetch their own data.
+
+- Lives in `frontend/src/components/`
+- Has a corresponding spec in `design/components/<name>.md`
+- Can be used across multiple pages or composed into other components
+- Example: `NarrativeCard`, `StatusBadge`, `LoadingSpinner`
+
+### Hook
+A custom React hook that encapsulates stateful logic or side effects.
+
+- Lives in `frontend/src/hooks/`
+- Named `use*` — e.g. `useNarratives`, `useAuth`
+- Returns values and/or callbacks — no JSX
+- Example: `useNarratives()` → `{ narratives, isLoading, error }`
+
+---
+
+## Component Organisation
+
+### File Structure
+
+Every component lives in its own directory. No flat `.tsx` files directly in `components/`.
+
+```
+frontend/src/
+  components/
+    <Name>/
+      index.tsx           ← Implementation and named export
+      <Name>.test.tsx     ← Unit tests, co-located with component
+      <Name>.types.ts     ← Local types (optional — only when more than 2–3)
+      <Name>.stories.tsx  ← Storybook stories (optional)
+  hooks/
+    use<Name>.ts
+    use<Name>.test.ts
+```
+
+### Import Rules
+
+Strict layer boundaries — no exceptions:
+
+| Layer | May import | May not import |
+|---|---|---|
+| `components/` | Props, local types | `api.ts`, hooks, other components' internals |
+| `hooks/` | `api.ts`, domain utilities | — |
+| `pages/` | `hooks/`, `components/` | `api.ts` directly |
+
+**Rule:** A component that imports `api.ts` cannot be tested in isolation.
+Data flows down via props. Whoever fetches data: a hook.
+
+---
+
 ## Design Token Usage
 
 | Token file | How to use in code |
@@ -172,6 +236,81 @@ the action handler must call the API. The only exception is genuinely local UI s
 
 ---
 
+## Testing
+
+**Stack:** Vitest + React Testing Library
+
+### What to test
+
+| Unit | Responsibility | Location |
+|---|---|---|
+| Page | Data loading states, error paths, full user flows | `src/pages/__tests__/` |
+| Component | Render variants, user interactions, i18n strings | `src/components/__tests__/` |
+| Hook | State transitions, side effects, return values | `src/hooks/__tests__/` |
+
+### Query Hierarchy
+
+Use queries in this order — most to least preferred:
+
+1. `getByRole` — semantic, matches how users perceive the UI
+2. `getByLabelText` — for form elements with visible labels
+3. `getByText` — for visible text content
+4. `getByTestId` — last resort, only for elements with no semantic role
+
+Never query by CSS class or inline style.
+
+### Provider Setup
+
+Tests that use i18n or the router need a wrapper. Use one shared helper:
+
+```tsx
+// src/test-utils.tsx
+import { render } from '@testing-library/react';
+import { I18nextProvider } from 'react-i18next';
+import { MemoryRouter } from 'react-router-dom';
+import i18n from './i18n/config';
+
+export function renderWithProviders(ui: React.ReactElement) {
+  return render(
+    <MemoryRouter>
+      <I18nextProvider i18n={i18n}>
+        {ui}
+      </I18nextProvider>
+    </MemoryRouter>
+  );
+}
+```
+
+### Async Patterns
+
+Use `waitFor` for async state. Never use `setTimeout` in tests.
+
+```tsx
+// Wait for data to appear
+await waitFor(() => {
+  expect(screen.getByRole('article')).toBeInTheDocument();
+});
+
+// Wait for loading indicator to disappear
+await waitFor(() => {
+  expect(screen.queryByText('…')).not.toBeInTheDocument();
+});
+```
+
+### API Mocking
+
+Mock at module level with `vi.mock`. Unit tests never call the real API.
+
+```tsx
+vi.mock('../lib/api', () => ({
+  fetchNarratives: vi.fn().mockResolvedValue([
+    { id: '1', title: 'Test Narrative', status: 'draft' }
+  ])
+}));
+```
+
+---
+
 ## Quality Checklist — Run Before Every Commit
 
 Go through this list item by item. Do not commit until all boxes are checked.
@@ -211,6 +350,17 @@ Go through this list item by item. Do not commit until all boxes are checked.
       comment **added in this task**: create a GitHub Issue with the correct label and
       update the comment to include the issue number: `// TODO(token): ... — Issue #<nr>`
       Do not commit with unlinked TODOs.
+
+### Tests
+- [ ] Every new Page has at least one test for loading state and error state
+- [ ] Every new Page has a test for the API error state
+      (network failure or 5xx → error message visible, no infinite spinner)
+- [ ] Every new Page that loads a resource by ID has a test for the 404 case
+- [ ] Every new Component has at least one render test and one interaction test
+- [ ] Every new Hook has tests for state transitions and return values
+- [ ] `renderWithProviders()` used where i18n or routing is needed
+- [ ] No `setTimeout` in tests — use `waitFor` instead
+- [ ] No real API calls — all API calls mocked via `vi.mock`
 
 ---
 

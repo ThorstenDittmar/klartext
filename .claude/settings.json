@@ -12,7 +12,9 @@
       "Bash(find *)",
       "Bash(grep*)",
 
-      "Bash(semgrep*)"
+      "Bash(semgrep*)",
+
+      "mcp__Claude_in_Chrome__*"
     ]
   }
 }

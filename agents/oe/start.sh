@@ -16,12 +16,23 @@ claude \
   --allowedTools "Write(agents/)" \
   --allowedTools "Edit(CLAUDE.md)" \
   --allowedTools "Write(CLAUDE.md)" \
-  --allowedTools "Edit(docs/superpowers/skills/agent-onboarding.md)" \
-  --allowedTools "Write(docs/superpowers/skills/agent-onboarding.md)" \
+  --allowedTools "Edit(docs/superpowers/skills/)" \
+  --allowedTools "Write(docs/superpowers/skills/)" \
+  --allowedTools "Edit(docs/superpowers/plans/PENDING.md)" \
+  --allowedTools "Write(docs/superpowers/plans/PENDING.md)" \
   --allowedTools "Bash(git add agents/)" \
   --allowedTools "Bash(git add CLAUDE.md)" \
-  --allowedTools "Bash(git add docs/superpowers/skills/agent-onboarding.md)" \
+  --allowedTools "Bash(git add docs/superpowers/skills/)" \
+  --allowedTools "Bash(git add docs/superpowers/plans/PENDING.md)" \
   --allowedTools "Bash(git commit *)" \
   --allowedTools "Bash(chmod +x agents/*/start.sh)" \
   --allowedTools "Edit($HOME/.claude/skills/pre-compact/)" \
-  --allowedTools "Write($HOME/.claude/skills/pre-compact/)"
+  --allowedTools "Write($HOME/.claude/skills/pre-compact/)" \
+  --allowedTools "Edit($HOME/.claude/skills/job-description/)" \
+  --allowedTools "Write($HOME/.claude/skills/job-description/)" \
+  --allowedTools "Edit($HOME/.claude/skills/knowledge-routing/)" \
+  --allowedTools "Write($HOME/.claude/skills/knowledge-routing/)" \
+  --allowedTools "Edit($HOME/.claude/skills/agent-onboarding/)" \
+  --allowedTools "Write($HOME/.claude/skills/agent-onboarding/)" \
+  --allowedTools "Edit($HOME/.claude/skills/task-readiness/)" \
+  --allowedTools "Write($HOME/.claude/skills/task-readiness/)"

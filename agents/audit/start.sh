@@ -35,5 +35,7 @@ claude \
   --allowedTools "Write(api/tests/test_claim*)" \
   --allowedTools "Edit(api/tests/test_claude_*)" \
   --allowedTools "Write(api/tests/test_claude_*)" \
+  --allowedTools "Edit(docs/superpowers/plans/PENDING.md)" \
+  --allowedTools "Write(docs/superpowers/plans/PENDING.md)" \
   --allowedTools "Edit(agents/audit/)" \
   --allowedTools "Write(agents/audit/)"

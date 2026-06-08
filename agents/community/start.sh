@@ -28,5 +28,7 @@ claude \
   --allowedTools "Write(api/exceptions/user*)" \
   --allowedTools "Edit(api/tests/test_user*)" \
   --allowedTools "Write(api/tests/test_user*)" \
+  --allowedTools "Edit(docs/superpowers/plans/PENDING.md)" \
+  --allowedTools "Write(docs/superpowers/plans/PENDING.md)" \
   --allowedTools "Edit(agents/community/)" \
   --allowedTools "Write(agents/community/)"
