@@ -334,3 +334,67 @@ export const api = {
     getObjectGraph: () => request<DebugGraphResponse>("/debug/object-graph"),
   },
 };
+
+// ─── Narrative Units ──────────────────────────────────────────────────────────
+// Matches backend: api/schemas/narrative_unit.py
+
+export interface NarrativeUnitResponse {
+  id: string;
+  typ: "work" | "part" | "chapter" | "scene" | "fragment";
+  title: string | null;
+  content: string | null;
+  position: number;
+  narrative_id: string;
+  parent_id: string | null;
+  children: NarrativeUnitResponse[];
+}
+
+export interface NarrativeTreeResponse {
+  narrative_id: string;
+  root: NarrativeUnitResponse | null;
+}
+
+export interface CreateNarrativeUnitRequest {
+  typ: string;
+  title?: string | null;
+  content?: string | null;
+  position: number;
+  parent_id?: string | null;
+  narrative_id: string;
+}
+
+export interface UpdateNarrativeUnitRequest {
+  title?: string | null;
+  content?: string | null;
+}
+
+/** Loads the full narrative unit tree for a given narrative. */
+export async function getNarrativeTree(narrativeId: string): Promise<NarrativeTreeResponse> {
+  return request<NarrativeTreeResponse>(`/narrative-units/tree/${narrativeId}`);
+}
+
+/** Creates a new narrative unit (work, part, chapter, scene or fragment). */
+export async function createNarrativeUnit(
+  body: CreateNarrativeUnitRequest
+): Promise<NarrativeUnitResponse> {
+  return request<NarrativeUnitResponse>("/narrative-units", {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+}
+
+/** Updates the title or content of an existing narrative unit. */
+export async function updateNarrativeUnit(
+  unitId: string,
+  body: UpdateNarrativeUnitRequest
+): Promise<NarrativeUnitResponse> {
+  return request<NarrativeUnitResponse>(`/narrative-units/${unitId}`, {
+    method: "PATCH",
+    body: JSON.stringify(body),
+  });
+}
+
+/** Deletes a narrative unit by ID. */
+export async function deleteNarrativeUnit(unitId: string): Promise<void> {
+  return requestVoid(`/narrative-units/${unitId}`, { method: "DELETE" });
+}
