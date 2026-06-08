@@ -366,23 +366,20 @@ async def test_supabase_causal_model_repository_add_relation_and_find() -> None:
     )
     repo = SupabaseCausalModelRepository(client=client)
     cm = await repo.save(CausalModelMother.empty())
+    assert cm.id is not None
 
     try:
-        source = await repo.add_slot(  # type: ignore[arg-type]
-            cm.id, Slot.create("money_supply", SlotType.PHYSICAL_QUANTITY)
-        )
-        target = await repo.add_slot(  # type: ignore[arg-type]
-            cm.id, Slot.create("inflation", SlotType.TREND)
-        )
+        source = await repo.add_slot(cm.id, Slot.create("money_supply", SlotType.PHYSICAL_QUANTITY))
+        target = await repo.add_slot(cm.id, Slot.create("inflation", SlotType.TREND))
         relation = CausalRelation.create(
             identifier="money_supply_causes_inflation",
             source=source,
             target=target,
             polarity=Polarity.POSITIVE,
         )
-        saved_rel = await repo.add_relation(cm.id, relation)  # type: ignore[arg-type]
+        saved_rel = await repo.add_relation(cm.id, relation)
 
-        relations = await repo.find_relations_by_model_id(cm.id)  # type: ignore[arg-type]
+        relations = await repo.find_relations_by_model_id(cm.id)
 
         assert saved_rel.id is not None
         assert len(relations) == 1
