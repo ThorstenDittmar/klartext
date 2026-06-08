@@ -18,6 +18,42 @@
   --color-blue-text:  #0C447C;
   --color-teal-bg:    #E1F5EE;
   --color-teal-text:  #0F6E56;
+
+  /* ─── Semantic color aliases ─────────────────────────── */
+  --color-surface:    var(--color-bg);
+  --color-background: var(--color-bg);
+  --color-accent:     var(--color-blue-text);
+  --color-on-accent:  var(--color-text-inverse);
+  --color-success:    var(--color-green-text);
+  --color-error:      var(--color-red-text);
+
+  /* ─── Spacing — 4px base scale ──────────────────────── */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* ─── Typography ─────────────────────────────────────── */
+  /* Note: values match plan spec (SA-approved); sm/base/md differ from
+     typography.json named scale — token file should be reconciled. */
+  --font-size-xs:    11px;
+  --font-size-sm:    13px;
+  --font-size-base:  16px;
+  --font-size-prose: 18px;
+  --font-family-prose: Georgia, 'Times New Roman', serif;
+
+  /* ─── Shape ──────────────────────────────────────────── */
+  /* Note: --radius-md=8px matches plan spec; radius.md in tokens=6px.
+     Token file should be reconciled. */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+
+  /* ─── Layout ─────────────────────────────────────────── */
+  --bottom-bar-height: 40px;
 }
 
 * {
