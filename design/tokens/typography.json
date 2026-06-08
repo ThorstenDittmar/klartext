@@ -11,8 +11,8 @@
     },
     "size": {
       "xs":   { "$value": "11px", "$type": "fontSize" },
-      "sm":   { "$value": "12px", "$type": "fontSize" },
-      "sm2":  { "$value": "13px", "$type": "fontSize", "$description": "Compact UI text: sidebar items, table rows, card metadata" },
+      "sm":   { "$value": "13px", "$type": "fontSize", "$description": "Compact UI text — sidebar items, table rows, card metadata, breadcrumbs. Maps to --font-size-sm." },
+      "sm2":  { "$value": "13px", "$type": "fontSize", "$description": "Deprecated alias for sm (same value). Use sm instead." },
       "base": { "$value": "14px", "$type": "fontSize", "$description": "Default body text size" },
       "md":   { "$value": "15px", "$type": "fontSize" },
       "lg":   { "$value": "16px", "$type": "fontSize" },
