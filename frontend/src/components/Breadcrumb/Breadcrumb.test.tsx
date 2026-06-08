@@ -63,4 +63,16 @@ describe("Breadcrumb", () => {
     render(<Breadcrumb items={[{ label: "Nur-Seite" }]} />);
     expect(screen.queryByText("›")).not.toBeInTheDocument();
   });
+
+  it("renders slash separator when separator='slash' is specified", () => {
+    /** Expects: slash separator replaces the default chevron. */
+    render(
+      <Breadcrumb
+        items={[{ label: "A", onClick: vi.fn() }, { label: "B" }]}
+        separator="slash"
+      />
+    );
+    expect(screen.getByText("/")).toBeInTheDocument();
+    expect(screen.queryByText("›")).not.toBeInTheDocument();
+  });
 });
