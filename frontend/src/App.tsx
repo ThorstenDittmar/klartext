@@ -6,6 +6,7 @@ import WirkgefuegeVorschlag from "./pages/WirkgefuegeVorschlag";
 import CausalModelEditor from "./pages/CausalModelEditor";
 import Login from "./pages/Login";
 import DebugObjectGraph from "./pages/DebugObjectGraph";
+import ManuscriptView from "./pages/ManuscriptView";
 
 // ---------------------------------------------------------------------------
 // App — V2 routing
@@ -29,6 +30,10 @@ export default function App() {
           <Route
             path="/narrative/:narrativeId/wirkgefuege-vorschlag"
             element={<WirkgefuegeVorschlag />}
+          />
+          <Route
+            path="/narrative/:narrativeId/manuscript"
+            element={<ManuscriptView />}
           />
           <Route path="/causal-model/:modelId" element={<CausalModelEditor />} />
           <Route path="/login" element={<Login />} />
