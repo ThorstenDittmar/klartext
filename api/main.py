@@ -19,9 +19,15 @@ from api.exceptions.narrative import (
     NarrativeNotFoundError,
     SceneNotFoundError,
 )
+from api.exceptions.narrative_unit import (
+    NarrativeUnitNotFoundError,
+    NarrativeUnitPersistenceError,
+    NarrativeUnitValidationError,
+)
 from api.routers import claims, narratives
 from api.routers.causal_models import router as causal_models_router
 from api.routers.debug import router as debug_router
+from api.routers.narrative_units import router as narrative_units_router
 from api.routers.users import router as users_router
 from api.services.health_service import HealthChecker, HealthStatus
 
@@ -81,6 +87,30 @@ async def handle_causal_model_not_found(
     return JSONResponse(status_code=404, content={"error": str(exc)})
 
 
+@app.exception_handler(NarrativeUnitValidationError)
+async def handle_narrative_unit_validation_error(
+    request: Request, exc: NarrativeUnitValidationError
+) -> JSONResponse:
+    """Returns 422 when a NarrativeUnit domain invariant is violated."""
+    return JSONResponse(status_code=422, content={"error": str(exc)})
+
+
+@app.exception_handler(NarrativeUnitNotFoundError)
+async def handle_narrative_unit_not_found(
+    request: Request, exc: NarrativeUnitNotFoundError
+) -> JSONResponse:
+    """Returns 404 when a NarrativeUnit cannot be found."""
+    return JSONResponse(status_code=404, content={"error": str(exc)})
+
+
+@app.exception_handler(NarrativeUnitPersistenceError)
+async def handle_narrative_unit_persistence_error(
+    request: Request, exc: NarrativeUnitPersistenceError
+) -> JSONResponse:
+    """Returns 500 when a NarrativeUnit database operation fails."""
+    return JSONResponse(status_code=500, content={"error": str(exc)})
+
+
 @app.exception_handler(NarrativeAnalysisError)
 async def handle_narrative_analysis_error(
     request: Request, exc: NarrativeAnalysisError
@@ -99,6 +129,7 @@ async def handle_narrative_analysis_error(
 
 app.include_router(claims.router, tags=["claims"])
 app.include_router(narratives.router, tags=["narratives"])
+app.include_router(narrative_units_router, tags=["narrative-units"])
 app.include_router(causal_models_router, tags=["causal-models"])
 app.include_router(users_router)
 app.include_router(debug_router)

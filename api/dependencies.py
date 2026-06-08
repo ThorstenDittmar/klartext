@@ -33,6 +33,7 @@ from api.providers.narrative_analysis_provider import NarrativeAnalysisProvider
 from api.repositories.causal_model_repository import CausalModelRepository
 from api.repositories.claim_repository import ClaimRepository
 from api.repositories.narrative_repository import NarrativeRepository
+from api.repositories.narrative_unit_repository import NarrativeUnitRepository
 from api.repositories.supabase_causal_model_repository import SupabaseCausalModelRepository
 from api.repositories.supabase_claim_repository import SupabaseClaimRepository
 from api.repositories.supabase_narrative_repository import SupabaseNarrativeRepository
@@ -46,6 +47,7 @@ from api.services.health_service import HealthChecker, SupabaseHealthChecker
 from api.services.narrative_analysis_service import NarrativeAnalysisService
 from api.services.narrative_import_service import NarrativeImportService
 from api.services.narrative_service import NarrativeService
+from api.services.narrative_unit_service import NarrativeUnitService
 from api.services.user_service import UserService
 from api.services.wirkgefuege_suggestion_service import WirkgefuegeSuggestionService
 
@@ -203,6 +205,24 @@ async def get_debug_graph_service(
         claim_repository=claim_repository,
         causal_model_repository=causal_model_repository,
     )
+
+
+async def get_narrative_unit_repository(
+    client: AsyncClient = Depends(get_supabase_client),
+) -> NarrativeUnitRepository:
+    """Wires SupabaseNarrativeUnitRepository with the injected Supabase client."""
+    from api.repositories.supabase_narrative_unit_repository import (
+        SupabaseNarrativeUnitRepository,  # noqa: PLC0415
+    )
+
+    return SupabaseNarrativeUnitRepository(client=client)
+
+
+async def get_narrative_unit_service(
+    repository: NarrativeUnitRepository = Depends(get_narrative_unit_repository),
+) -> NarrativeUnitService:
+    """Wires NarrativeUnitService with the Supabase repository."""
+    return NarrativeUnitService(repository=repository)
 
 
 async def get_wirkgefuege_suggestion_service(
