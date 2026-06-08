@@ -10,13 +10,14 @@ from __future__ import annotations
 import pytest
 from fastapi.testclient import TestClient
 
-from api.dependencies import get_debug_graph_service
+from api.dependencies import get_debug_graph_service, get_user_service
 from api.main import app
 from api.services.debug_graph_service import DebugGraphService
 from api.tests.fakes.fake_causal_model_repository import FakeCausalModelRepository
 from api.tests.fakes.fake_claim_repository import FakeClaimRepository
 from api.tests.fakes.fake_narrative_repository import FakeNarrativeRepository
 from api.tests.fakes.fake_user_repository import DEFAULT_USER_ID, FakeUserRepository
+from api.tests.fakes.fake_user_service import FakeUserService
 
 # ---------------------------------------------------------------------------
 # Stub service
@@ -40,8 +41,9 @@ def make_debug_graph_service() -> DebugGraphService:
 
 @pytest.fixture(autouse=True)
 def override_debug_service():
-    """Replaces the real DebugGraphService with a fake for every test in this module."""
+    """Replaces DebugGraphService and UserService with fakes for every test in this module."""
     app.dependency_overrides[get_debug_graph_service] = make_debug_graph_service
+    app.dependency_overrides[get_user_service] = lambda: FakeUserService()
     yield
     app.dependency_overrides.clear()
 
