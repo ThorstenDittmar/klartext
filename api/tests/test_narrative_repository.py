@@ -472,11 +472,13 @@ async def test_supabase_narrative_repository_link_to_causal_model() -> None:
 
     saved_narrative = await narrative_repo.save(NarrativeMother.empty())
     saved_model = await causal_model_repo.save(CausalModelMother.empty())
+    assert saved_narrative.id is not None
+    assert saved_model.id is not None
 
     try:
         updated = await narrative_repo.link_to_causal_model(
             saved_narrative.id,
-            saved_model.id,  # type: ignore[arg-type]
+            saved_model.id,
         )
 
         assert updated.causal_model_id == saved_model.id
