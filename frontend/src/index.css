@@ -37,13 +37,13 @@
   --space-12: 48px;
   --space-16: 64px;
 
-  /* Typography */
-  /* Note: values match plan spec (SA-approved); sm/base/md differ from
-     typography.json named scale -- token file should be reconciled. */
-  --font-size-xs:    11px;
-  --font-size-sm:    13px;
-  --font-size-base:  16px;
-  --font-size-prose: 18px;
+  /* Typography -- mirrors design/tokens/typography.json */
+  /* Note: --font-size-base=16px maps to typography.json font.size.lg (16px).
+     --radius-md=8px maps to radii.json radius.lg (8px). Named differently by design intent. */
+  --font-size-xs:    11px;  /* typography.json font.size.xs */
+  --font-size-sm:    13px;  /* typography.json font.size.sm (synced) */
+  --font-size-base:  16px;  /* typography.json font.size.lg -- default body size */
+  --font-size-prose: 18px;  /* typography.json font.size.xl -- prose reading size */
   --font-family-prose: Georgia, 'Times New Roman', serif;
   /* Line heights -- mirrors typography.json lineHeight scale + prose extension */
   --line-height-tight:   1.3;
@@ -52,8 +52,7 @@
   --line-height-prose:   1.8;
 
   /* Shape */
-  /* Note: --radius-md=8px matches plan spec; radius.md in tokens=6px.
-     Token file should be reconciled. */
+  /* Note: --radius-md=8px maps to radii.json radius.lg (8px). */
   --radius-sm: 4px;
   --radius-md: 8px;
 
