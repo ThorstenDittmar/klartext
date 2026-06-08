@@ -6,6 +6,8 @@ No API calls — the anthropic client is not used by these methods.
 
 from __future__ import annotations
 
+from typing import Any
+
 import pytest
 
 from api.providers.claude_narrative_analysis_provider import ClaudeNarrativeAnalysisProvider
@@ -74,7 +76,7 @@ def test_parse_actor_multiple_occurrences() -> None:
 def test_parse_actor_empty_occurrences_for_implicit_group() -> None:
     """Expects an empty occurrences list when actor_type is group with no text reference."""
     provider = make_provider()
-    record = {
+    record: dict[str, Any] = {
         "label": "Klimaaktivisten",
         "actor_type": "group",
         "occurrences": [],
@@ -144,7 +146,7 @@ def test_parse_actor_skips_non_dict_occurrence_entries() -> None:
 def test_parse_actor_falls_back_to_abstract_entity_for_unknown_type() -> None:
     """Expects actor_type to fall back to 'abstract_entity' for unrecognised values."""
     provider = make_provider()
-    record = {
+    record: dict[str, Any] = {
         "label": "Unbekannt",
         "actor_type": "alien_species",
         "occurrences": [],
@@ -159,7 +161,11 @@ def test_parse_actor_falls_back_to_abstract_entity_for_unknown_type() -> None:
 def test_parse_actor_uses_unknown_label_as_fallback() -> None:
     """Expects label to fall back to 'Unknown' when missing from the record."""
     provider = make_provider()
-    record = {"actor_type": "individual", "occurrences": [], "entity_suggestion": None}
+    record: dict[str, Any] = {
+        "actor_type": "individual",
+        "occurrences": [],
+        "entity_suggestion": None,
+    }
 
     actor = provider._parse_actor(record)
 
@@ -364,7 +370,7 @@ async def test_analyse_raises_error_when_stop_reason_is_max_tokens() -> None:
     mock_client.messages = MagicMock()
     mock_client.messages.create = AsyncMock(return_value=mock_message)
 
-    provider = ClaudeNarrativeAnalysisProvider(client=mock_client)  # type: ignore[arg-type]
+    provider = ClaudeNarrativeAnalysisProvider(client=mock_client)
     narrative = Narrative(id="test", title="Test")
     narrative.add_scene(Scene(id="s1", title="Szene 1", text="Ein Text.", position=1))
 
