@@ -10,7 +10,7 @@ from __future__ import annotations
 import pytest
 
 from api.models.claim import Claim, ClaimStatus, ClaimType
-from api.models.narrative import Actor, Narrative, Scene
+from api.models.narrative import Actor, ActorType, Narrative, Scene
 from api.services.debug_graph_service import DebugGraphService
 from tests.fakes.fake_causal_model_repository import FakeCausalModelRepository
 from tests.fakes.fake_claim_repository import FakeClaimRepository
@@ -44,7 +44,7 @@ async def _make_service_with_narrative(
     if with_actor:
         await narrative_repo.add_actor(
             saved.id,  # type: ignore[arg-type]
-            Actor(id=None, label="Maria", actor_type="individual", notes=None),
+            Actor(id=None, label="Maria", actor_type=ActorType.INDIVIDUAL, notes=None),
         )
 
     if with_claim:
