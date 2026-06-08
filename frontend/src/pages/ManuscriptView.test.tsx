@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { describe, it, expect, vi, beforeEach } from "vitest";
@@ -308,5 +308,65 @@ describe("ManuscriptView", () => {
 
     // BottomBar renders AutosaveIndicator which shows "Nicht gespeichert" for "unsaved"
     expect(await screen.findByText(/Nicht gespeichert/i)).toBeInTheDocument();
+  });
+
+  // ── Autosave debounce ─────────────────────────────────────────────────────
+
+  it("autosave calls updateNarrativeUnit after debounce", async () => {
+    /** Expects: updateNarrativeUnit is NOT called immediately on keystroke, but IS called
+     *  after the 1.5s debounce window has elapsed. */
+    const { getNarrativeTree, updateNarrativeUnit } = await import("../lib/api");
+    vi.mocked(getNarrativeTree).mockResolvedValueOnce({
+      narrative_id: "nar-001",
+      root: TREE_WITH_SCENE,
+    });
+
+    renderManuscript();
+    // Wait with real timers until DOM is ready (findBy* uses waitFor with setTimeout).
+    const textarea = await screen.findByPlaceholderText("Schreib hier…");
+
+    // Switch to fake timers only after DOM is stable.
+    // Use fireEvent instead of userEvent to avoid internal timer usage.
+    vi.useFakeTimers();
+    fireEvent.change(textarea, { target: { value: "Hallo WeltX" } });
+
+    expect(vi.mocked(updateNarrativeUnit)).not.toHaveBeenCalled(); // vor debounce
+
+    // act wraps timer advancement so React flushes all pending state updates
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1500);
+    });
+
+    expect(vi.mocked(updateNarrativeUnit)).toHaveBeenCalledWith(
+      "frag-1",
+      expect.objectContaining({ content: "Hallo WeltX" })
+    );
+    vi.useRealTimers();
+  });
+
+  it("autosave failure resets saveStatus to unsaved", async () => {
+    /** Expects: when updateNarrativeUnit rejects after the debounce, the AutosaveIndicator
+     *  shows "Nicht gespeichert" (status=unsaved). */
+    const { getNarrativeTree, updateNarrativeUnit } = await import("../lib/api");
+    vi.mocked(getNarrativeTree).mockResolvedValueOnce({
+      narrative_id: "nar-001",
+      root: TREE_WITH_SCENE,
+    });
+    vi.mocked(updateNarrativeUnit).mockRejectedValueOnce(new Error("Timeout"));
+
+    renderManuscript();
+    // Wait with real timers until DOM is ready.
+    const textarea = await screen.findByPlaceholderText("Schreib hier…");
+
+    vi.useFakeTimers();
+    fireEvent.change(textarea, { target: { value: "Hallo WeltX" } });
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1500);
+    });
+
+    // After the rejected promise flushes, saveStatus should be "unsaved"
+    expect(screen.getByText(/Nicht gespeichert/i)).toBeInTheDocument();
+    vi.useRealTimers();
   });
 });
