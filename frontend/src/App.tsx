@@ -5,6 +5,7 @@ import NarrativeAnalyse from "./pages/NarrativeAnalyse";
 import WirkgefuegeVorschlag from "./pages/WirkgefuegeVorschlag";
 import CausalModelEditor from "./pages/CausalModelEditor";
 import Login from "./pages/Login";
+import DebugObjectGraph from "./pages/DebugObjectGraph";
 
 // ---------------------------------------------------------------------------
 // App — V2 routing
@@ -14,6 +15,7 @@ import Login from "./pages/Login";
 // Screen 2: /narrative/:narrativeId/analyse  → NarrativeAnalyse
 // Screen 3: /narrative/:narrativeId/wirkgefuege-vorschlag → WirkgefuegeVorschlag
 // Screen 4: /causal-model/:modelId           → CausalModelEditor
+// Debug:    /debug/objects                   → DebugObjectGraph (not in nav)
 // ---------------------------------------------------------------------------
 
 export default function App() {
@@ -30,6 +32,7 @@ export default function App() {
           />
           <Route path="/causal-model/:modelId" element={<CausalModelEditor />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/debug/objects" element={<DebugObjectGraph />} />
         </Routes>
       </div>
     </BrowserRouter>

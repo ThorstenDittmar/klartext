@@ -181,6 +181,28 @@ export interface CausalModel {
   linked_narratives: LinkedNarrative[];
 }
 
+// ---------------------------------------------------------------------------
+// Debug object graph
+// ---------------------------------------------------------------------------
+
+export interface DebugNode {
+  id: string;
+  class_name: string;
+  fields: Record<string, unknown>;
+}
+
+export interface DebugEdge {
+  id: string;
+  source: string;
+  target: string;
+  label: string;
+}
+
+export interface DebugGraphResponse {
+  nodes: DebugNode[];
+  edges: DebugEdge[];
+}
+
 export const api = {
   causalModels: {
     list: () => request<CausalModel[]>("/causal-models"),
@@ -307,5 +329,8 @@ export const api = {
         method: "POST",
         body: JSON.stringify({ wirkgefuege_ref }),
       }),
+  },
+  debug: {
+    getObjectGraph: () => request<DebugGraphResponse>("/debug/object-graph"),
   },
 };

@@ -157,6 +157,24 @@ CLAIMS_URL = f"/narratives/{NARRATIVE_ID}/scenes/{SCENE_ID}/claims"
 
 
 # ---------------------------------------------------------------------------
+# Health endpoint
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_scene_claims_health_returns_200() -> None:
+    """Expects GET /claims/health to return HTTP 200 with status ok.
+
+    Scene claims endpoints are registered in the claims router, so the
+    shared /claims/health endpoint covers their infrastructure health.
+    """
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.get("/claims/health")
+    assert response.status_code == 200
+    assert response.json()["status"] == "ok"
+
+
+# ---------------------------------------------------------------------------
 # POST extract-claims – happy path
 # ---------------------------------------------------------------------------
 

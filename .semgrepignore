@@ -1,0 +1,7 @@
+# Semgrep ignore configuration for klartext.
+# Semgrep's built-in defaults exclude tests/ directories.
+# We explicitly un-ignore fakes/ so that klartext-fake-silent-constant.yaml
+# can scan Fake* classes for silent placeholder returns.
+
+# Un-ignore fake repositories and providers used in tests
+!api/tests/fakes/

@@ -6,6 +6,8 @@ No API calls — the anthropic client is not used by these methods.
 
 from __future__ import annotations
 
+from typing import Any
+
 import pytest
 
 from api.providers.claude_narrative_analysis_provider import ClaudeNarrativeAnalysisProvider
@@ -74,7 +76,7 @@ def test_parse_actor_multiple_occurrences() -> None:
 def test_parse_actor_empty_occurrences_for_implicit_group() -> None:
     """Expects an empty occurrences list when actor_type is group with no text reference."""
     provider = make_provider()
-    record = {
+    record: dict[str, Any] = {
         "label": "Klimaaktivisten",
         "actor_type": "group",
         "occurrences": [],
@@ -144,7 +146,7 @@ def test_parse_actor_skips_non_dict_occurrence_entries() -> None:
 def test_parse_actor_falls_back_to_abstract_entity_for_unknown_type() -> None:
     """Expects actor_type to fall back to 'abstract_entity' for unrecognised values."""
     provider = make_provider()
-    record = {
+    record: dict[str, Any] = {
         "label": "Unbekannt",
         "actor_type": "alien_species",
         "occurrences": [],
@@ -159,7 +161,11 @@ def test_parse_actor_falls_back_to_abstract_entity_for_unknown_type() -> None:
 def test_parse_actor_uses_unknown_label_as_fallback() -> None:
     """Expects label to fall back to 'Unknown' when missing from the record."""
     provider = make_provider()
-    record = {"actor_type": "individual", "occurrences": [], "entity_suggestion": None}
+    record: dict[str, Any] = {
+        "actor_type": "individual",
+        "occurrences": [],
+        "entity_suggestion": None,
+    }
 
     actor = provider._parse_actor(record)
 
@@ -280,6 +286,96 @@ def test_parse_claim_clamps_confidence_below_zero() -> None:
     claim = provider._parse_claim(record)
 
     assert claim.confidence == pytest.approx(0.0)
+
+
+def test_parse_actor_named_institution_with_direct_text_occurrence() -> None:
+    """Expects a named institution ('die Regierung') to be parsed with actor_type 'institution'.
+
+    Verifies that its direct text occurrence is correctly extracted from the record.
+    """
+    provider = make_provider()
+    record = {
+        "label": "Die Regierung",
+        "actor_type": "institution",
+        "occurrences": [
+            {"scene_title": "Einleitung", "start_offset": 0, "end_offset": 13},
+        ],
+        "entity_suggestion": "government",
+    }
+
+    actor = provider._parse_actor(record)
+
+    assert actor.label == "Die Regierung"
+    assert actor.actor_type == "institution"
+    assert len(actor.occurrences) == 1
+    assert actor.occurrences[0].scene_title == "Einleitung"
+    assert actor.occurrences[0].start_offset == 0
+    assert actor.occurrences[0].end_offset == 13
+    assert actor.entity_suggestion == "government"
+
+
+def test_parse_actor_pronoun_occurrences_are_included_as_regular_occurrences() -> None:
+    """Expects pronoun references ('sie', 'er') to appear as regular occurrences.
+
+    They should appear alongside the direct name reference of the same actor.
+    """
+    provider = make_provider()
+    record = {
+        "label": "Die Regierung",
+        "actor_type": "institution",
+        "occurrences": [
+            # Direct name reference
+            {"scene_title": "Szene 1", "start_offset": 0, "end_offset": 13},
+            # Pronoun "sie" referring back to "Die Regierung"
+            {"scene_title": "Szene 1", "start_offset": 42, "end_offset": 45},
+            # Pronoun "sie" in a different scene
+            {"scene_title": "Szene 2", "start_offset": 8, "end_offset": 11},
+        ],
+        "entity_suggestion": "government",
+    }
+
+    actor = provider._parse_actor(record)
+
+    assert len(actor.occurrences) == 3
+    assert actor.occurrences[0].start_offset == 0  # direct name
+    assert actor.occurrences[1].start_offset == 42  # pronoun in scene 1
+    assert actor.occurrences[2].start_offset == 8  # pronoun in scene 2
+    assert actor.occurrences[2].scene_title == "Szene 2"
+
+
+@pytest.mark.asyncio
+async def test_analyse_raises_error_when_stop_reason_is_max_tokens() -> None:
+    """Expects NarrativeAnalysisError when Claude stops due to max_tokens.
+
+    When the model hits its output token limit the response JSON is truncated.
+    The provider must detect this via stop_reason and raise a meaningful error
+    instead of letting the JSON parse error bubble up with a cryptic message.
+    """
+    from unittest.mock import AsyncMock, MagicMock
+
+    import anthropic
+
+    from api.exceptions.narrative import NarrativeAnalysisError
+    from api.models.narrative import Narrative, Scene
+
+    mock_message = MagicMock()
+    mock_message.stop_reason = "max_tokens"
+    mock_message.content = [
+        MagicMock(
+            spec=anthropic.types.TextBlock,
+            text='{"actors": [{"label": "Mara", "actor_type": "individual", "occurrences": [',
+        )
+    ]
+    mock_client = MagicMock()
+    mock_client.messages = MagicMock()
+    mock_client.messages.create = AsyncMock(return_value=mock_message)
+
+    provider = ClaudeNarrativeAnalysisProvider(client=mock_client)
+    narrative = Narrative(id="test", title="Test")
+    narrative.add_scene(Scene(id="s1", title="Szene 1", text="Ein Text.", position=1))
+
+    with pytest.raises(NarrativeAnalysisError, match="max_tokens"):
+        await provider.analyse(narrative)
 
 
 def test_parse_claim_uses_text_as_label_fallback() -> None:

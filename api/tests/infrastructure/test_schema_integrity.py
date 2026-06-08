@@ -100,6 +100,21 @@ async def test_postgrest_resolves_narrative_actors_count_on_narrative() -> None:
 
 @pytest.mark.integration
 @pytest.mark.asyncio
+async def test_narrative_units_health_endpoint_returns_ok() -> None:
+    """GET /narrative-units/health returns 200 for the narrative-units router."""
+    from httpx import ASGITransport, AsyncClient
+
+    from api.main import app
+
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.get("/narrative-units/health")
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "ok"
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
 async def test_claims_narrative_id_column_exists() -> None:
     """Verifies that claims.narrative_id column was added by the migration.
 

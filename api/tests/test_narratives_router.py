@@ -1002,8 +1002,8 @@ class FakeWirkgefuegeSuggestionService:
 @pytest.mark.asyncio
 async def test_analyse_narrative_returns_actors_and_claims() -> None:
     """Expects 200 with actors and claims when the service succeeds."""
-    app.dependency_overrides[get_narrative_analysis_service] = (
-        lambda: FakeNarrativeAnalysisService()
+    app.dependency_overrides[get_narrative_analysis_service] = lambda: (
+        FakeNarrativeAnalysisService()
     )
     try:
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
@@ -1022,8 +1022,8 @@ async def test_analyse_narrative_returns_actors_and_claims() -> None:
 @pytest.mark.asyncio
 async def test_analyse_narrative_serializes_actor_occurrences() -> None:
     """Expects actor occurrences to contain scene_title, start_offset and end_offset fields."""
-    app.dependency_overrides[get_narrative_analysis_service] = (
-        lambda: FakeNarrativeAnalysisService()
+    app.dependency_overrides[get_narrative_analysis_service] = lambda: (
+        FakeNarrativeAnalysisService()
     )
     try:
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
@@ -1042,8 +1042,8 @@ async def test_analyse_narrative_serializes_actor_occurrences() -> None:
 @pytest.mark.asyncio
 async def test_analyse_narrative_serializes_claim_offsets() -> None:
     """Expects claims to include scene_title, start_offset and end_offset when present."""
-    app.dependency_overrides[get_narrative_analysis_service] = (
-        lambda: FakeNarrativeAnalysisService()
+    app.dependency_overrides[get_narrative_analysis_service] = lambda: (
+        FakeNarrativeAnalysisService()
     )
     try:
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
@@ -1098,14 +1098,32 @@ async def test_analyse_narrative_returns_404_for_unknown_narrative() -> None:
     """Expects 404 when the service raises NarrativeNotFoundError."""
     from api.exceptions.narrative import NarrativeNotFoundError
 
-    app.dependency_overrides[get_narrative_analysis_service] = lambda: (
-        FakeNarrativeAnalysisService(raise_on_analyse=NarrativeNotFoundError("not found"))
+    app.dependency_overrides[get_narrative_analysis_service] = lambda: FakeNarrativeAnalysisService(
+        raise_on_analyse=NarrativeNotFoundError("not found")
     )
     try:
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
             response = await client.post("/narratives/does-not-exist/analyse")
 
         assert response.status_code == 404
+    finally:
+        clear_overrides()
+
+
+@pytest.mark.asyncio
+async def test_analyse_narrative_returns_503_on_analysis_error() -> None:
+    """Expects 503 when the service raises NarrativeAnalysisError (e.g. Claude truncation)."""
+    from api.exceptions.narrative import NarrativeAnalysisError
+
+    app.dependency_overrides[get_narrative_analysis_service] = lambda: FakeNarrativeAnalysisService(
+        raise_on_analyse=NarrativeAnalysisError("Claude API returned invalid JSON")
+    )
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.post(f"/narratives/{SAVED_NARRATIVE_ID}/analyse")
+
+        assert response.status_code == 503
+        assert "error" in response.json()
     finally:
         clear_overrides()
 
@@ -1118,8 +1136,8 @@ async def test_analyse_narrative_returns_404_for_unknown_narrative() -> None:
 @pytest.mark.asyncio
 async def test_suggest_wirkgefuege_returns_slots_and_relations() -> None:
     """Expects 200 with suggested slots and relations when the service succeeds."""
-    app.dependency_overrides[get_wirkgefuege_suggestion_service] = (
-        lambda: FakeWirkgefuegeSuggestionService()
+    app.dependency_overrides[get_wirkgefuege_suggestion_service] = lambda: (
+        FakeWirkgefuegeSuggestionService()
     )
     try:
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:

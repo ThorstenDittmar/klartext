@@ -33,6 +33,7 @@ from api.providers.narrative_analysis_provider import NarrativeAnalysisProvider
 from api.repositories.causal_model_repository import CausalModelRepository
 from api.repositories.claim_repository import ClaimRepository
 from api.repositories.narrative_repository import NarrativeRepository
+from api.repositories.narrative_unit_repository import NarrativeUnitRepository
 from api.repositories.supabase_causal_model_repository import SupabaseCausalModelRepository
 from api.repositories.supabase_claim_repository import SupabaseClaimRepository
 from api.repositories.supabase_narrative_repository import SupabaseNarrativeRepository
@@ -41,10 +42,12 @@ from api.repositories.user_repository import UserRepository
 from api.services.causal_model_service import CausalModelService
 from api.services.claim_extractor_service import ClaimExtractorService
 from api.services.claim_service import ClaimService
+from api.services.debug_graph_service import DebugGraphService
 from api.services.health_service import HealthChecker, SupabaseHealthChecker
 from api.services.narrative_analysis_service import NarrativeAnalysisService
 from api.services.narrative_import_service import NarrativeImportService
 from api.services.narrative_service import NarrativeService
+from api.services.narrative_unit_service import NarrativeUnitService
 from api.services.user_service import UserService
 from api.services.wirkgefuege_suggestion_service import WirkgefuegeSuggestionService
 
@@ -187,6 +190,39 @@ async def get_user_service(
 ) -> UserService:
     """Wires UserRepository into UserService."""
     return UserService(repository=repository)
+
+
+async def get_debug_graph_service(
+    user_repository: UserRepository = Depends(get_user_repository),
+    narrative_repository: NarrativeRepository = Depends(get_narrative_repository),
+    claim_repository: ClaimRepository = Depends(get_claim_repository),
+    causal_model_repository: CausalModelRepository = Depends(get_causal_model_repository),
+) -> DebugGraphService:
+    """Wires all repositories into DebugGraphService."""
+    return DebugGraphService(
+        user_repository=user_repository,
+        narrative_repository=narrative_repository,
+        claim_repository=claim_repository,
+        causal_model_repository=causal_model_repository,
+    )
+
+
+async def get_narrative_unit_repository(
+    client: AsyncClient = Depends(get_supabase_client),
+) -> NarrativeUnitRepository:
+    """Wires SupabaseNarrativeUnitRepository with the injected Supabase client."""
+    from api.repositories.supabase_narrative_unit_repository import (
+        SupabaseNarrativeUnitRepository,  # noqa: PLC0415
+    )
+
+    return SupabaseNarrativeUnitRepository(client=client)
+
+
+async def get_narrative_unit_service(
+    repository: NarrativeUnitRepository = Depends(get_narrative_unit_repository),
+) -> NarrativeUnitService:
+    """Wires NarrativeUnitService with the Supabase repository."""
+    return NarrativeUnitService(repository=repository)
 
 
 async def get_wirkgefuege_suggestion_service(
