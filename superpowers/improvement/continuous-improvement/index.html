@@ -1782,11 +1782,21 @@ Wirkmodell.
 </blockquote>
 <h4 id="problem-map-rca-first-draft-2026-06-09">Problem map — RCA first draft (2026-06-09)<a class="headerlink" href="#problem-map-rca-first-draft-2026-06-09" title="Permanent link">&para;</a></h4>
 <blockquote>
-<p><strong>STATUS: Phase 1 complete (2026-06-09).</strong> Six root causes (RC1–RC6), user-validated and confirmed by a
-<strong>discipline cross-check (8/8, recorded per discipline)</strong>. The cross-check produced: RC6 new (tacit
-assumptions), RC4 + RC5 extended (lifecycle / observability), RC3 sharpened (shared interfaces) — no
-<em>unexplained</em> symptom. Parked as forward questions (not faults): DevOps↔UX channel, Technical Writer,
-B2 schema check. <strong>All four Phase-1 DoD criteria met.</strong></p>
+<p><strong>STATUS: Phase 1 complete (2026-06-09).</strong> Six root causes (RC1–RC6), user-validated and confirmed across
+<strong>all nine domain disciplines, recorded per discipline</strong> — eight H01 participants plus the Community Expert
+as a <strong>validated exclusion</strong> (not a sprint participant; the RC model was checked against its domain
+retroactively and fits). The cross-check produced: RC6 new (tacit assumptions), RC4 + RC5 extended
+(lifecycle / observability), RC3 sharpened (shared interfaces) — no <em>unexplained</em> symptom. Parked as forward
+questions (not faults): DevOps↔UX channel, Technical Writer, B2 schema check. <strong>All four Phase-1 DoD criteria
+met.</strong></p>
+<p><strong>Correction (2026-06-09) — a silent gap in our own RCA, caught and closed.</strong> The cross-check was first
+labelled "8/8" but silently omitted the Community Expert (the 9th domain). Community had been dormant since
+2026-06-06 (pre-sprint) — a non-participant — but that was never made <em>explicit</em>: it was dropped, not
+decided. A live instance of exactly what this initiative fights: a silent completeness gap + an unsurfaced
+assumption (RC6 / the DoD rule "no gap stays silent"). The user caught it. <strong>Closed (2026-06-09):</strong> Community
+queried directly, responded — confirms all six RCs against its domain, no unexplained symptom, recorded as an
+explicit validated exclusion (9th row below). <em>(Deeper remediation: a maintained team list makes such
+completeness mechanically checkable — see Phase 2, "Team list = Artifact Register pilot".)</em></p>
 </blockquote>
 <p>Data basis: Coverage-Tracker T1–T6, inventory categories A–F, triage findings (all in <code>PENDING.md</code>). Goal:
 not to manage ~30 symptoms but to find the <em>few</em> drivers beneath them.</p>
@@ -1901,6 +1911,11 @@ observability). Three disciplines deepened the root independently.</p>
 <td>✅ RCs (with correction)</td>
 <td>Correction: "Hannibal too deep" → <strong>RC3</strong> (role/owner discipline, boundary not felt → also RC2), <em>not</em> RC5. <strong>Q2 finding (strong):</strong> <em>tacit assumptions at seams are never SURFACED</em> — the 422 assumption was "unborn", not homeless. RC1 presupposes existence; here the step BEFORE is missing (make assumptions explicit + checkable before building). Candidate RC6.</td>
 </tr>
+<tr>
+<td>Community</td>
+<td>✅ RCs confirmed (validated exclusion)</td>
+<td><strong>Not a H01 participant</strong> (last active 2026-06-06, pre-sprint) — no direct experience base; recorded as an <em>explicit, validated exclusion</em>, not a gap. Reviewed the six RCs retroactively against its domain (<code>api/*/user*</code>) and confirms all six; <strong>no unexplained symptom</strong>. Domain note: <strong>RC6 hits hardest</strong> — the auth flow carries many tacit assumptions (required registration fields, expected frontend error codes, session handling), none formulated as an explicit contract.</td>
+</tr>
 </tbody>
 </table>
 <h3 id="phase-2-target-way-of-working-method-comparison-status-in-progress">Phase 2 — Target way of working + method comparison  ·  <em>Status: in progress</em><a class="headerlink" href="#phase-2-target-way-of-working-method-comparison-status-in-progress" title="Permanent link">&para;</a></h3>
@@ -1998,6 +2013,18 @@ a potential <strong>central instrument</strong>, not a side list. Established pa
 CMDB-lite).
 <strong>Open:</strong> columns final · location · who maintains · update ritual (the register itself must be hardened against
 "stale" — otherwise it drifts, RC4 on itself).</p>
+<p><strong>Team list = pilot of the Artifact Register</strong> <em>(decided 2026-06-09):</em>
+A dedicated, OE-maintained <strong>team roster</strong> (agent · domain · owner · session-id · status [active/dormant/
+offboarded] · <code>start.sh</code>/<code>claude.md</code> paths), used by all for <strong>broadcasting and expert search</strong>, updated as the
+<strong>on/offboarding ritual</strong> (integrates with the <code>agent-onboarding</code> skill). In Essence terms it is the work
+product of the <strong>Team Alpha</strong>.
+<strong>Effect:</strong> addresses RC1 (the "team truth" had no checkable home — that is <em>why</em> the Community Expert slipped
+through), RC4 (reconciles the <em>declared</em> roster in <code>CLAUDE.md</code> against the <em>running</em> state in <code>list_sessions</code> —
+the two drift, as the dormant Community session showed), RC3 (domain→owner for routing).
+<strong>Why it matters here:</strong> the roster is <strong>Artifact-Register-shaped</strong> (type/home/owner/consumer/lifecycle/ritual)
+→ designated the <strong>pilot</strong> that validates the register design, and a strong <strong>Walking Skeleton candidate</strong>
+(small, real, produces an artifact, exercises the on/offboarding ritual). <strong>Build deferred to Phase 2 with the
+register</strong> — not now, to avoid pre-empting the register and to avoid parallel-thread tangling (risk #1).</p>
 <p><strong>Pulled-forward findings (2026-06-09) — context / memory management:</strong>
 From a first market research (Anthropic "Effective context engineering"; JetBrains Research; Claude Code
 docs/guides), triggered by the compaction concern:
