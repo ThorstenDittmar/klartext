@@ -5,6 +5,9 @@
 - Communication with the team in German
 - User-facing strings are externalized via i18n (`t('key')`) — never hardcoded in any language.
   See `design/i18n.md` for rules. Backend error messages that reach the API response: German.
+- Documentation (technical/process/method docs): English — ADRs, skills, method docs under `docs/superpowers/`.
+  Scope: development and method documentation only. Product-facing content (e.g. *Wirkgefüge*, domain terms) keeps German.
+  Convention for now; candidate for future lint enforcement.
 
 ## Test-Driven Development
 Use the `tdd` skill. It extends the `superpowers:test-driven-development` skill with project-specific standards.
@@ -405,6 +408,21 @@ Project-level baseline permissions (all agents): `.claude/settings.json`
 | Causal Model Expert | Wirkgefüge backend (`api/*/causal_model*`) |
 | Audit Expert | Verification procedures, claim extraction (`api/providers/`) |
 | Community Expert | User/community backend (`api/*/user*`) |
+
+### Way of Working — our method (SEMAT/Essence)
+
+Our way of working is being forged as an explicit, evolving **method**, using **Essence/SEMAT** as the
+meta-language. Before proposing changes to how we work, read the method document set under
+`docs/superpowers/improvement/`:
+
+- `semat-definition.md` — self-contained reference for the meta-language (Kernel, Alphas, Practices, Methods)
+- `semat-glossary.md` — our process/method vocabulary (the terms to use)
+- `practices/` — our Practices (composable how-tos; e.g. `improvement-step.md`, `document-scoping.md`)
+- `continuous-improvement.md` — our decisions, rationale, RCA and plan
+
+Having read these, communicate with OE about the way of working **using this vocabulary** (Alphas, states,
+Practices, Methods) and propose changes that slot into the Kernel rather than reinventing it.
+Owner of the method: OE.
 
 ### Domain-Respekt — gilt für alle Agents
 
