@@ -74,6 +74,16 @@ DevOps ist nicht involviert — kein Briefing nötig.
 
 ## Koordination
 
+### Mit Hannibal — Merge-Protokoll
+Hannibal erteilt Merge-Aufträge via `send_message`. Ablauf:
+1. CI-Status prüfen (`gh pr checks <nr>`) — alle Checks müssen grün sein, inkl. Integration Tests
+2. Bei pending: warten (`until`-Loop), nie blind mergen
+3. Mergen: `gh pr merge <nr> --merge --delete-branch`
+4. Hannibal per `send_message` mit Commit-Zeitstempel bestätigen
+
+Integration Tests laufen manchmal doppelt (alter + neuer Push-Run) — der **neueste Run** ist maßgeblich.
+Ein noch-pending älterer Run ist kein Blocker wenn der neueste Run bereits grün ist.
+
 ### Mit System Architect — Regel-Enforcement
 SA definiert neue Regeln (Semgrep, tach, ruff) → ich verdrahte technisch (CI, pre-commit, pyproject.toml).
 Auslöser: SA brieft mich mit konkretem Vorhaben und Begründung. Ich entscheide über Umsetzung.
@@ -96,6 +106,42 @@ Ich aktualisiere `.claude/settings.json` und bestätige.
 |---|---|
 | `job-description` | Eigene Rolle erklären |
 | `pre-compact` | Vor /compact |
+
+## .claude/settings.json — Permissions-Format
+
+MCP-Tool-Permissions unterstützen **keine URL-Patterns in Klammern**. Korrekte Syntax:
+```json
+"mcp__Claude_in_Chrome__navigate"       // einzelnes Tool
+"mcp__Claude_in_Chrome__*"              // alle Tools eines MCP-Servers
+```
+Falsch (wird vom Schema abgelehnt): `"mcp__Claude_in_Chrome__navigate(http://localhost:5173/*)"`.
+
+`PreToolUse`-Hooks in `settings.json` gelten für alle Sessions im Projektverzeichnis (inkl. Sub-Agents).
+Sie greifen NICHT bei direkten git-Operationen außerhalb von Claude Code.
+
+## Notfall — Working-Tree-Verlustschutz (Salvage-Branch)
+
+Wenn viel uncommitted Arbeit im Working Tree liegt und Verlustrisiko besteht:
+
+```bash
+git checkout -b salvage/<datum>-working-tree   # Working Tree unverändert
+git add -A                                      # alles stagen
+git reset HEAD '<datei-die-nicht-rein-soll>'    # Ausnahmen rausnehmen
+git commit -m "chore(salvage): capture uncommitted working tree state"
+git push origin salvage/<datum>-working-tree    # Remote-Backup
+```
+
+`git checkout -b` berührt den Working Tree nicht — der neue Branch erbt den aktuellen Stand.
+Danach kann kontrolliert abgetragen werden (cherry-pick, PR pro Domain).
+
+## Bekannte Infrastruktur-Lücken (Stand 2026-06-09)
+
+Warten auf User-Freigabe, noch nicht umgesetzt:
+- **Branch-Protection auf `main`**: Required Status Checks noch nicht aktiviert — Merges ohne CI möglich
+- **`ANTHROPIC_API_KEY` als GitHub Secret**: Fehlt — AI-bezogene CI-Jobs scheitern still
+- **4 Skills nur lokal**: `pre-compact`, `qa-retro`, `qa-review`, `systematic-debugging`, `tdd` existieren nur in `~/.claude/skills/`, nicht versioniert
+- **`launch.json` ins Repo**: `~/.claude/launch.json` enthält projekt-spezifischen Pfad, gehört nach `setup.sh`-Installation
+- **`.semgrep/rules/` nicht unterteilt**: Kein `qa/`- und `arch/`-Subdir — alle Rules liegen flach
 
 ## Erweiterung durch DevOps Agent
 

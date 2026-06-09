@@ -108,6 +108,46 @@ Impact:    Causal Model Domain
 | `job-description` | Eigene Rolle erklären |
 | `pre-compact` | Vor /compact |
 
+## Bekannte Lücken (aus H01 Post-Mortem)
+
+### Health-Infra-Test fehlt
+`api/tests/infrastructure/` enthält keinen Test für `GET /causal-models/health`.
+Dieser Test muss ergänzt werden bevor der nächste Sprint beginnt.
+Owner: Causal Model Expert + QA
+
+---
+
+## Offene Architektur-Fragen (SA-Eskalation ausstehend)
+
+### Cross-Domain-Abhängigkeit WirkgefuegeSuggestionService
+`wirkgefuege_suggestion_service.py` injiziert aktuell direkt:
+- `NarrativeRepository` (Narrative Expert Domain)
+- `ClaimRepository` (Audit Domain)
+
+Keine SA-Freigabe vorhanden. **Keine weiteren cross-domain Repository-Dependencies
+hinzufügen bis SA entschieden hat** — direkter Zugriff OK oder Cross-Domain-Port erforderlich?
+
+---
+
+## Coding-Patterns
+
+### `assert X is not None` nach DB-Save in Integration-Tests
+Nach `repo.save()` / `repo.add_*()` immer `assert result.id is not None` schreiben,
+bevor `result.id` an weitere Calls übergeben wird.
+Kein `# type: ignore[arg-type]` als Workaround.
+
+```python
+# correct
+cm = await repo.save(CausalModelMother.empty())
+assert cm.id is not None
+source = await repo.add_slot(cm.id, Slot.create(...))
+
+# wrong — # type: ignore[arg-type] maskiert das Problem nur
+source = await repo.add_slot(cm.id, ...)  # type: ignore[arg-type]
+```
+
+---
+
 ## Erweiterung durch Causal Model Expert Agent
 
 Causal Model Expert ergänzt hier:

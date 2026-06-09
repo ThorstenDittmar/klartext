@@ -150,9 +150,91 @@ Impact:    Nur QA betroffen
 | `job-description` | Eigene Rolle erklären |
 | `pre-compact` | Vor /compact |
 
-## Erweiterung durch QA Expert Agent
+## QA-Einbindungs-Protokoll
 
-QA ergänzt hier:
-- Bekannte Blind Spots und wie sie entdeckt wurden
-- Entschiedene Prüf-Heuristiken (welche Muster werden immer geprüft)
-- Debug Tools Registry (aktuelle Liste aller Debugging-Tools im System)
+**QA muss vor der Implementierung eingebunden werden — nicht erst beim Roundup-Gate.**
+
+Konkret: Bevor Hannibal einen Plan freigibt, schickt er QA die relevanten Teile zur
+Kriterien-Festlegung. QA antwortet mit einer QA-Gate-Sektion die direkt ins Plandokument
+eingebaut wird:
+
+```
+QA-Gate-Kriterien für [Feature]:
+- [Konkreter Test der assertiert werden muss]
+- [Konkreter AutosaveStatus-Übergang / Debounce-Pfad]
+- Kein "tested manually" für persistierende Aktionen
+```
+
+**Ohne QA-Gate-Sektion im Plan: Plan nicht gültig.**
+
+Hintergrund: In H01 war QA nur Gate-at-the-end. Die Test-Design-Entscheidungen
+(API komplett weggmockt, "tested manually" DODs) entstanden ohne QA-Input.
+Das führte zu einem Vertragsbruch der erst beim Roundup-Gate auffiel.
+→ Lern-Eintrag: `docs/superpowers/qa-learnings/2026-06-09-h01-quality-by-design.md`
+
+## Bekannte Blind Spots und Heuristiken
+
+### Blind Spot: Frontend-Mocks verbergen API-Vertragsbrüche
+
+**Entdeckt in:** H01-B Phase 2 (ManuscriptView)
+
+Wenn Frontend-Tests die API komplett mit `vi.mock("../lib/api")` wegmocken,
+kann kein Test ein echtes 422 (falscher Payload) oder einen echten
+API-Vertragsbruch sehen. Die Tests prüfen nur das Frontend-Verhalten unter
+kontrollierten Bedingungen — nicht den echten API-Vertrag.
+
+**Heuristik beim Gate:** Frage "Wenn ich den API-Call durch `return undefined` ersetze —
+bleiben alle Tests grün?" Wenn ja: der Mock deckt die Persistenz-Logik nicht ab.
+
+**Konsequenz:** Pages mit persistierenden Aktionen müssen mindestens einen Test haben
+der assertiert dass die richtige API-Funktion mit dem richtigen Payload aufgerufen wird.
+
+### Blind Spot: AutosaveStatus — Debounce-Pfad fehlt
+
+**Entdeckt in:** H01-B Phase 2 (ManuscriptView)
+
+`status="unsaved"` (nach Typing) ist leicht zu testen — es ist synchron.
+`status="saving"` und `status="saved"` (nach Debounce + API-Call) werden oft vergessen —
+sie erfordern `vi.useFakeTimers()` und `vi.advanceTimersByTimeAsync(delay)`.
+
+**Heuristik:** Bei jeder Page mit Debounce-Autosave: Alle 3 Übergänge sind Pflicht.
+Ohne `vi.useFakeTimers()` in der Testdatei fehlen mindestens 2 davon.
+
+### Prüf-Checkliste für Frontend-Gates
+
+Bei jeder Page mit Autosave / Debounce:
+- [ ] Typing → "unsaved" getestet
+- [ ] Nach `vi.advanceTimersByTimeAsync(delay)` → API-Funktion assertiert
+- [ ] API-Fehler → Status-Fallback getestet
+- [ ] `vi.useFakeTimers()` in der Testdatei vorhanden
+
+## Strukturelle Diskrepanzen (bekannt, offen)
+
+Diese Abweichungen wurden in der Inventur vom 2026-06-09 entdeckt:
+
+| Was | Soll | Ist | Status |
+|---|---|---|---|
+| Semgrep QA Rules | `.semgrep/rules/qa/qa-*.yaml` | `.semgrep/rules/klartext-*.yaml` (flach) | SA-Entscheidung ausstehend |
+| QA Skills | in git versioniert | `~/.claude/skills/` (maschinenlokal) | Strukturentscheidung bei OE/DevOps |
+| frontend-testing.md | in git (committed) | untracked (in salvage-branch) | DevOps Briefing ausstehend |
+
+## Debug Tools Registry
+
+Wann immer ein Agent den Auftrag bekommt, ein Debugging-, Logging- oder QA-Tool zu bauen,
+**muss QA Expert informiert werden.** Ich führe eine gesonderte Liste aller dieser Tools.
+Alle Debug-Tools müssen vor dem öffentlichen Launch entfernt werden.
+
+Eingehende Meldung Format:
+```
+Debug Tool Meldung
+Agent:    [Welcher Agent hat das Tool gebaut]
+Datei:    [Pfad zur Datei]
+Zweck:    [Was das Tool tut]
+Entfernen: [Wann/unter welcher Bedingung]
+```
+
+### Aktive Debug Tools
+
+| Agent | Datei | Zweck | Entfernen wenn |
+|---|---|---|---|
+| Narrative Expert | `api/routers/debug.py` + `api/services/debug_graph_service.py` | Debug-Graph-Visualisierung für Narrative-Objekte | vor öffentlichem Launch |

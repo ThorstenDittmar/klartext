@@ -36,3 +36,10 @@ Thumbs.db
 .vscode/
 *.swp
 *.swo
+
+# Claude Code — lokale Laufzeit-Daten (maschinenspezifisch, nicht versioniert)
+.claude/compact-log.txt
+.claude/compact-snapshots/
+.claude/compact-log-lastcheck
+.claude/compact-monitor-digest.txt
+.claude/compact-monitor.log

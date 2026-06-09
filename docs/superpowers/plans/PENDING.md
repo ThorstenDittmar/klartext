@@ -1,5 +1,8 @@
 # Pending Implementation Plans
 
+> **Prozessverbesserung läuft strukturiert** in `docs/superpowers/improvement/continuous-improvement.md`
+> (Master-Dokument: DoD-Baum, 4-Phasen-Plan, KVP-Loop). Die Befunde unten sind dessen Datenbasis.
+
 ## Post-Mortem H01 — Coverage-Tracker
 
 Konsolidierte Befunde aus dem H01-Post-Mortem (7 Gewerke + Hannibal + OE), thematisch
@@ -13,11 +16,13 @@ Status je Punkt: ☐ offen · ◐ in Arbeit · ☑ abgedeckt
 - ☐ Architektur-Sign-off erfolgte getrennt pro Plan, nie an der Grenze
 - ☐ Cross-Domain-Repository-Zugriff nie als Port eskaliert/freigegeben
 - ☐ Zwei widersprüchliche Wahrheiten über leeren `content` schon im Backend selbst
+  - Repro (verifiziert 2026-06-08 via Claude_Preview MCP): „+ Absatz hinzufügen" auf leerem Narrativ → `POST /narrative-units` → 422 `{"error":"content must not be empty"}` → kein `<textarea>`, kein Tippen möglich. Frontend sendet beim Anlegen `content:''`, Backend-Domain-Invariante verbietet leeren content. Fix-Richtung offen (Frontend lazy-create vs. Invariante lockern) → fachliche Achse.
 
 **Thema 2 — Niemand besaß die End-to-End-Verifikation** *(qual)*
 - ☐ „tested manually"-DOD unerfüllbar zugewiesen (CLI-Agent ohne Browser)
 - ☐ Tests strukturell blind für den API-Vertrag (Mocks + Fakes, Naht ungetestet)
 - ☐ Kein Integrations-/Contract-Gate vor Merge; keine Browser-Verifikations-Ownership
+  - ☐ **Konkret (Hannibal-Workflow):** Roundup Schritt 6 (`agents/hannibal/claude.md`) triggert nur das *strukturelle* QA-Gate (coverage, Fake-Contract, qa-review der Tests) — verlangt NIE eine End-to-End-/App-Run-Verifikation vor „done". Regel ergänzen, sobald Thema-2-Ownership („wer fährt die App" — QA via verify-Skill? Hannibal?) entschieden ist. Quelle: Hannibal-Briefing 2026-06-09.
 
 **Thema 3 — Qualität als Nachgang statt Entwurf** *(qual + org)*
 - ☐ Kriterien-Eigentümer (QA) sah Pläne erst beim Roundup-Gate
@@ -73,6 +78,43 @@ Output ein Zuhause in git".
 
 ---
 
+## Stand 2026-06-08 (Abend) — Enforcement & Repo-Fähigkeit + offene Entscheidungen
+
+**Verlustsicherung erledigt:** Gesamter uncommitteter Working Tree auf Branch
+`salvage/h01-working-tree` (Commit `b84913c`, 99 Dateien) + auf GitHub gepusht.
+Verlustrisiko für Repo-Artefakte gebannt. `~/.claude/`-Artefakte NICHT erfasst (separate
+Sicherung noch offen). Branch muss kontrolliert abgetragen werden (= Teardown).
+
+**Enforcement-Analyse (DevOps): „Weg gehen — mit Auflagen".**
+- Modell: git-native Gates (pre-commit/CI/Branch-Protection) = teamweites Rückgrat;
+  PreToolUse-Hooks = Claude-lokale Frühfang-Ergänzung, bypassbar (nicht das Rückgrat).
+- Prinzip: nur **detektierbare Artefakte** gaten; **wenige stabile** Gates statt vieler fragiler.
+- Ownership: SA/OE/QA definieren das WAS + das Artefakt, DevOps verdrahtet das WIE.
+- Restkarte: git-Gates schützen nur den Weg *in* git. Ungeschützt bleiben: Working-Tree-vor-Commit,
+  `~/.claude/`, Supabase-Laufzeit/Drift, GitHub-Config, Lost Boys ohne Artefakt, „grüner ≠ richtiger Check".
+
+**Quick Wins (kein SA nötig, DevOps sofort, NACH CI-grün-Check):**
+(1) Branch-Protection auf `main` (required status checks), (2) `ANTHROPIC_API_KEY` als GitHub-Secret.
+
+**Repo-Fähigkeit der Außenseiter (DevOps-Analyse) — 5 Maßnahmen:**
+- 4–5 nur-lokale Skills (`pre-compact`, `qa-review`, `qa-retro`, `systematic-debugging`, `tdd`) → Kanon nach `docs/superpowers/skills/` + `setup.sh` installiert Wrapper [OE/QA liefern]
+- `launch.json` → Template ins Repo + `setup.sh` [DevOps]
+- Storage-Bucket-Defs in `config.toml` prüfen/ergänzen (evtl. nur im Dashboard) [DevOps]
+- `supabase db diff` als CI-Drift-Check [DevOps/SA]
+- Zentrale Model-Konstante statt 5× hardcodiert + Semgrep [SA/Audit/DevOps] — ⚠️ aktuelle Model-ID separat verifizieren (offizielle Quelle), nicht aus Gedächtnis pinnen
+- Wartungs-Haken: Wrapper-Muster braucht Update-Kommando (`klartext skills sync`), sonst Drift
+- **Sign-offs (Lost Boy) gelöst:** GitHub-PR-Approval (nativ, detektierbar, kein neuer Dokumenttyp) statt `docs/decisions/`-Log
+- Bleibt korrekt draußen: `.env`/Keychain, Build-Artefakte, laufende Daten, PostgREST-Cache, Auto-Memory (aber Team-Wissen daraus extrahieren)
+
+**OFFENE ENTSCHEIDUNGEN (User entscheidet morgen):**
+1. Step 1 — Enforcement-Grundsatz JA? + Quick Wins (Branch-Protection + Secret) freigeben?
+2. Die 5 Repo-Maßnahmen — Priorisierung/Reihenfolge
+3. Salvage-Teardown planen (Hannibal + DevOps + Owner pro Datei)
+4. Lost Boys verorten (SA): Kontrakte → `docs/contracts/`?, Sign-offs → PR-Approval (s.o.)
+⚠️ Reihenfolge-Warnung: NICHT alles gleichzeitig anstoßen (= H01-Muster). Eins nach dem anderen.
+
+---
+
 ## Offene Delegationen
 
 Aufgaben die in Agent-Sessions delegiert wurden und noch nicht erledigt sind.
@@ -89,6 +131,12 @@ Nach Erledigung: Zeile löschen oder als ~~durchgestrichen~~ markieren.
 | OE | Post-Mortem: Narrative Expert hat Supabase-Client inline mit `os.environ` erstellt statt via Dependency Injection (`dependencies.py` + `Depends()`). Prüfen ob das bereits im Code ist, wenn ja: fixen. Klären warum NE vom DI-Muster abgewichen ist — fehlt die Regel im `agents/narrative/claude.md`? Ggf. NE briefen. | User | 2026-06-08 |
 | OE | Post-Mortem: Brauchen wir einen Technical Writer Agent für Benutzerhandbuch und Produktdokumentation? Klären: wer schreibt heute Doku, fällt das durch die Raster, und ist das ein eigener Domain oder eine Rolle die bei einem bestehenden Agent angesiedelt werden kann. | User | 2026-06-08 |
 | OE | Post-Mortem: Verwaiste Dateien ohne Domain-Eigentümer — `api/routers/debug.py` + `api/tests/test_debug_router.py` hatten CI-Fehler, kein Agent war zuständig (Code kam direkt von Thorsten). DevOps hat gefixt. Strukturfrage: Was passiert mit Code außerhalb aller Agent-Domains? Optionen: (1) DevOps als Auffangbecken, (2) SA für Crosscutting-Code (Debug, Health, CLI), (3) explizite shared-Domain, (4) Zuweisung bei Commit. OE bewertet + Regel formulieren. | DevOps | 2026-06-08 |
+| Hannibal | Dauerhafte Lösung für übergeordnete Dokument-Typen: Roadmap, Projektplan, Lastenheft (fachlicher User-Input an Hannibal), Projekt-Doku. Klären: versionierter Ort im Repo, Format (`.docx` → Markdown?), Pflege, Einfluss auf Plan-Erstellung. Anlass: `Narrative_Epistemik_Projektskizze_V026.docx` lag lose im Working Tree, aus Salvage-Commit ausgeschlossen. Hannibal hält es im Hoheitswissen fest + bringt Vorschlag. | User | 2026-06-08 |
+| OE | Klären: Kann man `/compact` für eine Zeit unterdrücken/aufschieben? (Mechanismus prüfen — Hook? Setting? manuelle Disziplin?) Später besprechen. | User | 2026-06-08 |
+| OE/Hannibal | Brauchen wir ein Sprint-Anfang- und Sprint-Ende-Flag? (Markierung wann ein Sprint startet/endet — für Branch-Lifecycle, Salvage-Vermeidung, Roundup-Trigger). Später besprechen. | User | 2026-06-08 |
+| QA (via UX/UI → OE, zur Weiterleitung bereit) | `verify.md` zwei Fixes: (1) ManuscriptView-Route `/narrative/:narrativeId/manuscript` fehlt in der Screens-Tabelle — Komponenten-Checks existieren, die Page selbst (Loading/Empty/Route-Validierung) nicht. (2) **`verify`-Skill aktuell defekt für localhost:** Z.35 nutzt Claude-in-Chrome (localhost gesperrt), muss auf Claude_Preview MCP (launch.json) umgestellt werden. Passt zu Thema 2. | UX/UI | 2026-06-09 |
+| OE/QA | Fake-Ownership in `api/tests/fakes/` team-weit ungeregelt: QA besitzt `api/tests/` (die Dateien), aber ein Fake spiegelt das Interface einer fremden Domain (`fake_narrative_repository.py` = NE-Interface). Datei-Owner ≠ Interface-Owner → wer aktualisiert den Fake bei Interface-Änderung? Regel definieren. Familie: Commit-Ownership-Graubereich (`.storybook/`), verwaiste Dateien (`debug.py`), Causal-Model-Befund (FakeNarrative/FakeClaim cross-domain). **Konkrete QA-Prüfung (CM-Briefing):** `test_wirkgefuege_suggestion_service.py` — FakeNarrative/FakeClaim vollständig, keine silent constants (`find_by_narrative_id`, `find_by_id`). | Audit + CM | 2026-06-09 |
+| DevOps | Schema-Vollständigkeit `narrative_units.typ` bestätigen: sind alle 5 Werte (work/part/chapter/scene/fragment) in der Spalte erlaubt? Falls nicht: schmale ALTER TABLE. SA wartet auf Bestätigung vor finalem NarrativeUnit-Sign-off. | SA | 2026-06-08 |
 | ~~UX/UI~~ | ~~Token-Diskrepanz synchronisieren nach Merge H01-B1~~ | ~~UX/UI Expert~~ | ~~DONE PR #44~~ |
 
 ---

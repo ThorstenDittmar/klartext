@@ -137,6 +137,53 @@ Wissens-Briefing an OE (Organisationswissen).
 
 ---
 
+## Übergeordnete Projekt-Artefakte (Anforderungsschicht) — OFFENE ENTSCHEIDUNG
+
+**Status: zu klären, Vorschlag in Arbeit (Auftrag OE, 2026-06-08). Kein Sofort-Handeln.**
+
+Über meinen Umsetzungsplänen liegt eine Schicht, die im Projekt bisher nicht
+sauber definiert ist: **Roadmap, Projektplan, Lastenheft (fachlicher Input des
+Users an mich), allgemeine Projekt-Doku.** Das Fehlen eines *verbindlichen
+Anforderungsdokuments an der Wurzel der Pläne* hat H01 mitgekippt — der
+422-Vertragsbruch entstand, weil Frontend- und Backend-Plan gegen kein
+gemeinsames, prüfbares Lastenheft abgeglichen wurden.
+
+**Auslöser:** `Narrative_Epistemik_Projektskizze_V026.docx` lag lose im Working
+Tree, außerhalb jeder Versionierung. Es ist der fachliche Input des Users an mich.
+
+**Befund (verifiziert 2026-06-08):** Der Ablage-Ort existiert bereits.
+- Die Projektskizze lebt versioniert als `docs/kap-01…kap-24.md` (Markdown, in
+  git, via `mkdocs.yml` ausgeliefert). `docs/kap-15-roadmap.md` existiert.
+- Ältere Skizzen-Stände (V024/V025) wurden bereits docx→Markdown konvertiert und
+  committed. Die `…V026.docx` ist nur die neueste Version, deren Konvertierung
+  nie nachgezogen wurde → „gestrandete Quelle".
+- Lücke ist NICHT „kein Ort", sondern: (a) der Konvertierungs-/Sync-Schritt ist
+  manuell und ad-hoc, wurde für V026 übersprungen; (b) die `kap-*.md` sind
+  Vision/Prosa, KEIN strukturiertes, referenzierbares Lastenheft mit
+  Akzeptanzkriterien, auf das ein Plan zeigen kann.
+
+**Vorschlagsrichtung (an OE gesendet, noch nicht beschlossen):**
+1. **Format & Ort = per Präzedenz entschieden:** Markdown in `docs/`, versioniert,
+   via mkdocs. `.docx` = Autoren-Entwurf des Users → wird konvertiert → als
+   Markdown committed. Die binäre `.docx` gehört NICHT als Source-of-Truth in git
+   (nicht diffbar); höchstens in `docs/_sources/`. git-History ersetzt die
+   V024/V025/V026-Dateiwucherung.
+2. **Fehlende Schicht einführen:** eine strukturierte Anforderungs-/Lastenheft-
+   Schicht (z.B. `docs/product/`), die die Prosa-Skizze in referenzierbare
+   Requirements mit ID + Akzeptanzkriterien destilliert.
+3. **Plan-Bindung (schließt die H01-Lücke):** Jeder Umsetzungsplan MUSS die
+   Requirement-ID(s) zitieren, die er umsetzt. Plan ohne rückverfolgbare
+   Anforderung an der Wurzel = ungültig. Brainstorming startet am Lastenheft,
+   nicht am mündlichen Zuruf.
+4. **Ownership:** User = Product Owner (WAS/WARUM). Hannibal pflegt:
+   Konvertierung/Sync der Skizze, Destillat in die Requirement-Schicht,
+   Plan↔Requirement-Rückverfolgbarkeit. Roadmap/Projektplan = Hannibal, abgeleitet.
+
+Format-/Ort-Entscheidung berührt mkdocs und ggf. `.gitignore` → **DevOps-Briefing**
+nötig, bevor etwas Strukturelles angelegt wird. Nicht selbst Infra anlegen.
+
+---
+
 ## Erweiterung durch Hannibal Agent
 
 Hannibal trägt hier ein wenn sich der Planungsprozess weiterentwickelt:

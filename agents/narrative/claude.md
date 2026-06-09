@@ -15,7 +15,7 @@ api/models/scene*.py              Scene Domain Objects
 api/models/actor*.py              Actor Domain Objects (geplant — Phase 2)
 api/services/narrative*.py        Narrative Services (inkl. Import-Pipeline)
 api/repositories/narrative*.py    Narrative Repositories
-api/routers/narratives*.py        Narrative Router
+api/routers/narrative*.py         Narrative Router (narratives.py + narrative_units.py)
 api/schemas/narrative*.py         Narrative Pydantic Schemas
 api/exceptions/narrative*.py      Narrative Exception Classes
 api/parsers/narrative*.py         Autoren-Import-Parser (DOCX, Markdown)
@@ -97,10 +97,43 @@ Impact:    Narrative Domain
 | `job-description` | Eigene Rolle erklären |
 | `pre-compact` | Vor /compact |
 
-## Erweiterung durch Narrative Expert Agent
+## NarrativeUnit-Hierarchie (implementiert H01-A, auf main seit 2026-06-08)
 
-Narrative Expert ergänzt hier:
-- Detaillierte Narrativ-Fachlogik und Invarianten
-- Szenen-Aufbau und Beziehungen
-- Import-Formate (DOCX, Markdown) — Parser-Details
-- Analyse-Pipeline-Übersicht
+Fünf Typen, alle in der `narrative_units`-Tabelle (Single-Table-Inheritance):
+
+```
+Work → Part → Chapter → Scene → Fragment
+```
+
+- `NarrativeUnit` ist abstrakt; Subklassen registrieren sich via `__init_subclass__`
+- `NarrativeUnit.from_record()` dispatcht via `typ`-Spalte
+- `Fragment.update_title()` raises `InvalidOperationError` — Fragment hat keinen Titel (nur Content)
+- `Work.create()` nimmt kein `parent_id` — Work ist immer Root, keine Position
+
+### Tree Loading — Root-Erkennung
+
+`SupabaseNarrativeUnitRepository.load_tree()` lädt mit einem einzigen `SELECT *`, baut den Baum
+in Python auf. Root wird via `typ == 'work'` identifiziert, **nicht** via `parent_id IS NULL`.
+
+Grund: Phase-1-Szenen (vor H01-A importiert) haben `parent_id=NULL` aber `typ='scene'`.
+Die `parent_id IS NULL`-Regel würde sie fälschlich als Root erkennen.
+
+### PATCH Shell-Pattern
+
+`PATCH /narrative-units/{id}` hat noch keinen `get_by_id`-Endpoint.
+Router baut ein Shell-`Fragment`-Objekt mit nur `id` + neuen Feldern; `position=0`, `narrative_id=""`,
+`parent_id=None` sind Platzhalter — `update()` sendet nur `title`/`content`, die anderen Felder
+werden nie persistiert. Follow-up: `get_by_id` zum Repository hinzufügen wenn nötig.
+
+### Integration-Test-Isolation
+
+Jeder Integration-Test erzeugt eine eigene frische Narrative-Zeile via `NarrativeMother.empty()`.
+`TEST_NARRATIVE_ID` aus `NarrativeUnitMother` existiert **nicht** als DB-Zeile — nur als
+konsistente ID für Unit- und Router-Tests (Fake/Mock-Layer).
+
+### Router-Regel: kein try/except
+
+Semgrep-Regel `klartext-router-no-try-except` blockiert `try/except` in Routers.
+Alle fachlichen Exceptions propagieren zu zentralen Handlers in `api/main.py`.
+NarrativeUnit-Handler: `NarrativeUnitValidationError` → 422, `NarrativeUnitNotFoundError` → 404,
+`NarrativeUnitPersistenceError` → 500.

@@ -73,12 +73,34 @@ Wann immer ein Agent den Auftrag bekommt, ein Debugging-, Logging- oder QA-Tool 
 **QA Expert muss informiert werden.** QA führt eine gesonderte Registry aller dieser Tools.
 Alle Debug-Tools müssen vor dem öffentlichen Launch entfernt werden.
 
+## Bekannte technische Schulden
+
+### Hardcodierte Model-ID in Provider-Dateien
+Alle vier Claude-Provider setzen `model="claude-sonnet-4-5"` direkt im Code — keine zentrale Konstante.
+Betroffene Dateien (verifiziert 2026-06-09):
+- `api/providers/claude_claim_extraction_provider.py:46`
+- `api/providers/claude_consistency_checker.py:61`
+- `api/providers/claude_narrative_analysis_provider.py:94`
+- `api/providers/claude_wirkgefuege_suggestion_provider.py:62`
+
+Folgepaket nötig: zentrale Konstante `CLAUDE_MODEL` in `api/providers/` extrahieren.
+**Keine Umsetzung ohne Hannibal-Task.**
+
+---
+
 ## Koordination
 
 ### Mit Narrative Expert — Provider-Interface
 Wenn Narrative Expert eine neue Analyse-Funktion braucht:
 Briefing von Narrative Expert kommt mit: gewünschter Analyse, erwartetem Interface, verfügbaren Daten.
 Ich liefere Provider-Implementierung und Fake für Tests.
+
+### Mein Test-Domain auf fremden Branches
+Pattern `api/tests/test_claude_*.py` gehört Audit.
+Falls NE, CM oder ein anderer Agent diese Dateien auf ihrem Branch anfassen muss:
+→ Audit Expert **vorher** briefen. Kein Silent-Fix auf fremdem Branch.
+Hintergrund: In H01 (2026-06-09) landete `test_claude_narrative_analysis_provider_parsing.py`
+auf NE's Branch ohne Koordination und verursachte einen CI-Fehler.
 
 ### Mit Causal Model Expert — Vorschlags-Provider
 Wenn Causal Model Expert das Vorschlags-Interface erweitern möchte:

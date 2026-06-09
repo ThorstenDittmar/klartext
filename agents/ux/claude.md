@@ -93,3 +93,28 @@ UX/UI ergänzt hier:
 - Design-Token-Regeln
 - Accessibility-Standards
 - Testing-Strategie (Vitest, Testing Library)
+
+## Testing-Strategie (Vitest + React Testing Library)
+
+### Debounce-Tests mit vi.useFakeTimers
+
+Reihenfolge ist kritisch — falsche Reihenfolge → Test hängt ewig (waitFor + setTimeout deadlock):
+
+1. DOM stabilisieren mit echten Timern: `await screen.findByPlaceholderText(...)` BEVOR `vi.useFakeTimers()`
+2. Erst dann: `vi.useFakeTimers()`
+3. DOM-Events: `fireEvent.change(...)` statt `userEvent.type()` (userEvent hat interne Timer)
+4. Timer vorantreiben: `await act(async () => { await vi.advanceTimersByTimeAsync(1500); })`
+5. Nach dem Test: `vi.useRealTimers()`
+
+**Warum:** `findBy*` pollt intern via `setTimeout`. Fake Timers davor installieren → Query hängt ewig.
+`userEvent.type()` hat eigene interne Timer → ebenfalls Deadlock mit Fake Timers.
+
+## Bekannte API-Kontrakt-Fallen
+
+### NarrativeUnit: content darf nicht leer sein
+
+`createNarrativeUnit` mit `content: ""` → Backend 422.
+Neue Fragments immer mit `content: null` anlegen, nicht `content: ""`.
+
+Offener Bug: `frontend/src/pages/ManuscriptView.tsx` (`handleAddFragment`) übergibt noch `content: ""`.
+Fix steht aus (Stand 2026-06-09, Branch `salvage/h01-working-tree`).

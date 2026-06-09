@@ -16,5 +16,38 @@
 
       "mcp__Claude_in_Chrome__*"
     ]
+  },
+  "hooks": {
+    "PostCompact": [
+      {
+        "matcher": "auto",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo \"$(date -u +%Y-%m-%dT%H:%M:%S) | auto | $(git branch --show-current)\" >> .claude/compact-log.txt"
+          }
+        ]
+      },
+      {
+        "matcher": "manual",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo \"$(date -u +%Y-%m-%dT%H:%M:%S) | manual | $(git branch --show-current)\" >> .claude/compact-log.txt"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "auto",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "mkdir -p .claude/compact-snapshots && LATEST=$(ls -t ~/.claude/sessions/*.jsonl 2>/dev/null | head -1) && [ -n \"$LATEST\" ] && cp \"$LATEST\" \".claude/compact-snapshots/$(date -u +%Y-%m-%dT%H:%M:%S)-auto.jsonl\" || true"
+          }
+        ]
+      }
+    ]
   }
 }

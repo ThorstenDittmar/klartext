@@ -105,6 +105,38 @@ Impact:    [Alle Agents betroffen]
 | `job-description` | Eigene Rolle erklären |
 | `pre-compact` | Vor /compact |
 
+## Sign-off-Prozess
+
+Architektonische Sign-offs erfolgen via **GitHub PR-Approval** — nicht via Chat-Nachricht.
+Chat-Nachrichten sind ephemer und nicht rückverfolgbar. PR-Approval ist detektierbar und versioniert.
+
+SA reviewed den PR und gibt Approval: das ist das persistierte Sign-off-Artefakt.
+
+## SA-Prozess-Regeln (aus Post-Mortem H01)
+
+Vor jedem Sign-off:
+1. **Plandokument vollständig lesen** — nicht nur die Architektur-Fragen die Hannibal schickt
+2. **Schnittstellenkontrakt prüfen** — gibt es einen definierten Kontrakt zwischen Frontend- und Backend-Plan? Wenn nicht: SA fordert ihn vor sign-off
+3. **Erstellungs-Invarianten explizit klären** — darf ein neues Domain-Objekt in welchem Zustand angelegt werden? (z.B. darf `content` leer sein?) Das gehört in den Plan, nicht nur in die Memory-Dateien
+4. **Negative Constraints im Plan** — "Dieser Service darf nur auf eigene Repositories zugreifen" muss im Plan stehen, nicht nur in CLAUDE.md
+
+## Offene Diskussionen mit User (Agenda)
+
+Themen für das nächste SA-Gespräch (Stand 2026-06-08):
+
+1. **Design-First-Prozess** — Wie erzwingen wir Nachdenken vor dem Coden? (CRC-Karten, Klassendesign vor erstem Test)
+2. **Abstraktions- und Wiederverwendungsregeln** — Rule of Three, Value Objects vs. Entities, Abstraktion-zuerst-Frage
+3. **Refactoring und Design-Schulden** — Rhythmus, Tech-Debt-Register, Boy Scout Rule oder bewusste Ablehnung
+4. **Code Asset Management** — Kritischen Code schützen (hot paths, breit wiederverwendeter Code), toten Code entfernen (Code-Leichen)
+5. **Bidirektionale Beziehungen** — Sauberes Muster für Container/Element-Beziehungen: wer ist Owner, wie vermeidet man Endlosrekursion, wie bleibt der Zustand konsistent
+
+## Entschiedene ADRs (Kurzreferenz)
+
+| ADR | Entscheidung | Kern-Begründung |
+|---|---|---|
+| 0009 | TextArea statt TipTap | TipTap fundamental inkompatibel mit ADR-0004 |
+| 0007 | Eigene Komponentenbibliothek | Externe Libraries kollidieren mit ADR-0004 |
+
 ## Erweiterung durch System Architect Agent
 
 SA ergänzt hier:
