@@ -5,6 +5,9 @@
 - Communication with the team in German
 - User-facing strings are externalized via i18n (`t('key')`) — never hardcoded in any language.
   See `design/i18n.md` for rules. Backend error messages that reach the API response: German.
+- Documentation (technical/process/method docs): English — ADRs, skills, method docs under `docs/superpowers/`.
+  Scope: development and method documentation only. Product-facing content (e.g. *Wirkgefüge*, domain terms) keeps German.
+  Convention for now; candidate for future lint enforcement.
 
 ## Test-Driven Development
 Use the `tdd` skill. It extends the `superpowers:test-driven-development` skill with project-specific standards.
@@ -395,15 +398,50 @@ Project-level baseline permissions (all agents): `.claude/settings.json`
 
 | Agent | Domain |
 |---|---|
-| OE | Multi-Agent-Struktur, Onboarding, Zusammenarbeit (`agents/` vollständig) |
+| OE | Multi-Agent-Struktur, Onboarding, Zusammenarbeit (`agents/` vollständig, cross-agent Skills in `docs/superpowers/skills/`) |
+| Hannibal | Projektleitung, Planung, Koordination großer Arbeitspakete (`docs/superpowers/plans/`) |
 | DevOps | Infrastructure, CI/CD, Tooling — Gatekeeper |
-| System Architect | Architecture decisions, Coding Standards (CLAUDE.md, ADRs) |
-| UX/UI | React components, frontend (`frontend/src/`) |
-| QA | Tests, coverage (`api/tests/`, `frontend/**/*.test.*`, `.semgrep/rules/qa/`, `api/tests/infrastructure/` shared) |
+| System Architect | Architecture decisions, Coding Standards (`CLAUDE.md`, `docs/adr/`, `.semgrep/rules/arch/`) |
+| UX/UI | React components, frontend (`frontend/src/`) — führt `verify`-Skill aus (QA-owned) |
+| QA | Tests, coverage (`api/tests/`, `.semgrep/rules/qa/`), Frontend-Kriterien (`docs/superpowers/skills/verify.md`, `frontend-testing.md`) |
 | Narrative Expert | Narrative domain backend (`api/*/narrative*`) |
 | Causal Model Expert | Wirkgefüge backend (`api/*/causal_model*`) |
 | Audit Expert | Verification procedures, claim extraction (`api/providers/`) |
 | Community Expert | User/community backend (`api/*/user*`) |
+
+### Way of Working — our method (SEMAT/Essence)
+
+Our way of working is being forged as an explicit, evolving **method**, using **Essence/SEMAT** as the
+meta-language. Before proposing changes to how we work, read the method document set under
+`docs/superpowers/improvement/`:
+
+- `semat-definition.md` — self-contained reference for the meta-language (Kernel, Alphas, Practices, Methods)
+- `semat-glossary.md` — our process/method vocabulary (the terms to use)
+- `practices/` — our Practices (composable how-tos; e.g. `improvement-step.md`, `document-scoping.md`)
+- `continuous-improvement.md` — our decisions, rationale, RCA and plan
+
+Having read these, communicate with OE about the way of working **using this vocabulary** (Alphas, states,
+Practices, Methods) and propose changes that slot into the Kernel rather than reinventing it.
+Owner of the method: OE.
+
+### Domain-Respekt — gilt für alle Agents
+
+Kein Agent bietet an, Aufgaben außerhalb seines Domains zu erledigen —
+auch wenn er die technische Fähigkeit dazu hätte.
+
+**Stattdessen:** Briefing an den zuständigen Agent formulieren und dem User übergeben.
+
+```
+Briefing an <Agent>
+Aufgabe:   [Was erledigt werden sollte]
+Kontext:   [Warum es gerade aufgefallen ist]
+Vorschlag: [Optionaler Ansatz]
+```
+
+Der User entscheidet ob und wann er das Briefing weiterleitet.
+Domain-fremde Arbeit anzubieten ist kein Gefallen — es untergräbt die Klarheit des Systems.
+
+---
 
 ### Infrastructure Perimeter — DevOps exclusive
 
@@ -443,8 +481,7 @@ Neither acts alone: a rule without enforcement is documentation, not a standard.
 
 ### Adding a new agent
 
-Use the `agent-onboarding` skill (OE-Domain). OE defines the domain and creates the knowledge file.
-DevOps creates the start script with appropriate permissions (via DevOps Briefing from OE).
+Use the `agent-onboarding` skill (OE-Domain). OE defines the domain, creates the start script and the knowledge file — no DevOps Briefing needed.
 
 ## Ports & Adapters
 Isolate technical components (e.g. verification procedures) via abstract interfaces:
