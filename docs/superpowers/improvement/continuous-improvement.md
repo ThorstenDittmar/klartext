@@ -124,11 +124,22 @@ goal, input (what we need), output (what is produced), owner candidates.
 
 #### Problem map — RCA first draft (2026-06-09)
 
-> **STATUS: Phase 1 complete (2026-06-09).** Six root causes (RC1–RC6), user-validated and confirmed by a
-> **discipline cross-check (8/8, recorded per discipline)**. The cross-check produced: RC6 new (tacit
-> assumptions), RC4 + RC5 extended (lifecycle / observability), RC3 sharpened (shared interfaces) — no
-> *unexplained* symptom. Parked as forward questions (not faults): DevOps↔UX channel, Technical Writer,
-> B2 schema check. **All four Phase-1 DoD criteria met.**
+> **STATUS: Phase 1 complete (2026-06-09).** Six root causes (RC1–RC6), user-validated and confirmed across
+> **all nine domain disciplines, recorded per discipline** — eight H01 participants plus the Community Expert
+> as a **validated exclusion** (not a sprint participant; the RC model was checked against its domain
+> retroactively and fits). The cross-check produced: RC6 new (tacit assumptions), RC4 + RC5 extended
+> (lifecycle / observability), RC3 sharpened (shared interfaces) — no *unexplained* symptom. Parked as forward
+> questions (not faults): DevOps↔UX channel, Technical Writer, B2 schema check. **All four Phase-1 DoD criteria
+> met.**
+>
+> **Correction (2026-06-09) — a silent gap in our own RCA, caught and closed.** The cross-check was first
+> labelled "8/8" but silently omitted the Community Expert (the 9th domain). Community had been dormant since
+> 2026-06-06 (pre-sprint) — a non-participant — but that was never made *explicit*: it was dropped, not
+> decided. A live instance of exactly what this initiative fights: a silent completeness gap + an unsurfaced
+> assumption (RC6 / the DoD rule "no gap stays silent"). The user caught it. **Closed (2026-06-09):** Community
+> queried directly, responded — confirms all six RCs against its domain, no unexplained symptom, recorded as an
+> explicit validated exclusion (9th row below). *(Deeper remediation: a maintained team list makes such
+> completeness mechanically checkable — see Phase 2, "Team list = Artifact Register pilot".)*
 
 Data basis: Coverage-Tracker T1–T6, inventory categories A–F, triage findings (all in `PENDING.md`). Goal:
 not to manage ~30 symptoms but to find the *few* drivers beneath them.
@@ -210,6 +221,7 @@ observability). Three disciplines deepened the root independently.
 | Causal Model | ✅ RCs confirmed | **Q2:** no gap. **RC3 sharpening:** *shared/bidirectional* interface ownership — who owns the interface *between* consumer (CM) and provider (Audit)? No one; RC3 may explain it too weakly (more than "file path ≠ interface"). Extra symptom RC2: committed `# type: ignore` without a blocking gate. |
 | Audit | ✅ RCs confirmed | Correction: model ID in **4** files (not 5). **Q2 finding:** *external-dependency lifecycle without a process* — who decides when/by what criteria provider models are upgraded? No owner/test/sign-off. Lifecycle, not drift. |
 | Hannibal | ✅ RCs (with correction) | Correction: "Hannibal too deep" → **RC3** (role/owner discipline, boundary not felt → also RC2), *not* RC5. **Q2 finding (strong):** *tacit assumptions at seams are never SURFACED* — the 422 assumption was "unborn", not homeless. RC1 presupposes existence; here the step BEFORE is missing (make assumptions explicit + checkable before building). Candidate RC6. |
+| Community | ✅ RCs confirmed (validated exclusion) | **Not a H01 participant** (last active 2026-06-06, pre-sprint) — no direct experience base; recorded as an *explicit, validated exclusion*, not a gap. Reviewed the six RCs retroactively against its domain (`api/*/user*`) and confirms all six; **no unexplained symptom**. Domain note: **RC6 hits hardest** — the auth flow carries many tacit assumptions (required registration fields, expected frontend error codes, session handling), none formulated as an explicit contract. |
 
 ### Phase 2 — Target way of working + method comparison  ·  *Status: in progress*
 - **Goal:** Define how we *want* to work (PM level), and mirror it against proven methods.
@@ -317,6 +329,19 @@ a potential **central instrument**, not a side list. Established pattern (asset 
 CMDB-lite).
 **Open:** columns final · location · who maintains · update ritual (the register itself must be hardened against
 "stale" — otherwise it drifts, RC4 on itself).
+
+**Team list = pilot of the Artifact Register** *(decided 2026-06-09):*
+A dedicated, OE-maintained **team roster** (agent · domain · owner · session-id · status [active/dormant/
+offboarded] · `start.sh`/`claude.md` paths), used by all for **broadcasting and expert search**, updated as the
+**on/offboarding ritual** (integrates with the `agent-onboarding` skill). In Essence terms it is the work
+product of the **Team Alpha**.
+**Effect:** addresses RC1 (the "team truth" had no checkable home — that is *why* the Community Expert slipped
+through), RC4 (reconciles the *declared* roster in `CLAUDE.md` against the *running* state in `list_sessions` —
+the two drift, as the dormant Community session showed), RC3 (domain→owner for routing).
+**Why it matters here:** the roster is **Artifact-Register-shaped** (type/home/owner/consumer/lifecycle/ritual)
+→ designated the **pilot** that validates the register design, and a strong **Walking Skeleton candidate**
+(small, real, produces an artifact, exercises the on/offboarding ritual). **Build deferred to Phase 2 with the
+register** — not now, to avoid pre-empting the register and to avoid parallel-thread tangling (risk #1).
 
 **Pulled-forward findings (2026-06-09) — context / memory management:**
 From a first market research (Anthropic "Effective context engineering"; JetBrains Research; Claude Code
