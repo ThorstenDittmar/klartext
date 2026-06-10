@@ -25,12 +25,16 @@ continuous improvement loop.
 ## Steps
 
 1. **Pick up** — name exactly **one** topic/decision (not several at once).
-2. **Clarify & decide** — present options + a recommendation; the **user decides**.
-3. **Record** — store the decision at its agreed home, **including the rationale (the "why")**.
+2. **Classify** — locate the topic in Essence terms **before** discussing solutions: which element type is it
+   (Alpha / Practice / Pattern / Work Product / Activity / Competency)? Which Alpha does it advance? Does the
+   standard already predefine it (**KB-first lookup**: `semat-definition.md` + glossary first, web only on a
+   miss)? This step keeps us *thinking* in the meta-language instead of inventing parallel concepts.
+3. **Clarify & decide** — present options + a recommendation; the **user decides**.
+4. **Record** — store the decision at its agreed home, **including the rationale (the "why")**.
    This is the capture-first pillar.
-4. **Route** — inform affected agents via the `knowledge-routing` skill (**the user is the channel**).
+5. **Route** — inform affected agents via the `knowledge-routing` skill (**the user is the channel**).
    This step is what earns the Way-of-Working state *In Use* (the team actually uses the practice).
-5. **Set next step** — leave a pointer to the next open topic, so the loop never stalls and a `/compact`
+6. **Set next step** — leave a pointer to the next open topic, so the loop never stalls and a `/compact`
    cannot sever it.
 
 ## Work Products
@@ -43,6 +47,8 @@ continuous improvement loop.
 ## Completion Checklist (Done)
 
 - [ ] Exactly **one** topic was addressed.
+- [ ] The topic was located in Essence terms (element type + Alpha) and checked against the standard
+  (KB-first) **before** deciding.
 - [ ] A decision was made by the user.
 - [ ] Decision **and rationale** are recorded at a durable home (not only in chat).
 - [ ] Affected agents identified; briefings formulated and routed — or explicitly "none affected".
