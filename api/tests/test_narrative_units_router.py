@@ -156,6 +156,40 @@ class TestCreateUnit:
             )
         assert response.status_code == 422
 
+    async def test_create_fragment_without_parent_id_returns_422(self) -> None:
+        """POST /narrative-units with typ=fragment and no parent_id returns 422.
+
+        The router enforces that fragments must have a parent_id (a parent scene).
+        """
+        async with _make_client(FakeNarrativeUnitService()) as client:
+            response = await client.post(
+                "/narrative-units",
+                json={
+                    "typ": "fragment",
+                    "content": "Some text.",
+                    "position": 1,
+                    "narrative_id": TEST_NARRATIVE_ID,
+                },
+            )
+        assert response.status_code == 422
+
+    async def test_create_scene_without_parent_id_returns_422(self) -> None:
+        """POST /narrative-units with typ=scene and no parent_id returns 422.
+
+        All non-work, non-fragment types require a parent_id.
+        """
+        async with _make_client(FakeNarrativeUnitService()) as client:
+            response = await client.post(
+                "/narrative-units",
+                json={
+                    "typ": "scene",
+                    "title": "A Scene",
+                    "position": 1,
+                    "narrative_id": TEST_NARRATIVE_ID,
+                },
+            )
+        assert response.status_code == 422
+
 
 class TestUpdateUnit:
     async def test_update_fragment_content_returns_200(self) -> None:
@@ -289,3 +323,67 @@ class TestCreateFragmentContract:
             )
         assert response.status_code == 422
         assert response.json()["error"] == "content must not be empty"
+
+    async def test_valid_content_returns_201(self) -> None:
+        """POST /narrative-units with valid content returns 201 through the real service.
+
+        Contract: valid Fragment content passes all domain invariants and is
+        persisted, returning 201 with the saved unit.
+        """
+        async with _make_real_service_client() as client:
+            response = await client.post(
+                "/narrative-units",
+                json={
+                    "typ": "fragment",
+                    "content": "Ein vollständiger Absatz.",
+                    "position": 1,
+                    "parent_id": SCENE_ID,
+                    "narrative_id": TEST_NARRATIVE_ID,
+                },
+            )
+        assert response.status_code == 201
+        body = response.json()
+        assert body["typ"] == "fragment"
+        assert body["content"] == "Ein vollständiger Absatz."
+
+
+class TestCreateWorkContract:
+    """Contract tests for POST /narrative-units (typ=work).
+
+    Verifies that the Work title invariant is enforced end-to-end through the
+    real NarrativeUnitService — not bypassed by a fake stub.
+    """
+
+    async def test_empty_title_returns_422(self) -> None:
+        """POST /narrative-units with typ=work and empty title returns 422.
+
+        Work.create() raises NarrativeUnitValidationError for empty titles,
+        which the global exception handler translates to 422.
+        """
+        async with _make_real_service_client() as client:
+            response = await client.post(
+                "/narrative-units",
+                json={
+                    "typ": "work",
+                    "title": "",
+                    "position": 1,
+                    "narrative_id": TEST_NARRATIVE_ID,
+                },
+            )
+        assert response.status_code == 422
+        assert response.json()["error"] == "title must not be empty"
+
+    async def test_whitespace_only_title_returns_422(self) -> None:
+        """POST /narrative-units with typ=work and whitespace-only title returns 422."""
+        async with _make_real_service_client() as client:
+            response = await client.post(
+                "/narrative-units",
+                json={
+                    "typ": "work",
+                    "title": "   ",
+                    "position": 1,
+                    "narrative_id": TEST_NARRATIVE_ID,
+                },
+            )
+        assert response.status_code == 422
+        assert response.json()["error"] == "title must not be empty"
