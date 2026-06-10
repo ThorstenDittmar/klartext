@@ -2016,8 +2016,18 @@ status rather than after every merge. This honors both small-batch integration <
 DevOps (feature branch <code>docs/h01-method-foundation</code> → PR → CI → merge; <strong>Go given 2026-06-09</strong>, with a
 diff-verification gate) — <strong>decoupled</strong> from the team refresh; (4) <strong>team refresh batched to a Way-of-Working
 milestone</strong> (candidate: <em>Foundation Established</em>, after the Walking Skeleton); (5) the Walking Skeleton.</p>
-<p><strong>Open / next:</strong> run the <strong>Walking Skeleton</strong> (decide: retrospective H01 thread vs. fresh small task) to
-pressure-test C-minimal, then expand the meta-frame with evidence.</p>
+<p><strong>Next step (set 2026-06-10): the 422 Walking Skeleton — run in a FRESH session.</strong>
+Decision made (was: "retro thread vs. fresh task" → <strong>the retrospective 422 thread</strong>, it hits the costliest
+H01 wound directly). Subject: the seam that broke H01 — the <strong>"empty content" contract</strong> between frontend
+(consumer) and narrative backend (provider). Thread it cleanly through the method: <strong>surface the contract</strong>
+(RC6) → <strong>name the seam owner</strong> (RC3) → <strong>QA writes the missing contract test</strong> (their Q2 finding) → real
+handoff via Hannibal, <strong>with <code>task-readiness</code> enforced this time</strong> (the last advisory gap, T6/RC2).
+Participants: Hannibal (cut + dispatch), UX/UI + Narrative Expert (the two seam sides), QA, OE observing.
+Close with the <strong>first real run of the Retrospective practice</strong> (alpha-walk, feed the Improvement Register,
+learnings to <code>learnings/</code>). Double value: pressure-tests C-minimal under load <em>and</em> the missing contract-test
+layer exists afterwards. Then: back to the meta-frame with evidence.
+<em>Unread material (registered in <code>assets-local/</code>, needed later for TDD/Teaming/Stand-up cards): Agile
+Essentials sheets 5–9, ATDD/TDD deck.</em></p>
 <p><strong>Instrument candidate — artifact register</strong> <em>(user, 2026-06-09):</em>
 A <em>continuously maintained</em> list of <strong>artifact types</strong> with metadata — distinct from the one-off storage
 inventory (a problem snapshot). Columns: artifact type · storage location · volume · owner · consumer · change
@@ -2083,7 +2093,14 @@ visually from the image-only PDF). This delivers the formerly deferred item "WoW
   (Method Literacy defined, not assessed) · integrated way of working available ❌.
 <strong>Consequence:</strong> the team-refresh milestone (<em>Foundation Established</em>) is now <strong>checklist-checkable</strong> instead
 of a feeling; the refresh completes the last <em>Principles</em> checkbox and starts <em>In Use</em>. The open <em>Foundation</em>
-checkboxes are, in effect, the remaining Phase-2 to-do list.</p>
+checkboxes are, in effect, the remaining Phase-2 to-do list.
+<strong>Re-assessed at retro 1 (2026-06-10):</strong> <em>Foundation Established</em> ≈ <strong>4/6</strong> (up from ~1.5/6) — key practices &amp;
+tools selected ✅ (3 described cards incl. Retrospective; enacted set registered in <code>method.md</code>) · gaps
+understood ✅ · capability gaps understood ✅ (two-tier competencies now on the retro card; team assessment
+pending but the target is defined and the refresh planned) · non-negotiables ⚠️ (mechanical gates listed in
+<code>method.md</code>, not yet marked per practice) · practices-needed-to-start ⚠️ (named in the 422 next-step block, not
+yet validated) · <strong>integrated way of working available ❌ — the blocking checkbox; exactly what the 422 Walking
+Skeleton validates.</strong> No regression against the first assessment.</p>
 <p><strong>Decision — Retrospective practice composed (2026-06-10).</strong>
 Built by <strong>comparative selection</strong> (user rule: not the first option, the best-fitting one), from the
 downloaded IJI decks (<code>assets-local/</code>): <strong>adopted</strong> from <em>Agile Retrospective Essentials</em> — the activity
@@ -2237,15 +2254,36 @@ below. Learnings home: <code>learnings/</code>.</p>
 <td>Compaction monitoring (hooks + launchd digest)</td>
 <td>compaction concern (2026-06-09)</td>
 <td>DevOps</td>
-<td><strong>Trialed</strong></td>
-<td>live; evaluate at next retro: were auto-compacts caught early?</td>
+<td><strong>Action Agreed</strong> (re-fix after failed trial)</td>
+<td><strong>retro 1 (2026-06-10): trial FAILED</strong> — <code>.claude/compact-monitor.log</code> shows launchd firing into a missing script (<code>scripts/check-compact-log.sh: No such file or directory</code>, 4×). RC4 on the guard itself. Agreed action (owner DevOps, enforcement mechanical): script committed / path corrected <strong>plus an infrastructure test that the monitor target exists</strong> — then re-trial</td>
 </tr>
 <tr>
 <td>Classify step in Improvement Step (Essence-first thinking)</td>
 <td>two Eigensaft near-misses (2026-06-09)</td>
 <td>OE</td>
-<td><strong>Trialed</strong></td>
-<td>applied since introduction; evaluate after a few more runs</td>
+<td><strong>In Use</strong></td>
+<td>retro 1 (2026-06-10): evaluated positive — ≥4 successful applications (method.md vs. "method inventory", Resource element, retro composition, Method-Keeper-instead-of-new-role 2026-06-10); caught every near-invention since introduction</td>
+</tr>
+<tr>
+<td><code>pre-compact</code> skill: EN migration + versioned home + <strong>validation on non-OE sessions</strong> (currently German, unversioned in <code>~/.claude/skills/</code>, only ever run on OE)</td>
+<td>method compatibility check (2026-06-10); priority raised at retro 1 follow-up</td>
+<td>OE</td>
+<td><strong>Prioritized</strong></td>
+<td>RC4 — and now the <strong>enabler of cheap retros</strong>: the Retrospective card's artifact-mediated input variant (a) stays locked until this capture practice is trusted on every agent's session; until then active retro input must use live sessions (expensive). Bundle with the "wrapper re-install / skills sync" question</td>
+</tr>
+<tr>
+<td>"Docs increment to DevOps" as a practice/skill (file list + naht-check + salvage reminder — formulated near-identically 3× today)</td>
+<td>pre-compact step 6 (2026-06-10)</td>
+<td>OE</td>
+<td><strong>Prioritized</strong></td>
+<td>retro 1 (2026-06-10): prioritized — recurs immediately (next increment already queued); action proposal: OE writes the practice card in the next improvement step</td>
+</tr>
+<tr>
+<td>"Deck extraction" as a repeatable procedure (PDF → render → rotate → read cards visually → KB backfill)</td>
+<td>pre-compact step 6 (2026-06-10)</td>
+<td>OE</td>
+<td><strong>Identified</strong></td>
+<td>recurs for every further IJI deck; next retro prioritizes</td>
 </tr>
 </tbody>
 </table>
