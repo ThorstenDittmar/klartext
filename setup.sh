@@ -132,6 +132,28 @@ else
 fi
 
 # ---------------------------------------------------------------------------
+# Compact-Monitor (macOS only)
+# ---------------------------------------------------------------------------
+
+section "Installing compact monitor"
+
+if [[ "$(uname)" == "Darwin" ]]; then
+    PLIST_DEST="$HOME/Library/LaunchAgents/com.klartext.compact-monitor.plist"
+    REPO_DIR="$(pwd)"
+
+    info "Installing launchd agent for auto-compact monitoring…"
+    sed "s|@@REPO_DIR@@|$REPO_DIR|g" scripts/com.klartext.compact-monitor.plist.template > "$PLIST_DEST"
+    chmod +x scripts/check-compact-log.sh
+
+    launchctl unload "$PLIST_DEST" 2>/dev/null || true
+    launchctl load "$PLIST_DEST"
+
+    success "Compact monitor installed — checks hourly, notifies on auto-compacts"
+else
+    info "Skipping compact monitor (launchd is macOS-only — not available on Linux/Codespace)"
+fi
+
+# ---------------------------------------------------------------------------
 # External reference assets
 # ---------------------------------------------------------------------------
 

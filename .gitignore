@@ -41,3 +41,10 @@ Thumbs.db
 # See assets-local/README.md for the file register and conventions.
 assets-local/*
 !assets-local/README.md
+
+# Claude Code — compact monitor runtime data (machine-specific, not versioned)
+.claude/compact-log.txt
+.claude/compact-snapshots/
+.claude/compact-log-lastcheck
+.claude/compact-monitor-digest.txt
+.claude/compact-monitor.log
