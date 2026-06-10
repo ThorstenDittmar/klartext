@@ -1725,6 +1725,7 @@ New schemas + routers:
 <li><strong>N-04</strong> (<code>clean_up.md</code>): CausalModelFederation vollständig spezifizieren</li>
 <li><strong>N-06</strong> (<code>clean_up.md</code>): Community Model Specs anlegen</li>
 <li><strong>Fragment aus narrative_units.typ entfernen</strong> — erst bei Phase-2-Migration zu <code>document_nodes</code></li>
+<li><strong>[PARKED → H01-422-Retro] DELETE-on-unknown-id Kontrakt</strong> — <code>SupabaseNarrativeUnitRepository.remove()</code> ist idempotent (kein 404), <code>update()</code> ist strikt (404). Inkonsistenz. Gleiches Muster wie der 422 (RC6 ungeborener Kontrakt × RC3 API-Konsistenz). Von QA per qa-review gefunden (2026-06-09, gesichert als Investigation-Task). Entscheid nötig: Option A idempotent→204 (Test umbauen) vs. Option B strikt→404 (<code>remove()</code> strikt machen, Frontend behandelt 404). Braucht Narrative-Semantik × SA-Konsistenz. <strong>Bewusst geparkt</strong> (nicht ins laufende 422-Skeleton ziehen — Anti-Tangling); in der H01-422-Retrospective als eigenes walking-skeleton-förmiges Item einspeisen.</li>
 </ul>
 <hr />
 <h2 id="frontend-infrastruktur-offene-punkte-2026-06-05">Frontend-Infrastruktur — Offene Punkte (2026-06-05)<a class="headerlink" href="#frontend-infrastruktur-offene-punkte-2026-06-05" title="Permanent link">&para;</a></h2>
