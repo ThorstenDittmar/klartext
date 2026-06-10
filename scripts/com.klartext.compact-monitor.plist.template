@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- launchd Agent — Compact-Monitor (macOS-only, kein Äquivalent auf Linux/Codespace) -->
+<!-- Installiert via setup.sh nach ~/Library/LaunchAgents/com.klartext.compact-monitor.plist -->
+<!-- @@REPO_DIR@@ wird bei Installation durch den absoluten Repo-Pfad ersetzt -->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.klartext.compact-monitor</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>@@REPO_DIR@@/scripts/check-compact-log.sh</string>
+        <string>@@REPO_DIR@@</string>
+    </array>
+
+    <!-- Stündlich prüfen — Signal ändert sich träge -->
+    <key>StartInterval</key>
+    <integer>3600</integer>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>StandardOutPath</key>
+    <string>@@REPO_DIR@@/.claude/compact-monitor.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>@@REPO_DIR@@/.claude/compact-monitor.log</string>
+</dict>
+</plist>
