@@ -14,5 +14,27 @@
 
       "Bash(semgrep*)"
     ]
+  },
+  "hooks": {
+    "PostCompact": [
+      {
+        "matcher": "auto",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo \"$(date -u +%Y-%m-%dT%H:%M:%S) | auto | $(git branch --show-current)\" >> .claude/compact-log.txt"
+          }
+        ]
+      },
+      {
+        "matcher": "manual",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo \"$(date -u +%Y-%m-%dT%H:%M:%S) | manual | $(git branch --show-current)\" >> .claude/compact-log.txt"
+          }
+        ]
+      }
+    ]
   }
 }
