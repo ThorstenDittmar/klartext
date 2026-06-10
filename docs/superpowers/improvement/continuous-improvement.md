@@ -333,8 +333,18 @@ DevOps (feature branch `docs/h01-method-foundation` → PR → CI → merge; **G
 diff-verification gate) — **decoupled** from the team refresh; (4) **team refresh batched to a Way-of-Working
 milestone** (candidate: *Foundation Established*, after the Walking Skeleton); (5) the Walking Skeleton.
 
-**Open / next:** run the **Walking Skeleton** (decide: retrospective H01 thread vs. fresh small task) to
-pressure-test C-minimal, then expand the meta-frame with evidence.
+**Next step (set 2026-06-10): the 422 Walking Skeleton — run in a FRESH session.**
+Decision made (was: "retro thread vs. fresh task" → **the retrospective 422 thread**, it hits the costliest
+H01 wound directly). Subject: the seam that broke H01 — the **"empty content" contract** between frontend
+(consumer) and narrative backend (provider). Thread it cleanly through the method: **surface the contract**
+(RC6) → **name the seam owner** (RC3) → **QA writes the missing contract test** (their Q2 finding) → real
+handoff via Hannibal, **with `task-readiness` enforced this time** (the last advisory gap, T6/RC2).
+Participants: Hannibal (cut + dispatch), UX/UI + Narrative Expert (the two seam sides), QA, OE observing.
+Close with the **first real run of the Retrospective practice** (alpha-walk, feed the Improvement Register,
+learnings to `learnings/`). Double value: pressure-tests C-minimal under load *and* the missing contract-test
+layer exists afterwards. Then: back to the meta-frame with evidence.
+*Unread material (registered in `assets-local/`, needed later for TDD/Teaming/Stand-up cards): Agile
+Essentials sheets 5–9, ATDD/TDD deck.*
 
 **Instrument candidate — artifact register** *(user, 2026-06-09):*
 A *continuously maintained* list of **artifact types** with metadata — distinct from the one-off storage
@@ -406,6 +416,13 @@ visually from the image-only PDF). This delivers the formerly deferred item "WoW
 **Consequence:** the team-refresh milestone (*Foundation Established*) is now **checklist-checkable** instead
 of a feeling; the refresh completes the last *Principles* checkbox and starts *In Use*. The open *Foundation*
 checkboxes are, in effect, the remaining Phase-2 to-do list.
+**Re-assessed at retro 1 (2026-06-10):** *Foundation Established* ≈ **4/6** (up from ~1.5/6) — key practices &
+tools selected ✅ (3 described cards incl. Retrospective; enacted set registered in `method.md`) · gaps
+understood ✅ · capability gaps understood ✅ (two-tier competencies now on the retro card; team assessment
+pending but the target is defined and the refresh planned) · non-negotiables ⚠️ (mechanical gates listed in
+`method.md`, not yet marked per practice) · practices-needed-to-start ⚠️ (named in the 422 next-step block, not
+yet validated) · **integrated way of working available ❌ — the blocking checkbox; exactly what the 422 Walking
+Skeleton validates.** No regression against the first assessment.
 
 **Decision — Retrospective practice composed (2026-06-10).**
 Built by **comparative selection** (user rule: not the first option, the best-fitting one), from the
@@ -551,8 +568,11 @@ This process does not end with Phase 4. The improvement itself becomes a recurri
 | Improvement | Origin | Owner | State | Evidence / next check |
 |---|---|---|---|---|
 | Branch protection on `main` (6 required checks) | RCA RC2 (2026-06-09) | DevOps | **In Use** | validated through PRs #45/#46/#48 — gate held, naht-checks ran |
-| Compaction monitoring (hooks + launchd digest) | compaction concern (2026-06-09) | DevOps | **Trialed** | live; evaluate at next retro: were auto-compacts caught early? |
-| Classify step in Improvement Step (Essence-first thinking) | two Eigensaft near-misses (2026-06-09) | OE | **Trialed** | applied since introduction; evaluate after a few more runs |
+| Compaction monitoring (hooks + launchd digest) | compaction concern (2026-06-09) | DevOps | **Action Agreed** (re-fix after failed trial) | **retro 1 (2026-06-10): trial FAILED** — `.claude/compact-monitor.log` shows launchd firing into a missing script (`scripts/check-compact-log.sh: No such file or directory`, 4×). RC4 on the guard itself. Agreed action (owner DevOps, enforcement mechanical): script committed / path corrected **plus an infrastructure test that the monitor target exists** — then re-trial |
+| Classify step in Improvement Step (Essence-first thinking) | two Eigensaft near-misses (2026-06-09) | OE | **In Use** | retro 1 (2026-06-10): evaluated positive — ≥4 successful applications (method.md vs. "method inventory", Resource element, retro composition, Method-Keeper-instead-of-new-role 2026-06-10); caught every near-invention since introduction |
+| `pre-compact` skill: EN migration + versioned home + **validation on non-OE sessions** (currently German, unversioned in `~/.claude/skills/`, only ever run on OE) | method compatibility check (2026-06-10); priority raised at retro 1 follow-up | OE | **Prioritized** | RC4 — and now the **enabler of cheap retros**: the Retrospective card's artifact-mediated input variant (a) stays locked until this capture practice is trusted on every agent's session; until then active retro input must use live sessions (expensive). Bundle with the "wrapper re-install / skills sync" question |
+| "Docs increment to DevOps" as a practice/skill (file list + naht-check + salvage reminder — formulated near-identically 3× today) | pre-compact step 6 (2026-06-10) | OE | **Prioritized** | retro 1 (2026-06-10): prioritized — recurs immediately (next increment already queued); action proposal: OE writes the practice card in the next improvement step |
+| "Deck extraction" as a repeatable procedure (PDF → render → rotate → read cards visually → KB backfill) | pre-compact step 6 (2026-06-10) | OE | **Identified** | recurs for every further IJI deck; next retro prioritizes |
 
 > Open (to clarify with the user, noted in PENDING.md): do we need an explicit **sprint-start/end flag** as a
 > trigger for this loop? And: how do we prevent `/compact` from losing knowledge mid-loop?
