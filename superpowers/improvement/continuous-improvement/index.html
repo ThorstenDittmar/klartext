@@ -2299,6 +2299,41 @@ below. Learnings home: <code>learnings/</code>.</p>
 <td><strong>Identified</strong></td>
 <td>same learning class as "guards drift too" (guards/gates need their own existence checks). Candidate enforcement: entry-criteria line on practice cards + artifact-register column. Next retro prioritizes — and this is <strong>prime evidence for retro 2</strong></td>
 </tr>
+<tr>
+<td>Evaluate <strong>Claude Code Agent Teams</strong> (experimental, ≥ v2.1.32) as enactment technology for our multi-agent collaboration — one lead session coordinates, teammates with own context windows, <strong>shared task list + direct mailbox messaging between agents</strong></td>
+<td>user research find (2026-06-10); Resource: https://code.claude.com/docs/en/agent-teams</td>
+<td>OE (+ DevOps for the <code>CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS</code> env flag — Infrastructure Perimeter)</td>
+<td><strong>Identified</strong></td>
+<td>could relieve three known pain points at once: the "user is always the channel" relay overhead, the expensive live-session variant (b) of retro active input, and Hannibal's dispatch round-trips. <strong>Caveats:</strong> experimental (known issues: <code>/resume</code>, task-status tracking, shutdown), significantly higher token use (each teammate = own instance; 3–5 recommended), and it would touch core method patterns (channel rule, knowledge routing) — so: deliberate evaluation against the method, not ad-hoc adoption. <strong>Deliberately NOT during the 422 skeleton</strong> (no tech swap mid-validation). Next retro prioritizes</td>
+</tr>
+<tr>
+<td><strong>Merge protocol for parallel dispatches</strong> — explicit merge owner + PR/rebase order per work package; file-path-disjoint tasks ≠ regulated merge order</td>
+<td>H01-422 run (2026-06-10): Hannibal dispatched QA (<code>api/tests/</code>) and UX/UI (<code>frontend/</code>) in parallel, correctly disjoint, but PR/rebase order on <code>main</code> was unregulated (user flagged the risk; Hannibal owns the gap honestly) — RC5</td>
+<td>Hannibal (card support: OE)</td>
+<td><strong>Identified</strong></td>
+<td>retro 2 material; candidate: practice card "Merge Protocol" (merge owner + order as part of every parallel dispatch)</td>
+</tr>
+<tr>
+<td><strong>Test-first depth for race conditions / create→update transitions</strong> — strengthen the TDD practice so in-flight/race cases are designed test-first, not found in review</td>
+<td>H01-422 run (2026-06-10): UX/UI's honest self-assessment — 4 lazy-create tests were properly RED→GREEN, but the race-condition case (rapid second edit before CREATE resolve) only surfaced in the QA-review pass after implementation</td>
+<td>QA (with UX/UI)</td>
+<td><strong>Identified</strong></td>
+<td>retro 2 material; feeds the pending TDD practice card (test-design checklist: state-transition/race cases)</td>
+</tr>
+<tr>
+<td><strong>Storybook upkeep on component changes</strong> — stories are not maintained when component behavior changes</td>
+<td>H01-422 run (2026-06-10, user observation via Hannibal): unclear which story updates #55 would have required; related to the open <code>.storybook</code> commit-ownership point</td>
+<td>UX/UI</td>
+<td><strong>Identified</strong></td>
+<td>retro 2 material; clarify trigger rule ("component behavior changed → story check") + enforcement level</td>
+</tr>
+<tr>
+<td><strong>Browser-verification capability for UX/UI</strong> — UX/UI tests only via <code>vitest run</code>, no browser-level verification; this run's browser verification is done by Hannibal (roundup) via <code>Claude_Preview</code> MCP (Claude-in-Chrome blocked for localhost)</td>
+<td>H01-422 run (2026-06-10, user observation via Hannibal): open "who drives the app" / verification-ownership question (Thema 2)</td>
+<td>UX/UI + QA (criteria owner)</td>
+<td><strong>Identified</strong></td>
+<td>retro 2 material; candidate: <code>Claude_Preview</code> as team-wide verify capability instead of the Chrome extension; touches the <code>verify</code> skill (QA-owned criteria, UX/UI executes)</td>
+</tr>
 </tbody>
 </table>
 <blockquote>
