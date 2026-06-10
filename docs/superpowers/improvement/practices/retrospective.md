@@ -39,6 +39,12 @@ RC2 failure mode ("decided, never verified") detectable.
 **Event-based, never wall-clock:** end of a sprint / work package (the Work alpha's *Closed* state requires
 "Lessons learned"), a defined milestone, or on demand after a significant incident.
 
+**Who triggers vs. who hosts (clarified 2026-06-10):** the work-package owner (Hannibal — *Coordinate
+Activity*) **triggers** the retro by wanting to close the Work alpha — he cannot reach *Closed* without it.
+The **Method Keeper (OE) hosts**: invites the participants and leads the run. The coordinator must not
+host — the retro evaluates (among other things) how well his coordination worked; self-evaluation without
+a counterpart would break the four-eyes pattern. Precedent: `qa-retro` is led by its practice owner (QA).
+
 ## Entry Criteria
 
 - A **named, event-based trigger** — recorded in the retro output (an unnamed trigger violates this card).
