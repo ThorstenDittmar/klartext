@@ -115,11 +115,16 @@ Literacy ≥ 1); until then OE + user run the involvement check manually against
    **Way of Working**: which checkbox regressed? Which one blocks the next state?
 4. **Root-cause mapping** — map findings to RC1–RC6 (`continuous-improvement.md` Phase 1). If none fits,
    that is a candidate **new** root cause — record it explicitly.
-5. **Identify & prioritize improvements** — new Improvement instances enter the register
+5. **Element sweep** *(added 2026-06-10, user-prompted)* — walk the run's artifacts, activities, patterns
+   and competencies: which elements did this run **use or produce**? Each one: registered in `method.md`?
+   If not → register it (or record it as an Improvement candidate) **in this retro**. This reconciles the
+   *described* method against the *enacted* one — RC4 medicine applied to the method itself; the
+   maintenance ritual alone only catches deliberate changes, not elements that creep in through use.
+6. **Identify & prioritize improvements** — new Improvement instances enter the register
    (*Identified* / *Prioritized*).
-6. **Agree actions** — per improvement: **owner + checkable DoD + enforcement level**
+7. **Agree actions** — per improvement: **owner + checkable DoD + enforcement level**
    (mechanical / ritual — never advisory-only). State → *Action Agreed*.
-7. **Capture & route** — learnings to `learnings/` (one file per learning), register updated, affected
+8. **Capture & route** — learnings to `learnings/` (one file per learning), register updated, affected
    practice cards / `method.md` updated **in the same step**; briefings routed via `knowledge-routing`
    where other agents are affected.
 
@@ -137,6 +142,11 @@ Literacy ≥ 1); until then OE + user run the involvement check manually against
 - [ ] Every previously *Trialed* improvement was evaluated — advanced or retired.
 - [ ] Evidence basis was concrete (incidents / signals), not impressions.
 - [ ] The Way-of-Working checklist was walked; regressions named.
+- [ ] The element sweep ran — every element the run used/produced is registered in `method.md` or recorded
+      as an Improvement candidate.
+- [ ] **Deviation clause:** if any mandatory input was missing or an enactment rule was bent, the deviation
+      is named and justified in the record, and missing input is carried as a *verified addendum* —
+      otherwise this retro is not Done.
 - [ ] Each new improvement has owner + checkable DoD + enforcement level.
 - [ ] Learnings captured at their home; register updated.
 - [ ] Briefings routed where other agents are affected.
