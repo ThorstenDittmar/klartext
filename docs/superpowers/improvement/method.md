@@ -59,7 +59,7 @@ inverse of RC1 (*enforced-ish but not described* instead of *described but not e
 
 | Element | Levels (Essence) | Purpose |
 |---|---|---|
-| **Method Literacy** — the ability to locate way-of-working topics in Essence terms (element type, Alpha) and to use the method document set | 1 *Assists* … 5 *Innovates* | Target for agent onboarding and the team refresh: every agent reaches at least level 2 (*Applies*). |
+| **Method Literacy** — the ability to locate way-of-working topics in Essence terms (element type, Alpha) and to use the method document set | 1 *Assists* … 5 *Innovates* | Target for agent onboarding and the team refresh: every agent reaches at least level 2 (*Applies*). Referenced by practice cards: the Retrospective requires ≥ 2 for the leader (via the Method Keeper pattern), ≥ 1 for participants. |
 
 ## Mechanical gates (activities / checks)
 
