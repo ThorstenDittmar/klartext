@@ -416,6 +416,7 @@ meta-language. Before proposing changes to how we work, read the method document
 `docs/superpowers/improvement/`:
 
 - `semat-definition.md` — self-contained reference for the meta-language (Kernel, Alphas, Practices, Methods)
+- `alpha-states.md` — the kernel Alpha state checklists (the checkable lifecycle)
 - `semat-glossary.md` — our process/method vocabulary (the terms to use)
 - `practices/` — our Practices (composable how-tos; e.g. `improvement-step.md`, `document-scoping.md`)
 - `continuous-improvement.md` — our decisions, rationale, RCA and plan

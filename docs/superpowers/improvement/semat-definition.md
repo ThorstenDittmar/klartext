@@ -48,7 +48,8 @@ The Kernel groups everything into three areas:
 
 An **Alpha** (*Abstract-Level Progress Health Attribute*) is an **essential thing whose state you progress
 and track**. The Kernel defines exactly seven, each with a lifecycle of **states**. Each state has a
-**checklist** to decide whether it has been reached. *(This "thing with a tracked state lifecycle" is the
+**checklist** to decide whether it has been reached — the full per-state checklists live in
+**`alpha-states.md`** (extracted from the IJI Alpha State Cards, CC BY 4.0 SEMAT Inc.). *(This "thing with a tracked state lifecycle" is the
 single most valuable idea we import — see `continuous-improvement.md` RC4.)*
 
 **Customer area**
@@ -103,10 +104,17 @@ the elements to describe your own additions:
   products have *levels of detail*.
 - **Activity** — concrete work that fills an Activity Space.
 - **Pattern** — any other named structure (e.g. a role, a check).
+- **Resource** — external supporting material a Practice *references* but the endeavour does not *produce*
+  (standards documents, card decks, guides). Distinct from a Work Product (which we produce). *(Backfilled
+  2026-06-10 — gap found while classifying external reference assets.)*
 - **Practice** — a **separately-describable, composable** unit: "a repeatable way of doing something with a
   clear purpose." A Practice references the Alphas it advances, the Work Products it produces, and the
   Activities it performs.
-- **Method** — a **composition of Practices** that together form a complete way of working.
+- **Method** — the **composition of a Kernel and a set of Practices** to fulfill a specific purpose — together
+  forming a complete way of working.
+- **Library** — a container/catalog of element groups, notably Practices: a *Practice Library* holds the
+  **stock** of described practices; a Method is the **composition actually in use**. *(Backfilled 2026-06-09 —
+  the gap was found during a check against the standard and closed in the same step.)*
 
 Essence is **card-based**: every element (Alpha, state, Activity, Practice…) is summarised on a concise card
 with its checklist. Cards make the method tangible and checkable rather than a thick manual.
@@ -134,6 +142,9 @@ with its checklist. Cards make the method tangible and checkable rather than a t
 - **No jargon dumping.** We do not force Essence terms into daily speech. Shared meaning comes from our
   small authoritative `semat-glossary.md` (DDD Ubiquitous Language), which imports from Essence only what
   earns its keep.
+- **KB-first lookup.** For SEMAT/method questions, consult this file + the glossary **first** (and say so);
+  go to the web only on a miss or for existence questions (this summary is lossy — absence here does not prove
+  absence in the standard). Every confirmed gap is **backfilled here in the same step**.
 - **Where things live:** this file = the *standard*; `semat-glossary.md` = our *terms*; `practices/` = our
   *Practices*; `continuous-improvement.md` = our *decisions, rationale and plan*.
 
