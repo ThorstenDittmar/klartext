@@ -16,31 +16,37 @@
 > The **Card** column doubles as the migration diagnostic — the only *temporary* aspect of this document:
 > ❌ entries are *enacted* (lived, often as a skill) but not yet *described* in our meta-language.
 
+> **Non-negotiable (NN) flag** *(added 2026-06-10, closes the last Foundation-Established checkbox)*:
+> ✓ = must run whenever its trigger condition applies; skipping requires a **recorded deviation** (cf. the
+> retro deviation clause). — = strong convention, context may override without a record. All mechanical
+> gates are non-negotiable by nature.
+
 ## Practices — described (cards exist)
 
-| Element | Advances Alpha | Enforcement | Card |
-|---|---|---|---|
-| Improvement Step | Way of Working | ritual | ✅ `practices/improvement-step.md` |
-| Document Scoping | Way of Working | ritual | ✅ `practices/document-scoping.md` |
-| Retrospective | Way of Working (tracks Improvement sub-alpha) | ritual | ✅ `practices/retrospective.md` |
+| Element | Advances Alpha | Enforcement | NN | Card |
+|---|---|---|---|---|
+| Improvement Step | Way of Working | ritual | ✓ | ✅ `practices/improvement-step.md` |
+| Document Scoping | Way of Working | ritual | — | ✅ `practices/document-scoping.md` |
+| Retrospective | Way of Working (tracks Improvement sub-alpha) | ritual | ✓ (Work cannot reach *Closed* without it) | ✅ `practices/retrospective.md` |
+| Merge Protocol | Work | ritual | ✓ (for parallel dispatches) | ✅ `practices/merge-protocol.md` |
 
 ## Practices — enacted as skills (cards pending)
 
 Lived practices: each has an executable enactment (a Claude Code skill) but no description card yet — the
 inverse of RC1 (*enforced-ish but not described* instead of *described but not enforced*).
 
-| Element | Enacted as | Advances Alpha | Enforcement today | Card |
-|---|---|---|---|---|
-| TDD | `tdd` skill (wraps superpowers TDD) | Software System, Requirements | ritual + partly mechanical (CI test gate) | ❌ |
-| QA Review | `qa-review` skill (called by `tdd` step 3) | Software System | ritual | ❌ |
-| QA Retro | `qa-retro` skill (test-gap learning loop) | Way of Working, Software System | ritual | ❌ |
-| Task Readiness | `task-readiness` skill | Work | ⚠️ **advisory — never invoked in H01 (T6/RC2)** | ❌ |
-| Knowledge Routing | `knowledge-routing` skill | Team, Way of Working | ritual (anchored in pre-compact) | ❌ |
-| Pre-Compact Capture | `pre-compact` skill | Way of Working | ritual (user-triggered) | ❌ |
-| Frontend Verification | `verify` skill (QA owns criteria, UX/UI executes — four-eyes instance) | Software System | ritual | ❌ |
-| Systematic Debugging | `systematic-debugging` skill | Software System | ritual | ❌ |
-| Frontend Standards | `frontend` skill | Software System | ritual | ❌ |
-| Agent Onboarding | `agent-onboarding` skill | Team | ritual | ❌ |
+| Element | Enacted as | Advances Alpha | Enforcement today | NN | Card |
+|---|---|---|---|---|---|
+| TDD | `tdd` skill (wraps superpowers TDD) | Software System, Requirements | ritual + partly mechanical (CI test gate) | ✓ | ❌ |
+| QA Review | `qa-review` skill (called by `tdd` step 3) | Software System | ritual | ✓ | ❌ |
+| QA Retro | `qa-retro` skill (test-gap learning loop) | Way of Working, Software System | ritual | ✓ (when triggered) | ❌ |
+| Task Readiness | `task-readiness` skill | Work | ritual — **validated H01-422: invoked 3/3 dispatches** (drained to `main` PR #52) | ✓ | ❌ |
+| Knowledge Routing | `knowledge-routing` skill | Team, Way of Working | ritual (anchored in pre-compact) | ✓ | ❌ |
+| Pre-Compact Capture | `pre-compact` skill | Way of Working | ritual (user-triggered) | ✓ (North Star: no insight lost) | ❌ |
+| Frontend Verification | `verify` skill (QA owns criteria, UX/UI executes — four-eyes instance) | Software System | ritual | ✓ (for UI changes) | ❌ |
+| Systematic Debugging | `systematic-debugging` skill | Software System | ritual | — | ❌ |
+| Frontend Standards | `frontend` skill | Software System | ritual | — | ❌ |
+| Agent Onboarding | `agent-onboarding` skill | Team | ritual | ✓ (when adding an agent) | ❌ |
 
 ## Patterns — named structures (mostly prose, no cards)
 
@@ -54,6 +60,11 @@ inverse of RC1 (*enforced-ish but not described* instead of *described but not e
 | Role Description | Pattern | `job-description` skill | — |
 | KB-First Lookup (SEMAT/method questions: own reference first, web on miss, backfill gaps in the same step) | Pattern | `semat-definition.md` §5 | ritual |
 | Method Keeper (OE owns the method; locates way-of-working topics in Essence terms before solutioning) | Pattern (role) | `agents/oe/claude.md` | ritual |
+| Memory Park / Custody (out-of-tree redundancy for at-risk knowledge: park verbatim in auto-memory with restore condition + delete-after-verification; applied 3× on 2026-06-10, bridged two data-loss incidents) | Pattern | element-sweep find (retro 2) — prose here, card pending | ritual |
+| Blocker Protocol (on an unlocatable/blocked step: STOP → classify in Essence/RC terms → escalate to the owner — never improvise; first run: Hannibal B2, 2026-06-10) | Pattern | element-sweep find (retro 2) — prose here, card pending | ritual |
+| Naht-Check (every PR verified to contain exactly the intended files, nothing else; DevOps, every increment since #45) | Activity (gate) | element-sweep find (retro 2) — enacted by DevOps, undescribed | ritual |
+| E2E-before-done (A2 gate: end-to-end verification on the live system *before* merge, evidence captured; first run H01-422) | Activity (gate) | element-sweep find (retro 2) — enacted by Hannibal, undescribed | ritual |
+| Salvage Triage (a/b) (per quarantined file: (a) belongs in repo → commit to main; (b) machine-local → gitignore/outside; freeze → tag/bundle, never a branch in the shared tree) | Activity | DevOps git analysis (2026-06-10) — defined in `continuous-improvement.md` drain warnings | ritual |
 
 ## Competencies (kernel extension)
 
@@ -74,7 +85,8 @@ Specs (`docs/superpowers/specs/`) · Plans (`docs/superpowers/plans/`) · `PENDI
 ADRs (`docs/adr/`) · QA learnings (`docs/superpowers/qa-learnings/`) · Practice cards (`practices/`) · Method
 docs (this set) · Agent knowledge files (`agents/*/claude.md`) + start scripts · Knowledge briefings & DevOps
 briefings (formats defined, **no declared home — RC1 candidates**) · Sign-offs (**unresolved H01 pain point**) ·
-Compact log/digest (gitignored, local).
+Compact log/digest (gitignored, local) · **Friction Reports** (capture-validation output; element-sweep find
+retro 2 — no declared home yet, currently routed via custody depots) · Retro records (`learnings/`).
 
 **Resources** (referenced, not produced — Essence element): external reference assets (licensed decks,
 standards PDFs) · home `assets-local/` (gitignored; README = provenance register, convention in `setup.sh`).

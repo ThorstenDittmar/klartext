@@ -86,3 +86,67 @@ Why:       [Technischer Grund]
 Domain:    [Dependencies]
 Impact:    [Nur QA betroffen]
 ```
+
+## QA-Einbindungs-Protokoll
+
+| Trigger | Wer ruft auf | Kanal |
+|---|---|---|
+| Nach jeder Implementierung (TDD Step 3) | Implementierer | `qa-review` Skill |
+| Infrastructure Tests fertig (DevOps schreibt) | QA reviewt | `qa-review` auf `api/tests/infrastructure/` |
+| Retro-Teilnahme (Hannibal triggert, OE hostet) | QA als Active-Input-Participant | User als Kanal |
+| Blind Spot nach Bug | QA selbst | `qa-retro` Skill |
+
+QA hat Write-Access auf `api/tests/infrastructure/` — direkte Assertion-Ergänzungen ohne Briefing.
+
+## Contract-Test-Pattern
+
+Erkenntniss aus H01-422: `FakeNarrativeUnitService` in Router-Tests umgeht `Fragment.create()` komplett —
+Domain-Invarianten (z.B. leerer Content → 422) werden nie getriggert. Lösung:
+
+```python
+def _make_real_service_client() -> AsyncClient:
+    """Returns a client wired to the real NarrativeUnitService with a FakeNarrativeUnitRepository."""
+    real_service = NarrativeUnitService(repository=FakeNarrativeUnitRepository())
+    app.dependency_overrides[get_narrative_unit_service] = lambda: real_service
+    return AsyncClient(transport=ASGITransport(app=app), base_url="http://test")
+```
+
+**Wann anwenden:** Wenn 422-Verhalten aus einer Domain-Factory-Methode (`X.create()`) stammt — nicht wenn
+es direkt aus dem Router kommt (HTTPException). Testklasse: `TestCreate<Typ>Contract`.
+
+Beide Fälle nötig: Fehlerfall (422) **und** Happy Path (201) — sonst ist der Kontrakt unvollständig.
+
+## Blind Spots / Heuristiken
+
+Gelernt aus H01/H01-422:
+
+1. **FakeService = Domain-Bypass.** Router-Test mit `FakeXService` ruft `X.create()` nie auf. Ein
+   bestandener Test beweist nicht, dass die Domain-Invariante läuft.
+
+2. **Asymmetrie update vs. remove.** `update()` prüft das DB-Ergebnis und wirft `NarrativeUnitNotFoundError`.
+   `remove()` ist idempotent — kein Check, kein raise, auch bei unbekannter ID. Der globale Handler in
+   `main.py` greift für DELETE/404 daher **nie**. Ein Test `test_remove_unknown_unit_returns_404` ist in
+   Production unerreichbar. Status: PARKED → `PENDING.md`, Entscheid in der Retro.
+
+3. **qa-review findet echte Bugs.** H01-422: 5 weitere Tests entdeckt die echte Vertragslücken abdeckten
+   (Happy Path fehlte; Work-Typ nicht in Contract-Klasse; parent_id-Cases). qa-review ist kein reiner
+   Coverage-Checker — es ist QA-Urteilsvermögen.
+
+## Debug Tools Registry
+
+| Tool | Befehl | Zweck |
+|---|---|---|
+| Strukturcheck | `python3 scripts/check_test_coverage.py` | 3 Invarianten: source→test, router→health, supabase→integration |
+| Unit-Tests | `pytest api/tests/ -k "not integration" -v` | Alle Unit- und Router-Tests |
+| Integration-Tests | `pytest api/tests/ -m integration -v` | Gegen echte Supabase-Dev-DB |
+| Einzelne Datei | `pytest api/tests/test_narrative_units_router.py -v` | Einen Router-Test isoliert |
+
+## Strukturelle Diskrepanzen
+
+Bekannte Abweichungen zwischen diesem claude.md und der Realität — nicht selbst vorziehen, auf SA/OE warten:
+
+1. **Semgrep-Pfad.** Dieses Dokument nennt `.semgrep/rules/qa/` — tatsächliche Rules liegen **flach** in
+   `.semgrep/rules/` mit `klartext-*` Präfix. SA-Entscheid über Verzeichnis-Struktur ausstehend.
+
+2. **`frontend-testing.md`** liegt nur auf `salvage/h01-working-tree` (nicht auf `main`). Nach dem
+   Salvage-Teardown hier eintragen, sobald die Datei auf `main` verfügbar ist.
