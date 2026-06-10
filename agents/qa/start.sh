@@ -18,6 +18,8 @@
 cd "$(dirname "$0")/../.." || exit 1
 
 claude \
+  --allowedTools "Edit(docs/superpowers/plans/PENDING.md)" \
+  --allowedTools "Write(docs/superpowers/plans/PENDING.md)" \
   --allowedTools "Bash(source api/.venv/bin/activate && python*)" \
   --allowedTools "Bash(python3 scripts/check_test_coverage.py*)" \
   --allowedTools "Edit(api/tests/)" \

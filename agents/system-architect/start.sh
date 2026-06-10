@@ -18,6 +18,8 @@
 cd "$(dirname "$0")/../.." || exit 1
 
 claude \
+  --allowedTools "Edit(docs/superpowers/plans/PENDING.md)" \
+  --allowedTools "Write(docs/superpowers/plans/PENDING.md)" \
   --allowedTools "Edit(CLAUDE.md)" \
   --allowedTools "Write(CLAUDE.md)" \
   --allowedTools "Edit(docs/adr/)" \
