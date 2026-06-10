@@ -1,7 +1,13 @@
 """Tests for the /narrative-units router.
 
-NarrativeUnitService is replaced by FakeNarrativeUnitService via
-app.dependency_overrides. No database is involved.
+Two kinds of tests live here:
+
+1. Unit-level router tests — NarrativeUnitService is replaced by FakeNarrativeUnitService
+   via app.dependency_overrides. No database, no domain validation.
+
+2. Contract tests (TestCreateFragmentContract) — use the real NarrativeUnitService
+   with FakeNarrativeUnitRepository to verify that domain invariants are enforced
+   end-to-end through the router. Contract source: docs/contracts/narrative-units-fragment.md
 """
 
 from __future__ import annotations
@@ -14,6 +20,8 @@ from api.dependencies import get_narrative_unit_service
 from api.exceptions.narrative_unit import NarrativeUnitNotFoundError
 from api.main import app
 from api.models.narrative_unit import Fragment, NarrativeUnit
+from api.services.narrative_unit_service import NarrativeUnitService
+from api.tests.fakes.fake_narrative_unit_repository import FakeNarrativeUnitRepository
 from api.tests.mothers.narrative_unit_mother import (
     FRAGMENT_ID,
     SCENE_ID,
@@ -194,3 +202,90 @@ class TestRemoveUnit:
         ) as client:
             response = await client.delete("/narrative-units/does-not-exist")
         assert response.status_code == 404
+
+
+# ---------------------------------------------------------------------------
+# Contract tests — real service, fake repository
+# ---------------------------------------------------------------------------
+
+
+def _make_real_service_client() -> AsyncClient:
+    """Returns a client wired to the real NarrativeUnitService with a FakeNarrativeUnitRepository.
+
+    Used by contract tests to exercise the full domain validation chain without
+    hitting the database. The fake repository is sufficient because the domain
+    invariant fires before any repository call is made.
+    """
+    real_service = NarrativeUnitService(repository=FakeNarrativeUnitRepository())
+    app.dependency_overrides[get_narrative_unit_service] = lambda: real_service
+    return AsyncClient(transport=ASGITransport(app=app), base_url="http://test")
+
+
+class TestCreateFragmentContract:
+    """Contract tests for POST /narrative-units (typ=fragment).
+
+    Verifies that the backend enforces the Fragment content invariant end-to-end
+    through the router. These tests use the real NarrativeUnitService (not a fake)
+    so that domain validation cannot be accidentally bypassed by a service stub.
+
+    Contract source: docs/contracts/narrative-units-fragment.md
+    """
+
+    async def test_empty_content_returns_422(self) -> None:
+        """POST /narrative-units with content='' returns 422.
+
+        Contract: a Fragment with empty content violates the domain invariant
+        and must be rejected with 422 and error message 'content must not be empty'.
+        """
+        async with _make_real_service_client() as client:
+            response = await client.post(
+                "/narrative-units",
+                json={
+                    "typ": "fragment",
+                    "content": "",
+                    "position": 1,
+                    "parent_id": SCENE_ID,
+                    "narrative_id": TEST_NARRATIVE_ID,
+                },
+            )
+        assert response.status_code == 422
+        assert response.json()["error"] == "content must not be empty"
+
+    async def test_whitespace_only_content_returns_422(self) -> None:
+        """POST /narrative-units with content='   ' (whitespace-only) returns 422.
+
+        Contract: whitespace-only content is treated as empty by the domain invariant.
+        """
+        async with _make_real_service_client() as client:
+            response = await client.post(
+                "/narrative-units",
+                json={
+                    "typ": "fragment",
+                    "content": "   ",
+                    "position": 1,
+                    "parent_id": SCENE_ID,
+                    "narrative_id": TEST_NARRATIVE_ID,
+                },
+            )
+        assert response.status_code == 422
+        assert response.json()["error"] == "content must not be empty"
+
+    async def test_null_content_returns_422(self) -> None:
+        """POST /narrative-units with content=null returns 422.
+
+        The router coerces null to '' via `body.content or ""`, which the domain
+        invariant then rejects. Contract: content must be present and non-empty.
+        """
+        async with _make_real_service_client() as client:
+            response = await client.post(
+                "/narrative-units",
+                json={
+                    "typ": "fragment",
+                    "content": None,
+                    "position": 1,
+                    "parent_id": SCENE_ID,
+                    "narrative_id": TEST_NARRATIVE_ID,
+                },
+            )
+        assert response.status_code == 422
+        assert response.json()["error"] == "content must not be empty"
