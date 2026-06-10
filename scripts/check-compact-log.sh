@@ -36,8 +36,11 @@ if [ "$CURRENT_LINES" -le "$LAST_CHECKED" ]; then
     exit 0
 fi
 
-# Neue Zeilen seit letztem Check auf auto-Einträge prüfen
-NEW_AUTO=$(tail -n +"$((LAST_CHECKED + 1))" "$LOG_FILE" | grep "| auto |" | wc -l | tr -d ' ')
+# Neue Zeilen seit letztem Check auf auto-Einträge prüfen.
+# `grep -c` zählt Treffer; bei null Treffern liefert grep Exit 1, was unter
+# `set -euo pipefail` das Skript abbrechen würde (State bliebe stehen) — daher
+# `|| true`, damit "keine auto-Compacts" ein regulärer 0-Fall ist, kein Fehler.
+NEW_AUTO=$(tail -n +"$((LAST_CHECKED + 1))" "$LOG_FILE" | grep -c "| auto |" || true)
 
 # State aktualisieren
 echo "$CURRENT_LINES" > "$STATE_FILE"
