@@ -2111,7 +2111,37 @@ validated the integrated way of working end-to-end (gated dispatch → TDD → q
 enacted merge protocol → captures → retro), so "integrated way of working available" ✓ and
 "practices-needed-to-start agreed" ✓ (validated in use). <strong>Single open box: "non-negotiables marked per
 practice"</strong> — agreed action at retro 2 (OE, <code>method.md</code> flag). When it closes: <strong>team-refresh milestone
-fires.</strong> Work alpha H01-422: <strong>Closed</strong> (lessons: <code>learnings/2026-06-10-h01-422-retrospective.md</code>).</p>
+fires.</strong> Work alpha H01-422: <strong>Closed</strong> (lessons: <code>learnings/2026-06-10-h01-422-retrospective.md</code>).
+<strong>🏁 Foundation Established REACHED (2026-06-10, post-retro-2 actions):</strong> NN flags live in <code>method.md</code> →
+<strong>6/6</strong>. The Way-of-Working alpha stands at <em>Foundation Established</em>; <strong>the team-refresh milestone is DUE</strong>
+(batched activation: every agent reads the method doc set, Method Literacy ≥ 2 target → completes
+<em>Principles Established</em> 6/6 and starts <em>In Use</em>). Executed in the same block: element-sweep step + deviation
+clause on the retro card (self-audit findings 1+2 closed structurally), Merge-Protocol card
+(<code>practices/merge-protocol.md</code>), 6 element-sweep finds registered in <code>method.md</code>, start.sh permission audit
+(9 scripts fixed — only Hannibal's declared PENDING.md access; stale "DevOps only" headers noted, role SSOT
+says OE). Open from the retro-2 action list: the pre-compact multi-agent fix bundle (next OE step).
+<strong>Team-refresh tally</strong> (explicit confirmation per agent → completes <em>Principles</em> 6/6, starts <em>In Use</em>):
+UX/UI ✅ (2026-06-10, exemplary — alphas, NN set, own register rows located) · QA ✅ (2026-06-10 — incl.
+capture follow-up git-verified [3 artifacts] and the load-bearing insight "green tests prove nothing about
+the <em>right</em> tests") · SA ✅ (2026-06-10 —
+incl. ADR sign-off ×3, retro-2 addendum delivered [deviation closed], and a self-diagnosed micro-RC1) ·
+Narrative ✅ (2026-06-10 — incl. A1 entry artifact-verified, 3rd independent false-persistence case
+[claude.md content lived only in the session summary], placeholder-sweep finding) ·
+Causal Model ✅ (2026-06-10 — Level 2, correctly traces own routed items) · Audit ✅ (2026-06-10 — Level 2,
+incl. honest gap report: O3 never landed in §3) · Community ✅ (2026-06-10 — incl. correct negative finding:
+no owned register rows, no inherited actions) · DevOps ✅ (2026-06-10 — self-assessed ≥2, OE assesses 3
+<em>Masters</em>: maps own register dependency chains incl. capture-trust → retro variant (a)) · Hannibal ✅
+(2026-06-10 — OE assesses 3 <em>Masters</em>: articulates the trigger/host asymmetry and his Closed-dependency
+unprompted; principles explicitly supported "because measured, not because practiced")</p>
+<p><strong>🏁🏁 9/9 — <em>Principles Established</em> 6/6 → the Way-of-Working alpha enters <em>In Use</em> (2026-06-10).</strong>
+Every agent explicitly supports the principles, has read the doc set, and located their own register rows;
+team-wide Method Literacy ≥ 2 (two assessed at 3). The refresh worked as a real literacy check, not a
+nod-through ritual: it produced 4 new improvement candidates, 1 routing-loss report, a 3rd false-persistence
+case, and a validation of the self-contained doc set (a first-day agent answered everything without a single
+follow-up question). <em>In Use</em> checklist now governs: practices &amp; tools in use ✓ · regularly inspected
+(retros 1+2 ✓, cadence to hold) · adapted to context ✓ (validated through use) · supported by team ✓ (this
+tally) · feedback mechanisms in place ✓ (register + retro + blocker protocol) · supports collaboration —
+<strong>the open box; evidence target for the next work packages.</strong></p>
 <p><strong>Decision — Retrospective practice composed (2026-06-10).</strong>
 Built by <strong>comparative selection</strong> (user rule: not the first option, the best-fitting one), from the
 downloaded IJI decks (<code>assets-local/</code>): <strong>adopted</strong> from <em>Agile Retrospective Essentials</em> — the activity
@@ -2265,8 +2295,8 @@ below. Learnings home: <code>learnings/</code>.</p>
 <td>Compaction monitoring (hooks + launchd digest)</td>
 <td>compaction concern (2026-06-09)</td>
 <td>DevOps</td>
-<td><strong>Action Agreed</strong> (3rd, after 2 failed trials)</td>
-<td><strong>Retro 2 (2026-06-10): 2nd trial FAILED one level deeper</strong> — ≥6 compacts today, zero <code>compact-log.txt</code> lines anywhere: the <strong>PostCompact hook layer never fired</strong> (hooks live in <code>klartext/.claude/settings.json</code>, sessions run with cwd <code>/Users/thormar</code> → project settings likely never load; plus cwd-relative log path). Launchd + script (retro-1 fix) run fine — against a void. <strong>Agreed action:</strong> fix hook layer (settings location / absolute paths) <strong>+ ONE end-to-end chain test</strong> (inject synthetic <code>| auto |</code> entry → digest + notification appear); per-link existence checks demonstrably pass while the chain is dead. ⚠️ Side question: if project settings don't load, <em>every</em> project-level hook/permission may be inert — verify. See <code>learnings/2026-06-10-h01-422-retrospective.md</code></td>
+<td><strong>Results Evaluated (partial)</strong> — Stage 2 proven, Stage 1 gated</td>
+<td><strong>3rd trial (2026-06-10, PRs #60/#61): Stage 2 (reader half) PROVEN end-to-end</strong> — synthetic <code>| auto |</code> entry → digest + notification; idempotent; <strong>the E2E trial caught a REAL bug</strong> (a single <code>| manual |</code> entry crashed the script under <code>set -euo pipefail</code> and froze state — fixed #61, regression-tested; per-link existence checks would never have seen it → hard confirmation of the "test the chain, not the links" learning). Hook paths hardened to <code>$CLAUDE_PROJECT_DIR</code> (#60, Option 0). 8 infra tests across both halves. <strong>Stage 1 (hook fires in real agent sessions) remains gated on the structural decision (cwd/worktree study, Option A/B)</strong> — final trial then. History: 1st trial failed (script missing), 2nd failed (hook layer dead) — see <code>learnings/2026-06-10-h01-422-retrospective.md</code></td>
 </tr>
 <tr>
 <td>Classify step in Improvement Step (Essence-first thinking)</td>
@@ -2279,8 +2309,8 @@ below. Learnings home: <code>learnings/</code>.</p>
 <td><code>pre-compact</code> skill: <strong>multi-agent fix bundle</strong> + EN migration + versioned home</td>
 <td>method compatibility check (2026-06-10); validation run at H01-422 close (4 non-OE sessions, convergent frictions ×3 agents)</td>
 <td>OE</td>
-<td><strong>Action Agreed</strong> (retro 2)</td>
-<td>Validation worked — gap list now precise: domain-agent home branch (<code>agents/&lt;name&gt;/claude.md</code> + own learnings), per-agent home list, step-1.5 trigger rule, "parked findings" category, conditional step 6B, <strong>artifact-verification step</strong> (false-persistence guard: <code>git status</code>/<code>git log</code> on claimed targets — 2× evidence of summaries claiming writes that never happened, RC4 variant). DoD: re-validation on one non-OE session passes friction-free → unlocks the cheap artifact-mediated retro variant (a). Companion action: <strong>start.sh permission audit</strong> (PENDING.md write permission promised by skill, declared nowhere — 3× independent, RC2 class)</td>
+<td><strong>Trialed</strong> (fix bundle applied 2026-06-10)</td>
+<td><strong>All 6 fixes applied + artifact-verified</strong> (grep 6/6, mtime 19:16): domain-agent home branch incl. write-permission pre-check, step-1.5 trigger rule + received-tasks/outgoing-findings framing, "parked findings" category 7 + Memory-Park home, conditional step 6B (domain agents brief OE), <strong>mandatory artifact-verification close in step 4</strong> (false-persistence guard). Companion done: <strong>start.sh audit — 9 scripts fixed</strong> (only Hannibal's declared PENDING.md access; 10/10 verified). <strong>Next check (→ Results Evaluated): re-validation on one non-OE session passes friction-free</strong> → unlocks the cheap artifact-mediated retro variant (a). Still open in this row: EN migration + versioned home (bundled with wrapper/skills-sync question)</td>
 </tr>
 <tr>
 <td>"Docs increment to DevOps" as a practice/skill (file list + naht-check + salvage reminder — formulated near-identically 3× today)</td>
@@ -2321,8 +2351,8 @@ below. Learnings home: <code>learnings/</code>.</p>
 <td><strong>Merge protocol for parallel dispatches</strong> — explicit merge owner + PR/rebase order per work package; file-path-disjoint tasks ≠ regulated merge order</td>
 <td>H01-422 run (2026-06-10): Hannibal dispatched QA (<code>api/tests/</code>) and UX/UI (<code>frontend/</code>) in parallel, correctly disjoint, but PR/rebase order on <code>main</code> was unregulated (user flagged the risk; Hannibal owns the gap honestly) — RC5</td>
 <td>Hannibal (card support: OE)</td>
-<td><strong>Action Agreed</strong> (retro 2)</td>
-<td><strong>First live enactment succeeded (2026-06-10):</strong> Hannibal as named merge owner, explicit #53→#54→#55 order, executed by DevOps and verified against artifacts. Agreed action: OE writes the practice card (content from Hannibal: named merge owner + explicit order + artifact verification); DoD: card + <code>method.md</code> row</td>
+<td><strong>Trialed</strong></td>
+<td>First live enactment succeeded (2026-06-10): #53→#54→#55, named owner, artifact-verified. <strong>Card written (<code>practices/merge-protocol.md</code>) + <code>method.md</code> row, NN for parallel dispatches.</strong> Evaluate at next parallel work package: did the card hold as written?</td>
 </tr>
 <tr>
 <td><strong>Test-first depth for race conditions / create→update transitions</strong> — strengthen the TDD practice so in-flight/race cases are designed test-first, not found in review</td>
@@ -2384,8 +2414,36 @@ below. Learnings home: <code>learnings/</code>.</p>
 <td><strong>Non-negotiables marked per practice</strong> — <code>method.md</code> gets a non-negotiable flag per element</td>
 <td>retro 2 alpha-walk: the single open <em>Foundation Established</em> checkbox</td>
 <td>OE</td>
-<td><strong>Action Agreed</strong> (retro 2)</td>
-<td>DoD: flag present for every practice in <code>method.md</code>. <strong>Closes the last Foundation box → fires the team-refresh milestone</strong> (batched activation + Principles 6/6)</td>
+<td><strong>Trialed</strong> (executed 2026-06-10)</td>
+<td>NN column live in <code>method.md</code> (both practice tables + legend with deviation-record rule). <strong>Last Foundation box closed → Foundation Established reached → team refresh DUE.</strong> Evaluate at next retro: did the flags actually bind behavior?</td>
+</tr>
+<tr>
+<td><strong>Provider-upgrade governance (Audit O3)</strong> — lifecycle governance for external model dependencies in <code>api/providers/</code> (upgrade path currently ungoverned, RC4 variant)</td>
+<td>Audit Expert, H01 post-mortem cross-check; <strong>routing loss surfaced at team refresh (2026-06-10): O3 was sent to Hannibal but never landed in §3</strong> — the gap report itself is a routing-loss data point</td>
+<td>Audit Expert + OE</td>
+<td><strong>Identified</strong></td>
+<td>next retro prioritizes; the routing loss feeds the briefings-without-home RC1 candidate</td>
+</tr>
+<tr>
+<td><strong>Placeholder sweep over <code>agents/*/claude.md</code></strong> — "Agent ergänzt hier"-placeholders are RC4 risk: the placeholder is the only repo version, and nobody can tell deliberate-empty from forgotten</td>
+<td>Narrative finding 2 at team refresh (2026-06-10): his own file was exactly this case, now filled (artifact-verified)</td>
+<td>OE</td>
+<td><strong>Identified</strong></td>
+<td>quick OE sweep; also connects to Narrative's 3rd false-persistence case (claude.md content lived only in a session summary — verification must fire in the <em>writing</em> session, before any compact)</td>
+</tr>
+<tr>
+<td><strong>Domain-activation guard check</strong> — when a dormant domain becomes productive, check whether the register/guards cover it (e.g. <code>api/*/user*</code> has zero domain-specific guard items; RC6 auth assumptions only cross-cutting)</td>
+<td>Community Expert observation at team refresh (2026-06-10), explicitly "observation, not blocker"</td>
+<td>OE + Community Expert</td>
+<td><strong>Identified</strong></td>
+<td>natural hook: <code>task-readiness</code> at the first dispatch into a fresh domain; next retro prioritizes</td>
+</tr>
+<tr>
+<td><strong>Formalize <code>docs/contracts/</code> as an artifact type</strong> — SA's R-decision introduced <code>docs/contracts/narrative-units-fragment.md</code> without registering the type: no Artifact-Register entry, no defined process, no maintenance rule</td>
+<td><strong>SA self-diagnosis at team refresh (2026-06-10)</strong> — micro-RC1, found via the retro-2 involvement addendum; SA's positive evidence in the same addendum: escalation arrived <em>at the seam</em> (post-mortem repair worked) and the briefing was RC6-conform (contract surfaced, checkable, with options)</td>
+<td>SA + OE</td>
+<td><strong>Identified</strong></td>
+<td>feeds the Artifact-Register candidate (this is exactly the register's purpose: no type without home + maintenance rule); next retro prioritizes</td>
 </tr>
 <tr>
 <td><strong>Structural change: <code>git worktree</code> per context + session-cwd repair</strong> — each agent/context gets its own working directory (same object store); every session runs in its repo-/worktree-root</td>
@@ -2406,7 +2464,7 @@ below. Learnings home: <code>learnings/</code>.</p>
 <td>Hannibal find (2026-06-10, post-retro-2): <code>agents/hannibal/</code> (claude.md + start.sh — his session-start knowledge!) vanished from the tree; verified affected: 2 H01 plans (PENDING references → broken links), ADR 0007+0008 (SA domain). OE verified: hannibal/ is the ONLY <code>agents/</code> dir missing on main — explains the stranded Hannibal row in the role tables. New RC4 variant, same question class as the settings-load find ("what the system believes present vs. what is")</td>
 <td>OE (policy) + DevOps (drains) + Hannibal/SA (domain sign-offs)</td>
 <td><strong>Action Agreed</strong></td>
-<td>Actions: (1) drain <code>agents/hannibal/</code> + the 2 plans to <code>main</code> (owners approved; bundle with next docs increment), (2) ADR 0007/0008 drain pending SA sign-off (rides with the involvement-check question), (3) teardown plan gets the category <strong>"already removed from tree by checkout — operationally missing NOW"</strong> with full inventory as teardown entry step. Hannibal's interim restore (untracked via <code>git show salvage:…</code>, 192 lines verified) holds until (1)</td>
+<td>Actions: (1) drain <code>agents/hannibal/</code> + the 2 plans to <code>main</code> (owners approved; bundle with next docs increment), (2) ADR 0007/0008 drain pending SA sign-off (rides with the involvement-check question), (3) teardown plan gets the category <strong>"already removed from tree by checkout — operationally missing NOW"</strong> with full inventory as teardown entry step. Hannibal's interim restore (untracked via <code>git show salvage:…</code>, 192 lines verified) holds until (1). <strong>Teardown triage complete (2026-06-10, DevOps, post PR #62):</strong> remaining salvage-only (A-list) = 9 implemented frontend components incl. stories/tests (owner decision UX/UI+QA: drain vs. discard) · ADR 0007/0008/<strong>0009</strong> (SA sign-off) · 2 QA docs (QA) · ~~job-description skill~~ (OE: drain approved 2026-06-10). M-list (~35 divergent files): main is AHEAD (salvage = stale 13:33 snapshot) — no blind drain. Teardown gate = A-list decisions; then delete salvage (+ optional tag/bundle as frozen H01 record, user's call)</td>
 </tr>
 </tbody>
 </table>
