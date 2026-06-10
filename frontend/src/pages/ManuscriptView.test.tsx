@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import ManuscriptView from "./ManuscriptView";
 import type { NarrativeUnitResponse } from "../lib/api";
 
@@ -83,6 +83,10 @@ function renderManuscriptWithoutParam() {
 }
 
 describe("ManuscriptView", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   beforeEach(async () => {
     vi.clearAllMocks();
     const { getNarrativeTree, createNarrativeUnit, updateNarrativeUnit } =
@@ -261,18 +265,38 @@ describe("ManuscriptView", () => {
     );
   });
 
-  it("'+ Absatz hinzufügen' button calls createNarrativeUnit with typ='fragment'", async () => {
-    /** Expects: clicking the per-scene add-fragment button fires createNarrativeUnit for a 'fragment'. */
+  // ── Lazy-create ─────────────────────────────────────────────────────────────
+
+  it("'+ Absatz hinzufügen' renders a pending textarea immediately without calling createNarrativeUnit", async () => {
+    /** Expects: clicking the add-fragment button renders a textarea immediately via local
+     *  pending state, without sending a POST request to the server. */
+    const { getNarrativeTree, createNarrativeUnit } = await import("../lib/api");
+    vi.mocked(getNarrativeTree).mockResolvedValueOnce({
+      narrative_id: "nar-001",
+      root: TREE_SCENE_NO_FRAGMENTS,
+    });
+
+    renderManuscript();
+    const button = await screen.findByRole("button", { name: "+ Absatz hinzufügen" });
+    await userEvent.click(button);
+
+    expect(screen.getByPlaceholderText("Schreib hier…")).toBeInTheDocument();
+    expect(vi.mocked(createNarrativeUnit)).not.toHaveBeenCalled();
+  });
+
+  it("typing non-empty content into a pending textarea calls createNarrativeUnit after debounce", async () => {
+    /** Expects: when a pending fragment receives non-empty content, createNarrativeUnit is
+     *  called exactly once after the 1.5s debounce — not on click, not immediately on change. */
     const { getNarrativeTree, createNarrativeUnit } = await import("../lib/api");
     vi.mocked(getNarrativeTree).mockResolvedValueOnce({
       narrative_id: "nar-001",
       root: TREE_SCENE_NO_FRAGMENTS,
     });
     vi.mocked(createNarrativeUnit).mockResolvedValueOnce({
-      id: "frag-new",
+      id: "frag-server-1",
       typ: "fragment",
       title: null,
-      content: "",
+      content: "Erstes Wort",
       position: 1,
       narrative_id: "nar-001",
       parent_id: "scene-1",
@@ -280,18 +304,234 @@ describe("ManuscriptView", () => {
     });
 
     renderManuscript();
-    const button = await screen.findByRole("button", {
-      name: "+ Absatz hinzufügen",
-    });
+    const button = await screen.findByRole("button", { name: "+ Absatz hinzufügen" });
     await userEvent.click(button);
 
+    const textarea = screen.getByPlaceholderText("Schreib hier…");
+
+    vi.useFakeTimers();
+    fireEvent.change(textarea, { target: { value: "Erstes Wort" } });
+    expect(vi.mocked(createNarrativeUnit)).not.toHaveBeenCalled();
+
+    await act(async () => { await vi.advanceTimersByTimeAsync(1500); });
+
+    expect(vi.mocked(createNarrativeUnit)).toHaveBeenCalledTimes(1);
     expect(vi.mocked(createNarrativeUnit)).toHaveBeenCalledWith(
       expect.objectContaining({
         typ: "fragment",
-        parent_id: "scene-1",
+        content: "Erstes Wort",
         narrative_id: "nar-001",
+        parent_id: "scene-1",
       })
     );
+    vi.useRealTimers();
+  });
+
+  it("after the first save, further edits call updateNarrativeUnit with the server id", async () => {
+    /** Expects: once a pending fragment has been persisted (CREATE), subsequent content changes
+     *  call updateNarrativeUnit with the server-assigned id — createNarrativeUnit is called only once. */
+    const { getNarrativeTree, createNarrativeUnit, updateNarrativeUnit } = await import("../lib/api");
+    vi.mocked(getNarrativeTree).mockResolvedValueOnce({
+      narrative_id: "nar-001",
+      root: TREE_SCENE_NO_FRAGMENTS,
+    });
+    vi.mocked(createNarrativeUnit).mockResolvedValueOnce({
+      id: "frag-server-1",
+      typ: "fragment",
+      title: null,
+      content: "Erstes Wort",
+      position: 1,
+      narrative_id: "nar-001",
+      parent_id: "scene-1",
+      children: [],
+    });
+
+    renderManuscript();
+    const button = await screen.findByRole("button", { name: "+ Absatz hinzufügen" });
+    await userEvent.click(button);
+
+    const textarea = screen.getByPlaceholderText("Schreib hier…");
+
+    vi.useFakeTimers();
+    // Before first edit: no API call yet (lazy-create — click must not trigger POST)
+    expect(vi.mocked(createNarrativeUnit)).not.toHaveBeenCalled();
+
+    // First edit → triggers CREATE
+    fireEvent.change(textarea, { target: { value: "Erstes Wort" } });
+    await act(async () => { await vi.advanceTimersByTimeAsync(1500); });
+    expect(vi.mocked(createNarrativeUnit)).toHaveBeenCalledTimes(1);
+
+    // Second edit → triggers UPDATE with server id
+    fireEvent.change(textarea, { target: { value: "Zweites Wort" } });
+    await act(async () => { await vi.advanceTimersByTimeAsync(1500); });
+
+    expect(vi.mocked(updateNarrativeUnit)).toHaveBeenCalledWith(
+      "frag-server-1",
+      expect.objectContaining({ content: "Zweites Wort" })
+    );
+    expect(vi.mocked(createNarrativeUnit)).toHaveBeenCalledTimes(1);
+    vi.useRealTimers();
+  });
+
+  it("leaving a pending textarea empty after debounce does not call createNarrativeUnit", async () => {
+    /** Expects: if the user clicks '+ Absatz' but only enters whitespace, createNarrativeUnit
+     *  is never called — empty content must not reach the backend (would cause 422). */
+    const { getNarrativeTree, createNarrativeUnit } = await import("../lib/api");
+    vi.mocked(getNarrativeTree).mockResolvedValueOnce({
+      narrative_id: "nar-001",
+      root: TREE_SCENE_NO_FRAGMENTS,
+    });
+
+    renderManuscript();
+    const button = await screen.findByRole("button", { name: "+ Absatz hinzufügen" });
+    await userEvent.click(button);
+
+    const textarea = screen.getByPlaceholderText("Schreib hier…");
+
+    vi.useFakeTimers();
+    fireEvent.change(textarea, { target: { value: "   " } }); // whitespace only
+    await act(async () => { await vi.advanceTimersByTimeAsync(1500); });
+
+    expect(vi.mocked(createNarrativeUnit)).not.toHaveBeenCalled();
+    vi.useRealTimers();
+  });
+
+  it("clicking '+ Absatz' twice creates two independent pending textareas", async () => {
+    /** Expects: each click on the add-fragment button adds a separate pending textarea with a
+     *  unique pending id. Both are visible in the DOM independently, and createNarrativeUnit
+     *  is still not called on either click. */
+    const { getNarrativeTree, createNarrativeUnit } = await import("../lib/api");
+    vi.mocked(getNarrativeTree).mockResolvedValueOnce({
+      narrative_id: "nar-001",
+      root: TREE_SCENE_NO_FRAGMENTS,
+    });
+
+    renderManuscript();
+    const button = await screen.findByRole("button", { name: "+ Absatz hinzufügen" });
+
+    await userEvent.click(button);
+    await userEvent.click(button);
+
+    const textareas = screen.getAllByPlaceholderText("Schreib hier…");
+    expect(textareas).toHaveLength(2);
+    expect(vi.mocked(createNarrativeUnit)).not.toHaveBeenCalled();
+  });
+
+  it("createNarrativeUnit failure on pending CREATE sets saveStatus to unsaved", async () => {
+    /** Expects: when createNarrativeUnit rejects after the debounce for a pending fragment,
+     *  saveStatus returns to 'unsaved' — evidenced by the AutosaveIndicator showing "Nicht gespeichert". */
+    const { getNarrativeTree, createNarrativeUnit } = await import("../lib/api");
+    vi.mocked(getNarrativeTree).mockResolvedValueOnce({
+      narrative_id: "nar-001",
+      root: TREE_SCENE_NO_FRAGMENTS,
+    });
+    vi.mocked(createNarrativeUnit).mockRejectedValueOnce(new Error("Server error"));
+
+    renderManuscript();
+    const button = await screen.findByRole("button", { name: "+ Absatz hinzufügen" });
+    await userEvent.click(button);
+
+    const textarea = screen.getByPlaceholderText("Schreib hier…");
+
+    vi.useFakeTimers();
+    fireEvent.change(textarea, { target: { value: "Neuer Text" } });
+    await act(async () => { await vi.advanceTimersByTimeAsync(1500); });
+
+    expect(screen.getByText(/Nicht gespeichert/i)).toBeInTheDocument();
+    vi.useRealTimers();
+  });
+
+  it("a rapid second edit before the first CREATE resolves does not trigger a second createNarrativeUnit", async () => {
+    /** Expects: if two debounce windows complete back-to-back while the first CREATE is still
+     *  in-flight (unresolved), the second debounce must wait for the resolved id and then UPDATE
+     *  rather than firing a second CREATE. createNarrativeUnit must be called exactly once. */
+    const { getNarrativeTree, createNarrativeUnit, updateNarrativeUnit } = await import("../lib/api");
+    vi.mocked(getNarrativeTree).mockResolvedValueOnce({
+      narrative_id: "nar-001",
+      root: TREE_SCENE_NO_FRAGMENTS,
+    });
+
+    // Simulate a slow CREATE so we can interleave a second debounce before it resolves
+    let resolveCreate!: (value: typeof fakeCreated) => void;
+    const fakeCreated = {
+      id: "frag-server-1",
+      typ: "fragment" as const,
+      title: null as null,
+      content: "Erstes Wort",
+      position: 1,
+      narrative_id: "nar-001",
+      parent_id: "scene-1",
+      children: [] as NarrativeUnitResponse[],
+    };
+    vi.mocked(createNarrativeUnit).mockImplementationOnce(
+      () => new Promise((res) => { resolveCreate = res; })
+    );
+
+    renderManuscript();
+    const button = await screen.findByRole("button", { name: "+ Absatz hinzufügen" });
+    await userEvent.click(button);
+
+    const textarea = screen.getByPlaceholderText("Schreib hier…");
+
+    vi.useFakeTimers();
+    // First edit: trigger first debounce window
+    fireEvent.change(textarea, { target: { value: "Erstes Wort" } });
+    await act(async () => { await vi.advanceTimersByTimeAsync(1500); });
+    // First CREATE is now in-flight and unresolved — resolvedIds.current is NOT yet set
+
+    // Second edit: triggers second debounce window *while* first CREATE is still pending
+    fireEvent.change(textarea, { target: { value: "Zweites Wort" } });
+    // Advance second debounce *before* resolving the first CREATE
+    await act(async () => { await vi.advanceTimersByTimeAsync(1500); });
+    // At this point the second debounce callback ran, but resolvedIds.current is still empty
+    // → the implementation would fire a second CREATE here if not guarded
+
+    // Now resolve the first CREATE
+    await act(async () => { resolveCreate(fakeCreated); });
+
+    // CREATE must have been called exactly once (the second debounce must not fire another CREATE)
+    expect(vi.mocked(createNarrativeUnit)).toHaveBeenCalledTimes(1);
+    // UPDATE should have been called with the server id for the second content
+    expect(vi.mocked(updateNarrativeUnit)).toHaveBeenCalledWith(
+      "frag-server-1",
+      expect.objectContaining({ content: "Zweites Wort" })
+    );
+    vi.useRealTimers();
+  });
+
+  it("POST for a pending fragment includes the correct position field", async () => {
+    /** Expects: createNarrativeUnit is called with position matching the fragment's place
+     *  in the scene (1-based). This is the contract the backend requires. */
+    const { getNarrativeTree, createNarrativeUnit } = await import("../lib/api");
+    vi.mocked(getNarrativeTree).mockResolvedValueOnce({
+      narrative_id: "nar-001",
+      root: TREE_SCENE_NO_FRAGMENTS,
+    });
+    vi.mocked(createNarrativeUnit).mockResolvedValueOnce({
+      id: "frag-server-1",
+      typ: "fragment",
+      title: null,
+      content: "Text",
+      position: 1,
+      narrative_id: "nar-001",
+      parent_id: "scene-1",
+      children: [],
+    });
+
+    renderManuscript();
+    const button = await screen.findByRole("button", { name: "+ Absatz hinzufügen" });
+    await userEvent.click(button);
+
+    const textarea = screen.getByPlaceholderText("Schreib hier…");
+
+    vi.useFakeTimers();
+    fireEvent.change(textarea, { target: { value: "Text" } });
+    await act(async () => { await vi.advanceTimersByTimeAsync(1500); });
+
+    expect(vi.mocked(createNarrativeUnit)).toHaveBeenCalledWith(
+      expect.objectContaining({ position: 1 })
+    );
+    vi.useRealTimers();
   });
 
   it("typing in a textarea sets saveStatus to 'unsaved'", async () => {

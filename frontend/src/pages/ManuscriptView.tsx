@@ -14,13 +14,16 @@ import { countWords } from "../utils/wordCount";
 import { type AutosaveStatus } from "../components/AutosaveIndicator";
 
 const AUTOSAVE_DELAY_MS = 1500;
+// Prefix for locally-pending fragments that have not yet been persisted to the server.
+const PENDING_PREFIX = "pending-";
 
 /**
  * ManuscriptView — continuous prose editor for a Narrative.
  *
  * One <textarea> per Fragment (the atomic editing unit).
- * Optimistic local state; PATCH called 1.5 s after last keystroke per fragment.
- * Tree loaded once on mount; fragment saves do not trigger a full reload.
+ * Lazy-create: clicking "+ Absatz" adds a local pending fragment immediately.
+ * The POST only fires after the first non-empty debounce — never with empty content.
+ * After the first save the pending id maps to the server id; subsequent edits use PATCH.
  */
 export default function ManuscriptView() {
   const { narrativeId } = useParams<{ narrativeId: string }>();
@@ -31,13 +34,22 @@ export default function ManuscriptView() {
   const [error, setError] = useState<string | null>(null);
   const [saveStatus, setSaveStatus] = useState<AutosaveStatus>("saved");
   const [addingScene, setAddingScene] = useState(false);
-  const [addingFragmentTo, setAddingFragmentTo] = useState<string | null>(null);
 
   // Local content overrides: fragment id → current text (optimistic UI)
   const [contentMap, setContentMap] = useState<Record<string, string>>({});
 
-  // One debounce timer per fragment
+  // One debounce timer per fragment (keyed by fragment id, including pending ids)
   const timers = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
+
+  // Metadata for pending fragments: pending-id → { parent_id, position, narrative_id }
+  const pendingMeta = useRef<Record<string, { parent_id: string; position: number; narrative_id: string }>>({});
+
+  // After first successful CREATE: pending-id → server-assigned id
+  const resolvedIds = useRef<Record<string, string>>({});
+
+  // In-flight CREATE promise per pending id — prevents a second CREATE when a debounce
+  // fires before the first CREATE resolves.
+  const inFlightCreate = useRef<Partial<Record<string, Promise<string>>>>({});
 
   // Load tree on mount
   useEffect(() => {
@@ -58,10 +70,11 @@ export default function ManuscriptView() {
       .finally(() => setLoading(false));
   }, [narrativeId]);
 
-  // Debounced autosave per fragment
+  // Debounced autosave per fragment.
+  // Pending fragments (id starts with PENDING_PREFIX) use CREATE on first non-empty save,
+  // then UPDATE via the resolved server id on all subsequent saves.
   const handleFragmentChange = useCallback(
     (fragmentId: string, newContent: string) => {
-      // Optimistic update
       setContentMap((prev) => ({ ...prev, [fragmentId]: newContent }));
       setSaveStatus("unsaved");
 
@@ -69,9 +82,39 @@ export default function ManuscriptView() {
         clearTimeout(timers.current[fragmentId]);
       }
       timers.current[fragmentId] = setTimeout(async () => {
+        if (!newContent.trim()) {
+          // Empty content must never reach the backend (422). Reset to saved state.
+          setSaveStatus("saved");
+          return;
+        }
         setSaveStatus("saving");
         try {
-          await updateNarrativeUnit(fragmentId, { content: newContent });
+          if (fragmentId.startsWith(PENDING_PREFIX)) {
+            const resolved = resolvedIds.current[fragmentId];
+            if (resolved) {
+              await updateNarrativeUnit(resolved, { content: newContent });
+            } else if (inFlightCreate.current[fragmentId]) {
+              // A CREATE is already in-flight — wait for the server id, then UPDATE.
+              const serverId = await inFlightCreate.current[fragmentId];
+              await updateNarrativeUnit(serverId, { content: newContent });
+            } else {
+              const meta = pendingMeta.current[fragmentId];
+              const promise = createNarrativeUnit({
+                typ: "fragment",
+                content: newContent,
+                position: meta.position,
+                parent_id: meta.parent_id,
+                narrative_id: meta.narrative_id,
+              }).then((created) => {
+                resolvedIds.current[fragmentId] = created.id;
+                return created.id;
+              });
+              inFlightCreate.current[fragmentId] = promise;
+              await promise;
+            }
+          } else {
+            await updateNarrativeUnit(fragmentId, { content: newContent });
+          }
           setSaveStatus("saved");
         } catch (err) {
           console.error("Autosave failed:", err);
@@ -103,39 +146,42 @@ export default function ManuscriptView() {
     }
   };
 
-  // Add a new Fragment to a Scene
-  const handleAddFragment = async (
+  // Add a new Fragment to a Scene — synchronous, no API call.
+  // The fragment is pending until the user types non-empty content and the debounce fires.
+  const handleAddFragment = (
     sceneId: string,
     sceneChildren: NarrativeUnitResponse[]
   ) => {
-    if (!narrativeId || addingFragmentTo === sceneId) return;
-    setAddingFragmentTo(sceneId);
-    try {
-      const fragmentCount = sceneChildren.filter(
-        (c) => c.typ === "fragment"
-      ).length;
-      const created = await createNarrativeUnit({
-        typ: "fragment",
-        content: "",
-        position: fragmentCount + 1,
-        parent_id: sceneId,
-        narrative_id: narrativeId,
-      });
-      setContentMap((prev) => ({ ...prev, [created.id]: "" }));
-      setTree((prev) => {
-        if (!prev) return prev;
-        return {
-          ...prev,
-          children: prev.children.map((scene) =>
-            scene.id === sceneId
-              ? { ...scene, children: [...scene.children, created] }
-              : scene
-          ),
-        };
-      });
-    } finally {
-      setAddingFragmentTo(null);
-    }
+    if (!narrativeId) return;
+    const fragmentCount = sceneChildren.filter((c) => c.typ === "fragment").length;
+    const pendingId = `${PENDING_PREFIX}${Date.now()}`;
+    const position = fragmentCount + 1;
+
+    pendingMeta.current[pendingId] = { parent_id: sceneId, position, narrative_id: narrativeId };
+
+    const pendingFragment: NarrativeUnitResponse = {
+      id: pendingId,
+      typ: "fragment",
+      title: null,
+      content: "",
+      position,
+      narrative_id: narrativeId,
+      parent_id: sceneId,
+      children: [],
+    };
+
+    setContentMap((prev) => ({ ...prev, [pendingId]: "" }));
+    setTree((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        children: prev.children.map((scene) =>
+          scene.id === sceneId
+            ? { ...scene, children: [...scene.children, pendingFragment] }
+            : scene
+        ),
+      };
+    });
   };
 
   const totalWordCount = countWords(Object.values(contentMap).join(" "));
@@ -203,10 +249,9 @@ export default function ManuscriptView() {
                     ))}
                   <button
                     onClick={() => handleAddFragment(scene.id, scene.children)}
-                    disabled={addingFragmentTo === scene.id}
                     style={addButtonStyle}
                   >
-                    {addingFragmentTo === scene.id ? "…" : "+ Absatz hinzufügen" /* TODO(i18n) */}
+                    + Absatz hinzufügen {/* TODO(i18n) */}
                   </button>
                 </section>
               ))}
