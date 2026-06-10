@@ -4,6 +4,44 @@ Plans that are next in line. Tests may already be written (RED).
 
 ---
 
+## H01-422 Walking Skeleton — Status (2026-06-10, Hannibal)
+
+**Work-Alpha: CLOSED** (Retro 2, 2026-06-10). Record:
+`docs/superpowers/improvement/learnings/2026-06-10-h01-422-retrospective.md`.
+*Foundation Established* danach 5/6 — letzte Box („non-negotiables per practice") bei OE.
+
+Erster realer Lauf der Methode am H01-422-Wund („+ Absatz hinzufügen" → 422 → kein Tippen möglich).
+Alle Schritte mit `task-readiness`-Gate dispatcht; Sign-off an der Naht VOR den Builder-Dispatches.
+
+| Schritt | Ergebnis |
+|---|---|
+| Kontrakt surfaced (RC6) + SA-Sign-off: Variante R1 Lazy-create, Seam-Owner = Narrative | ✅ |
+| PR #53 Kontrakt-Doku `docs/contracts/narrative-units-fragment.md` (Narrative) | ✅ gemergt |
+| PR #54 Contract-Tests, 17/17 (QA) — schließt die fehlende Contract-Test-Schicht | ✅ gemergt |
+| PR #55 Lazy-create ManuscriptView, 93/93 + tsc clean (UX/UI) | ✅ gemergt |
+| PR #56/#57 stash-gerettete Tree-Edits separat · PR #58 PostCompact-Hook-Promotion | ✅ gemergt |
+| End-to-End-Verifikation via Claude_Preview VOR Merge: Tippen → 201, kein 422 | ✅ bestanden |
+| Wissens-Captures aller Beteiligten (+ 2 Nicht-Beteiligte) inkl. Friction-Reports | ✅ |
+| Retrospective (OE; DELETE-Befund → Produkt-Task, Friction → Register/Aktionen) | ✅ 2026-06-10 |
+
+Verwahr-Depot der Retro-Inputs: Hannibal-Memory `project_h01422_retro_inputs.md` (nach Retro verorten + löschen).
+
+---
+
+## Offene Delegationen (aktiv)
+
+> Die historische Delegations-Tabelle aus H01 liegt auf `salvage/h01-working-tree` (Commit e73a461,
+> PENDING.md dort §„Offene Delegationen") und kommt mit dem geplanten Teardown. Hier nur AKTIVE Einträge.
+> Befund Audit O4 (2026-06-10): Dieser Abschnitt fehlte auf `main` — Tracking-Lücke, hiermit geschlossen.
+
+| Agent | Aufgabe | Delegiert von | Datum |
+|---|---|---|---|
+| SA (via Hannibal-Task) | Semgrep-Regel Ports & Adapters: „Service importiert nie direkt einen Adapter" — dokumentiert, nicht enforced | Audit Expert | 2026-06-10 |
+| OE | Fake-Ownership in `api/tests/fakes/` klären (`fake_narrative_repository.py`: NE-Interface, kein Owner) | Audit Expert | 2026-06-10 |
+| OE (Register) | Improvement-Kandidat: Semgrep-Gate gegen `# type: ignore` in `api/tests/` (RC2; CI-Fix b74c95b) | Causal Model Expert | 2026-06-10 |
+
+---
+
 ## Plan B — Actor + Claim Evolution
 
 **Status:** DONE (2026-06-03)  
@@ -89,7 +127,7 @@ Steps 2–6 from `experiment_scope.md`:
 - **N-04** (`clean_up.md`): CausalModelFederation vollständig spezifizieren
 - **N-06** (`clean_up.md`): Community Model Specs anlegen
 - **Fragment aus narrative_units.typ entfernen** — erst bei Phase-2-Migration zu `document_nodes`
-- **[PARKED → H01-422-Retro] DELETE-on-unknown-id Kontrakt** — `SupabaseNarrativeUnitRepository.remove()` ist idempotent (kein 404), `update()` ist strikt (404). Inkonsistenz. Gleiches Muster wie der 422 (RC6 ungeborener Kontrakt × RC3 API-Konsistenz). Von QA per qa-review gefunden (2026-06-09, gesichert als Investigation-Task). Entscheid nötig: Option A idempotent→204 (Test umbauen) vs. Option B strikt→404 (`remove()` strikt machen, Frontend behandelt 404). Braucht Narrative-Semantik × SA-Konsistenz. **Bewusst geparkt** (nicht ins laufende 422-Skeleton ziehen — Anti-Tangling); in der H01-422-Retrospective als eigenes walking-skeleton-förmiges Item einspeisen.
+- **[AKTIV — Produkt-Task, aus Retro 2 via Hannibal] DELETE-on-unknown-id Kontrakt** — `SupabaseNarrativeUnitRepository.remove()` ist idempotent (kein 404), `update()` ist strikt (404). Inkonsistenz. Gleiches Muster wie der 422 (RC6 ungeborener Kontrakt × RC3 API-Konsistenz). Von QA per qa-review gefunden (2026-06-09, gesichert als Investigation-Task). Entscheid nötig: Option A idempotent→204 (Test umbauen) vs. Option B strikt→404 (`remove()` strikt machen, Frontend behandelt 404). Braucht Narrative-Semantik × SA-Konsistenz. Retro-2-Entscheid: als Produkt-Task via Hannibal an Narrative (Seam-Owner, Semantik + Kontrakt-Doku) mit SA-Sign-off (API-Konsistenz) routen; bei Option B zusätzlich UX/UI-Briefing (404-Handling). Dispatch steht aus.
 
 ---
 
