@@ -154,6 +154,43 @@ else
 fi
 
 # ---------------------------------------------------------------------------
+# Auto-memory pinning (shared team blackboard)
+# ---------------------------------------------------------------------------
+
+section "Pinning auto-memory location"
+
+# All agent sessions share one auto-memory directory — the team blackboard.
+# Auto-memory is otherwise keyed by the session's project path, which is fragile:
+# sessions started from different cwds get different memory stores. Pinning it to
+# a fixed, stable path via the user-global settings makes every session read and
+# write the same memory regardless of cwd (and survives the move to git worktrees).
+MEMORY_DIR="$HOME/.claude/klartext-team-memory"
+USER_SETTINGS="$HOME/.claude/settings.json"
+
+mkdir -p "$MEMORY_DIR" "$HOME/.claude"
+
+# Merge the two keys into the user-global settings without clobbering existing
+# values (model, theme, plugins, …). Idempotent: safe to re-run.
+python3 - "$USER_SETTINGS" "$MEMORY_DIR" <<'PY'
+import json, pathlib, sys
+
+settings_path, memory_dir = sys.argv[1], sys.argv[2]
+path = pathlib.Path(settings_path)
+data = {}
+if path.exists():
+    try:
+        data = json.loads(path.read_text())
+    except json.JSONDecodeError:
+        data = {}
+data["autoMemoryEnabled"] = True
+data["autoMemoryDirectory"] = memory_dir
+path.write_text(json.dumps(data, indent=2) + "\n")
+PY
+
+success "Auto-memory pinned to $MEMORY_DIR (user-global settings)"
+info "Existing team memory is not migrated by setup.sh — copy it once if needed."
+
+# ---------------------------------------------------------------------------
 # External reference assets
 # ---------------------------------------------------------------------------
 
