@@ -65,3 +65,32 @@ def test_postcompact_hook_distinguishes_auto_from_manual() -> None:
         "the monitor only alerts on `| auto |` entries, so the matcher is what makes "
         "proactive (manual) vs. system-triggered (auto) compacts distinguishable in the log"
     )
+
+
+def test_postcompact_hook_uses_project_dir_anchor() -> None:
+    """Verifies the hook anchors paths to $CLAUDE_PROJECT_DIR, not the hook's cwd.
+
+    A bare relative path (`>> .claude/compact-log.txt`) resolves against the hook's
+    working directory, which is not guaranteed to be the repo root — sessions have
+    been observed running with a cwd outside the repo. The log would then land
+    somewhere the launchd monitor never reads. Anchoring on $CLAUDE_PROJECT_DIR pins
+    both the log path and the `git` invocation to the project root deterministically.
+    """
+    settings = _load_settings()
+    post_compact = settings["hooks"]["PostCompact"]
+    commands = [
+        hook["command"]
+        for matcher in post_compact
+        for hook in matcher.get("hooks", [])
+        if hook.get("type") == "command"
+    ]
+    for command in commands:
+        assert "$CLAUDE_PROJECT_DIR/.claude/compact-log.txt" in command, (
+            "The PostCompact hook must write to "
+            '"$CLAUDE_PROJECT_DIR/.claude/compact-log.txt" — a bare relative path '
+            "resolves against the hook's cwd, which may not be the repo root"
+        )
+        assert ">> .claude/compact-log.txt" not in command, (
+            "The PostCompact hook still uses a bare relative log path — "
+            "anchor it on $CLAUDE_PROJECT_DIR instead"
+        )
