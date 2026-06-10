@@ -2254,8 +2254,8 @@ below. Learnings home: <code>learnings/</code>.</p>
 <td>Compaction monitoring (hooks + launchd digest)</td>
 <td>compaction concern (2026-06-09)</td>
 <td>DevOps</td>
-<td><strong>Action Agreed</strong> (re-fix after failed trial)</td>
-<td><strong>retro 1 (2026-06-10): trial FAILED</strong> — <code>.claude/compact-monitor.log</code> shows launchd firing into a missing script (<code>scripts/check-compact-log.sh: No such file or directory</code>, 4×). RC4 on the guard itself. Agreed action (owner DevOps, enforcement mechanical): script committed / path corrected <strong>plus an infrastructure test that the monitor target exists</strong> — then re-trial</td>
+<td><strong>Trialed</strong> (2nd trial, after failed 1st)</td>
+<td><strong>retro 1 (2026-06-10): 1st trial FAILED</strong> — launchd fired into a missing script (RC4 on the guard itself). <strong>Re-fix landed (PR #51, <code>3f6b825</code>):</strong> script versioned, plist template, setup.sh integration, <strong>3 infrastructure tests</strong> that catch exactly this scenario in every CI run (mechanical). <strong>DevOps involvement-check answer (retro 1, Need 3):</strong> root cause = sequencing error (script lived on <code>salvage/h01-working-tree</code>, the promotion branch kept getting deprioritized behind method-foundation increments) + missing existence gate at launchd install time (checked the plist template, not the target script after branch switches) — RC4 + RC2 confirmed. <strong>Evaluate at next retro:</strong> does <code>compact-monitor.log</code> show clean hourly runs?</td>
 </tr>
 <tr>
 <td>Classify step in Improvement Step (Essence-first thinking)</td>
@@ -2284,6 +2284,20 @@ below. Learnings home: <code>learnings/</code>.</p>
 <td>OE</td>
 <td><strong>Identified</strong></td>
 <td>recurs for every further IJI deck; next retro prioritizes</td>
+</tr>
+<tr>
+<td>CI decoupling by commit class — we commit three content classes undistinguished: (1) product code, (2) process state (plans, todos), (3) way of working (method/SEMAT artifacts); the ever-growing product integration suite runs on all of them</td>
+<td>user (2026-06-10)</td>
+<td>DevOps</td>
+<td><strong>Identified</strong></td>
+<td>long-term: consider e.g. CI path filters per class — <strong>but check overlaps first</strong>: where classes genuinely interact, the full run stays justified. Maps cleanly onto Essence areas (Solution / Work / Way-of-Working) and feeds the Artifact Register candidate (column "CI class"). Infrastructure Perimeter → clarify with DevOps, not urgent</td>
+</tr>
+<tr>
+<td>Mandate-time existence check — before a practice/gate is mandated for a run, verify its artifact exists where the participating sessions load from (<code>main</code>/working tree)</td>
+<td>422 skeleton blocker B2 (2026-06-10): OE mandated <code>task-readiness</code> as a hard gate while its skill file existed only on <code>salvage/h01-working-tree</code> — a live RC1 instance on exactly the gate meant to close RC2/T6; found by Hannibal, not by OE</td>
+<td>OE</td>
+<td><strong>Identified</strong></td>
+<td>same learning class as "guards drift too" (guards/gates need their own existence checks). Candidate enforcement: entry-criteria line on practice cards + artifact-register column. Next retro prioritizes — and this is <strong>prime evidence for retro 2</strong></td>
 </tr>
 </tbody>
 </table>
