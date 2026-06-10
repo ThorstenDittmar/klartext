@@ -36,3 +36,8 @@ Thumbs.db
 .vscode/
 *.swp
 *.swo
+
+# External reference assets — local only (licensed material, large binaries; not committed)
+# See assets-local/README.md for the file register and conventions.
+assets-local/*
+!assets-local/README.md

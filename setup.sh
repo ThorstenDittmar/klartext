@@ -132,6 +132,16 @@ else
 fi
 
 # ---------------------------------------------------------------------------
+# External reference assets
+# ---------------------------------------------------------------------------
+
+section "External reference assets"
+
+info "assets-local/ holds licensed/large reference files (gitignored, agents can read)."
+info "Place PDFs and external materials there — never in ~/Downloads (TCC-blocked on macOS)."
+info "See assets-local/README.md for the file register and provenance convention."
+
+# ---------------------------------------------------------------------------
 # Done
 # ---------------------------------------------------------------------------
 
