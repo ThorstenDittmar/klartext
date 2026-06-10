@@ -89,6 +89,7 @@ Steps 2–6 from `experiment_scope.md`:
 - **N-04** (`clean_up.md`): CausalModelFederation vollständig spezifizieren
 - **N-06** (`clean_up.md`): Community Model Specs anlegen
 - **Fragment aus narrative_units.typ entfernen** — erst bei Phase-2-Migration zu `document_nodes`
+- **[PARKED → H01-422-Retro] DELETE-on-unknown-id Kontrakt** — `SupabaseNarrativeUnitRepository.remove()` ist idempotent (kein 404), `update()` ist strikt (404). Inkonsistenz. Gleiches Muster wie der 422 (RC6 ungeborener Kontrakt × RC3 API-Konsistenz). Von QA per qa-review gefunden (2026-06-09, gesichert als Investigation-Task). Entscheid nötig: Option A idempotent→204 (Test umbauen) vs. Option B strikt→404 (`remove()` strikt machen, Frontend behandelt 404). Braucht Narrative-Semantik × SA-Konsistenz. **Bewusst geparkt** (nicht ins laufende 422-Skeleton ziehen — Anti-Tangling); in der H01-422-Retrospective als eigenes walking-skeleton-förmiges Item einspeisen.
 
 ---
 
