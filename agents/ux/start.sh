@@ -16,6 +16,8 @@
 cd "$(dirname "$0")/../.." || exit 1
 
 claude \
+  --allowedTools "Edit(docs/superpowers/plans/PENDING.md)" \
+  --allowedTools "Write(docs/superpowers/plans/PENDING.md)" \
   --allowedTools "Edit(frontend/src/)" \
   --allowedTools "Write(frontend/src/)" \
   --allowedTools "Edit(frontend/public/)" \

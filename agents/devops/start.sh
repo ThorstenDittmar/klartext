@@ -28,6 +28,8 @@
 cd "$(dirname "$0")/../.." || exit 1
 
 claude \
+  --allowedTools "Edit(docs/superpowers/plans/PENDING.md)" \
+  --allowedTools "Write(docs/superpowers/plans/PENDING.md)" \
   --allowedTools "Bash(git *)" \
   --allowedTools "Bash(gh *)" \
   --allowedTools "Bash(bash scripts/*)" \
