@@ -1767,6 +1767,10 @@ content — it belongs on <code>main</code> now and must not stay on the quarant
 because that was the checked-out branch — a live instance of RC4/RC5). DevOps is coordinating the move to
 <code>main</code>; other forward work likely also stranded on salvage (compaction-monitoring scripts, ADR 0009) is the
 same class of problem and is flagged to DevOps.</p>
+<p>⚠️ <strong>Drain warning — <code>agents/oe/CLAUDE.md</code> diverged (2026-06-09).</strong> <code>main</code>'s version received a forward
+edit (Method Keeper section) while the H01-era updates of the agent knowledge files (incl. the Hannibal row)
+remain on salvage, deliberately deferred. The future drain of <code>agents/*/claude.md</code> must <strong>merge, not
+overwrite</strong> — otherwise the Method Keeper section is lost (RC4-style loss at the seam).</p>
 </blockquote>
 <h3 id="phase-1-problem-root-cause-analysis-rca-status-complete">Phase 1 — Problem &amp; root-cause analysis (RCA)  ·  <em>Status: complete</em><a class="headerlink" href="#phase-1-problem-root-cause-analysis-rca-status-complete" title="Permanent link">&para;</a></h3>
 <blockquote>
@@ -1978,6 +1982,18 @@ language) for the seam/ownership layer (RC3/RC6), Conway's Law as OE's design le
 development for homes (RC1), BDD/Specification-by-Example for surfacing contracts (RC6), Fail-fast against
 deadlocks, and the orchestration primitives (handoff protocol, state checkpointing, failure recovery) for
 RC5. These are <strong>candidates to compose</strong>, not methods to adopt wholesale.</p>
+<p><strong>Method survey addendum — IJI Essence Practice Library contents (verified via browser, 2026-06-09).</strong>
+The free IJI hub publishes ready-made <strong>Essence practice card decks</strong> — i.e. established practices already
+expressed in our meta-language. Available: <strong>Alpha State Cards</strong> (the Kernel itself; explicitly recommended to
+"facilitate retrospectives" — candidate instrument for our retro: walk the Alpha states as the health grid) ·
+<strong>Scrum</strong> (Foundations / Essentials / Accelerator) · <strong>Scrum@Scale</strong> (Scrum-of-Scrums, Executive) · <strong>Agile
+Essentials</strong> (7 practices incl. <strong>Agile Retrospective Essentials</strong> — template for our missing retro card —
+plus Product Ownership, Product Backlog, Agile Teaming, Daily Stand-up, Agile Development, Agile Timeboxing) ·
+<strong>Agile at Scale Essentials</strong> · <strong>Kanban</strong> (Foundations, Team Kanban Essentials) · <strong>BDD/ATDD cards</strong>
+(→ directly relevant to RC6 contract surfacing) · <strong>User Story Essentials</strong> (Cohn) · <strong>Story Mapping</strong>
+(Patton) · <strong>Use Case 2.0</strong> · <strong>Spotify Model Essentials</strong> (org patterns — OE/Conway-relevant) · SAFe
+principle decks · Method-Agnostic Agility cards. Decks are form-gated PDF downloads — deep content needs a
+manual download by the user (the site blocks automated fetches).</p>
 <p><strong>Minimal document set (English) + Document Scoping convention.</strong>
 The method now has a minimal, self-contained document set under <code>docs/superpowers/improvement/</code>:
 <code>semat-definition.md</code> (self-contained meta-language reference — independent of the external SEMAT site, RC4),
@@ -2025,6 +2041,62 @@ the two drift, as the dormant Community session showed), RC3 (domain→owner for
 → designated the <strong>pilot</strong> that validates the register design, and a strong <strong>Walking Skeleton candidate</strong>
 (small, real, produces an artifact, exercises the on/offboarding ritual). <strong>Build deferred to Phase 2 with the
 register</strong> — not now, to avoid pre-empting the register and to avoid parallel-thread tangling (risk #1).</p>
+<p><strong>Decision — <code>method.md</code> (our Essence Method document) + Library/Method distinction</strong> <em>(2026-06-09):</em>
+Trigger: inventorying the existing "mischmasch" (skills, rituals, briefings, gates) to map it into Essence
+logic. We nearly invented a new concept ("method inventory") — a check against the standard (anti-Eigensaft)
+showed Essence already defines both halves: a <strong>Method</strong> is "the composition of a kernel and a set of practices
+to fulfill a specific purpose"; a <strong>Library</strong> is the catalog of practices from which methods are composed.
+Consequence: created <strong><code>method.md</code></strong> as our Method document — the <em>permanent</em> register of our method's elements
+(element · Essence type · Alpha · enforcement · card status); <code>practices/</code> is our <strong>Practice Library</strong>; the
+card-status column is the only <em>temporary</em> (migration-diagnostic) part. <strong>SSOT sharpened:</strong> the glossary defines
+terms only; <code>method.md</code> lists elements; cards hold content. <strong>Maintenance ritual:</strong> <code>method.md</code> is updated in
+the same Improvement Step that adds/changes/retires an element. <strong>Side find:</strong> our own reference
+(<code>semat-definition.md</code>) lacked the Library element → backfilled in the same step (a knowledge-base gap is
+closed the moment it is found). Key diagnostic from the initial fill: most lived practices are
+<em>enacted-but-not-described</em> (the inverse of RC1), and <code>task-readiness</code> is the one remaining <strong>advisory-only</strong>
+skill (T6/RC2).</p>
+<p><strong>Decision — anchoring Essence-thinking</strong> <em>(2026-06-09):</em>
+"Always think in the meta-language when process is discussed" cannot be enforced mechanically — so it is
+anchored at the chokepoints every process conversation passes through, and the anchoring is itself <strong>described
+in the meta-language</strong>: (1) <strong>Activity</strong> — the Improvement Step practice gained a mandatory <strong>Classify</strong> step
+(locate the topic in Essence terms + KB-first standard check <em>before</em> solutioning; would have caught both
+near-inventions of this session automatically); (2) <strong>Pattern</strong> — OE's knowledge file gained a <strong>Method
+Keeper</strong> role section (loads at every OE session start → survives sessions and compaction); (3) <strong>Competency
+(kernel extension)</strong> — <strong>Method Literacy</strong>, levels per Essence (1 <em>Assists</em> … 5 <em>Innovates</em>); gives onboarding
+and the team refresh a <em>measurable</em> target (every agent ≥ level 2 <em>Applies</em>) instead of a vague "everyone
+should know it". Context: the standard-check discipline had come from the <strong>user</strong> twice in one session — the
+goal of these anchors is that the check comes from the structure, not from the user's vigilance. Agents are
+covered via <code>CLAUDE.md</code> § Way of Working (activation at the team refresh).</p>
+<p><strong>Way-of-Working Alpha instantiated</strong> <em>(2026-06-10):</em>
+The full kernel state checklists are now in our KB — <strong><code>alpha-states.md</code></strong>, extracted from the IJI Alpha
+State Cards (<code>assets-local/alpha_state_cards_ecards.pdf</code>; checkpoint content <strong>CC BY 4.0 SEMAT Inc.</strong>, read
+visually from the image-only PDF). This delivers the formerly deferred item "WoW state lifecycle".
+<strong>First assessment (honest):</strong>
+- <strong><em>Principles Established</em> = 5/6.</strong> Stakeholders agree ✅ (user drove and approved the principles) · tool
+  needs agreed ✅ · approach recommended ✅ (Essence + practice composition + enforcement hierarchy) ·
+  operational context understood ✅ (RCA 9/9) · practice &amp; tool constraints known ✅ (C1, hook limits, TCC …).
+  <strong>Pending: "team actively support principles"</strong> — the 9 other agents haven't been activated yet; completes
+  with the team refresh.
+- <strong><em>Foundation Established</em> = in progress (~1.5/6).</strong> Gaps understood ✅ (<code>method.md</code> known-gaps + RCA) ·
+  key practices &amp; tools selected ⚠️ partial (2 cards, 10 enacted-uncarded, survey pool; retro card missing) ·
+  practices-needed-to-start agreed ❌ · non-negotiables ⚠️ not marked per practice · capability gaps ⚠️
+  (Method Literacy defined, not assessed) · integrated way of working available ❌.
+<strong>Consequence:</strong> the team-refresh milestone (<em>Foundation Established</em>) is now <strong>checklist-checkable</strong> instead
+of a feeling; the refresh completes the last <em>Principles</em> checkbox and starts <em>In Use</em>. The open <em>Foundation</em>
+checkboxes are, in effect, the remaining Phase-2 to-do list.</p>
+<p><strong>Decision — Retrospective practice composed (2026-06-10).</strong>
+Built by <strong>comparative selection</strong> (user rule: not the first option, the best-fitting one), from the
+downloaded IJI decks (<code>assets-local/</code>): <strong>adopted</strong> from <em>Agile Retrospective Essentials</em> — the activity
+skeleton (<em>evaluate previous actions first</em> → identify → prioritize → agree actions) and, verbatim, the
+<strong>Improvement sub-alpha</strong> (<em>Identified → Prioritized → Action Agreed → Trialed → Results Evaluated → In Use</em>)
+— this closes the "check effectiveness" gap (RC2): unverified measures now stay visibly stuck in the register.
+<strong>Replaced:</strong> <em>Mad/Sad/Glad</em> (emotion-based, human-specific) by an <strong>alpha-walk</strong> over the state checklists
+(<code>alpha-states.md</code>) — evidence-based, fits an agent team; IJI itself recommends the alpha cards for retros.
+<strong>Added (both gaps from <code>method.md</code>):</strong> a defined <strong>learnings home</strong> (<code>learnings/</code>, mirror of <code>qa-learnings/</code>)
+and the <strong>Improvement Register</strong> (§3). <strong>Trigger rule:</strong> event-based (work-package end / milestone /
+significant incident), never wall-clock. Relation: <code>qa-retro</code> stays as the incident-triggered sibling.
+Card: <code>practices/retrospective.md</code>. <strong>This unblocks the 422 Walking Skeleton</strong> (retro readiness was the
+prerequisite).</p>
 <p><strong>Pulled-forward findings (2026-06-09) — context / memory management:</strong>
 From a first market research (Anthropic "Effective context engineering"; JetBrains Research; Claude Code
 docs/guides), triggered by the compaction concern:
@@ -2136,6 +2208,47 @@ anything where oversight / real context matters.</p>
 <li><strong>Step 4 — Check effectiveness:</strong> did an earlier measure <em>really</em> fix the problem? (If not, back into the loop.)</li>
 <li><strong>Owner:</strong> OE maintains the loop; all disciplines provide input.</li>
 </ul>
+<blockquote>
+<p><strong>Enacted (2026-06-10):</strong> this loop is now operationalized by the <strong>Retrospective practice</strong>
+(<code>practices/retrospective.md</code>). Step 4 is mechanized via the <strong>Improvement sub-alpha</strong> (adopted from IJI:
+<em>Identified → Prioritized → Action Agreed → Trialed → Results Evaluated → In Use</em>) — tracked in the register
+below. Learnings home: <code>learnings/</code>.</p>
+</blockquote>
+<h3 id="improvement-register-improvement-sub-alpha-instances">Improvement Register (Improvement sub-alpha instances)<a class="headerlink" href="#improvement-register-improvement-sub-alpha-instances" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Improvement</th>
+<th>Origin</th>
+<th>Owner</th>
+<th>State</th>
+<th>Evidence / next check</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Branch protection on <code>main</code> (6 required checks)</td>
+<td>RCA RC2 (2026-06-09)</td>
+<td>DevOps</td>
+<td><strong>In Use</strong></td>
+<td>validated through PRs #45/#46/#48 — gate held, naht-checks ran</td>
+</tr>
+<tr>
+<td>Compaction monitoring (hooks + launchd digest)</td>
+<td>compaction concern (2026-06-09)</td>
+<td>DevOps</td>
+<td><strong>Trialed</strong></td>
+<td>live; evaluate at next retro: were auto-compacts caught early?</td>
+</tr>
+<tr>
+<td>Classify step in Improvement Step (Essence-first thinking)</td>
+<td>two Eigensaft near-misses (2026-06-09)</td>
+<td>OE</td>
+<td><strong>Trialed</strong></td>
+<td>applied since introduction; evaluate after a few more runs</td>
+</tr>
+</tbody>
+</table>
 <blockquote>
 <p>Open (to clarify with the user, noted in PENDING.md): do we need an explicit <strong>sprint-start/end flag</strong> as a
 trigger for this loop? And: how do we prevent <code>/compact</code> from losing knowledge mid-loop?</p>

@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/superpowers/improvement/practices/improvement-step/">
+        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/superpowers/improvement/practices/retrospective/">
       
       
       
@@ -23,7 +23,7 @@
     
     
       
-        <title>Practice: Improvement Step - klartext.jetzt – Spezifikation</title>
+        <title>Practice: Retrospective - klartext.jetzt – Spezifikation</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#practice-improvement-step" class="md-skip">
+        <a href="#practice-retrospective" class="md-skip">
           Zum Inhalt
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Practice: Improvement Step
+              Practice: Retrospective
             
           </span>
         </div>
@@ -1650,7 +1650,7 @@
 
 
   
-    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/superpowers/improvement/practices/improvement-step.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/superpowers/improvement/practices/retrospective.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1658,67 +1658,74 @@
   
 
 
-<h1 id="practice-improvement-step">Practice: Improvement Step<a class="headerlink" href="#practice-improvement-step" title="Permanent link">&para;</a></h1>
+<h1 id="practice-retrospective">Practice: Retrospective<a class="headerlink" href="#practice-retrospective" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Scope.</strong> This document defines the <strong>Improvement Step</strong> practice — one composable brick in our Practice
-Library.
-<strong>Out of scope.</strong> Other practices live in their own cards under <code>practices/</code>; method decisions and rationale
-live in <code>continuous-improvement.md</code>.
-<strong>Anti-pattern guarded.</strong> Advisory-only process knowledge that lives in chat and gets lost (see
-<code>continuous-improvement.md</code> §0 / RC2).
+<p><strong>Scope.</strong> This document defines the <strong>Retrospective</strong> practice — the periodic, evidence-based
+way-of-working retro, including the <strong>Improvement</strong> sub-alpha it tracks.
+<strong>Out of scope.</strong> The incident-triggered test-gap retro (<code>qa-retro</code> skill — the sibling practice); decisions
+and rationale (<code>continuous-improvement.md</code>); the Improvement Register itself (lives in
+<code>continuous-improvement.md</code> §3).
+<strong>Anti-pattern guarded.</strong> Decided-but-never-verified measures (RC2 — the "check effectiveness" gap);
+impressions instead of evidence as retro input.
 <strong>Language.</strong> English — documentation-language rule.</p>
 <p><strong>Status:</strong> active (ritual) · <strong>Owner:</strong> OE · <strong>Advances Alpha:</strong> Way of Working
-<strong>Source check:</strong> verified against the Essence standard — this is a Practice that advances the
-Way-of-Working Alpha (the cross-check itself is a four-eyes review against an external standard).</p>
+<strong>Source:</strong> composed from IJI <em>Agile Retrospective Essentials</em> (card content CC BY 4.0; deck in
+<code>assets-local/</code>) + the Essence Alpha State Cards (alpha-walk as inspection grid) + our RCA discipline.
+<strong>Deliberately not adopted:</strong> <em>Mad/Sad/Glad</em> — emotion-based and human-specific; our data basis is
+concrete incidents, not impressions (§3 rule).</p>
 </blockquote>
 <h2 id="goal">Goal<a class="headerlink" href="#goal" title="Permanent link">&para;</a></h2>
-<p>Evolve the multi-agent system's way of working <strong>one decision at a time</strong>, such that <strong>no insight is ever
-lost</strong> — without anyone having to remember to capture it. This is the load-bearing practice of our
-continuous improvement loop.</p>
+<p>Make incremental improvements to the way of working through regular, evidence-based retrospectives —
+where <strong>no improvement counts as done until its results are evaluated</strong>.</p>
 <h2 id="advances-alpha">Advances Alpha<a class="headerlink" href="#advances-alpha" title="Permanent link">&para;</a></h2>
-<p><strong>Way of Working</strong> — each run pushes it toward the states <em>In Use</em> → <em>Working Well</em>.</p>
+<p><strong>Way of Working</strong> (<em>In Use</em> → <em>Working Well</em>). Defines and tracks the <strong>Improvement sub-alpha</strong>
+(adopted from IJI):</p>
+<blockquote>
+<p><strong>Improvement</strong> — a possible adaptation to improve the team's Way of Working.
+States: <em>Identified → Prioritized → Action Agreed → Trialed → Results Evaluated → In Use.</em></p>
+</blockquote>
+<p>An improvement that never reaches <em>Results Evaluated</em> stays visibly stuck — the register makes the
+RC2 failure mode ("decided, never verified") detectable.</p>
+<h2 id="trigger">Trigger<a class="headerlink" href="#trigger" title="Permanent link">&para;</a></h2>
+<p><strong>Event-based, never wall-clock:</strong> end of a sprint / work package (the Work alpha's <em>Closed</em> state requires
+"Lessons learned"), a defined milestone, or on demand after a significant incident.</p>
 <h2 id="steps">Steps<a class="headerlink" href="#steps" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>Pick up</strong> — name exactly <strong>one</strong> topic/decision (not several at once).</li>
-<li><strong>Classify</strong> — locate the topic in Essence terms <strong>before</strong> discussing solutions: which element type is it
-   (Alpha / Practice / Pattern / Work Product / Activity / Competency)? Which Alpha does it advance? Does the
-   standard already predefine it (<strong>KB-first lookup</strong>: <code>semat-definition.md</code> + glossary first, web only on a
-   miss)? This step keeps us <em>thinking</em> in the meta-language instead of inventing parallel concepts.</li>
-<li><strong>Clarify &amp; decide</strong> — present options + a recommendation; the <strong>user decides</strong>.</li>
-<li><strong>Record</strong> — store the decision at its agreed home, <strong>including the rationale (the "why")</strong>.
-   This is the capture-first pillar.</li>
-<li><strong>Route</strong> — inform affected agents via the <code>knowledge-routing</code> skill (<strong>the user is the channel</strong>).
-   This step is what earns the Way-of-Working state <em>In Use</em> (the team actually uses the practice).</li>
-<li><strong>Set next step</strong> — leave a pointer to the next open topic, so the loop never stalls and a <code>/compact</code>
-   cannot sever it.</li>
+<li><strong>Evaluate previous actions</strong> — walk the Improvement Register first: did each <em>Trialed</em> improvement
+   produce results? Advance its state (<em>Results Evaluated</em> / <em>In Use</em>) or retire it. Nothing stays silently
+   on <em>Action Agreed</em>.</li>
+<li><strong>Collect evidence</strong> — concrete incidents, CI status, compact-monitor digest, <code>PENDING.md</code> state.
+   No impressions without an incident behind them.</li>
+<li><strong>Alpha-walk</strong> — inspect the relevant Alpha state checklists (<code>alpha-states.md</code>), at minimum
+   <strong>Way of Working</strong>: which checkbox regressed? Which one blocks the next state?</li>
+<li><strong>Root-cause mapping</strong> — map findings to RC1–RC6 (<code>continuous-improvement.md</code> Phase 1). If none fits,
+   that is a candidate <strong>new</strong> root cause — record it explicitly.</li>
+<li><strong>Identify &amp; prioritize improvements</strong> — new Improvement instances enter the register
+   (<em>Identified</em> / <em>Prioritized</em>).</li>
+<li><strong>Agree actions</strong> — per improvement: <strong>owner + checkable DoD + enforcement level</strong>
+   (mechanical / ritual — never advisory-only). State → <em>Action Agreed</em>.</li>
+<li><strong>Capture &amp; route</strong> — learnings to <code>learnings/</code> (one file per learning), register updated, affected
+   practice cards / <code>method.md</code> updated <strong>in the same step</strong>; briefings routed via <code>knowledge-routing</code>
+   where other agents are affected.</li>
 </ol>
 <h2 id="work-products">Work Products<a class="headerlink" href="#work-products" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Decision + rationale recorded at a durable home (e.g. <code>continuous-improvement.md</code>).</li>
-<li>New/updated terms in <code>semat-glossary.md</code>.</li>
-<li>Knowledge briefings routed to affected agents (or an explicit "none affected").</li>
-<li>A "next step" pointer.</li>
+<li><strong>Improvement Register</strong> — <code>continuous-improvement.md</code> §3 (Improvement instances with alpha state).</li>
+<li><strong>Learning entries</strong> — <code>docs/superpowers/improvement/learnings/</code> (one file per learning).</li>
+<li>Updates to practice cards / <code>method.md</code>.</li>
 </ul>
 <h2 id="completion-checklist-done">Completion Checklist (Done)<a class="headerlink" href="#completion-checklist-done" title="Permanent link">&para;</a></h2>
 <ul>
-<li>[ ] Exactly <strong>one</strong> topic was addressed.</li>
-<li>[ ] The topic was located in Essence terms (element type + Alpha) and checked against the standard
-  (KB-first) <strong>before</strong> deciding.</li>
-<li>[ ] A decision was made by the user.</li>
-<li>[ ] Decision <strong>and rationale</strong> are recorded at a durable home (not only in chat).</li>
-<li>[ ] Affected agents identified; briefings formulated and routed — or explicitly "none affected".</li>
-<li>[ ] A pointer to the next step exists.</li>
+<li>[ ] Every previously <em>Trialed</em> improvement was evaluated — advanced or retired.</li>
+<li>[ ] Evidence basis was concrete (incidents / signals), not impressions.</li>
+<li>[ ] The Way-of-Working checklist was walked; regressions named.</li>
+<li>[ ] Each new improvement has owner + checkable DoD + enforcement level.</li>
+<li>[ ] Learnings captured at their home; register updated.</li>
+<li>[ ] Briefings routed where other agents are affected.</li>
 </ul>
 <h2 id="enforcement">Enforcement<a class="headerlink" href="#enforcement" title="Permanent link">&para;</a></h2>
-<p>Currently a <strong>ritual</strong> (Enforcement Hierarchy level 2). Promotion to a <strong>Skill</strong> (closer to mechanical) is
-<strong>deferred until after the first real run</strong> validates the shape ("instantiate through use" — Gall's Law).
-When promoted, the Skill must <strong>derive from this card and stay in sync</strong> — otherwise we get two diverging
-representations (RC4 drift). This card remains the SSOT.</p>
-<h2 id="notes">Notes<a class="headerlink" href="#notes" title="Permanent link">&para;</a></h2>
-<ul>
-<li>First run = self-application: the methodology decisions recorded on 2026-06-09 were produced by running
-  this very practice for the first time.</li>
-</ul>
+<p>Currently a <strong>ritual</strong> (level 2). Skill promotion after the first real runs. Relation: <code>qa-retro</code> is the
+<strong>incident-triggered sibling</strong> for test gaps — both feed Improvement instances into the same register.</p>
 
 
 

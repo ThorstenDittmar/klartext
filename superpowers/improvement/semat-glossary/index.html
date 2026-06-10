@@ -1690,19 +1690,29 @@ speculatively. Maintained via the Improvement Step practice.</p>
 <li><strong>Practice</strong> — a <strong>separately-describable, composable</strong> unit of "a way of doing something" with a clear
   goal; it advances one or more Alphas. The reusable brick we compose into our Method. Lives in the
   Practice Library (<code>practices/</code>).</li>
-<li><strong>Method</strong> — a composition of Practices = our forged way of working. (Cockburn: <em>methodology per project</em> —
-  forge a fitting method, don't adopt one wholesale.)</li>
+<li><strong>Method</strong> — the composition of the Kernel and a set of Practices for a specific purpose = our forged way
+  of working. Ours is described in <code>method.md</code>. (Cockburn: <em>methodology per project</em> — forge a fitting method,
+  don't adopt one wholesale.)</li>
+<li><strong>Library (Practice Library)</strong> — the catalog of described Practices from which Methods are composed. Ours is
+  the <code>practices/</code> directory. Distinct from the Method: the Library is the <em>stock</em>, the Method is the
+  <em>composition in use</em>.</li>
 </ul>
-<h2 id="our-practices-the-bricks-we-are-forging">Our practices (the bricks we are forging)<a class="headerlink" href="#our-practices-the-bricks-we-are-forging" title="Permanent link">&para;</a></h2>
+<h2 id="our-method-elements">Our method elements<a class="headerlink" href="#our-method-elements" title="Permanent link">&para;</a></h2>
+<p>The authoritative register of our method's elements (practices, patterns, work products, gates) is
+<strong><code>method.md</code></strong> — our Essence <strong>Method</strong> document. Practice <em>content</em> lives in <code>practices/</code> — our
+<strong>Practice Library</strong>. This glossary defines <em>terms</em> only and does not list elements (SSOT discipline).</p>
 <ul>
-<li><strong>Improvement Step</strong> <em>(Practice)</em> — our atomic continuous-improvement practice
-  (Pick up → Clarify &amp; decide → Record → Route → Set next step). Advances the Way-of-Working Alpha.
-  Defined in <code>practices/improvement-step.md</code>. Currently a ritual; skill promotion deferred.</li>
-<li><strong>Document Scoping</strong> <em>(Practice)</em> — every document opens with a scope header
-  (scope · out-of-scope + link · anti-pattern guarded · language). Defined in <code>practices/document-scoping.md</code>.</li>
-<li><strong>Walking Skeleton / Tracer Bullet</strong> <em>(Practice, planned)</em> — a minimal <strong>real</strong> end-to-end thread through
-  the system, built to validate the architecture before fleshing it out. (Cockburn.) Used here to pressure-test
-  the minimal meta-frame.</li>
+<li><strong>Walking Skeleton / Tracer Bullet</strong> — a minimal <strong>real</strong> end-to-end thread through the system, built to
+  validate the architecture before fleshing it out (Cockburn). Used here to pressure-test the minimal
+  meta-frame.</li>
+<li><strong>Method Literacy</strong> <em>(Competency, our kernel extension)</em> — the ability to locate way-of-working topics in
+  Essence terms (element type, Alpha) and to use the method document set. Levels per Essence
+  (1 <em>Assists</em> … 5 <em>Innovates</em>). Registered in <code>method.md</code>.</li>
+<li><strong>Resource</strong> — external supporting material a Practice references but we do not produce (e.g. the IJI Alpha
+  State Cards deck). Home: <code>assets-local/</code> (gitignored, README = provenance register). Not a Work Product.</li>
+<li><strong>Improvement</strong> <em>(sub-alpha, practice-defined)</em> — a possible adaptation to improve the team's Way of
+  Working; states <em>Identified → Prioritized → Action Agreed → Trialed → Results Evaluated → In Use</em>. Defined
+  by the Retrospective practice; instances live in the Improvement Register.</li>
 </ul>
 <h2 id="cross-cutting-principles">Cross-cutting principles<a class="headerlink" href="#cross-cutting-principles" title="Permanent link">&para;</a></h2>
 <ul>
