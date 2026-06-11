@@ -40,7 +40,7 @@ def test_postcompact_hook_is_configured() -> None:
 
 
 def test_postcompact_hook_writes_compact_log() -> None:
-    """Verifies the PostCompact hook appends to .claude/compact-log.txt (the monitor's input)."""
+    """Verifies the PostCompact hook appends to the central compact-log (the monitor's input)."""
     settings = _load_settings()
     post_compact = settings["hooks"]["PostCompact"]
     commands = [
@@ -49,9 +49,9 @@ def test_postcompact_hook_writes_compact_log() -> None:
         for hook in matcher.get("hooks", [])
         if hook.get("type") == "command"
     ]
-    assert any(".claude/compact-log.txt" in command for command in commands), (
-        "The PostCompact hook does not write to .claude/compact-log.txt — "
-        "the launchd monitor (scripts/check-compact-log.sh) reads exactly that file"
+    assert any("klartext-team-memory/compact-log.txt" in command for command in commands), (
+        "The PostCompact hook does not write to the central "
+        "klartext-team-memory/compact-log.txt — the launchd monitor reads exactly that file"
     )
 
 
@@ -67,14 +67,15 @@ def test_postcompact_hook_distinguishes_auto_from_manual() -> None:
     )
 
 
-def test_postcompact_hook_uses_project_dir_anchor() -> None:
-    """Verifies the hook anchors paths to $CLAUDE_PROJECT_DIR, not the hook's cwd.
+def test_postcompact_hook_writes_to_central_pinned_log() -> None:
+    """Verifies the hook writes to the central pinned log, not a per-repo/worktree path.
 
-    A bare relative path (`>> .claude/compact-log.txt`) resolves against the hook's
-    working directory, which is not guaranteed to be the repo root — sessions have
-    been observed running with a cwd outside the repo. The log would then land
-    somewhere the launchd monitor never reads. Anchoring on $CLAUDE_PROJECT_DIR pins
-    both the log path and the `git` invocation to the project root deterministically.
+    Once agents run in per-agent git worktrees (Stage 2), a log under the session's
+    own project dir would be invisible to the single launchd monitor instance. The
+    hook therefore writes to the absolute pinned path
+    ($HOME/.claude/klartext-team-memory/compact-log.txt), shared across all worktrees.
+    The branch field still derives from $CLAUDE_PROJECT_DIR (`git -C`), so each entry
+    records which agent/worktree compacted. A bare relative log path would be wrong.
     """
     settings = _load_settings()
     post_compact = settings["hooks"]["PostCompact"]
@@ -85,12 +86,15 @@ def test_postcompact_hook_uses_project_dir_anchor() -> None:
         if hook.get("type") == "command"
     ]
     for command in commands:
-        assert "$CLAUDE_PROJECT_DIR/.claude/compact-log.txt" in command, (
-            "The PostCompact hook must write to "
-            '"$CLAUDE_PROJECT_DIR/.claude/compact-log.txt" — a bare relative path '
-            "resolves against the hook's cwd, which may not be the repo root"
+        assert "$HOME/.claude/klartext-team-memory/compact-log.txt" in command, (
+            "The PostCompact hook must write to the central pinned log "
+            '"$HOME/.claude/klartext-team-memory/compact-log.txt" so one monitor '
+            "catches every per-agent worktree"
+        )
+        assert 'git -C "$CLAUDE_PROJECT_DIR"' in command, (
+            "The branch field must derive from $CLAUDE_PROJECT_DIR (git -C) so each "
+            "log entry records which agent/worktree compacted"
         )
         assert ">> .claude/compact-log.txt" not in command, (
-            "The PostCompact hook still uses a bare relative log path — "
-            "anchor it on $CLAUDE_PROJECT_DIR instead"
+            "The PostCompact hook still uses a bare relative log path"
         )

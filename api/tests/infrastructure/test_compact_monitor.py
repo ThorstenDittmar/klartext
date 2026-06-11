@@ -55,9 +55,9 @@ def test_monitor_does_not_crash_on_non_auto_new_line(tmp_path: Path) -> None:
     same line, crashed again, and the state never advanced. Found by the 3rd monitor
     trial (2026-06-10). This path never calls osascript, so the test is CI-safe.
     """
-    claude_dir = tmp_path / ".claude"
-    claude_dir.mkdir()
-    log = claude_dir / "compact-log.txt"
+    # The monitor reads its log/state/digest directly from the base dir it is given
+    # (the pinned team memory), not from a .claude/ subdirectory.
+    log = tmp_path / "compact-log.txt"
     log.write_text("2026-06-10T16:00:00 | manual | some-branch\n")
 
     result = subprocess.run(
@@ -70,11 +70,11 @@ def test_monitor_does_not_crash_on_non_auto_new_line(tmp_path: Path) -> None:
         f"check-compact-log.sh crashed on a non-auto new line (exit {result.returncode}): "
         f"{result.stderr}"
     )
-    state = (claude_dir / "compact-log-lastcheck").read_text().strip()
+    state = (tmp_path / "compact-log-lastcheck").read_text().strip()
     assert state == "1", (
         f"State did not advance past the processed line (lastcheck={state!r}); "
         "the monitor would re-scan and re-crash on every run"
     )
-    assert not (claude_dir / "compact-monitor-digest.txt").exists(), (
+    assert not (tmp_path / "compact-monitor-digest.txt").exists(), (
         "A manual compact must not produce a digest entry — only `| auto |` alerts"
     )

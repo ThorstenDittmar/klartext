@@ -22,7 +22,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo \"$(date -u +%Y-%m-%dT%H:%M:%S) | auto | $(git -C \"$CLAUDE_PROJECT_DIR\" branch --show-current)\" >> \"$CLAUDE_PROJECT_DIR/.claude/compact-log.txt\""
+            "command": "mkdir -p \"$HOME/.claude/klartext-team-memory\" && echo \"$(date -u +%Y-%m-%dT%H:%M:%S) | auto | $(git -C \"$CLAUDE_PROJECT_DIR\" branch --show-current)\" >> \"$HOME/.claude/klartext-team-memory/compact-log.txt\""
           }
         ]
       },
@@ -31,7 +31,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo \"$(date -u +%Y-%m-%dT%H:%M:%S) | manual | $(git -C \"$CLAUDE_PROJECT_DIR\" branch --show-current)\" >> \"$CLAUDE_PROJECT_DIR/.claude/compact-log.txt\""
+            "command": "mkdir -p \"$HOME/.claude/klartext-team-memory\" && echo \"$(date -u +%Y-%m-%dT%H:%M:%S) | manual | $(git -C \"$CLAUDE_PROJECT_DIR\" branch --show-current)\" >> \"$HOME/.claude/klartext-team-memory/compact-log.txt\""
           }
         ]
       }
