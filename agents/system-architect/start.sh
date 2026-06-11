@@ -14,19 +14,8 @@
 # To request a permission change, send a DevOps Briefing.
 #
 # TODO: Permissions to be finalized when System Architect agent is onboarded.
+#
+# Allowlists live in agents/system-architect/allowed-tools.txt (one entry per line),
+# read by the central launcher scripts/start-agent.sh.
 
-cd "$(dirname "$0")/../.." || exit 1
-
-claude \
-  --allowedTools "Edit(docs/superpowers/plans/PENDING.md)" \
-  --allowedTools "Write(docs/superpowers/plans/PENDING.md)" \
-  --allowedTools "Edit(CLAUDE.md)" \
-  --allowedTools "Write(CLAUDE.md)" \
-  --allowedTools "Edit(docs/adr/)" \
-  --allowedTools "Write(docs/adr/)" \
-  --allowedTools "Edit(docs/superpowers/skills/)" \
-  --allowedTools "Write(docs/superpowers/skills/)" \
-  --allowedTools "Edit(.semgrep/rules/arch/)" \
-  --allowedTools "Write(.semgrep/rules/arch/)" \
-  --allowedTools "Edit(agents/system-architect/)" \
-  --allowedTools "Write(agents/system-architect/)"
+exec "$(dirname "$0")/../../scripts/start-agent.sh" system-architect

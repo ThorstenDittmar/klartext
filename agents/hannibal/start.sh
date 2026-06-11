@@ -14,16 +14,8 @@
 #
 # Read/Analyse permissions are granted project-wide in .claude/settings.json.
 # OE Perimeter: This file is maintained by OE only.
+#
+# Allowlists live in agents/hannibal/allowed-tools.txt (one entry per line),
+# read by the central launcher scripts/start-agent.sh.
 
-cd "$(dirname "$0")/../.." || exit 1
-
-claude \
-  --allowedTools "Edit(docs/superpowers/plans/)" \
-  --allowedTools "Write(docs/superpowers/plans/)" \
-  --allowedTools "Edit(docs/superpowers/plans/PENDING.md)" \
-  --allowedTools "Write(docs/superpowers/plans/PENDING.md)" \
-  --allowedTools "Edit(agents/hannibal/)" \
-  --allowedTools "Write(agents/hannibal/)" \
-  --allowedTools "Bash(git add docs/superpowers/plans/)" \
-  --allowedTools "Bash(git add agents/hannibal/)" \
-  --allowedTools "Bash(git commit *)"
+exec "$(dirname "$0")/../../scripts/start-agent.sh" hannibal

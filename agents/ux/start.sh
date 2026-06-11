@@ -12,17 +12,8 @@
 # To request a permission change, send a DevOps Briefing.
 #
 # TODO: Permissions to be finalized when UX/UI agent is onboarded.
+#
+# Allowlists live in agents/ux/allowed-tools.txt (one entry per line),
+# read by the central launcher scripts/start-agent.sh.
 
-cd "$(dirname "$0")/../.." || exit 1
-
-claude \
-  --allowedTools "Edit(docs/superpowers/plans/PENDING.md)" \
-  --allowedTools "Write(docs/superpowers/plans/PENDING.md)" \
-  --allowedTools "Edit(frontend/src/)" \
-  --allowedTools "Write(frontend/src/)" \
-  --allowedTools "Edit(frontend/public/)" \
-  --allowedTools "Write(frontend/public/)" \
-  --allowedTools "Edit(frontend/src/lib/api.ts)" \
-  --allowedTools "Write(frontend/src/lib/api.ts)" \
-  --allowedTools "Edit(agents/ux/)" \
-  --allowedTools "Write(agents/ux/)"
+exec "$(dirname "$0")/../../scripts/start-agent.sh" ux
