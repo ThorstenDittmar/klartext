@@ -24,7 +24,11 @@ jobs:
 
       - uses: supabase/setup-cli@v1
         with:
-          version: latest
+          # Pinned: supabase CLI v2.106.0 (released 2026-06-11 12:01 UTC) changed the
+          # local instance's default table privileges, breaking every integration test
+          # with "permission denied for table ..." (42501). v2.105.0 is the last good
+          # stable. Revisit / unpin once the upstream grant change is understood.
+          version: 2.105.0
 
       - name: Start Supabase and apply migrations
         # supabase start applies all migrations automatically on Linux.
