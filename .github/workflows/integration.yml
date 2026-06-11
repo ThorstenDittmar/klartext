@@ -24,12 +24,30 @@ jobs:
 
       - uses: supabase/setup-cli@v1
         with:
-          version: latest
+          # Pinned: supabase CLI v2.106.0 (released 2026-06-11 12:01 UTC) changed the
+          # local instance's default table privileges, breaking every integration test
+          # with "permission denied for table ..." (42501). v2.105.0 is the last good
+          # stable. Revisit / unpin once the upstream grant change is understood.
+          version: 2.105.0
 
       - name: Start Supabase and apply migrations
         # supabase start applies all migrations automatically on Linux.
         # The macOS workaround in cli.py (_db_reset) is not needed here.
         run: supabase start
+
+      - name: Export live Supabase credentials
+        # The CLI is unpinned (version: latest). A CLI/image update can rotate the
+        # default JWT secret, which silently invalidates any hardcoded service-role
+        # key — every query then runs as anon and fails with
+        # "permission denied for table ...". Read the keys the running instance
+        # actually uses instead of hardcoding them. The `:?` guard fails loudly if
+        # a future CLI renames the variable, instead of falling back to anon.
+        run: |
+          eval "$(supabase status -o env)"
+          {
+            echo "SUPABASE_URL=${API_URL:-http://127.0.0.1:54321}"
+            echo "SUPABASE_SERVICE_ROLE_KEY=${SERVICE_ROLE_KEY:?supabase status did not expose SERVICE_ROLE_KEY}"
+          } >> "$GITHUB_ENV"
 
       - name: Install Python dependencies
         run: pip install -e '.[dev]'
@@ -41,12 +59,7 @@ jobs:
         # Tests marked @pytest.mark.claude call the real Anthropic API and are
         # excluded because they require ANTHROPIC_API_KEY and incur API costs.
         # Run those manually: pytest -m "integration and claude"
+        # SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY come from the running instance
+        # (exported above), not hardcoded — robust to CLI/JWT-secret changes.
         run: python -m pytest -m "integration and not claude" --tb=short -q
         working-directory: api
-        env:
-          # Local Supabase always listens on port 54321.
-          SUPABASE_URL: http://127.0.0.1:54321
-          # Deterministic service role key derived from the default JWT secret
-          # "super-secret-jwt-token-with-at-least-32-characters-long".
-          # This key is identical for every local Supabase instance — it is not a secret.
-          SUPABASE_SERVICE_ROLE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU
