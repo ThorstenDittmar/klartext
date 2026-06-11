@@ -140,9 +140,14 @@ section "Installing compact monitor"
 if [[ "$(uname)" == "Darwin" ]]; then
     PLIST_DEST="$HOME/Library/LaunchAgents/com.klartext.compact-monitor.plist"
     REPO_DIR="$(pwd)"
+    # The compact-log lives centrally in the pinned team memory, not per repo/worktree,
+    # so this one launchd instance catches compacts from every per-agent worktree.
+    MONITOR_MEMORY_DIR="$HOME/.claude/klartext-team-memory"
+    mkdir -p "$MONITOR_MEMORY_DIR"
 
     info "Installing launchd agent for auto-compact monitoring…"
-    sed "s|@@REPO_DIR@@|$REPO_DIR|g" scripts/com.klartext.compact-monitor.plist.template > "$PLIST_DEST"
+    sed -e "s|@@REPO_DIR@@|$REPO_DIR|g" -e "s|@@MEMORY_DIR@@|$MONITOR_MEMORY_DIR|g" \
+        scripts/com.klartext.compact-monitor.plist.template > "$PLIST_DEST"
     chmod +x scripts/check-compact-log.sh
 
     launchctl unload "$PLIST_DEST" 2>/dev/null || true

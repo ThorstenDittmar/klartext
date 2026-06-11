@@ -3,6 +3,7 @@
 <!-- launchd Agent — Compact-Monitor (macOS-only, kein Äquivalent auf Linux/Codespace) -->
 <!-- Installiert via setup.sh nach ~/Library/LaunchAgents/com.klartext.compact-monitor.plist -->
 <!-- @@REPO_DIR@@ wird bei Installation durch den absoluten Repo-Pfad ersetzt -->
+<!-- @@MEMORY_DIR@@ wird durch den gepinnten Team-Memory-Pfad ersetzt (zentraler compact-log) -->
 <plist version="1.0">
 <dict>
     <key>Label</key>
@@ -12,7 +13,7 @@
     <array>
         <string>/bin/bash</string>
         <string>@@REPO_DIR@@/scripts/check-compact-log.sh</string>
-        <string>@@REPO_DIR@@</string>
+        <string>@@MEMORY_DIR@@</string>
     </array>
 
     <!-- Stündlich prüfen — Signal ändert sich träge -->
