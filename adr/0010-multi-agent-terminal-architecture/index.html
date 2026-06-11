@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/superpowers/plans/PENDING/">
+        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/adr/0010-multi-agent-terminal-architecture/">
       
       
       
@@ -18,19 +18,19 @@
         
       
       
-      <link rel="icon" href="../../../assets/images/favicon.png">
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
-        <title>Pending Implementation Plans - klartext.jetzt – Spezifikation</title>
+        <title>0010 — Multi-Agent Terminal Architecture: Worktree-per-Agent + File Inbox + Central Compact-Log - klartext.jetzt – Spezifikation</title>
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -49,7 +49,7 @@
       
     
     
-    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#pending-implementation-plans" class="md-skip">
+        <a href="#0010-multi-agent-terminal-architecture-worktree-per-agent-file-inbox-central-compact-log" class="md-skip">
           Zum Inhalt
         </a>
       
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Kopfzeile">
-    <a href="../../.." title="klartext.jetzt – Spezifikation" class="md-header__button md-logo" aria-label="klartext.jetzt – Spezifikation" data-md-component="logo">
+    <a href="../.." title="klartext.jetzt – Spezifikation" class="md-header__button md-logo" aria-label="klartext.jetzt – Spezifikation" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Pending Implementation Plans
+              0010 — Multi-Agent Terminal Architecture: Worktree-per-Agent + File Inbox + Central Compact-Log
             
           </span>
         </div>
@@ -217,7 +217,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../.." class="md-tabs__link">
+      <a href="../.." class="md-tabs__link">
         
   
   
@@ -236,7 +236,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../pruefbericht-klartext.html" class="md-tabs__link">
+      <a href="../../pruefbericht-klartext.html" class="md-tabs__link">
         
   
   
@@ -257,7 +257,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../kap-01-executive-summary/" class="md-tabs__link">
+        <a href="../../kap-01-executive-summary/" class="md-tabs__link">
           
   
   
@@ -277,7 +277,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../kap-06-systemarchitektur/" class="md-tabs__link">
+        <a href="../../kap-06-systemarchitektur/" class="md-tabs__link">
           
   
   
@@ -297,7 +297,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../kap-11-leser/" class="md-tabs__link">
+        <a href="../../kap-11-leser/" class="md-tabs__link">
           
   
   
@@ -317,7 +317,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../kap-19-umsetzung/" class="md-tabs__link">
+        <a href="../../kap-19-umsetzung/" class="md-tabs__link">
           
   
   
@@ -335,7 +335,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../developer-guide/" class="md-tabs__link">
+      <a href="../../developer-guide/" class="md-tabs__link">
         
   
   
@@ -356,7 +356,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../appendix-a/" class="md-tabs__link">
+        <a href="../../appendix-a/" class="md-tabs__link">
           
   
   
@@ -398,7 +398,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../.." title="klartext.jetzt – Spezifikation" class="md-nav__button md-logo" aria-label="klartext.jetzt – Spezifikation" data-md-component="logo">
+    <a href="../.." title="klartext.jetzt – Spezifikation" class="md-nav__button md-logo" aria-label="klartext.jetzt – Spezifikation" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -428,7 +428,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../.." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         
   
   
@@ -455,7 +455,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../pruefbericht-klartext.html" class="md-nav__link">
+      <a href="../../pruefbericht-klartext.html" class="md-nav__link">
         
   
   
@@ -536,7 +536,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../kap-01-executive-summary/" class="md-nav__link">
+      <a href="../../kap-01-executive-summary/" class="md-nav__link">
         
   
   
@@ -564,7 +564,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../kap-02-problemdefinition/" class="md-nav__link">
+      <a href="../../kap-02-problemdefinition/" class="md-nav__link">
         
   
   
@@ -592,7 +592,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../kap-03-kognition/" class="md-nav__link">
+      <a href="../../kap-03-kognition/" class="md-nav__link">
         
   
   
@@ -620,7 +620,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../kap-04-vision/" class="md-nav__link">
+      <a href="../../kap-04-vision/" class="md-nav__link">
         
   
   
@@ -648,7 +648,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../kap-05-autorenumgebung/" class="md-nav__link">
+      <a href="../../kap-05-autorenumgebung/" class="md-nav__link">
         
   
   
@@ -737,7 +737,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../kap-06-systemarchitektur/" class="md-nav__link">
+      <a href="../../kap-06-systemarchitektur/" class="md-nav__link">
         
   
   
@@ -765,7 +765,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../kap-07-wirkmodelle/" class="md-nav__link">
+      <a href="../../kap-07-wirkmodelle/" class="md-nav__link">
         
   
   
@@ -793,7 +793,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../kap-08-verbindung/" class="md-nav__link">
+      <a href="../../kap-08-verbindung/" class="md-nav__link">
         
   
   
@@ -821,7 +821,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../kap-09-transparenzbericht/" class="md-nav__link">
+      <a href="../../kap-09-transparenzbericht/" class="md-nav__link">
         
   
   
@@ -849,7 +849,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../kap-10-perspektivpluralismus/" class="md-nav__link">
+      <a href="../../kap-10-perspektivpluralismus/" class="md-nav__link">
         
   
   
@@ -938,7 +938,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../kap-11-leser/" class="md-nav__link">
+      <a href="../../kap-11-leser/" class="md-nav__link">
         
   
   
@@ -966,7 +966,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../kap-12-distribution/" class="md-nav__link">
+      <a href="../../kap-12-distribution/" class="md-nav__link">
         
   
   
@@ -994,7 +994,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../kap-13-folgeprojekte/" class="md-nav__link">
+      <a href="../../kap-13-folgeprojekte/" class="md-nav__link">
         
   
   
@@ -1022,7 +1022,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../kap-14-technologie/" class="md-nav__link">
+      <a href="../../kap-14-technologie/" class="md-nav__link">
         
   
   
@@ -1050,7 +1050,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../kap-15-roadmap/" class="md-nav__link">
+      <a href="../../kap-15-roadmap/" class="md-nav__link">
         
   
   
@@ -1078,7 +1078,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../kap-16-relevanz/" class="md-nav__link">
+      <a href="../../kap-16-relevanz/" class="md-nav__link">
         
   
   
@@ -1106,7 +1106,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../kap-17-schluss/" class="md-nav__link">
+      <a href="../../kap-17-schluss/" class="md-nav__link">
         
   
   
@@ -1134,7 +1134,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../kap-18-wissenschaft/" class="md-nav__link">
+      <a href="../../kap-18-wissenschaft/" class="md-nav__link">
         
   
   
@@ -1223,7 +1223,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../kap-19-umsetzung/" class="md-nav__link">
+      <a href="../../kap-19-umsetzung/" class="md-nav__link">
         
   
   
@@ -1251,7 +1251,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../kap-20-literaten-workflow/" class="md-nav__link">
+      <a href="../../kap-20-literaten-workflow/" class="md-nav__link">
         
   
   
@@ -1279,7 +1279,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../kap-21-wirkmodell-workflow/" class="md-nav__link">
+      <a href="../../kap-21-wirkmodell-workflow/" class="md-nav__link">
         
   
   
@@ -1307,7 +1307,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../kap-22-leser-workflow/" class="md-nav__link">
+      <a href="../../kap-22-leser-workflow/" class="md-nav__link">
         
   
   
@@ -1335,7 +1335,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../kap-23-community/" class="md-nav__link">
+      <a href="../../kap-23-community/" class="md-nav__link">
         
   
   
@@ -1363,7 +1363,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../kap-24-datenmodell/" class="md-nav__link">
+      <a href="../../kap-24-datenmodell/" class="md-nav__link">
         
   
   
@@ -1398,7 +1398,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../developer-guide/" class="md-nav__link">
+      <a href="../../developer-guide/" class="md-nav__link">
         
   
   
@@ -1479,7 +1479,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../appendix-a/" class="md-nav__link">
+      <a href="../../appendix-a/" class="md-nav__link">
         
   
   
@@ -1561,7 +1561,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../adr/0001-detector-quality-testing/" class="md-nav__link">
+      <a href="../0001-detector-quality-testing/" class="md-nav__link">
         
   
   
@@ -1589,7 +1589,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../adr/0002-test-data-object-mother/" class="md-nav__link">
+      <a href="../0002-test-data-object-mother/" class="md-nav__link">
         
   
   
@@ -1650,7 +1650,7 @@
 
 
   
-    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/superpowers/plans/PENDING.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/adr/0010-multi-agent-terminal-architecture.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1658,277 +1658,120 @@
   
 
 
-<h1 id="pending-implementation-plans">Pending Implementation Plans<a class="headerlink" href="#pending-implementation-plans" title="Permanent link">&para;</a></h1>
-<p>Plans that are next in line. Tests may already be written (RED).</p>
-<hr />
-<h2 id="h01-422-walking-skeleton-status-2026-06-10-hannibal">H01-422 Walking Skeleton — Status (2026-06-10, Hannibal)<a class="headerlink" href="#h01-422-walking-skeleton-status-2026-06-10-hannibal" title="Permanent link">&para;</a></h2>
-<p><strong>Work-Alpha: CLOSED</strong> (Retro 2, 2026-06-10). Record:
-<code>docs/superpowers/improvement/learnings/2026-06-10-h01-422-retrospective.md</code>.
-<em>Foundation Established</em> danach 5/6 — letzte Box („non-negotiables per practice") bei OE.</p>
-<p>Erster realer Lauf der Methode am H01-422-Wund („+ Absatz hinzufügen" → 422 → kein Tippen möglich).
-Alle Schritte mit <code>task-readiness</code>-Gate dispatcht; Sign-off an der Naht VOR den Builder-Dispatches.</p>
+<h1 id="0010-multi-agent-terminal-architecture-worktree-per-agent-file-inbox-central-compact-log">0010 — Multi-Agent Terminal Architecture: Worktree-per-Agent + File Inbox + Central Compact-Log<a class="headerlink" href="#0010-multi-agent-terminal-architecture-worktree-per-agent-file-inbox-central-compact-log" title="Permanent link">&para;</a></h1>
+<p><strong>Status:</strong> Accepted<br />
+<strong>Datum:</strong> 2026-06-11<br />
+<strong>Entscheider:</strong> User (2026-06-11); SA sign-off pending (SA app-based at decision time)</p>
+<h2 id="kontext">Kontext<a class="headerlink" href="#kontext" title="Permanent link">&para;</a></h2>
+<p>Der klartext Multi-Agent-Betrieb lief in einem einzigen geteilten Working Tree (<code>$HOME/klartext</code>)
+mit Sessions, die per Desktop-App aus <code>$HOME</code> gestartet wurden. Dieser Aufbau verursachte
+am 2026-06-10 drei Incident-Klassen in einem Tag:</p>
+<ol>
+<li>
+<p><strong>Uncommitted edits wurden durch <code>git reset</code>-Operationen anderer Agents zerstört</strong> — OE verlor
+   5 Register-Rows, CME 3 claude.md-Abschnitte, SA 4 Abschnitte. Recovery war Glück + Redundanz,
+   kein Schutz (RC4/RC5-Klasse: documented vs. actual).</p>
+</li>
+<li>
+<p><strong>Project settings und PostCompact-hooks luden nie</strong> — Sessions starteten mit cwd <code>$HOME</code>,
+   kein Git-Repo → <code>.claude/settings.json</code> und alle definierten Hooks blieben tot.
+   Alle allowlist-Regeln in <code>start.sh</code> waren de facto wirkungslos: nie enforced.</p>
+</li>
+<li>
+<p><strong>Compaction-Monitoring konnte nicht zuverlässig bewiesen werden</strong> — der Hook-Layer war tot,
+   die ersten zwei Monitoring-Trials scheiterten aus diesem Grund.</p>
+</li>
+</ol>
+<h3 id="optionen-evaluiert">Optionen evaluiert<a class="headerlink" href="#optionen-evaluiert" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>Schritt</th>
-<th>Ergebnis</th>
+<th>Option</th>
+<th>Entscheidung</th>
+<th>Grund</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Kontrakt surfaced (RC6) + SA-Sign-off: Variante R1 Lazy-create, Seam-Owner = Narrative</td>
-<td>✅</td>
+<td><strong>Weiter: Eternal app sessions + shared tree</strong></td>
+<td>REJECTED</td>
+<td>False-persistence-Kette (RC4/RC5): committed knowledge ≠ disk knowledge; drei Agents verloren claude.md-Inhalte in einem Tag; root cause nicht behebbar ohne Isolation</td>
 </tr>
 <tr>
-<td>PR #53 Kontrakt-Doku <code>docs/contracts/narrative-units-fragment.md</code> (Narrative)</td>
-<td>✅ gemergt</td>
+<td><strong>Desktop-App Folder-Select</strong></td>
+<td>REJECTED</td>
+<td>Strukturell unmöglich upstream: Folder-Pick setzt den Projektkontext der App, nie den Shell-cwd. Kein <code>--cwd</code>-Flag, kein shipped default-dir setting (GH #56688/#26287/#60151/#60099) — DevOps-Analyse bestätigt</td>
 </tr>
 <tr>
-<td>PR #54 Contract-Tests, 17/17 (QA) — schließt die fehlende Contract-Test-Schicht</td>
-<td>✅ gemergt</td>
+<td><strong>Agent Teams as memory/blackboard</strong></td>
+<td>REJECTED</td>
+<td>Ephemer by design: Team-dirs werden beim Session-Ende gelöscht. Tool-Missbrauch; schließt RC4 nicht</td>
 </tr>
 <tr>
-<td>PR #55 Lazy-create ManuscriptView, 93/93 + tsc clean (UX/UI)</td>
-<td>✅ gemergt</td>
+<td><strong>Native app worktrees (app settings "worktree location")</strong></td>
+<td>REJECTED</td>
+<td>Für ephemere Sessions gebaut; <code>claude/</code>-Branches divergieren bei Eternal-Agents; DevOps-Recherche bestätigt Inkompatibilität</td>
 </tr>
 <tr>
-<td>PR #56/#57 stash-gerettete Tree-Edits separat · PR #58 PostCompact-Hook-Promotion</td>
-<td>✅ gemergt</td>
+<td><strong>Hybrid (high-write-risk terminal, Advisors in-app)</strong></td>
+<td>Not chosen</td>
+<td>Konvergiert zu Full-Terminal bei konsequenter Anwendung; Zweiklassengesellschaft im Team</td>
 </tr>
 <tr>
-<td>End-to-End-Verifikation via Claude_Preview VOR Merge: Tippen → 201, kein 422</td>
-<td>✅ bestanden</td>
-</tr>
-<tr>
-<td>Wissens-Captures aller Beteiligten (+ 2 Nicht-Beteiligte) inkl. Friction-Reports</td>
-<td>✅</td>
-</tr>
-<tr>
-<td>Retrospective (OE; DELETE-Befund → Produkt-Task, Friction → Register/Aktionen)</td>
-<td>✅ 2026-06-10</td>
+<td><strong>Full terminal via <code>start.sh</code> + Worktree-per-Agent + File Inbox</strong></td>
+<td><strong>ACCEPTED</strong></td>
+<td>Einziger Weg der Project-Settings, Hooks und Allowlists mechanisch enforced (statt rituell) — Enforcement-Hierarchy Regel</td>
 </tr>
 </tbody>
 </table>
-<p>Verwahr-Depot der Retro-Inputs: Hannibal-Memory <code>project_h01422_retro_inputs.md</code> (nach Retro verorten + löschen).</p>
-<hr />
-<h2 id="offene-delegationen-aktiv">Offene Delegationen (aktiv)<a class="headerlink" href="#offene-delegationen-aktiv" title="Permanent link">&para;</a></h2>
-<blockquote>
-<p>Die historische Delegations-Tabelle aus H01 liegt auf <code>salvage/h01-working-tree</code> (Commit e73a461,
-PENDING.md dort §„Offene Delegationen") und kommt mit dem geplanten Teardown. Hier nur AKTIVE Einträge.
-Befund Audit O4 (2026-06-10): Dieser Abschnitt fehlte auf <code>main</code> — Tracking-Lücke, hiermit geschlossen.</p>
-</blockquote>
-<table>
-<thead>
-<tr>
-<th>Agent</th>
-<th>Aufgabe</th>
-<th>Delegiert von</th>
-<th>Datum</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>SA (via Hannibal-Task)</td>
-<td>Semgrep-Regel Ports &amp; Adapters: „Service importiert nie direkt einen Adapter" — dokumentiert, nicht enforced</td>
-<td>Audit Expert</td>
-<td>2026-06-10</td>
-</tr>
-<tr>
-<td>SA</td>
-<td>ADR-0010 sign-off (<code>docs/adr/0010-multi-agent-terminal-architecture.md</code>) — SA war app-basiert zum Entscheidungszeitpunkt; ADR von DevOps gedraftet, wartet auf SA-Review</td>
-<td>DevOps</td>
-<td>2026-06-11</td>
-</tr>
-<tr>
-<td>OE</td>
-<td>Fake-Ownership in <code>api/tests/fakes/</code> klären (<code>fake_narrative_repository.py</code>: NE-Interface, kein Owner)</td>
-<td>Audit Expert</td>
-<td>2026-06-10</td>
-</tr>
-<tr>
-<td>~~OE (Register)~~</td>
-<td>~~Improvement-Kandidat: Semgrep-Gate gegen <code># type: ignore</code>~~ — <strong>erledigt 2026-06-10</strong>, Register-Zeile in §3 (Owner SA+DevOps)</td>
-<td>Causal Model Expert</td>
-<td>2026-06-10</td>
-</tr>
-<tr>
-<td>UX/UI</td>
-<td>A1–A3 aus Hannibals Verwahr-Depot in <code>agents/ux/claude.md</code> eintragen (Debounce-Test-Muster, Contract-Falle content:null, In-Flight-Guard) — <strong>artefakt-verifiziert</strong>; danach darf Hannibal das Depot löschen</td>
-<td>OE (pre-compact 2026-06-10)</td>
-<td>2026-06-10</td>
-</tr>
-<tr>
-<td>~~DevOps~~</td>
-<td>~~Mini-Inkrement landen~~ — <strong>erledigt 2026-06-10</strong> (<code>c20a79d</code>, artefakt-verifiziert: Permissions in den Skripten)</td>
-<td>OE (pre-compact 2026-06-10)</td>
-<td>2026-06-10</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h2 id="plan-b-actor-claim-evolution">Plan B — Actor + Claim Evolution<a class="headerlink" href="#plan-b-actor-claim-evolution" title="Permanent link">&para;</a></h2>
-<p><strong>Status:</strong> DONE (2026-06-03)<br />
-<strong>Plan:</strong> <code>docs/superpowers/plans/2026-06-03-actor-claim-evolution.md</code></p>
-<p><strong>What:</strong> Breaking changes to existing Actor and Claim domain objects, propagated
-through all layers (repository, schemas, router, frontend, DB migration).</p>
-<p>Actor changes:
-- <code>name</code> → <code>label</code>
-- <code>typ</code> → <code>actor_type</code>
-- <code>description</code> → <code>notes</code>
-- New field: <code>entity_ref: str | None</code> (ID of linked causal model entity)</p>
-<p>Claim changes:
-- New field: <code>label: str</code>
-- New field: <code>status: ClaimStatus</code> (DRAFT / LINKED / UNRESOLVED)
-- New field: <code>wirkgefuege_ref: str | None</code>
-- New method: <code>link_to_wirkgefuege(ref_id)</code>
-- New method: <code>mark_unresolved()</code></p>
-<p>Files affected: <code>models/narrative.py</code>, <code>models/claim.py</code>, <code>schemas/narratives.py</code>,
-<code>routers/narratives.py</code>, <code>repositories/supabase_narrative_repository.py</code>,
-<code>seeddata.py</code>, <code>frontend/src/pages/NarrativeEditor.tsx</code>,
-<code>frontend/src/lib/api.ts</code>, DB migration for <code>narrative_actors</code>.</p>
-<hr />
-<h2 id="plan-c-wirkgefuge-persistence">Plan C — Wirkgefüge Persistence<a class="headerlink" href="#plan-c-wirkgefuge-persistence" title="Permanent link">&para;</a></h2>
-<p><strong>Status:</strong> DONE (2026-06-04)<br />
-<strong>Plan:</strong> <code>docs/superpowers/plans/2026-06-04-wirkgefuege-persistence.md</code></p>
-<p><strong>What:</strong> Persist Slot and CausalRelation to the database.</p>
-<p>New DB tables: <code>slots</code>, <code>causal_relations</code>
-New repositories: <code>SupabaseSlotRepository</code>, <code>SupabaseCausalRelationRepository</code>
-New schemas + routers:
-- <code>POST /causal-models/{id}/slots</code>
-- <code>POST /causal-models/{id}/relations</code>
-- <code>PUT  /causal-models/{id}/relations/{id}</code>
-- <code>POST /claims/{id}/link-to-wirkgefuege</code></p>
-<hr />
-<h2 id="plan-d-analysis-workflow">Plan D — Analysis Workflow<a class="headerlink" href="#plan-d-analysis-workflow" title="Permanent link">&para;</a></h2>
-<p><strong>Status:</strong> DONE (2026-06-04)
-<strong>Plan:</strong> <code>docs/superpowers/plans/2026-06-04-analysis-workflow.md</code></p>
-<p><strong>What:</strong> End-to-end workflow from narrative to minimal Wirkgefüge.</p>
-<p>Steps 2–6 from <code>experiment_scope.md</code>:
-- <code>POST /narratives/{id}/analyse</code> → NarrativeAnalysisService + provider port
-- <code>POST /narratives/{id}/suggest-wirkgefuege</code> → WirkgefuegeSuggestionService
-- Frontend extensions for the analysis workflow</p>
-<hr />
-<h2 id="plan-e-frontend-extensions">Plan E — Frontend Extensions<a class="headerlink" href="#plan-e-frontend-extensions" title="Permanent link">&para;</a></h2>
-<p><strong>Status:</strong> DONE (2026-06-04)
-<strong>Spec:</strong> <code>docs/superpowers/specs/ui_experiment_scope.md</code>
-<strong>Plan:</strong> <code>docs/superpowers/plans/2026-06-04-frontend-extensions.md</code></p>
-<p><strong>What:</strong> 4 Screens für den Experiment-Workflow — Narrativ → Analyse → Wirkgefüge-Vorschlag → CausalModel.
-- Task 1: Backend: <code>causal_model_id</code> in <code>NarrativeSummaryResponse</code>
-- Task 2: <code>api.ts</code> — neue TypeScript-Typen + API-Calls
-- Task 3: <code>App.tsx</code> — neue Routes
-- Task 4: Screen 1 (<code>NarrativeEditor</code>) — "Analysieren →" Button
-- Task 5: Screen 2 (<code>NarrativeAnalyse</code>) — Actor/Claim-Karten mit Bestätigen/Verwerfen
-- Task 6: Screen 3 (<code>WirkgefuegeVorschlag</code>) — Slot/Relation-Karten + Speicherfluss
-- Task 7: Screen 4 (<code>CausalModelEditor</code>) — Slots + Relationen + Verknüpfte Narrative
-- Task 8: Full Regression Run</p>
-<hr />
-<h2 id="other-open-items">Other open items<a class="headerlink" href="#other-open-items" title="Permanent link">&para;</a></h2>
+<h2 id="entscheidung">Entscheidung<a class="headerlink" href="#entscheidung" title="Permanent link">&para;</a></h2>
+<p><strong>Jeder Agent läuft in einem eigenen langlebigen Git-Worktree, gestartet per Terminal via <code>scripts/start-agent.sh &lt;slug&gt;</code>.</strong></p>
+<h3 id="komponenten">Komponenten<a class="headerlink" href="#komponenten" title="Permanent link">&para;</a></h3>
+<p><strong>1. Worktree-per-Agent</strong>
+- Layout: <code>$HOME/klartext-worktrees/&lt;slug&gt;/</code> (außerhalb des Repos, nicht App-ephemer)
+- Branch: <code>agent/&lt;slug&gt;</code> (persistent; rebase auf <code>origin/main</code> bei jedem Session-Start)
+- Idempotente Provisionierung: <code>start-agent.sh</code> erstellt den Worktree beim ersten Start;
+  existing Worktrees werden nie resettet — uncommitted WIP bleibt erhalten
+- <code>agents/&lt;name&gt;/start.sh</code> = thin wrapper: <code>exec "$(dirname "$0")/../../scripts/start-agent.sh" &lt;name&gt;</code>
+- Allowlists: <code>agents/&lt;name&gt;/allowed-tools.txt</code> (eine Zeile pro Tool); central launcher liest sie</p>
+<p><strong>2. File Inbox als Messaging-Fallback</strong>
+- <code>scripts/inbox.sh send/read/unread</code> — dateibasierter Briefkasten in gepinntem shared memory
+- Ablage: <code>~/.claude/klartext-team-memory/inbox/&lt;slug&gt;/</code>
+- Semantik identisch zu App-DMs: User nudgt den Empfänger; der liest beim Session-Start
+- Entkoppelt die Messaging-Schicht von der App-Infrastruktur (kein Lock-in auf experimental features)
+- Architekturprinzip: <strong>"isolate code, share comms/memory/audit"</strong> — code layer per-agent (worktrees),
+  shared layer zentral gepinnt (memory + inbox + compact-log)</p>
+<p><strong>3. Central Compact-Log</strong>
+- <code>~/.claude/klartext-team-memory/compact-log.jsonl</code> — ein Log für alle Agents
+- Branch-Feld im Log-Eintrag identifiziert den compacteten Agent
+- Ein launchd-Monitor-Prozess deckt alle Worktrees ab; kein Monitor-Drift bei Rollout</p>
+<p><strong>4. Generation Change als Norm</strong>
+- Statt Eternal-Session + <code>/compact</code>: Session endet → <code>start.sh</code> startet frischen Nachfolger
+- Nachfolger liest von Disk: <code>claude.md</code> + domain knowledge + gepinnte Memory = vollständige Übergabe
+- Pre-Compact wird zu Pre-Restart: Wissen sichern, dann Session beenden</p>
+<h2 id="konsequenzen">Konsequenzen<a class="headerlink" href="#konsequenzen" title="Permanent link">&para;</a></h2>
+<p><strong>Positiv:</strong>
+- Project settings, PostCompact-hooks und --allowedTools-Allowlists greifen mechanisch (Enforcement-Hierarchy level 1)
+- WIP-Commits halten die volatile Schicht von Tagen auf Minuten
+- Monitoring nachweislich funktional: Hook feuerte auf ersten echten <code>/compact</code> (2026-06-11, Trial 4)
+- Uncommitted edits sind physisch isoliert — der RC5-Incident ist strukturell nicht reproduzierbar</p>
+<p><strong>Negativ / Trade-offs:</strong>
+- Terminal-Sessions sind für die Desktop-App unsichtbar (kein Session-Listing, kein <code>ccd_session_mgmt</code>)
+- Messaging über File-Inbox statt App-DMs: leicht mehr Friction (User muss Empfänger anstupsen)
+- Rollout erfordert einen kontrollierten Generationswechsel aller 10 Sessions — einmalig, nicht dauerhaft</p>
+<p><strong>Scope-Caveat:</strong>
+- Pilot: DevOps (2026-06-11). Rollout der anderen 9 Agents nach separatem Go
+- SA sign-off auf dieses ADR ausstehend (SA läuft zum Entscheidungszeitpunkt noch app-basiert)
+- Stage-2-Spec (Worktree-Lifecycle, Crashrecovery, Orphan-Check) liegt vor; Umsetzung nach Pilot-Beweis</p>
+<h2 id="referenzen">Referenzen<a class="headerlink" href="#referenzen" title="Permanent link">&para;</a></h2>
 <ul>
-<li>~~<strong>Migration 20260603000001 anwenden</strong>~~ — DONE. <code>supabase migration up --local</code> bestätigt: Local database is up to date.</li>
-<li>~~<strong>Integration-Tests narrative_repository reparieren</strong>~~ — DONE (2026-06-04). Alle 6 Tests grün.</li>
-<li><strong>N-01</strong> (<code>clean_up.md</code>): <code>precondition-postcondition.md.rtf</code> als Markdown neu speichern</li>
-<li><strong>N-04</strong> (<code>clean_up.md</code>): CausalModelFederation vollständig spezifizieren</li>
-<li><strong>N-06</strong> (<code>clean_up.md</code>): Community Model Specs anlegen</li>
-<li><strong>Fragment aus narrative_units.typ entfernen</strong> — erst bei Phase-2-Migration zu <code>document_nodes</code></li>
-<li><strong>[AKTIV — Produkt-Task, aus Retro 2 via Hannibal] DELETE-on-unknown-id Kontrakt</strong> — <code>SupabaseNarrativeUnitRepository.remove()</code> ist idempotent (kein 404), <code>update()</code> ist strikt (404). Inkonsistenz. Gleiches Muster wie der 422 (RC6 ungeborener Kontrakt × RC3 API-Konsistenz). Von QA per qa-review gefunden (2026-06-09, gesichert als Investigation-Task). Entscheid nötig: Option A idempotent→204 (Test umbauen) vs. Option B strikt→404 (<code>remove()</code> strikt machen, Frontend behandelt 404). Braucht Narrative-Semantik × SA-Konsistenz. Retro-2-Entscheid: als Produkt-Task via Hannibal an Narrative (Seam-Owner, Semantik + Kontrakt-Doku) mit SA-Sign-off (API-Konsistenz) routen; bei Option B zusätzlich UX/UI-Briefing (404-Handling). Dispatch steht aus.</li>
+<li>Improvement-Register-Row (CI §3): "Structural change: <code>git worktree</code> per context + session-cwd repair"</li>
+<li>PRs: #70 (inbox.sh), #71 (compact-log central), #75 (start-agent.sh), #76 (thin wrappers + allowlists)</li>
+<li><code>scripts/start-agent.sh</code> — zentrale Launcher-Logik</li>
+<li><code>scripts/inbox.sh</code> — dateibasierter Briefkasten</li>
+<li><code>agents/*/start.sh</code> — thin wrappers (OE-Domain)</li>
+<li><code>agents/*/allowed-tools.txt</code> — per-agent Allowlists (OE-Domain)</li>
 </ul>
-<hr />
-<h2 id="frontend-infrastruktur-offene-punkte-2026-06-05">Frontend-Infrastruktur — Offene Punkte (2026-06-05)<a class="headerlink" href="#frontend-infrastruktur-offene-punkte-2026-06-05" title="Permanent link">&para;</a></h2>
-<h3 id="sofort-beim-nachsten-backend-schema-refactoring-miterledigen">Sofort (beim nächsten Backend-Schema-Refactoring miterledigen)<a class="headerlink" href="#sofort-beim-nachsten-backend-schema-refactoring-miterledigen" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>Backend → Frontend Workflow-Regel in CLAUDE.md ergänzen:</strong>
-  Wer ein Pydantic-Response-Schema ändert, aktualisiert <code>frontend/src/lib/api.ts</code>
-  im selben Commit. <code>tsc --noEmit</code> lokal prüfen bevor committed wird.</li>
-</ul>
-<h3 id="mittelfristig">Mittelfristig<a class="headerlink" href="#mittelfristig" title="Permanent link">&para;</a></h3>
-<ul>
-<li>
-<p><strong>Vitest + React Testing Library einrichten</strong>
-  Frontend hat aktuell null Tests. Minimaler Einstieg: Smoke-Tests die prüfen ob
-  Komponenten ohne Crash rendern. Angehen nachdem der Frontend-Skill getestet und
-  die erste isolierte Komponente gebaut wurde.
-  Analogie zum Backend: Domain → Service → Repository → Router;
-  Frontend-Entsprechung: Utils → Komponenten → Screens → E2E.</p>
-</li>
-<li>
-<p><strong>OpenAPI → TypeScript-Generierung (Option B)</strong>
-  FastAPI generiert <code>/openapi.json</code>. Das Tool <code>openapi-typescript</code> erzeugt daraus
-  TypeScript-Interfaces und eliminiert den manuellen Sync zwischen Pydantic-Schemas
-  und <code>api.ts</code>. Verhindert stillen API-Contract-Drift.
-  Aufwand: mittel. Priorität: hoch sobald das Interface größer wird.</p>
-</li>
-</ul>
-<h3 id="skills-und-tooling">Skills und Tooling<a class="headerlink" href="#skills-und-tooling" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong><code>verify</code>-Skill für das Backend anlegen</strong>
-  Gegenstück zu <code>docs/superpowers/skills/verify.md</code>. Protokoll: <code>klartext health</code>,
-  relevante API-Endpoints aufrufen, <code>klartext test</code> für den geänderten Layer.
-  Ablage: <code>docs/superpowers/skills/verify-backend.md</code> + Wrapper <code>~/.claude/skills/verify-backend/</code>.</li>
-</ul>
-<hr />
-<h2 id="architectural-linting-plan-2026-06-05">Architectural Linting — Plan (2026-06-05)<a class="headerlink" href="#architectural-linting-plan-2026-06-05" title="Permanent link">&para;</a></h2>
-<p><strong>Entscheidung:</strong> ADR 0006 — alle Patterns aus CLAUDE.md und Skills werden automatisch geprüft.
-<strong>Primäres Tool:</strong> Semgrep (strukturelle Muster, language-agnostic, YAML-Regeln)
-<strong>Ergänzend:</strong> custom ruff rules (Python), custom eslint rules (TypeScript)
-<strong>Ablage:</strong> <code>.semgrep/rules/</code> im Repo</p>
-<h3 id="phase-1-semgrep-aufsetzen-hochste-prioritat">Phase 1 — Semgrep aufsetzen + höchste Priorität<a class="headerlink" href="#phase-1-semgrep-aufsetzen-hochste-prioritat" title="Permanent link">&para;</a></h3>
-<p>Setup:
-- <code>pip install semgrep</code> in dev dependencies
-- <code>.semgrep/rules/</code> Ordner anlegen
-- Semgrep in pre-commit + CI (<code>lint.yml</code>) einbinden</p>
-<p>Erste Regeln (höchster Wert, sofort sichtbar):</p>
-<p><strong>Backend:</strong>
-- <code>klartext/repo-logs-first</code> — jede Methode in <code>*Repository</code>-Klassen muss <code>self.logger</code> vor dem ersten nicht-logger Statement aufrufen
-- <code>klartext/no-hex-in-style</code> (Python-seitig) — kein hardcoded Hex in Python-Code
-- <code>klartext/exception-naming</code> — Exception-Klassen müssen auf <code>Error</code> enden
-- <code>klartext/factory-methods</code> — Klassen in <code>models/</code> müssen <code>create()</code> und <code>from_record()</code> haben</p>
-<p><strong>Frontend:</strong>
-- <code>klartext/no-hex-in-style</code> (TypeScript) — kein <code>"#XXXXXX"</code> in <code>style={{...}}</code>
-- <code>klartext/async-finally</code> — jeder <code>async</code> Event-Handler muss <code>finally</code> enthalten</p>
-<h3 id="phase-2-weitere-regeln">Phase 2 — Weitere Regeln<a class="headerlink" href="#phase-2-weitere-regeln" title="Permanent link">&para;</a></h3>
-<ul>
-<li><code>klartext/repo-log-level</code> — <code>debug</code> für Reads, <code>info</code> für Writes</li>
-<li><code>klartext/service-naming</code> — Service-Klassen enden auf <code>Service</code></li>
-<li><code>klartext/repository-naming</code> — Repository-Klassen enden auf <code>Repository</code></li>
-<li><code>klartext/no-db-in-service</code> — kein <code>supabase</code>-Import in <code>services/</code></li>
-<li><code>klartext/router-health</code> — jeder Router hat mindestens eine <code>/health</code>-Route</li>
-<li><code>klartext/no-jsx-strings</code> — keine String-Literale im JSX (außer technische Werte)</li>
-</ul>
-<h3 id="neue-pattern-regel">Neue Pattern-Regel<a class="headerlink" href="#neue-pattern-regel" title="Permanent link">&para;</a></h3>
-<p>Ab jetzt gilt: Wenn ein neues Pattern in CLAUDE.md oder einem Skill etabliert wird,
-wird im selben Commit eine entsprechende Semgrep-Regel angelegt. Kein Pattern ohne Regel.</p>
-<h3 id="spater-kein-konkreter-termin">Später (kein konkreter Termin)<a class="headerlink" href="#spater-kein-konkreter-termin" title="Permanent link">&para;</a></h3>
-<ul>
-<li>
-<p><strong>Style Dictionary einrichten</strong>
-  JSON-Tokens in <code>design/tokens/*.json</code> automatisch nach <code>frontend/src/index.css</code>
-  und optional nach TypeScript-Konstanten generieren. Eliminiert den manuellen
-  Sync zwischen Token-JSON und CSS Custom Properties.</p>
-</li>
-<li>
-<p><strong>Playwright für kritische User-Flows</strong>
-  E2E-Tests für den Experiment-Workflow (NarrativeEditor → Analyse →
-  WirkgefügeVorschlag → CausalModelEditor). Erst sinnvoll wenn Workflow stabil ist.</p>
-</li>
-<li>
-<p><strong>Design-System → Code Workflow (Workflow 3) vollständig definieren</strong>
-  Wenn ein Token in <code>design/tokens/*.json</code> geändert wird: wer prüft welche
-  Komponenten betroffen sind, und wie wird sichergestellt dass <code>index.css</code> aktualisiert
-  wird? Aktuell: CHANGELOG.md-Eintrag + manuelles Pending Task — kein automatischer Guard.</p>
-</li>
-</ul>
-<h2 id="lessons-learned-refactoring-scope">Lessons Learned — Refactoring-Scope<a class="headerlink" href="#lessons-learned-refactoring-scope" title="Permanent link">&para;</a></h2>
-<p>Bei Actor/Claim-Refactorings (Plan B) wurde <code>api/cli.py</code> zunächst vergessen —
-es enthält Seeddata-Code der dieselben Domain-Felder referenziert wie Service/Router.
-<strong>Regel für künftige Pläne:</strong> Bei Domain-Feld-Umbenennungen immer <code>api/cli.py</code> in die
-Dateiliste aufnehmen.</p>
-<p>Bei Claim-API-Änderungen (Plan B) wurden drei weitere Dateien übersehen, die erst beim
-nächsten Test-Run auffielen:
-- <code>api/routers/claims.py</code> — baut <code>ClaimResponse</code> direkt aus Domain-Objekten
-- <code>api/tests/fakes/fake_claim_repository.py</code> — konstruiert <code>Claim(...)</code> direkt im Fake
-- <code>api/tests/test_claims_router.py</code> — erstellt <code>Claim</code>-Objekte in der Fake-Service-Klasse</p>
-<p><strong>Regel für künftige Pläne:</strong> Bei Änderungen an <code>Claim</code> oder <code>Actor</code> immer auch diese
-Dateien in die Scope-Liste aufnehmen.</p>
 
 
 
@@ -1984,10 +1827,10 @@ Dateien in die Scope-Liste aufnehmen.</p>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.path", "navigation.top", "toc.integrate", "search.highlight", "search.suggest", "content.code.copy", "content.action.edit"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "In Zwischenablage kopiert", "clipboard.copy": "In Zwischenablage kopieren", "search.result.more.one": "1 weiteres Suchergebnis auf dieser Seite", "search.result.more.other": "# weitere Suchergebnisse auf dieser Seite", "search.result.none": "Keine Suchergebnisse", "search.result.one": "1 Suchergebnis", "search.result.other": "# Suchergebnisse", "search.result.placeholder": "Suchbegriff eingeben", "search.result.term.missing": "Es fehlt", "select.version": "Version ausw\u00e4hlen"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.path", "navigation.top", "toc.integrate", "search.highlight", "search.suggest", "content.code.copy", "content.action.edit"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "In Zwischenablage kopiert", "clipboard.copy": "In Zwischenablage kopieren", "search.result.more.one": "1 weiteres Suchergebnis auf dieser Seite", "search.result.more.other": "# weitere Suchergebnisse auf dieser Seite", "search.result.none": "Keine Suchergebnisse", "search.result.one": "1 Suchergebnis", "search.result.other": "# Suchergebnisse", "search.result.placeholder": "Suchbegriff eingeben", "search.result.term.missing": "Es fehlt", "select.version": "Version ausw\u00e4hlen"}, "version": null}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>
