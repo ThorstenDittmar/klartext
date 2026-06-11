@@ -37,6 +37,7 @@ Verwahr-Depot der Retro-Inputs: Hannibal-Memory `project_h01422_retro_inputs.md`
 | Agent | Aufgabe | Delegiert von | Datum |
 |---|---|---|---|
 | SA (via Hannibal-Task) | Semgrep-Regel Ports & Adapters: „Service importiert nie direkt einen Adapter" — dokumentiert, nicht enforced | Audit Expert | 2026-06-10 |
+| SA | ADR-0010 sign-off (`docs/adr/0010-multi-agent-terminal-architecture.md`) — SA war app-basiert zum Entscheidungszeitpunkt; ADR von DevOps gedraftet, wartet auf SA-Review | DevOps | 2026-06-11 |
 | OE | Fake-Ownership in `api/tests/fakes/` klären (`fake_narrative_repository.py`: NE-Interface, kein Owner) | Audit Expert | 2026-06-10 |
 | ~~OE (Register)~~ | ~~Improvement-Kandidat: Semgrep-Gate gegen `# type: ignore`~~ — **erledigt 2026-06-10**, Register-Zeile in §3 (Owner SA+DevOps) | Causal Model Expert | 2026-06-10 |
 | UX/UI | A1–A3 aus Hannibals Verwahr-Depot in `agents/ux/claude.md` eintragen (Debounce-Test-Muster, Contract-Falle content:null, In-Flight-Guard) — **artefakt-verifiziert**; danach darf Hannibal das Depot löschen | OE (pre-compact 2026-06-10) | 2026-06-10 |

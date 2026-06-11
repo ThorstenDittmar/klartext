@@ -48,14 +48,19 @@ case "$cmd" in
         dir="$BASE/$to"
         mkdir -p "$dir"
         ts="$(date -u +%Y-%m-%dT%H:%M:%S)"
-        file="$dir/${ts}__from-$(slugify "$from")__$(slugify "$subject").md"
-        {
+        subject_slug="$(slugify "$subject")"
+        subject_slug="${subject_slug:0:80}"
+        file="$dir/${ts}__from-$(slugify "$from")__${subject_slug}.md"
+        if ! {
             echo "# $subject"
             echo
             echo "> from: $from · to: $to · $ts UTC"
             echo
             cat -
-        } > "$file"
+        } > "$file"; then
+            echo "error: could not write message to $file" >&2
+            exit 1
+        fi
         echo "delivered: $file"
         ;;
     unread)

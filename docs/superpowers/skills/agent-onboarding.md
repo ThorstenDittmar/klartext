@@ -31,7 +31,7 @@ The domain defines the `--allowedTools` permissions. Be specific — narrow doma
 
 ---
 
-## Step 2 — Create the agent directory and start script
+## Step 2 — Create the agent directory, start script, and allowlist
 
 OE owns `agents/` vollständig — kein DevOps Briefing nötig.
 
@@ -39,7 +39,10 @@ OE owns `agents/` vollständig — kein DevOps Briefing nötig.
 mkdir -p agents/<name>
 ```
 
-Create `agents/<name>/start.sh`:
+**2a — Thin wrapper `agents/<name>/start.sh`**
+
+The central launcher `scripts/start-agent.sh` holds all the mechanism (worktree provisioning,
+rebase, allowlist loading). Each `agents/<name>/start.sh` is a thin one-liner that delegates:
 
 ```bash
 #!/bin/bash
@@ -47,25 +50,40 @@ Create `agents/<name>/start.sh`:
 #
 # Domain: <one-line description>
 #
-# Grants write access to:
-#   - <path>     (<reason>)
-#   - agents/<name>/    (self-write — own knowledge file)
+# Allowlists live in agents/<name>/allowed-tools.txt (one entry per line),
+# read by the central launcher scripts/start-agent.sh.
 #
-# Read/Analyse permissions are granted project-wide in .claude/settings.json.
 # OE Perimeter: This file is maintained by OE only.
 
-cd "$(dirname "$0")/../.." || exit 1
-
-claude \
-  --allowedTools "Edit(<domain-path>/)" \
-  --allowedTools "Write(<domain-path>/)" \
-  --allowedTools "Edit(agents/<name>/)" \
-  --allowedTools "Write(agents/<name>/)"
+exec "$(dirname "$0")/../../scripts/start-agent.sh" <name>
 ```
 
 ```bash
 chmod +x agents/<name>/start.sh
 ```
+
+**2b — Allowlist `agents/<name>/allowed-tools.txt`**
+
+One `--allowedTools` entry per line. The central launcher passes them to `claude`.
+Include Edit and Write for every path in the agent's domain, plus self-write for `agents/<name>/`:
+
+```
+Edit(<domain-path>/)
+Write(<domain-path>/)
+Edit(agents/<name>/)
+Write(agents/<name>/)
+```
+
+See `agents/devops/allowed-tools.txt` or `agents/qa/allowed-tools.txt` as reference.
+
+**Starting a session:**
+
+```bash
+bash agents/<name>/start.sh
+```
+
+This provisions a long-lived git worktree at `$HOME/klartext-worktrees/<name>/` (idempotent),
+rebases `agent/<name>` onto `origin/main`, and starts Claude with the allowlist enforced.
 
 ---
 
