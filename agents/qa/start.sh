@@ -14,25 +14,8 @@
 #
 # DevOps Perimeter: This file is maintained by DevOps only.
 # To request a permission change, send a DevOps Briefing.
+#
+# Allowlists live in agents/qa/allowed-tools.txt (one entry per line),
+# read by the central launcher scripts/start-agent.sh.
 
-cd "$(dirname "$0")/../.." || exit 1
-
-claude \
-  --allowedTools "Edit(docs/superpowers/plans/PENDING.md)" \
-  --allowedTools "Write(docs/superpowers/plans/PENDING.md)" \
-  --allowedTools "Bash(source api/.venv/bin/activate && python*)" \
-  --allowedTools "Bash(python3 scripts/check_test_coverage.py*)" \
-  --allowedTools "Edit(api/tests/)" \
-  --allowedTools "Write(api/tests/)" \
-  --allowedTools "Edit(.semgrep/rules/qa/)" \
-  --allowedTools "Write(.semgrep/rules/qa/)" \
-  --allowedTools "Edit(scripts/check_test_coverage.py)" \
-  --allowedTools "Write(scripts/check_test_coverage.py)" \
-  --allowedTools "Edit(docs/superpowers/qa-learnings/)" \
-  --allowedTools "Write(docs/superpowers/qa-learnings/)" \
-  --allowedTools "Edit($HOME/.claude/skills/qa-review/)" \
-  --allowedTools "Write($HOME/.claude/skills/qa-review/)" \
-  --allowedTools "Edit($HOME/.claude/skills/qa-retro/)" \
-  --allowedTools "Write($HOME/.claude/skills/qa-retro/)" \
-  --allowedTools "Edit(agents/qa/)" \
-  --allowedTools "Write(agents/qa/)"
+exec "$(dirname "$0")/../../scripts/start-agent.sh" qa

@@ -8,22 +8,8 @@
 #
 # Read/Analyse permissions are granted project-wide in .claude/settings.json.
 # DevOps Perimeter: This file is maintained by OE only.
+#
+# Allowlists live in agents/oe/allowed-tools.txt (one entry per line),
+# read by the central launcher scripts/start-agent.sh.
 
-cd "$(dirname "$0")/../.." || exit 1
-
-claude \
-  --allowedTools "Edit(docs/superpowers/plans/PENDING.md)" \
-  --allowedTools "Write(docs/superpowers/plans/PENDING.md)" \
-  --allowedTools "Edit(agents/)" \
-  --allowedTools "Write(agents/)" \
-  --allowedTools "Edit(CLAUDE.md)" \
-  --allowedTools "Write(CLAUDE.md)" \
-  --allowedTools "Edit(docs/superpowers/skills/agent-onboarding.md)" \
-  --allowedTools "Write(docs/superpowers/skills/agent-onboarding.md)" \
-  --allowedTools "Bash(git add agents/)" \
-  --allowedTools "Bash(git add CLAUDE.md)" \
-  --allowedTools "Bash(git add docs/superpowers/skills/agent-onboarding.md)" \
-  --allowedTools "Bash(git commit *)" \
-  --allowedTools "Bash(chmod +x agents/*/start.sh)" \
-  --allowedTools "Edit($HOME/.claude/skills/pre-compact/)" \
-  --allowedTools "Write($HOME/.claude/skills/pre-compact/)"
+exec "$(dirname "$0")/../../scripts/start-agent.sh" oe

@@ -8,33 +8,8 @@
 # To request a permission change, send a DevOps Briefing.
 #
 # TODO: Permissions to be finalized when Causal Model Expert agent is onboarded.
+#
+# Allowlists live in agents/causal-model/allowed-tools.txt (one entry per line),
+# read by the central launcher scripts/start-agent.sh.
 
-cd "$(dirname "$0")/../.." || exit 1
-
-claude \
-  --allowedTools "Edit(docs/superpowers/plans/PENDING.md)" \
-  --allowedTools "Write(docs/superpowers/plans/PENDING.md)" \
-  --allowedTools "Bash(source api/.venv/bin/activate && python*)" \
-  --allowedTools "Bash(pytest api/tests/test_causal_model* *)" \
-  --allowedTools "Bash(pytest api/tests/test_slot* *)" \
-  --allowedTools "Bash(pytest api/tests/test_causal_relation* *)" \
-  --allowedTools "Edit(api/models/causal_model*)" \
-  --allowedTools "Write(api/models/causal_model*)" \
-  --allowedTools "Edit(api/models/causal_relation*)" \
-  --allowedTools "Write(api/models/causal_relation*)" \
-  --allowedTools "Edit(api/models/slot*)" \
-  --allowedTools "Write(api/models/slot*)" \
-  --allowedTools "Edit(api/services/causal_model*)" \
-  --allowedTools "Write(api/services/causal_model*)" \
-  --allowedTools "Edit(api/repositories/causal_model*)" \
-  --allowedTools "Write(api/repositories/causal_model*)" \
-  --allowedTools "Edit(api/routers/causal_model*)" \
-  --allowedTools "Write(api/routers/causal_model*)" \
-  --allowedTools "Edit(api/schemas/causal_model*)" \
-  --allowedTools "Write(api/schemas/causal_model*)" \
-  --allowedTools "Edit(api/exceptions/causal_model*)" \
-  --allowedTools "Write(api/exceptions/causal_model*)" \
-  --allowedTools "Edit(api/tests/test_causal_model*)" \
-  --allowedTools "Write(api/tests/test_causal_model*)" \
-  --allowedTools "Edit(agents/causal-model/)" \
-  --allowedTools "Write(agents/causal-model/)"
+exec "$(dirname "$0")/../../scripts/start-agent.sh" causal-model

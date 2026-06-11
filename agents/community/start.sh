@@ -8,27 +8,8 @@
 # To request a permission change, send a DevOps Briefing.
 #
 # TODO: Permissions to be finalized when Community Expert agent is onboarded.
+#
+# Allowlists live in agents/community/allowed-tools.txt (one entry per line),
+# read by the central launcher scripts/start-agent.sh.
 
-cd "$(dirname "$0")/../.." || exit 1
-
-claude \
-  --allowedTools "Edit(docs/superpowers/plans/PENDING.md)" \
-  --allowedTools "Write(docs/superpowers/plans/PENDING.md)" \
-  --allowedTools "Bash(source api/.venv/bin/activate && python*)" \
-  --allowedTools "Bash(pytest api/tests/test_user* *)" \
-  --allowedTools "Edit(api/models/user*)" \
-  --allowedTools "Write(api/models/user*)" \
-  --allowedTools "Edit(api/services/user*)" \
-  --allowedTools "Write(api/services/user*)" \
-  --allowedTools "Edit(api/repositories/user*)" \
-  --allowedTools "Write(api/repositories/user*)" \
-  --allowedTools "Edit(api/routers/users*)" \
-  --allowedTools "Write(api/routers/users*)" \
-  --allowedTools "Edit(api/schemas/user*)" \
-  --allowedTools "Write(api/schemas/user*)" \
-  --allowedTools "Edit(api/exceptions/user*)" \
-  --allowedTools "Write(api/exceptions/user*)" \
-  --allowedTools "Edit(api/tests/test_user*)" \
-  --allowedTools "Write(api/tests/test_user*)" \
-  --allowedTools "Edit(agents/community/)" \
-  --allowedTools "Write(agents/community/)"
+exec "$(dirname "$0")/../../scripts/start-agent.sh" community
