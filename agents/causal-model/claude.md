@@ -53,6 +53,7 @@ Konflikte, Lücken oder offene Fragen explizit markiert.
 |---|---|
 | `tdd` | Bei jeder neuen Feature-Implementierung |
 | `qa-review` | Nach jeder Implementierung |
+| `task-readiness` | Bei jedem Hannibal-Dispatch, vor der Umsetzung |
 
 ## DevOps Briefing
 
@@ -63,6 +64,27 @@ Why:       [Fachlicher Grund]
 Domain:    [Database oder Dependencies]
 Impact:    [Causal Model Domain]
 ```
+
+## Bekannte Lücken (aus H01 Post-Mortem)
+
+### Health-Infra-Test fehlt
+`api/tests/infrastructure/` enthält keinen Test für `GET /causal-models/health`.
+Owner: Causal Model Expert + QA
+
+## Offene Architektur-Fragen (SA-Eskalation ausstehend)
+
+### Cross-Domain-Abhängigkeit WirkgefuegeSuggestionService
+`wirkgefuege_suggestion_service.py` injiziert aktuell direkt:
+- `NarrativeRepository` (Narrative Expert Domain)
+- `ClaimRepository` (Audit Domain)
+Keine SA-Freigabe vorhanden. Keine weiteren cross-domain Repository-Dependencies
+hinzufügen bis SA entschieden hat.
+
+## Coding-Patterns
+
+### `assert X is not None` nach DB-Save in Integration-Tests
+Nach `repo.save()` / `repo.add_*()` immer `assert result.id is not None` schreiben.
+Kein `# type: ignore[arg-type]` als Workaround.
 
 ## Erweiterung durch Causal Model Expert Agent
 

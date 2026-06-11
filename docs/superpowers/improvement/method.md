@@ -21,6 +21,13 @@
 > retro deviation clause). — = strong convention, context may override without a record. All mechanical
 > gates are non-negotiable by nature.
 
+> **Retirement rule** *(added 2026-06-10, user-requested)*: elements are **never deleted** from this
+> register. When an element is abandoned or replaced, its row gets status **`retired`** or
+> **`superseded by <element>`** plus a one-line rationale (and a pointer to the Improvement-Register row
+> or ADR carrying the full why). Modeled on the ADR supersession mechanism. Decisions *against* a way of
+> working are method knowledge of equal rank to decisions *for* one — they must survive compactions and
+> generation changes.
+
 ## Practices — described (cards exist)
 
 | Element | Advances Alpha | Enforcement | NN | Card |
