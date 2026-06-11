@@ -13,8 +13,17 @@ multi-agent system. OE owns `agents/` vollständig — start script, knowledge f
 alles in OE-Hand. Kein DevOps Briefing nötig.
 
 Each agent lives in its own directory: `agents/<name>/`
-- `agents/<name>/start.sh` — startet die Session mit den richtigen Permissions
+- `agents/<name>/start.sh` — thin wrapper, delegates to the central launcher `scripts/start-agent.sh`
+- `agents/<name>/allowed-tools.txt` — the agent's tool allowlist (one entry per line, read by the launcher)
 - `agents/<name>/claude.md` — Hoheitswissen und domänenspezifische Regeln (wird von Claude Code als CLAUDE.md erkannt und automatisch geladen)
+
+**Operating model (since 2026-06-11, see the structural ADR):** every agent session is started
+**from the terminal** via the central launcher — never via the desktop app (the app cannot set the
+shell cwd; settings, hooks and allowlists would stay dead). The launcher provisions a persistent
+worktree (`$HOME/klartext-worktrees/<name>/`, home branch `agent/<name>`) idempotently, rebases it
+on `origin/main`, shows unread inbox messages and starts `claude` inside the worktree. Sessions are
+**workdays, not lifetimes**: they end with a pre-restart ritual (pre-compact skill) and a successor
+boots from disk. Cross-agent messages travel via the file inbox (`scripts/inbox.sh send/read`).
 
 ---
 
@@ -27,11 +36,11 @@ Before touching any file, answer these questions (ask the user if unclear):
 - **Read-only**: What does the agent need to read but not write?
 - **Conflicts**: Does the domain overlap with an existing agent?
 
-The domain defines the `--allowedTools` permissions. Be specific — narrow domains are safer.
+The domain defines the entries in `allowed-tools.txt`. Be specific — narrow domains are safer.
 
 ---
 
-## Step 2 — Create the agent directory, start script, and allowlist
+## Step 2 — Create the agent directory, wrapper and allowlist
 
 OE owns `agents/` vollständig — kein DevOps Briefing nötig.
 
@@ -39,10 +48,7 @@ OE owns `agents/` vollständig — kein DevOps Briefing nötig.
 mkdir -p agents/<name>
 ```
 
-**2a — Thin wrapper `agents/<name>/start.sh`**
-
-The central launcher `scripts/start-agent.sh` holds all the mechanism (worktree provisioning,
-rebase, allowlist loading). Each `agents/<name>/start.sh` is a thin one-liner that delegates:
+Create `agents/<name>/start.sh` (thin wrapper — all logic lives in the central launcher):
 
 ```bash
 #!/bin/bash
@@ -52,38 +58,29 @@ rebase, allowlist loading). Each `agents/<name>/start.sh` is a thin one-liner th
 #
 # Allowlists live in agents/<name>/allowed-tools.txt (one entry per line),
 # read by the central launcher scripts/start-agent.sh.
-#
-# OE Perimeter: This file is maintained by OE only.
 
 exec "$(dirname "$0")/../../scripts/start-agent.sh" <name>
 ```
 
-```bash
-chmod +x agents/<name>/start.sh
-```
-
-**2b — Allowlist `agents/<name>/allowed-tools.txt`**
-
-One `--allowedTools` entry per line. The central launcher passes them to `claude`.
-Include Edit and Write for every path in the agent's domain, plus self-write for `agents/<name>/`:
+Create `agents/<name>/allowed-tools.txt` (one tool grant per line):
 
 ```
+Edit(docs/superpowers/plans/PENDING.md)
+Write(docs/superpowers/plans/PENDING.md)
 Edit(<domain-path>/)
 Write(<domain-path>/)
 Edit(agents/<name>/)
 Write(agents/<name>/)
 ```
 
-See `agents/devops/allowed-tools.txt` or `agents/qa/allowed-tools.txt` as reference.
-
-**Starting a session:**
+The PENDING.md lines are mandatory for every agent (pre-compact delegation tracking).
 
 ```bash
-bash agents/<name>/start.sh
+chmod +x agents/<name>/start.sh
 ```
 
-This provisions a long-lived git worktree at `$HOME/klartext-worktrees/<name>/` (idempotent),
-rebases `agent/<name>` onto `origin/main`, and starts Claude with the allowlist enforced.
+**Important sequencing:** both files must be merged to `main` before the first session start —
+the launcher reads the allowlist and the worktree checkout is based on `origin/main`.
 
 ---
 
@@ -148,9 +145,21 @@ Send the following to the new agent (adapt the placeholders):
 ```
 Willkommen im klartext Team.
 
+Du lebst in einer Terminal-Session in deinem eigenen Worktree
+($HOME/klartext-worktrees/<name>/, Branch agent/<name>). Der User startet dich mit
+`bash agents/<name>/start.sh` und beendet deine Session am natürlichen Arbeitsende —
+deine Identität persistiert auf Platte, die Session ist dein Arbeitstag. Vor jedem
+Session-Ende fährst du das pre-compact-Ritual (Pre-Restart) und hinterlegst deiner
+Nachfolge-Session eine Handoff-Notiz im eigenen Postfach.
+
 Dein Agent-Verzeichnis: agents/<name>/
-  - start.sh     → startet deine Session: bash agents/<name>/start.sh
-  - claude.md    → dein Hoheitswissen (wird automatisch von Claude Code geladen)
+  - start.sh           → dein Startweg (Terminal, nie Desktop-App)
+  - allowed-tools.txt  → deine Permissions (vom Launcher gelesen)
+  - claude.md          → dein Hoheitswissen (wird automatisch von Claude Code geladen)
+
+Nachrichten an Kollegen: bash scripts/inbox.sh send <empfänger> <name> "..."
+Dein Postfach lesen:     bash scripts/inbox.sh read <name>
+Der User stupst den Empfänger an — er ist immer der Kanal.
 
 Was du ohne Rückfrage darfst:
   - Lesen: alles (Read, git diff/log/status/show, grep, ls, find, semgrep)
