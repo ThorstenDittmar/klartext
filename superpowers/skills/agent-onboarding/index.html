@@ -1664,8 +1664,16 @@
 multi-agent system. OE owns <code>agents/</code> vollständig — start script, knowledge file, domain entry,
 alles in OE-Hand. Kein DevOps Briefing nötig.</p>
 <p>Each agent lives in its own directory: <code>agents/&lt;name&gt;/</code>
-- <code>agents/&lt;name&gt;/start.sh</code> — startet die Session mit den richtigen Permissions
+- <code>agents/&lt;name&gt;/start.sh</code> — thin wrapper, delegates to the central launcher <code>scripts/start-agent.sh</code>
+- <code>agents/&lt;name&gt;/allowed-tools.txt</code> — the agent's tool allowlist (one entry per line, read by the launcher)
 - <code>agents/&lt;name&gt;/claude.md</code> — Hoheitswissen und domänenspezifische Regeln (wird von Claude Code als CLAUDE.md erkannt und automatisch geladen)</p>
+<p><strong>Operating model (since 2026-06-11, see the structural ADR):</strong> every agent session is started
+<strong>from the terminal</strong> via the central launcher — never via the desktop app (the app cannot set the
+shell cwd; settings, hooks and allowlists would stay dead). The launcher provisions a persistent
+worktree (<code>$HOME/klartext-worktrees/&lt;name&gt;/</code>, home branch <code>agent/&lt;name&gt;</code>) idempotently, rebases it
+on <code>origin/main</code>, shows unread inbox messages and starts <code>claude</code> inside the worktree. Sessions are
+<strong>workdays, not lifetimes</strong>: they end with a pre-restart ritual (pre-compact skill) and a successor
+boots from disk. Cross-agent messages travel via the file inbox (<code>scripts/inbox.sh send/read</code>).</p>
 <hr />
 <h2 id="step-1-clarify-the-domain">Step 1 — Clarify the domain<a class="headerlink" href="#step-1-clarify-the-domain" title="Permanent link">&para;</a></h2>
 <p>Before touching any file, answer these questions (ask the user if unclear):</p>
@@ -1675,15 +1683,13 @@ alles in OE-Hand. Kein DevOps Briefing nötig.</p>
 <li><strong>Read-only</strong>: What does the agent need to read but not write?</li>
 <li><strong>Conflicts</strong>: Does the domain overlap with an existing agent?</li>
 </ul>
-<p>The domain defines the <code>--allowedTools</code> permissions. Be specific — narrow domains are safer.</p>
+<p>The domain defines the entries in <code>allowed-tools.txt</code>. Be specific — narrow domains are safer.</p>
 <hr />
-<h2 id="step-2-create-the-agent-directory-start-script-and-allowlist">Step 2 — Create the agent directory, start script, and allowlist<a class="headerlink" href="#step-2-create-the-agent-directory-start-script-and-allowlist" title="Permanent link">&para;</a></h2>
+<h2 id="step-2-create-the-agent-directory-wrapper-and-allowlist">Step 2 — Create the agent directory, wrapper and allowlist<a class="headerlink" href="#step-2-create-the-agent-directory-wrapper-and-allowlist" title="Permanent link">&para;</a></h2>
 <p>OE owns <code>agents/</code> vollständig — kein DevOps Briefing nötig.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>agents/&lt;name&gt;
 </code></pre></div>
-<p><strong>2a — Thin wrapper <code>agents/&lt;name&gt;/start.sh</code></strong></p>
-<p>The central launcher <code>scripts/start-agent.sh</code> holds all the mechanism (worktree provisioning,
-rebase, allowlist loading). Each <code>agents/&lt;name&gt;/start.sh</code> is a thin one-liner that delegates:</p>
+<p>Create <code>agents/&lt;name&gt;/start.sh</code> (thin wrapper — all logic lives in the central launcher):</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="ch">#!/bin/bash</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># &lt;Agent Name&gt; — Agent startup script</span>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1">#</span>
@@ -1691,31 +1697,26 @@ rebase, allowlist loading). Each <code>agents/&lt;name&gt;/start.sh</code> is a 
 <a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1">#</span>
 <a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="c1"># Allowlists live in agents/&lt;name&gt;/allowed-tools.txt (one entry per line),</span>
 <a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># read by the central launcher scripts/start-agent.sh.</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="c1">#</span>
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="c1"># OE Perimeter: This file is maintained by OE only.</span>
-<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>
-<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="nb">exec</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>dirname<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$0</span><span class="s2">&quot;</span><span class="k">)</span><span class="s2">/../../scripts/start-agent.sh&quot;</span><span class="w"> </span>&lt;name&gt;
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="nb">exec</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>dirname<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$0</span><span class="s2">&quot;</span><span class="k">)</span><span class="s2">/../../scripts/start-agent.sh&quot;</span><span class="w"> </span>&lt;name&gt;
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>chmod<span class="w"> </span>+x<span class="w"> </span>agents/&lt;name&gt;/start.sh
+<p>Create <code>agents/&lt;name&gt;/allowed-tools.txt</code> (one tool grant per line):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Edit(docs/superpowers/plans/PENDING.md)
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>Write(docs/superpowers/plans/PENDING.md)
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>Edit(&lt;domain-path&gt;/)
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>Write(&lt;domain-path&gt;/)
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>Edit(agents/&lt;name&gt;/)
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>Write(agents/&lt;name&gt;/)
 </code></pre></div>
-<p><strong>2b — Allowlist <code>agents/&lt;name&gt;/allowed-tools.txt</code></strong></p>
-<p>One <code>--allowedTools</code> entry per line. The central launcher passes them to <code>claude</code>.
-Include Edit and Write for every path in the agent's domain, plus self-write for <code>agents/&lt;name&gt;/</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>Edit(&lt;domain-path&gt;/)
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>Write(&lt;domain-path&gt;/)
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>Edit(agents/&lt;name&gt;/)
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>Write(agents/&lt;name&gt;/)
+<p>The PENDING.md lines are mandatory for every agent (pre-compact delegation tracking).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>chmod<span class="w"> </span>+x<span class="w"> </span>agents/&lt;name&gt;/start.sh
 </code></pre></div>
-<p>See <code>agents/devops/allowed-tools.txt</code> or <code>agents/qa/allowed-tools.txt</code> as reference.</p>
-<p><strong>Starting a session:</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>bash<span class="w"> </span>agents/&lt;name&gt;/start.sh
-</code></pre></div>
-<p>This provisions a long-lived git worktree at <code>$HOME/klartext-worktrees/&lt;name&gt;/</code> (idempotent),
-rebases <code>agent/&lt;name&gt;</code> onto <code>origin/main</code>, and starts Claude with the allowlist enforced.</p>
+<p><strong>Important sequencing:</strong> both files must be merged to <code>main</code> before the first session start —
+the launcher reads the allowlist and the worktree checkout is based on <code>origin/main</code>.</p>
 <hr />
 <h2 id="step-3-update-claudemd">Step 3 — Update CLAUDE.md<a class="headerlink" href="#step-3-update-claudemd" title="Permanent link">&para;</a></h2>
 <p>Add the new agent to the <code>## Agent Roles &amp; Boundaries</code> table in <code>CLAUDE.md</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>| &lt;Agent Name&gt; | &lt;Domain description&gt; |
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>| &lt;Agent Name&gt; | &lt;Domain description&gt; |
 </code></pre></div>
 <p>If the agent owns paths that are not yet in any agent's domain, add them to the table.
 Do NOT modify the Infrastructure Perimeter section without a separate DevOps decision.</p>
@@ -1744,35 +1745,47 @@ als CLAUDE.md und lädt sie beim Start — kein explizites Lesen nötig.</p>
 <hr />
 <h2 id="step-5-commit">Step 5 — Commit<a class="headerlink" href="#step-5-commit" title="Permanent link">&para;</a></h2>
 <p>Commit all changes together:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>git add agents/&lt;name&gt;/ CLAUDE.md docs/superpowers/skills/
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>git commit -m &quot;Add &lt;name&gt; agent: start script, knowledge file, domain entry&quot;
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>git add agents/&lt;name&gt;/ CLAUDE.md docs/superpowers/skills/
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>git commit -m &quot;Add &lt;name&gt; agent: start script, knowledge file, domain entry&quot;
 </code></pre></div>
 <hr />
 <h2 id="step-6-handoff-message">Step 6 — Handoff message<a class="headerlink" href="#step-6-handoff-message" title="Permanent link">&para;</a></h2>
 <p>Send the following to the new agent (adapt the placeholders):</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>Willkommen im klartext Team.
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>Dein Agent-Verzeichnis: agents/&lt;name&gt;/
-<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>  - start.sh     → startet deine Session: bash agents/&lt;name&gt;/start.sh
-<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>  - claude.md    → dein Hoheitswissen (wird automatisch von Claude Code geladen)
-<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>
-<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>Was du ohne Rückfrage darfst:
-<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>  - Lesen: alles (Read, git diff/log/status/show, grep, ls, find, semgrep)
-<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>  - Schreiben: nur dein Domain (steht in agents/&lt;name&gt;/claude.md)
-<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>
-<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>Was eine Rückfrage braucht: alles außerhalb deines Domains.
-<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>
-<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>Infrastruktur-Änderungen (CI, Dependencies, Scripts, settings.json):
-<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>  → DevOps Briefing schicken (Format in CLAUDE.md unter &quot;DevOps Briefing Protocol&quot;)
-<a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>  → DevOps entscheidet wie es umgesetzt wird
-<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a>
-<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a>Gemeinsame Coding-Standards: CLAUDE.md (für alle Agents gleich)
-<a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a>Dein Hoheitswissen erweitern: trage domain-spezifisches Wissen in agents/&lt;name&gt;/claude.md ein
-<a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a>
-<a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a>Wissens-Routing: Bei jedem pre-compact prüfst du ob Wissen entstanden ist, das einem
-<a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a>  anderen Agent gehört — Schritt 6 / Teil C führt dich durch den Prozess.
-<a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a>  Fremdwissen, Grenzwissen und Organisationswissen werden als Wissens-Briefings
-<a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a>  formuliert und dem User übergeben. Kein Agent schreibt direkt in fremde Dateien.
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>Willkommen im klartext Team.
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>Du lebst in einer Terminal-Session in deinem eigenen Worktree
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>($HOME/klartext-worktrees/&lt;name&gt;/, Branch agent/&lt;name&gt;). Der User startet dich mit
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>`bash agents/&lt;name&gt;/start.sh` und beendet deine Session am natürlichen Arbeitsende —
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>deine Identität persistiert auf Platte, die Session ist dein Arbeitstag. Vor jedem
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>Session-Ende fährst du das pre-compact-Ritual (Pre-Restart) und hinterlegst deiner
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>Nachfolge-Session eine Handoff-Notiz im eigenen Postfach.
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>Dein Agent-Verzeichnis: agents/&lt;name&gt;/
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>  - start.sh           → dein Startweg (Terminal, nie Desktop-App)
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>  - allowed-tools.txt  → deine Permissions (vom Launcher gelesen)
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>  - claude.md          → dein Hoheitswissen (wird automatisch von Claude Code geladen)
+<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>
+<a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>Nachrichten an Kollegen: bash scripts/inbox.sh send &lt;empfänger&gt; &lt;name&gt; &quot;...&quot;
+<a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a>Dein Postfach lesen:     bash scripts/inbox.sh read &lt;name&gt;
+<a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a>Der User stupst den Empfänger an — er ist immer der Kanal.
+<a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a>
+<a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a>Was du ohne Rückfrage darfst:
+<a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a>  - Lesen: alles (Read, git diff/log/status/show, grep, ls, find, semgrep)
+<a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a>  - Schreiben: nur dein Domain (steht in agents/&lt;name&gt;/claude.md)
+<a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a>
+<a id="__codelineno-6-23" name="__codelineno-6-23" href="#__codelineno-6-23"></a>Was eine Rückfrage braucht: alles außerhalb deines Domains.
+<a id="__codelineno-6-24" name="__codelineno-6-24" href="#__codelineno-6-24"></a>
+<a id="__codelineno-6-25" name="__codelineno-6-25" href="#__codelineno-6-25"></a>Infrastruktur-Änderungen (CI, Dependencies, Scripts, settings.json):
+<a id="__codelineno-6-26" name="__codelineno-6-26" href="#__codelineno-6-26"></a>  → DevOps Briefing schicken (Format in CLAUDE.md unter &quot;DevOps Briefing Protocol&quot;)
+<a id="__codelineno-6-27" name="__codelineno-6-27" href="#__codelineno-6-27"></a>  → DevOps entscheidet wie es umgesetzt wird
+<a id="__codelineno-6-28" name="__codelineno-6-28" href="#__codelineno-6-28"></a>
+<a id="__codelineno-6-29" name="__codelineno-6-29" href="#__codelineno-6-29"></a>Gemeinsame Coding-Standards: CLAUDE.md (für alle Agents gleich)
+<a id="__codelineno-6-30" name="__codelineno-6-30" href="#__codelineno-6-30"></a>Dein Hoheitswissen erweitern: trage domain-spezifisches Wissen in agents/&lt;name&gt;/claude.md ein
+<a id="__codelineno-6-31" name="__codelineno-6-31" href="#__codelineno-6-31"></a>
+<a id="__codelineno-6-32" name="__codelineno-6-32" href="#__codelineno-6-32"></a>Wissens-Routing: Bei jedem pre-compact prüfst du ob Wissen entstanden ist, das einem
+<a id="__codelineno-6-33" name="__codelineno-6-33" href="#__codelineno-6-33"></a>  anderen Agent gehört — Schritt 6 / Teil C führt dich durch den Prozess.
+<a id="__codelineno-6-34" name="__codelineno-6-34" href="#__codelineno-6-34"></a>  Fremdwissen, Grenzwissen und Organisationswissen werden als Wissens-Briefings
+<a id="__codelineno-6-35" name="__codelineno-6-35" href="#__codelineno-6-35"></a>  formuliert und dem User übergeben. Kein Agent schreibt direkt in fremde Dateien.
 </code></pre></div>
 <hr />
 <h2 id="reference">Reference<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h2>

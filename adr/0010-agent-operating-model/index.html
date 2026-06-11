@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/adr/0010-multi-agent-terminal-architecture/">
+        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/adr/0010-agent-operating-model/">
       
       
       
@@ -23,7 +23,7 @@
     
     
       
-        <title>0010 — Multi-Agent Terminal Architecture: Worktree-per-Agent + File Inbox + Central Compact-Log - klartext.jetzt – Spezifikation</title>
+        <title>0010 — Agent Operating Model: Terminal Start, Worktree Isolation, Generational Sessions - klartext.jetzt – Spezifikation</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#0010-multi-agent-terminal-architecture-worktree-per-agent-file-inbox-central-compact-log" class="md-skip">
+        <a href="#0010-agent-operating-model-terminal-start-worktree-isolation-generational-sessions" class="md-skip">
           Zum Inhalt
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              0010 — Multi-Agent Terminal Architecture: Worktree-per-Agent + File Inbox + Central Compact-Log
+              0010 — Agent Operating Model: Terminal Start, Worktree Isolation, Generational Sessions
             
           </span>
         </div>
@@ -1650,7 +1650,7 @@
 
 
   
-    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/adr/0010-multi-agent-terminal-architecture.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/adr/0010-agent-operating-model.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1658,120 +1658,169 @@
   
 
 
-<h1 id="0010-multi-agent-terminal-architecture-worktree-per-agent-file-inbox-central-compact-log">0010 — Multi-Agent Terminal Architecture: Worktree-per-Agent + File Inbox + Central Compact-Log<a class="headerlink" href="#0010-multi-agent-terminal-architecture-worktree-per-agent-file-inbox-central-compact-log" title="Permanent link">&para;</a></h1>
+<h1 id="0010-agent-operating-model-terminal-start-worktree-isolation-generational-sessions">0010 — Agent Operating Model: Terminal Start, Worktree Isolation, Generational Sessions<a class="headerlink" href="#0010-agent-operating-model-terminal-start-worktree-isolation-generational-sessions" title="Permanent link">&para;</a></h1>
 <p><strong>Status:</strong> Accepted<br />
-<strong>Datum:</strong> 2026-06-11<br />
-<strong>Entscheider:</strong> User (2026-06-11); SA sign-off pending (SA app-based at decision time)</p>
-<h2 id="kontext">Kontext<a class="headerlink" href="#kontext" title="Permanent link">&para;</a></h2>
-<p>Der klartext Multi-Agent-Betrieb lief in einem einzigen geteilten Working Tree (<code>$HOME/klartext</code>)
-mit Sessions, die per Desktop-App aus <code>$HOME</code> gestartet wurden. Dieser Aufbau verursachte
-am 2026-06-10 drei Incident-Klassen in einem Tag:</p>
+<strong>Decided by:</strong> User (2026-06-11)<br />
+<strong>Author / Sign-off:</strong> System Architect<br />
+<strong>Technical source:</strong> DevOps specification — Improvement Register §3 "Structural change: git worktree per context + session-cwd repair"<br />
+<strong>External evidence:</strong> <code>docs/superpowers/improvement/2026-06-10-external-review-brief.md</code> + <code>2026-06-10-external-review-response.md</code></p>
+<h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
+<p>The klartext project uses 10 specialized Claude Code agents as long-living sessions. Until 2026-06-10
+the shared operating model had three structural failure modes, discovered in a single day.</p>
+<p><strong>1. Shared working tree (RC5)</strong><br />
+All 10 agents operated on one working tree (<code>/Users/thormar/klartext</code>). Any <code>git reset</code>, <code>checkout</code>,
+or branch deletion is tree-global — it reaches uncommitted edits of every other agent regardless of
+file-ownership discipline. Three data losses on 2026-06-10: OE (5 register rows, 13:46), Causal Model
+Expert (3 claude.md sections, branch deleted), System Architect (4 claude.md sections, mechanism unknown).
+All three recovered independently — by luck and redundancy, not protection.</p>
+<p><strong>2. Sessions never starting in the repo root (RC4 variant)</strong><br />
+All sessions started via the Claude desktop app from <code>$HOME</code>. Consequences:<br />
+- Project <code>.claude/settings.json</code> (including PostCompact hooks) never loaded<br />
+- Per-agent allowlists in <code>agents/&lt;name&gt;/start.sh</code> were never active<br />
+- The compact-monitor hook chain never fired in a real session  </p>
+<p>Forensic evidence: memory-key analysis proved no session ever ran from the repo root.
+The first real hook firing happened on the terminal probe (2026-06-11).</p>
+<p><strong>3. Eternal sessions compacting into unreliable summaries (False Persistence)</strong><br />
+Sessions that compact indefinitely replace verified artifact state with unverified summaries.
+Three independent instances of False Persistence were documented on 2026-06-10.
+External review: <em>"Paradox formuliert: Die kompaktierte ewige Session ist die mit dem
+unzuverlässigeren Gedächtnis."</em> A fresh session that boots from disk has exclusively
+artifact-verified knowledge; a compacted session has summaries.</p>
+<p>Root causes: RC5 (destructive git ops in shared tree) · RC4 "documented vs. actual" ·
+False Persistence sub-class.</p>
+<h2 id="decision">Decision<a class="headerlink" href="#decision" title="Permanent link">&para;</a></h2>
+<p>The User decided on a new operating model with four pillars. All four were validated by a
+DevOps pilot (2026-06-11); rollout to all 10 agents proceeds at natural session boundaries,
+riskiest agent first.</p>
+<h3 id="1-terminal-start-via-central-launcher">1. Terminal start via central launcher<a class="headerlink" href="#1-terminal-start-via-central-launcher" title="Permanent link">&para;</a></h3>
+<p>All agent sessions start via:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>scripts/start-agent.sh &lt;slug&gt;
+</code></pre></div>
+<p>The central launcher carries all startup logic (cwd, allowlist injection). The 10
+<code>agents/&lt;name&gt;/start.sh</code> remain as thin one-line wrappers — single logic home, no ten-way
+drift, documented identity entry point per colleague preserved.</p>
+<p>Allowlists are read from <code>agents/&lt;name&gt;/allowed-tools.txt</code> before the <code>cd</code> into the worktree,
+so they are always read from the canonical main-tree version.</p>
+<p><strong>Proof:</strong> Terminal probe 2026-06-11 — mechanics 4/4 pass: cwd in repo ✓ · project settings
++ PostCompact hooks loaded ✓ · memory pinned ✓ · hook fired on real <code>/compact</code> (first time
+in project history) ✓.</p>
+<h3 id="2-worktree-per-colleague">2. Worktree per colleague<a class="headerlink" href="#2-worktree-per-colleague" title="Permanent link">&para;</a></h3>
+<p>Each agent gets its own isolated working directory:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>$HOME/klartext-worktrees/&lt;slug&gt;/
+</code></pre></div>
+<p>Persistent home branch: <code>agent/&lt;slug&gt;</code>. Code lands on main only via PR gate — merge-protocol
+rule 5 fulfills its sunset clause.</p>
+<p>Lifecycle rules (DevOps domain):
+- Provisioning is idempotent: exists → reuse, never reset
+- Teardown via <code>worktree remove</code> + <code>prune</code>, never <code>rm -rf</code>
+- Crash recovery via <code>worktree repair</code>; orphan check as health step</p>
+<p><strong>Consequence:</strong> RC5 is solved structurally. A <code>git reset</code> by one agent is physically impossible
+in another agent's worktree. No rule or discipline required — the strongest enforcement is the
+kind that needs no rule.</p>
+<p><strong>Architecture principle:</strong> "Isolate code, share comms/memory/audit."</p>
+<h3 id="3-generational-sessions-as-the-normal-mode">3. Generational sessions as the normal mode<a class="headerlink" href="#3-generational-sessions-as-the-normal-mode" title="Permanent link">&para;</a></h3>
+<p><em>Colleague</em> = <code>claude.md</code> + domain knowledge + memory + role.<br />
+<em>Session</em> = a working day.<br />
+<em>Generational change</em> = end of day, not end of identity.</p>
+<p>Proactive restart replaces compaction:</p>
 <ol>
-<li>
-<p><strong>Uncommitted edits wurden durch <code>git reset</code>-Operationen anderer Agents zerstört</strong> — OE verlor
-   5 Register-Rows, CME 3 claude.md-Abschnitte, SA 4 Abschnitte. Recovery war Glück + Redundanz,
-   kein Schutz (RC4/RC5-Klasse: documented vs. actual).</p>
-</li>
-<li>
-<p><strong>Project settings und PostCompact-hooks luden nie</strong> — Sessions starteten mit cwd <code>$HOME</code>,
-   kein Git-Repo → <code>.claude/settings.json</code> und alle definierten Hooks blieben tot.
-   Alle allowlist-Regeln in <code>start.sh</code> waren de facto wirkungslos: nie enforced.</p>
-</li>
-<li>
-<p><strong>Compaction-Monitoring konnte nicht zuverlässig bewiesen werden</strong> — der Hook-Layer war tot,
-   die ersten zwei Monitoring-Trials scheiterten aus diesem Grund.</p>
-</li>
+<li>Pre-Restart ritual (formerly Pre-Compact) — artifact-verified, well before context threshold</li>
+<li>Session ended by user</li>
+<li>Fresh session booted via launcher into the same worktree</li>
+<li>Fresh session reads disk (claude.md + pinned memory) — exclusively artifact-verified state</li>
 </ol>
-<h3 id="optionen-evaluiert">Optionen evaluiert<a class="headerlink" href="#optionen-evaluiert" title="Permanent link">&para;</a></h3>
+<p><strong>Pilot proof:</strong> DevOps generation change 2026-06-11. Successor seed: full pre-restart ritual
++ handoff note in own inbox. New session booted via launcher; channel proof artifact-verified
+(inbox message received and read). First colleague with real cwd, firing hooks, active allowlists
+and worktree isolation.</p>
+<p>WIP-commit discipline: with an own worktree, frequent small commits are safe (no shared tree
+risk). The volatile in-session layer shrinks from days to minutes.</p>
+<h3 id="4-shared-layer-centrally-pinned">4. Shared layer centrally pinned<a class="headerlink" href="#4-shared-layer-centrally-pinned" title="Permanent link">&para;</a></h3>
+<p>Shared infrastructure lives under <code>~/.claude/klartext-team-memory/</code>:</p>
 <table>
 <thead>
 <tr>
-<th>Option</th>
-<th>Entscheidung</th>
-<th>Grund</th>
+<th>Component</th>
+<th>Purpose</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Weiter: Eternal app sessions + shared tree</strong></td>
-<td>REJECTED</td>
-<td>False-persistence-Kette (RC4/RC5): committed knowledge ≠ disk knowledge; drei Agents verloren claude.md-Inhalte in einem Tag; root cause nicht behebbar ohne Isolation</td>
+<td>Auto-memory (team blackboard)</td>
+<td>Pinned via <code>autoMemoryDirectory</code>; content copied from original (rollback); bootstrapped in <code>setup.sh</code>; CI-validated on fresh runner</td>
 </tr>
 <tr>
-<td><strong>Desktop-App Folder-Select</strong></td>
-<td>REJECTED</td>
-<td>Strukturell unmöglich upstream: Folder-Pick setzt den Projektkontext der App, nie den Shell-cwd. Kein <code>--cwd</code>-Flag, kein shipped default-dir setting (GH #56688/#26287/#60151/#60099) — DevOps-Analyse bestätigt</td>
+<td>File inbox (<code>inbox/&lt;slug&gt;/</code>)</td>
+<td><code>scripts/inbox.sh send\|read\|unread</code>; replaces app messaging; user nudges recipient — same semantics as <code>send_message</code>, no unsolicited delivery</td>
 </tr>
 <tr>
-<td><strong>Agent Teams as memory/blackboard</strong></td>
-<td>REJECTED</td>
-<td>Ephemer by design: Team-dirs werden beim Session-Ende gelöscht. Tool-Missbrauch; schließt RC4 nicht</td>
-</tr>
-<tr>
-<td><strong>Native app worktrees (app settings "worktree location")</strong></td>
-<td>REJECTED</td>
-<td>Für ephemere Sessions gebaut; <code>claude/</code>-Branches divergieren bei Eternal-Agents; DevOps-Recherche bestätigt Inkompatibilität</td>
-</tr>
-<tr>
-<td><strong>Hybrid (high-write-risk terminal, Advisors in-app)</strong></td>
-<td>Not chosen</td>
-<td>Konvergiert zu Full-Terminal bei konsequenter Anwendung; Zweiklassengesellschaft im Team</td>
-</tr>
-<tr>
-<td><strong>Full terminal via <code>start.sh</code> + Worktree-per-Agent + File Inbox</strong></td>
-<td><strong>ACCEPTED</strong></td>
-<td>Einziger Weg der Project-Settings, Hooks und Allowlists mechanisch enforced (statt rituell) — Enforcement-Hierarchy Regel</td>
+<td>Compact log</td>
+<td>Centrally pinned; one launchd instance covers all worktrees; branch field identifies which agent compacted</td>
 </tr>
 </tbody>
 </table>
-<h2 id="entscheidung">Entscheidung<a class="headerlink" href="#entscheidung" title="Permanent link">&para;</a></h2>
-<p><strong>Jeder Agent läuft in einem eigenen langlebigen Git-Worktree, gestartet per Terminal via <code>scripts/start-agent.sh &lt;slug&gt;</code>.</strong></p>
-<h3 id="komponenten">Komponenten<a class="headerlink" href="#komponenten" title="Permanent link">&para;</a></h3>
-<p><strong>1. Worktree-per-Agent</strong>
-- Layout: <code>$HOME/klartext-worktrees/&lt;slug&gt;/</code> (außerhalb des Repos, nicht App-ephemer)
-- Branch: <code>agent/&lt;slug&gt;</code> (persistent; rebase auf <code>origin/main</code> bei jedem Session-Start)
-- Idempotente Provisionierung: <code>start-agent.sh</code> erstellt den Worktree beim ersten Start;
-  existing Worktrees werden nie resettet — uncommitted WIP bleibt erhalten
-- <code>agents/&lt;name&gt;/start.sh</code> = thin wrapper: <code>exec "$(dirname "$0")/../../scripts/start-agent.sh" &lt;name&gt;</code>
-- Allowlists: <code>agents/&lt;name&gt;/allowed-tools.txt</code> (eine Zeile pro Tool); central launcher liest sie</p>
-<p><strong>2. File Inbox als Messaging-Fallback</strong>
-- <code>scripts/inbox.sh send/read/unread</code> — dateibasierter Briefkasten in gepinntem shared memory
-- Ablage: <code>~/.claude/klartext-team-memory/inbox/&lt;slug&gt;/</code>
-- Semantik identisch zu App-DMs: User nudgt den Empfänger; der liest beim Session-Start
-- Entkoppelt die Messaging-Schicht von der App-Infrastruktur (kein Lock-in auf experimental features)
-- Architekturprinzip: <strong>"isolate code, share comms/memory/audit"</strong> — code layer per-agent (worktrees),
-  shared layer zentral gepinnt (memory + inbox + compact-log)</p>
-<p><strong>3. Central Compact-Log</strong>
-- <code>~/.claude/klartext-team-memory/compact-log.jsonl</code> — ein Log für alle Agents
-- Branch-Feld im Log-Eintrag identifiziert den compacteten Agent
-- Ein launchd-Monitor-Prozess deckt alle Worktrees ab; kein Monitor-Drift bei Rollout</p>
-<p><strong>4. Generation Change als Norm</strong>
-- Statt Eternal-Session + <code>/compact</code>: Session endet → <code>start.sh</code> startet frischen Nachfolger
-- Nachfolger liest von Disk: <code>claude.md</code> + domain knowledge + gepinnte Memory = vollständige Übergabe
-- Pre-Compact wird zu Pre-Restart: Wissen sichern, dann Session beenden</p>
-<h2 id="konsequenzen">Konsequenzen<a class="headerlink" href="#konsequenzen" title="Permanent link">&para;</a></h2>
-<p><strong>Positiv:</strong>
-- Project settings, PostCompact-hooks und --allowedTools-Allowlists greifen mechanisch (Enforcement-Hierarchy level 1)
-- WIP-Commits halten die volatile Schicht von Tagen auf Minuten
-- Monitoring nachweislich funktional: Hook feuerte auf ersten echten <code>/compact</code> (2026-06-11, Trial 4)
-- Uncommitted edits sind physisch isoliert — der RC5-Incident ist strukturell nicht reproduzierbar</p>
-<p><strong>Negativ / Trade-offs:</strong>
-- Terminal-Sessions sind für die Desktop-App unsichtbar (kein Session-Listing, kein <code>ccd_session_mgmt</code>)
-- Messaging über File-Inbox statt App-DMs: leicht mehr Friction (User muss Empfänger anstupsen)
-- Rollout erfordert einen kontrollierten Generationswechsel aller 10 Sessions — einmalig, nicht dauerhaft</p>
-<p><strong>Scope-Caveat:</strong>
-- Pilot: DevOps (2026-06-11). Rollout der anderen 9 Agents nach separatem Go
-- SA sign-off auf dieses ADR ausstehend (SA läuft zum Entscheidungszeitpunkt noch app-basiert)
-- Stage-2-Spec (Worktree-Lifecycle, Crashrecovery, Orphan-Check) liegt vor; Umsetzung nach Pilot-Beweis</p>
-<h2 id="referenzen">Referenzen<a class="headerlink" href="#referenzen" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Improvement-Register-Row (CI §3): "Structural change: <code>git worktree</code> per context + session-cwd repair"</li>
-<li>PRs: #70 (inbox.sh), #71 (compact-log central), #75 (start-agent.sh), #76 (thin wrappers + allowlists)</li>
-<li><code>scripts/start-agent.sh</code> — zentrale Launcher-Logik</li>
-<li><code>scripts/inbox.sh</code> — dateibasierter Briefkasten</li>
-<li><code>agents/*/start.sh</code> — thin wrappers (OE-Domain)</li>
-<li><code>agents/*/allowed-tools.txt</code> — per-agent Allowlists (OE-Domain)</li>
-</ul>
+<p>App messaging (<code>send_message</code>, session list) is not used: terminal sessions do not appear
+in the app session list and cannot receive app messages. The file inbox is the durable
+substitute with equivalent semantics.</p>
+<h2 id="rejected-alternatives">Rejected Alternatives<a class="headerlink" href="#rejected-alternatives" title="Permanent link">&para;</a></h2>
+<p>The decision record includes rejected paths as first-class method knowledge (user requirement, 2026-06-10).</p>
+<table>
+<thead>
+<tr>
+<th>Alternative</th>
+<th>Verdict</th>
+<th>Reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Eternal sessions (never restart)</strong></td>
+<td>Rejected</td>
+<td>Every compaction replaces verified history with an unverified summary — the False Persistence sub-class. The longer a session lives, the more its "memory" diverges from artifact state. External reference: Paperclip implements "persistent agents" as disk state loaded into fresh context per heartbeat, not eternal sessions. Identity is durable; sessions are not.</td>
+</tr>
+<tr>
+<td><strong>Desktop app start</strong></td>
+<td>Rejected</td>
+<td>Structurally impossible upstream. Folder selection sets the project association but never changes shell cwd. GH issues #56688 / #26287 / #60151 / #60099 confirm: no <code>--cwd</code> flag, no shipped default-directory setting. Live test 2026-06-10 (fresh app session, folder actively selected via picker): shell remains in <code>$HOME</code>. The only documented workaround is terminal start — what our always-unused <code>start.sh</code> scripts had always prescribed.</td>
+</tr>
+<tr>
+<td><strong>Agent Teams as team memory</strong></td>
+<td>Rejected</td>
+<td>Agent Teams directories are ephemeral coordination infrastructure, not a persistence layer. Using them as a team blackboard is tool misuse — the content has no persistence contract.</td>
+</tr>
+<tr>
+<td><strong>Native app worktrees for long-lived agents</strong></td>
+<td>Rejected / Superseded by self-managed worktrees</td>
+<td>The app creates native worktrees for ephemeral sessions. For long-lived agents they produce diverging <code>claude/</code> branches and have no lifecycle discipline (idempotent provisioning, crash recovery, orphan cleanup). Self-managed worktrees under <code>$HOME/klartext-worktrees/&lt;slug&gt;/</code> keep lifecycle control in our hands — standard git, not a workaround.</td>
+</tr>
+<tr>
+<td><strong>Shared working tree with ritual protection</strong></td>
+<td>Rejected / Superseded by worktree isolation</td>
+<td>Three data losses in one day despite mature rituals and a passed merge-protocol stress test on the same day. External review: <em>"Das Grundproblem ist nicht Disziplin, sondern Physik"</em> — tree-global git operations violate file-ownership rules without any agent misbehaving. Ritual enforcement is permanently inferior to physical isolation per our own enforcement hierarchy (mechanical &gt; ritual).</td>
+</tr>
+<tr>
+<td><strong>Hybrid: high-risk agents terminal, advisors in app</strong></td>
+<td>Superseded by uniform terminal</td>
+<td>Proposed as a fallback if the file inbox proved unworkable. Discarded after the inbox was validated (PR #70, 5 infra tests passing). Uniform terminal with file inbox is simpler, consistent, and avoids split enforcement.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="consequences">Consequences<a class="headerlink" href="#consequences" title="Permanent link">&para;</a></h2>
+<p><strong>Positive:</strong>
+- RC5 solved structurally — cross-agent data destruction is physically impossible
+- Settings, hooks, and allowlists are real for the first time; enforcement is mechanical
+- PostCompact hook chain proven end-to-end (first real firing: 2026-06-11)
+- Fresh sessions load exclusively artifact-verified state; False Persistence dissolved by design
+- WIP commits are safe and cheap; volatile layer shrinks from days to minutes
+- Rollout playbook documented and proven via DevOps pilot</p>
+<p><strong>Negative / Risks:</strong>
+- Terminal sessions are not visible in the app and cannot receive app messages — file inbox covers semantics at the cost of slightly more friction compared to <code>send_message</code>
+- Fresh sessions require a wake prompt before they act — the successor seed or launcher must include the initial task (pilot finding: a fresh session waits for the user's first message)
+- Mixed mode during rollout: the 9 remaining agents migrate at natural endpoints; interim period has heterogeneous session environments</p>
+<p><strong>Ongoing obligations:</strong>
+- <code>scripts/start-agent.sh</code> is the single startup logic home; allowlist or cwd changes go through the launcher, not individual wrappers
+- Worktree lifecycle (provision, teardown, repair, orphan check) is DevOps domain
+- File inbox semantics are identical to <code>send_message</code> semantics: user nudges the recipient; no unsolicited delivery without the user as channel</p>
 
 
 
