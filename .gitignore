@@ -48,3 +48,6 @@ assets-local/*
 .claude/compact-log-lastcheck
 .claude/compact-monitor-digest.txt
 .claude/compact-monitor.log
+
+# Claude Code — desktop-app session worktrees (checkout-in-checkout; never versioned)
+.claude/worktrees/
