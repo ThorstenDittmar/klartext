@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/superpowers/improvement/method/">
+        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/superpowers/improvement/2026-06-10-external-review-brief/">
       
       
       
@@ -23,7 +23,7 @@
     
     
       
-        <title>The klartext Method - klartext.jetzt – Spezifikation</title>
+        <title>Lagebild für eine externe Zweitmeinung — Multi-Agent-Setup „klartext" - klartext.jetzt – Spezifikation</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#the-klartext-method" class="md-skip">
+        <a href="#lagebild-fur-eine-externe-zweitmeinung-multi-agent-setup-klartext" class="md-skip">
           Zum Inhalt
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              The klartext Method
+              Lagebild für eine externe Zweitmeinung — Multi-Agent-Setup „klartext"
             
           </span>
         </div>
@@ -1650,7 +1650,7 @@
 
 
   
-    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/superpowers/improvement/method.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/superpowers/improvement/2026-06-10-external-review-brief.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1658,327 +1658,359 @@
   
 
 
-<h1 id="the-klartext-method">The klartext Method<a class="headerlink" href="#the-klartext-method" title="Permanent link">&para;</a></h1>
+<h1 id="lagebild-fur-eine-externe-zweitmeinung-multi-agent-setup-klartext">Lagebild für eine externe Zweitmeinung — Multi-Agent-Setup „klartext"<a class="headerlink" href="#lagebild-fur-eine-externe-zweitmeinung-multi-agent-setup-klartext" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Scope.</strong> The <strong>composition of our way of working</strong>: the authoritative register of the elements — Practices,
-Patterns, Work Products, gates, roles — that make up the klartext method, each with its Essence type, the
-Alpha it advances, enforcement level and card status. This is our instance of the Essence <strong>Method</strong> element
-("the composition of a kernel and a set of practices to fulfill a specific purpose").
-<strong>Out of scope.</strong> Practice <em>content</em> (lives in <code>practices/</code> — our <strong>Practice Library</strong>); the meta-language
-reference (<code>semat-definition.md</code>); term definitions (<code>semat-glossary.md</code>); decisions and rationale
-(<code>continuous-improvement.md</code>).
-<strong>Anti-pattern guarded.</strong> Implicit/unlisted method elements — completeness that cannot be checked (RC1;
-cf. the Community-omission incident: no list meant no completeness check).
-<strong>Language.</strong> English — documentation-language rule.</p>
-<p><strong>Owner:</strong> OE · <strong>Status:</strong> living · <strong>Maintenance ritual:</strong> updated in the same Improvement Step (step 3,
-Record) that adds, changes, promotes or retires an element.
-The <strong>Card</strong> column doubles as the migration diagnostic — the only <em>temporary</em> aspect of this document:
-❌ entries are <em>enacted</em> (lived, often as a skill) but not yet <em>described</em> in our meta-language.</p>
-<p><strong>Non-negotiable (NN) flag</strong> <em>(added 2026-06-10, closes the last Foundation-Established checkbox)</em>:
-✓ = must run whenever its trigger condition applies; skipping requires a <strong>recorded deviation</strong> (cf. the
-retro deviation clause). — = strong convention, context may override without a record. All mechanical
-gates are non-negotiable by nature.</p>
-<p><strong>Retirement rule</strong> <em>(added 2026-06-10, user-requested)</em>: elements are <strong>never deleted</strong> from this
-register. When an element is abandoned or replaced, its row gets status <strong><code>retired</code></strong> or
-<strong><code>superseded by &lt;element&gt;</code></strong> plus a one-line rationale (and a pointer to the Improvement-Register row
-or ADR carrying the full why). Modeled on the ADR supersession mechanism. Decisions <em>against</em> a way of
-working are method knowledge of equal rank to decisions <em>for</em> one — they must survive compactions and
-generation changes.</p>
+<p><strong>Zweck dieses Dokuments.</strong> Der Projektinhaber holt eine externe Meinung zu unserem
+Multi-Agent-Arbeitsmodell ein. Dieses Dokument beschreibt das Setup, die Arbeitsweise,
+die aufgetretenen Probleme, den Lösungsstand und das Zielbild — so vollständig, dass
+es ohne weiteres Vorwissen beurteilbar ist.
+<strong>Stand:</strong> 2026-06-10, Abend. <strong>Autor:</strong> OE-Agent (Method Keeper), reviewt vom Projektinhaber.</p>
 </blockquote>
-<h2 id="practices-described-cards-exist">Practices — described (cards exist)<a class="headerlink" href="#practices-described-cards-exist" title="Permanent link">&para;</a></h2>
+<hr />
+<h2 id="1-das-projekt">1. Das Projekt<a class="headerlink" href="#1-das-projekt" title="Permanent link">&para;</a></h2>
+<p><strong>klartext.jetzt</strong> ist eine Webanwendung (Monorepo: FastAPI-Backend, React/TypeScript-Frontend,
+Supabase-Datenbank) rund um Narrative, Behauptungen (Claims) und kausale Wirkmodelle
+(„Wirkgefüge"), inklusive einer Manuskript-Editieransicht. Ein einzelner menschlicher
+Projektinhaber entwickelt es mit einem Team aus <strong>10 spezialisierten KI-Agenten</strong>
+(Claude-Sessions). GitHub-Flow mit PRs, Branch-Protection und CI (6 Checks) ist etabliert.</p>
+<h2 id="2-das-team-setup">2. Das Team-Setup<a class="headerlink" href="#2-das-team-setup" title="Permanent link">&para;</a></h2>
+<h3 id="21-die-10-agenten">2.1 Die 10 Agenten<a class="headerlink" href="#21-die-10-agenten" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>Element</th>
-<th>Advances Alpha</th>
-<th>Enforcement</th>
-<th>NN</th>
-<th>Card</th>
+<th>Agent</th>
+<th>Rolle</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Improvement Step</td>
-<td>Way of Working</td>
-<td>ritual</td>
-<td>✓</td>
-<td>✅ <code>practices/improvement-step.md</code></td>
+<td><strong>Hannibal</strong></td>
+<td>Projektleiter / Arbeitspaket-Koordination (schneidet Tasks, dispatcht, verantwortet Merge-Reihenfolge)</td>
 </tr>
 <tr>
-<td>Document Scoping</td>
-<td>Way of Working</td>
-<td>ritual</td>
-<td>—</td>
-<td>✅ <code>practices/document-scoping.md</code></td>
+<td><strong>OE</strong> (Organisationsentwicklung)</td>
+<td>Method Keeper: pflegt die Arbeitsweise (SEMAT/Essence-basiert), hostet Retrospektiven, verbessert das <em>Team</em>, nicht das Produkt</td>
 </tr>
 <tr>
-<td>Retrospective</td>
-<td>Way of Working (tracks Improvement sub-alpha)</td>
-<td>ritual</td>
-<td>✓ (Work cannot reach <em>Closed</em> without it)</td>
-<td>✅ <code>practices/retrospective.md</code></td>
+<td><strong>DevOps</strong></td>
+<td>Alleiniger Owner des „Infrastructure Perimeter" (CI/CD, Configs, Tooling, git-Mechanik)</td>
 </tr>
 <tr>
-<td>Merge Protocol</td>
-<td>Work</td>
-<td>ritual</td>
-<td>✓ (for parallel dispatches)</td>
-<td>✅ <code>practices/merge-protocol.md</code></td>
+<td><strong>System Architect</strong></td>
+<td>Architekturentscheidungen, ADRs, Interface-Kontrakte, Sign-offs</td>
+</tr>
+<tr>
+<td><strong>QA</strong></td>
+<td>Teststrategie (4 Ebenen), Verifikationskriterien, QA-Reviews</td>
+</tr>
+<tr>
+<td><strong>UX/UI</strong></td>
+<td>Design-Tokens, Komponenten-Specs, eigene Komponentenbibliothek (Inline-Styles-only per ADR)</td>
+</tr>
+<tr>
+<td><strong>Narrative Expert</strong></td>
+<td>Fachdomäne Narrative/Manuskripte</td>
+</tr>
+<tr>
+<td><strong>Causal Model Expert</strong></td>
+<td>Fachdomäne Wirkgefüge/Kausalmodelle</td>
+</tr>
+<tr>
+<td><strong>Audit Expert</strong></td>
+<td>Fachdomäne Claims/Belege</td>
+</tr>
+<tr>
+<td><strong>Community Expert</strong></td>
+<td>Fachdomäne Community-Funktionen</td>
 </tr>
 </tbody>
 </table>
-<h2 id="practices-enacted-as-skills-cards-pending">Practices — enacted as skills (cards pending)<a class="headerlink" href="#practices-enacted-as-skills-cards-pending" title="Permanent link">&para;</a></h2>
-<p>Lived practices: each has an executable enactment (a Claude Code skill) but no description card yet — the
-inverse of RC1 (<em>enforced-ish but not described</em> instead of <em>described but not enforced</em>).</p>
-<table>
-<thead>
-<tr>
-<th>Element</th>
-<th>Enacted as</th>
-<th>Advances Alpha</th>
-<th>Enforcement today</th>
-<th>NN</th>
-<th>Card</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>TDD</td>
-<td><code>tdd</code> skill (wraps superpowers TDD)</td>
-<td>Software System, Requirements</td>
-<td>ritual + partly mechanical (CI test gate)</td>
-<td>✓</td>
-<td>❌</td>
-</tr>
-<tr>
-<td>QA Review</td>
-<td><code>qa-review</code> skill (called by <code>tdd</code> step 3)</td>
-<td>Software System</td>
-<td>ritual</td>
-<td>✓</td>
-<td>❌</td>
-</tr>
-<tr>
-<td>QA Retro</td>
-<td><code>qa-retro</code> skill (test-gap learning loop)</td>
-<td>Way of Working, Software System</td>
-<td>ritual</td>
-<td>✓ (when triggered)</td>
-<td>❌</td>
-</tr>
-<tr>
-<td>Task Readiness</td>
-<td><code>task-readiness</code> skill</td>
-<td>Work</td>
-<td>ritual — <strong>validated H01-422: invoked 3/3 dispatches</strong> (drained to <code>main</code> PR #52)</td>
-<td>✓</td>
-<td>❌</td>
-</tr>
-<tr>
-<td>Knowledge Routing</td>
-<td><code>knowledge-routing</code> skill</td>
-<td>Team, Way of Working</td>
-<td>ritual (anchored in pre-compact)</td>
-<td>✓</td>
-<td>❌</td>
-</tr>
-<tr>
-<td>Pre-Compact Capture</td>
-<td><code>pre-compact</code> skill</td>
-<td>Way of Working</td>
-<td>ritual (user-triggered)</td>
-<td>✓ (North Star: no insight lost)</td>
-<td>❌</td>
-</tr>
-<tr>
-<td>Frontend Verification</td>
-<td><code>verify</code> skill (QA owns criteria, UX/UI executes — four-eyes instance)</td>
-<td>Software System</td>
-<td>ritual</td>
-<td>✓ (for UI changes)</td>
-<td>❌</td>
-</tr>
-<tr>
-<td>Systematic Debugging</td>
-<td><code>systematic-debugging</code> skill</td>
-<td>Software System</td>
-<td>ritual</td>
-<td>—</td>
-<td>❌</td>
-</tr>
-<tr>
-<td>Frontend Standards</td>
-<td><code>frontend</code> skill</td>
-<td>Software System</td>
-<td>ritual</td>
-<td>—</td>
-<td>❌</td>
-</tr>
-<tr>
-<td>Agent Onboarding</td>
-<td><code>agent-onboarding</code> skill</td>
-<td>Team</td>
-<td>ritual</td>
-<td>✓ (when adding an agent)</td>
-<td>❌</td>
-</tr>
-</tbody>
-</table>
-<h2 id="patterns-named-structures-mostly-prose-no-cards">Patterns — named structures (mostly prose, no cards)<a class="headerlink" href="#patterns-named-structures-mostly-prose-no-cards" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th>Element</th>
-<th>Essence type</th>
-<th>Where it lives today</th>
-<th>Enforcement</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Four-Eyes Principle (executor / criteria-owner pair)</td>
-<td>Pattern</td>
-<td><code>CLAUDE.md</code>, <code>agents/oe/claude.md</code> (prose)</td>
-<td>ritual</td>
-</tr>
-<tr>
-<td>Domain Respect</td>
-<td>Pattern</td>
-<td><code>CLAUDE.md</code> § Agent Roles</td>
-<td>ritual</td>
-</tr>
-<tr>
-<td>Infrastructure Perimeter</td>
-<td>Pattern</td>
-<td><code>CLAUDE.md</code></td>
-<td>ritual</td>
-</tr>
-<tr>
-<td>Salvage Branch Policy</td>
-<td>Pattern</td>
-<td><code>continuous-improvement.md</code></td>
-<td>ritual</td>
-</tr>
-<tr>
-<td>Enforcement Hierarchy</td>
-<td>Pattern (cross-cutting principle)</td>
-<td><code>continuous-improvement.md</code> §1</td>
-<td>ritual</td>
-</tr>
-<tr>
-<td>Role Description</td>
-<td>Pattern</td>
-<td><code>job-description</code> skill</td>
-<td>—</td>
-</tr>
-<tr>
-<td>KB-First Lookup (SEMAT/method questions: own reference first, web on miss, backfill gaps in the same step)</td>
-<td>Pattern</td>
-<td><code>semat-definition.md</code> §5</td>
-<td>ritual</td>
-</tr>
-<tr>
-<td>Method Keeper (OE owns the method; locates way-of-working topics in Essence terms before solutioning)</td>
-<td>Pattern (role)</td>
-<td><code>agents/oe/claude.md</code></td>
-<td>ritual</td>
-</tr>
-<tr>
-<td>Memory Park / Custody (out-of-tree redundancy for at-risk knowledge: park verbatim in auto-memory with restore condition + delete-after-verification; applied 3× on 2026-06-10, bridged two data-loss incidents)</td>
-<td>Pattern</td>
-<td>element-sweep find (retro 2) — prose here, card pending</td>
-<td>ritual</td>
-</tr>
-<tr>
-<td>Blocker Protocol (on an unlocatable/blocked step: STOP → classify in Essence/RC terms → escalate to the owner — never improvise; first run: Hannibal B2, 2026-06-10)</td>
-<td>Pattern</td>
-<td>element-sweep find (retro 2) — prose here, card pending</td>
-<td>ritual</td>
-</tr>
-<tr>
-<td>Naht-Check (every PR verified to contain exactly the intended files, nothing else; DevOps, every increment since #45)</td>
-<td>Activity (gate)</td>
-<td>element-sweep find (retro 2) — enacted by DevOps, undescribed</td>
-<td>ritual</td>
-</tr>
-<tr>
-<td>E2E-before-done (A2 gate: end-to-end verification on the live system <em>before</em> merge, evidence captured; first run H01-422)</td>
-<td>Activity (gate)</td>
-<td>element-sweep find (retro 2) — enacted by Hannibal, undescribed</td>
-<td>ritual</td>
-</tr>
-<tr>
-<td>Salvage Triage (a/b) (per quarantined file: (a) belongs in repo → commit to main; (b) machine-local → gitignore/outside; freeze → tag/bundle, never a branch in the shared tree)</td>
-<td>Activity</td>
-<td>DevOps git analysis (2026-06-10) — defined in <code>continuous-improvement.md</code> drain warnings</td>
-<td>ritual</td>
-</tr>
-</tbody>
-</table>
-<h2 id="competencies-kernel-extension">Competencies (kernel extension)<a class="headerlink" href="#competencies-kernel-extension" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th>Element</th>
-<th>Levels (Essence)</th>
-<th>Purpose</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Method Literacy</strong> — the ability to locate way-of-working topics in Essence terms (element type, Alpha) and to use the method document set</td>
-<td>1 <em>Assists</em> … 5 <em>Innovates</em></td>
-<td>Target for agent onboarding and the team refresh: every agent reaches at least level 2 (<em>Applies</em>). Referenced by practice cards: the Retrospective requires ≥ 2 for the leader (via the Method Keeper pattern), ≥ 1 for participants.</td>
-</tr>
-</tbody>
-</table>
-<h2 id="mechanical-gates-activities-checks">Mechanical gates (activities / checks)<a class="headerlink" href="#mechanical-gates-activities-checks" title="Permanent link">&para;</a></h2>
-<p>Our strongest enforcement points — mechanical by design: branch protection on <code>main</code> (6 required CI checks,
-strict) · CI workflows (lint, tests, QA, integration) · Semgrep rules (<code>.semgrep/</code>) · tach layer boundaries ·
-pre-commit hooks · infrastructure tests · health-endpoint tests · PostCompact/PreCompact audit hooks + compact
-monitor (launchd).</p>
-<h2 id="work-products-in-circulation">Work Products in circulation<a class="headerlink" href="#work-products-in-circulation" title="Permanent link">&para;</a></h2>
-<p>Specs (<code>docs/superpowers/specs/</code>) · Plans (<code>docs/superpowers/plans/</code>) · <code>PENDING.md</code> (delegation tracking) ·
-ADRs (<code>docs/adr/</code>) · QA learnings (<code>docs/superpowers/qa-learnings/</code>) · Practice cards (<code>practices/</code>) · Method
-docs (this set) · Agent knowledge files (<code>agents/*/claude.md</code>) + start scripts · Knowledge briefings &amp; DevOps
-briefings (formats defined, <strong>no declared home — RC1 candidates</strong>) · Sign-offs (<strong>unresolved H01 pain point</strong>) ·
-Compact log/digest (gitignored, local) · <strong>Friction Reports</strong> (capture-validation output; element-sweep find
-retro 2 — no declared home yet, currently routed via custody depots) · Retro records (<code>learnings/</code>).</p>
-<p><strong>Resources</strong> (referenced, not produced — Essence element): external reference assets (licensed decks,
-standards PDFs) · home <code>assets-local/</code> (gitignored; README = provenance register, convention in <code>setup.sh</code>).</p>
-<blockquote>
-<p>This list is the <strong>seed of the Artifact Register</strong> (Phase 2 instrument candidate, see
-<code>continuous-improvement.md</code>).</p>
-</blockquote>
-<h2 id="roles-team">Roles / Team<a class="headerlink" href="#roles-team" title="Permanent link">&para;</a></h2>
-<p>The ten agents are instances of the <strong>Team Alpha</strong>; the role SSOT is <code>CLAUDE.md</code> § Agent Roles. Hannibal's
-coordination fills the kernel activity space <em>Coordinate Activity</em>. A maintained <strong>team roster</strong> is decided as
-the Artifact-Register pilot (Phase 2).</p>
-<h2 id="practice-defined-alphas-extensions">Practice-defined Alphas (extensions)<a class="headerlink" href="#practice-defined-alphas-extensions" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th>Element</th>
-<th>States</th>
-<th>Defined by</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Improvement</strong> — a possible adaptation to improve the team's Way of Working</td>
-<td>Identified → Prioritized → Action Agreed → Trialed → Results Evaluated → In Use</td>
-<td><code>practices/retrospective.md</code> (adopted from IJI Agile Retrospective Essentials); instances tracked in the Improvement Register (<code>continuous-improvement.md</code> §3)</td>
-</tr>
-</tbody>
-</table>
-<h2 id="known-gaps-migration-diagnostic-temporary">Known gaps (migration diagnostic — temporary)<a class="headerlink" href="#known-gaps-migration-diagnostic-temporary" title="Permanent link">&para;</a></h2>
+<h3 id="22-long-living-sessions-ewige-agenten">2.2 Long-living Sessions („ewige Agenten")<a class="headerlink" href="#22-long-living-sessions-ewige-agenten" title="Permanent link">&para;</a></h3>
+<p>Jeder Agent ist <strong>eine einzige, dauerhaft laufende Session</strong> der Claude-Desktop-App
+(macOS), gestartet vor Tagen, <strong>nie neu gestartet</strong>. Neue Sessions entstehen nur, wenn
+ein neuer Teamkollege angelegt wird — auch der lebt dann „ewig". Konsequenzen:</p>
 <ul>
-<li>~~Retro practice has no card~~ — <strong>closed 2026-06-10</strong> (<code>practices/retrospective.md</code>).</li>
-<li>~~Process-learnings home missing~~ — <strong>closed 2026-06-10</strong> (<code>learnings/</code>).</li>
-<li><strong>Walking Skeleton practice</strong> — planned, no card yet.</li>
-<li><strong><code>task-readiness</code> is advisory</strong> — the only H01-grade enforcement hole still open in the skill set (T6/RC2).</li>
-<li><strong>Briefings / sign-offs without declared homes</strong> — RC1 candidates → Artifact Register (Phase 2).</li>
+<li>Das <strong>Kontextfenster der Session ist das Arbeitsgedächtnis</strong> des Agenten. Es wächst,
+  bis eine Compaction (Zusammenfassung des Verlaufs) nötig wird — kontrolliert
+  (<code>/compact</code> durch den User) oder <strong>unkontrolliert</strong> (Auto-Compact bei voller
+  Kontextlänge). Unkontrollierte Compaction ist unser gefährlichster Verlustmodus.</li>
+<li>Identität, Hoheitswissen und Regeln jedes Agenten liegen in einer versionierten Datei
+  <code>agents/&lt;name&gt;/claude.md</code> — das ist das, was eine Compaction oder einen Neustart überlebt.</li>
+<li>Pro Agent existiert ein <code>agents/&lt;name&gt;/start.sh</code> (Terminal-Start mit <code>cd</code> ins Repo und
+  deklarierten Tool-Permissions). <strong>Befund von heute: Diese Skripte wurden nie benutzt</strong> —
+  alle Sessions liefen immer über die Desktop-App aus dem Home-Verzeichnis (Details §5.4).</li>
 </ul>
+<h3 id="23-kommunikationsmodell">2.3 Kommunikationsmodell<a class="headerlink" href="#23-kommunikationsmodell" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Grundregel: Der User ist immer der Kanal.</strong> Kein Agent schreibt in die Dateien eines
+  anderen Agenten; Wissen, das die Domäne wechselt, wird als „Wissens-Briefing" formuliert
+  und vom User zugestellt.</li>
+<li><strong>Direct Messages</strong> zwischen Sessions (App-Funktion <code>send_message</code>) sind als Transport
+  erlaubt, aber <strong>pro Einzelfall user-genehmigt</strong> (jeder Versand erfordert eine Bestätigung).
+  Das hat sich heute als tragende Infrastruktur erwiesen: Freigaben, Befund-Relays,
+  Team-Briefings liefen darüber.</li>
+<li><strong>Koordination:</strong> Hannibal schneidet Arbeitspakete und dispatcht an die Fach-Agenten
+  (per Direct Message, user-vermittelt). OE beobachtet methodisch und hostet danach die
+  Retrospektive (Vier-Augen-Prinzip: Koordinator triggert, Method Keeper hostet).</li>
+</ul>
+<h3 id="24-wann-wir-subagents-forken">2.4 Wann wir Subagents forken<a class="headerlink" href="#24-wann-wir-subagents-forken" title="Permanent link">&para;</a></h3>
+<p>Subagent-Forks (ephemere Kind-Instanzen einer Session) nutzen wir <strong>sparsam und nur für
+abgegrenzte Schreib-/Prüfaufträge</strong>, nie als Ersatz für die lebenden Kollegen:</p>
+<ul>
+<li>Im <strong>Pre-Compact-Ritual</strong>: Ein Subagent trägt offene Delegationen in das zentrale
+  Tracking (<code>PENDING.md</code>) ein.</li>
+<li>Im <strong>QA-Review</strong>: Ein Subagent prüft Testabdeckung/Edge-Cases nach Implementierungen.</li>
+<li>Subagents erben die Permissions der aufrufenden Session — was heute zur Entdeckung
+  beitrug, dass die deklarierten Permissions gar nicht wirken (§5.4).</li>
+</ul>
+<p>Wichtig: Die Vertretung eines <em>Kollegen</em> durch einen Subagent-Fork (z. B. in einer Retro)
+ist nur zulässig, wenn dessen Wissen vorher nachweislich auf Platte gesichert wurde
+(„Capture-Vorbedingung") — sonst ist eine Live-Beteiligung der echten Session Pflicht.</p>
+<h2 id="3-die-arbeitsweise-methoden-schicht">3. Die Arbeitsweise (Methoden-Schicht)<a class="headerlink" href="#3-die-arbeitsweise-methoden-schicht" title="Permanent link">&para;</a></h2>
+<p>Wir arbeiten explizit methodengeführt auf Basis von <strong>Essence/SEMAT</strong> (Kernel-Alphas,
+Practices, Zustandsmodelle). Der Method Keeper (OE) hält ein versioniertes Dokumentenset:</p>
+<ul>
+<li><code>docs/superpowers/improvement/continuous-improvement.md</code> — Entscheidungen mit Begründung</li>
+<li><strong>Improvement-Register</strong> (§3 dort): jede Verbesserung als Instanz mit Lebenszyklus
+  <em>Identified → Prioritized → Action Agreed → Trialed → Results Evaluated → In Use</em>.
+  Aktuell ~30 Instanzen, vom Erstfund bis zur geschlossenen Maßnahme.</li>
+<li><code>method.md</code> — Element-Register aller Practices/Patterns/Work Products, inkl.
+  <strong>Non-Negotiable-Flags</strong> und einer „Enforcement-Hierarchie" (mechanisch &gt; rituell &gt;
+  nie nur beratend).</li>
+<li>Practice-Karten (<code>practices/</code>), z. B. Retrospektive (Entry-Kriterien, Teilnehmerregeln,
+  Abweichungsklausel) und Merge-Protokoll (benannter Merge-Owner, explizite Reihenfolge,
+  Artefakt-Verifikation).</li>
+<li><code>learnings/</code> — Prozess-Learnings pro Ereignis; <code>plans/PENDING.md</code> — Delegations-Tracking;
+  ADRs unter <code>docs/adr/</code>.</li>
+</ul>
+<p>Entwicklung läuft mit TDD (Tests vor Implementierung), strenger Schichtenarchitektur,
+PR-Gates und einem „Task-Readiness"-Check vor jeder Umsetzung. Der Status der Arbeitsweise
+ist formal getrackt: Das Way-of-Working-Alpha steht seit heute auf <strong>In Use</strong> (alle 9
+Kollegen haben die Methode in einem Team-Refresh explizit bestätigt).</p>
+<p><strong>Rituale gegen Kontextverlust:</strong></p>
+<ul>
+<li><strong>Pre-Compact-Skill</strong> (Pflicht vor jeder Compaction): Session systematisch scannen —
+  Entscheidungen, Begründungen, mündliche Anweisungen, offene TODOs — und alles
+  Ungesicherte in die richtigen Homes schreiben, mit <strong>Artefakt-Verifikation</strong>
+  (<code>git status</code>/<code>git diff</code> nach dem Schreiben; Erinnerung und Summaries gelten nicht
+  als Beweis).</li>
+<li><strong>Wissens-Routing</strong>: Bei jedem Pre-Compact wird geprüft, ob Erkenntnisse in fremde
+  Domänen gehören → Briefing statt Selbst-Schreiben.</li>
+<li><strong>Memory-Park-Muster</strong>: Ungesicherte Funde werden notfalls in einem benannten Depot
+  im Auto-Memory geparkt, mit expliziter Lösch-/Freigabebedingung.</li>
+</ul>
+<h2 id="4-speicherorte-heute-und-gewollt">4. Speicherorte — heute und gewollt<a class="headerlink" href="#4-speicherorte-heute-und-gewollt" title="Permanent link">&para;</a></h2>
+<h3 id="41-was-wo-liegt-heute">4.1 Was wo liegt (heute)<a class="headerlink" href="#41-was-wo-liegt-heute" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Inhalt</th>
+<th>Ort</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Produkt-Code, Tests, CI</td>
+<td>Repo (<code>api/</code>, <code>frontend/</code>, <code>.github/</code>)</td>
+<td>✅ stabil, PR-Gates</td>
+</tr>
+<tr>
+<td>Methode (Register, Karten, Learnings, ADRs)</td>
+<td>Repo (<code>docs/superpowers/</code>, <code>docs/adr/</code>)</td>
+<td>✅ versioniert; ⚠️ Edits reiten teils uncommitted im Shared Tree</td>
+</tr>
+<tr>
+<td>Agenten-Identität/Hoheitswissen</td>
+<td>Repo (<code>agents/&lt;name&gt;/claude.md</code>)</td>
+<td>✅ versioniert; ⚠️ gleiche Shared-Tree-Gefahr</td>
+</tr>
+<tr>
+<td>Team-Gedächtnis (Auto-Memory)</td>
+<td><code>~/.claude/klartext-team-memory/</code> (seit heute explizit gepinnt; vorher zufällig cwd-gekeyt)</td>
+<td>✅ bewusst geteiltes „Blackboard" aller Sessions</td>
+</tr>
+<tr>
+<td>Session-Kontext (Arbeitsgedächtnis)</td>
+<td>nur im Kontextfenster</td>
+<td>⚠️ flüchtig; einziger Schutz: Pre-Compact-Disziplin</td>
+</tr>
+<tr>
+<td>Tool-Permissions pro Agent</td>
+<td><code>agents/&lt;name&gt;/start.sh</code></td>
+<td>❌ <strong>wirkungslos</strong> (Skripte nie benutzt, §5.4)</td>
+</tr>
+<tr>
+<td>Projekt-Hooks/-Settings</td>
+<td><code>klartext/.claude/settings.json</code></td>
+<td>❌ <strong>laden nie</strong> (Sessions starten in <code>$HOME</code>, §5.4)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Architektur-Eigenheit:</strong> Alle 10 Agenten arbeiten auf <strong>einem gemeinsamen Working Tree</strong>
+(<code>/Users/thormar/klartext</code>). Branch-Operationen eines Agenten treffen uncommittete
+Änderungen aller anderen (§5.2).</p>
+<h3 id="42-wie-wir-speichern-wollen-zielbild">4.2 Wie wir speichern wollen (Zielbild)<a class="headerlink" href="#42-wie-wir-speichern-wollen-zielbild" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Alles Dauerhafte versioniert im Repo</strong>, in klaren Homes pro Inhaltstyp — das steht
+   und funktioniert; offen ist die Idee, die drei Commit-Klassen (Produkt /
+   Prozess-Stand / Methoden-Artefakte) in der CI zu entkoppeln.</li>
+<li><strong>Uncommittete Arbeit darf nie durch fremde git-Operationen sterben</strong> — gewünschte
+   Lösung: Isolation pro Agent (Worktree o. Ä.), bis dahin rituelle Schutzregeln.</li>
+<li><strong>Team-Gedächtnis explizit statt zufällig</strong>: ein benanntes, geteiltes Memory-Verzeichnis
+   (seit heute umgesetzt), perspektivisch projekt- statt maschinenweit konfiguriert,
+   mit noch zu definierenden Ownership-Konventionen.</li>
+<li><strong>Session-Kontext als abgesicherte Ressource</strong>: Compaction beobachtbar (Monitoring),
+   planbar (proaktive Schwellen-Compaction statt Auto-Compact) und verlustarm
+   (Pre-Compact als erzwungener Schritt, nicht nur Ritual).</li>
+<li><strong>Permissions/Boundaries mechanisch durchgesetzt statt nur dokumentiert.</strong></li>
+</ol>
+<h2 id="5-die-probleme-chronologisch-und-ehrlich">5. Die Probleme — chronologisch und ehrlich<a class="headerlink" href="#5-die-probleme-chronologisch-und-ehrlich" title="Permanent link">&para;</a></h2>
+<h3 id="51-erster-durchlauf-h01-post-mortem">5.1 Erster Durchlauf „H01" (Post-Mortem)<a class="headerlink" href="#51-erster-durchlauf-h01-post-mortem" title="Permanent link">&para;</a></h3>
+<p>Unser erstes größeres Arbeitspaket lief schief und wurde vollständig obduziert. Die
+Wurzelursachen (RC1–RC6), stark verkürzt:</p>
+<ul>
+<li><strong>RC1 — flüchtiges Wissen:</strong> Sign-offs und Entscheidungen lebten im Chat statt in
+  Artefakten (Folge: heute laufen Sign-offs als GitHub-PR-Approval).</li>
+<li><strong>RC3 — fehlende Negativ-Constraints:</strong> Was <em>nicht</em> getan werden darf, stand nicht
+  in den Plänen.</li>
+<li><strong>RC4 — „documented vs. actual":</strong> Dokumentierte Annahmen wichen vom tatsächlichen
+  Systemverhalten ab. Daraus entstand die wichtigste neue Unterklasse: <strong>„False
+  Persistence"</strong> — kompaktierte Session-Summaries behaupten Schreibvorgänge, die nie
+  stattfanden (mehrfach unabhängig belegt).</li>
+<li><strong>RC5 — destruktive git-Operationen im Shared Tree</strong> ohne Schutzprotokoll.</li>
+<li><strong>RC6 — fehlende Interface-Kontrakte</strong> an Plan-Grenzen parallel arbeitender Agenten.</li>
+</ul>
+<p>Der zweite Durchlauf (H01-422, „Walking Skeleton") validierte die daraus gebauten
+Practices bewusst: 3 parallele Builder-Dispatches, Merge-Protokoll mit benannter
+Reihenfolge, E2E-Gate vor dem ersten Merge — erfolgreich, mit eigener Retrospektive.</p>
+<h3 id="52-der-shared-tree-tag-heute-drei-datenverluste">5.2 Der Shared-Tree-Tag (heute): drei Datenverluste<a class="headerlink" href="#52-der-shared-tree-tag-heute-drei-datenverluste" title="Permanent link">&para;</a></h3>
+<p>An einem einzigen Tag verloren <strong>drei Agenten</strong> uncommittete bzw. branch-gestrandete
+Arbeit durch git-Operationen im gemeinsamen Working Tree:</p>
+<ol>
+<li><strong>OE, 13:46:</strong> Ein <code>git reset</code> eines anderen Agenten traf 5 ungesicherte
+   Register-Zeilen (zweifach unabhängig wiederhergestellt — Glück plus Redundanz,
+   kein Schutz).</li>
+<li><strong>Causal Model Expert:</strong> 3 Sektionen seiner <code>claude.md</code> verloren (Quell-Branch
+   bereits gelöscht).</li>
+<li><strong>System Architect:</strong> 4 Sektionen verloren; Mechanismus ungeklärt (entweder
+   branch-gestrandet oder stiller Schreibfehler = mögliche In-Session-False-Persistence).</li>
+</ol>
+<p>Alle Inhalte wurden <strong>neu verfasst und gegen Artefakte verifiziert</strong> — bewusst nicht als
+„Wiederherstellung" gerahmt, weil die Existenzbehauptung nur aus Summaries stammte.</p>
+<h3 id="53-compaction-auer-kontrolle">5.3 Compaction außer Kontrolle<a class="headerlink" href="#53-compaction-auer-kontrolle" title="Permanent link">&para;</a></h3>
+<p>Ein Agent lief <strong>mitten im Pre-Compact-Ritual in einen Auto-Compact</strong> — der
+Schutzmechanismus wurde von genau dem Ereignis unterbrochen, vor dem er schützt. Unser
+Compaction-Monitoring (Hook schreibt Log, launchd-Digest benachrichtigt den User) war
+dreimal kaputt, jedes Mal eine Ebene tiefer: Skript fehlte → Hook-Ebene feuerte nie →
+ein E2E-Test fand schließlich einen echten Crash-Bug. Die Lesehälfte ist inzwischen
+end-to-end bewiesen; die Schreibhälfte (Hook feuert in echten Sessions) hängt am
+cwd-Problem (§5.4). Learning daraus: <strong>„Test the chain, not the links"</strong> — Existenz
+einzelner Glieder beweist keine funktionierende Kette.</p>
+<h3 id="54-der-enforcement-befund-heute-alles-nur-dokumentiert">5.4 Der Enforcement-Befund (heute): alles nur dokumentiert<a class="headerlink" href="#54-der-enforcement-befund-heute-alles-nur-dokumentiert" title="Permanent link">&para;</a></h3>
+<p>Forensik am Memory-Keying bewies: <strong>Keine Session lief je über die start.sh-Skripte.</strong>
+Alle Sessions starten in <code>$HOME</code> über die Desktop-App. Konsequenzen:</p>
+<ul>
+<li>Die per-Agent-<strong>Tool-Allowlists sind wirkungslos</strong> — Domain-Boundaries existieren als
+  Dokumentation, real gilt der Default-Permission-Mode der App.</li>
+<li><code>klartext/.claude/settings.json</code> (inkl. der Compaction-Hooks) <strong>lädt nie</strong>.</li>
+<li>Ein heute eingespielter Permission-Patch (PR) war damit von Anfang an ohne
+  Laufzeiteffekt — Paradebeispiel der RC4-Klasse „documented vs. actual".</li>
+</ul>
+<h3 id="55-die-app-kann-es-strukturell-nicht">5.5 Die App kann es strukturell nicht<a class="headerlink" href="#55-die-app-kann-es-strukturell-nicht" title="Permanent link">&para;</a></h3>
+<p>Live-Test mit frischer Desktop-App-Session, Ordner aktiv über den Picker gewählt:
+Die App zeigt das Projekt korrekt an, aber <strong>die Shell-cwd bleibt <code>$HOME</code></strong> — die
+Ordnerwahl setzt nur die Projekt-Zuordnung. Upstream bestätigt (mehrere offene Issues):
+kein <code>--cwd</code>-Flag, kein ausgeliefertes Default-Verzeichnis-Setting, keine
+Laufzeit-Änderung. <strong>Einziger dokumentierter Workaround: Terminal-Start</strong>
+(<code>cd &lt;repo&gt; &amp;&amp; claude</code>) — exakt das, was unsere nie benutzten start.sh tun.</p>
+<h3 id="56-der-offene-zielkonflikt-stand-jetzt">5.6 Der offene Zielkonflikt (Stand jetzt)<a class="headerlink" href="#56-der-offene-zielkonflikt-stand-jetzt" title="Permanent link">&para;</a></h3>
+<p>Der Terminal-Start würde cwd, Settings, Hooks und Allowlists in einem Zug real machen.
+<strong>Aber:</strong> Unsere Direct-Message-Transportschicht (Session-Liste, <code>send_message</code>) ist
+App-Infrastruktur. Wenn eine terminal-gestartete Session dort nicht auftaucht, tauschen
+wir Enforcement gegen den Team-Kanal — ein schlechter Tausch. Ein neutraler
+Terminal-Probe-Test (6 Prüfpunkte: cwd, Settings, Memory, Compact-Hook,
+App-Sichtbarkeit, Messaging-Erreichbarkeit) ist vorbereitet und steht unmittelbar bevor.</p>
+<h2 id="6-was-bereits-gelost-ist">6. Was bereits gelöst ist<a class="headerlink" href="#6-was-bereits-gelost-ist" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Methoden-Fundament:</strong> Way-of-Working formal „In Use" (9/9 bestätigt); Improvement-
+  Register mit vollständigen Lebenszyklen; Retrospektive-Practice durch zwei echte
+  Durchläufe gereift (Teilnehmerregeln, Capture-Vorbedingung, Abweichungsklausel,
+  Element-Sweep).</li>
+<li><strong>Pre-Compact multi-agent-fähig</strong> (Domain-Agent-Variante, Schreibrechte-Vorabprüfung,
+  Pflicht-Artefakt-Verifikation) — heute von zwei Domain-Agenten erfolgreich genutzt,
+  inklusive korrektem „OE um Freigabe bitten statt selbst schreiben".</li>
+<li><strong>Merge-Protokoll</strong> als Practice-Karte, in einem realen Parallel-Lauf validiert; erster
+  Live-Härtetest bestanden (DevOps brach einen Checkout korrekt ab, statt fremde
+  uncommittete Edits zu überschreiben).</li>
+<li><strong>Memory-Pinning umgesetzt:</strong> Team-Blackboard liegt explizit in
+  <code>~/.claude/klartext-team-memory/</code> (Kopie, Original als Rollback; reproduzierbar im
+  Setup-Skript verankert; per CI auf frischem Runner validiert). Live-bestätigt durch
+  eine neue Session.</li>
+<li><strong>Schutz-Fixes:</strong> Hook-Pfade gehärtet; <code>.claude/worktrees/</code> gitignored (Checkout-im-
+  Checkout-Footgun); Crash-Bug im Monitor-Skript per E2E-Test gefunden und gefixt.</li>
+<li><strong>Salvage-Komplettzyklus:</strong> Ein verlorener Arbeitsstand des ersten Durchlaufs wurde
+  vollständig trianguliert, in 8 PRs an die richtigen Homes gedraint und als annotierter
+  Tag eingefroren — Register-Zeile geschlossen.</li>
+</ul>
+<h2 id="7-wo-wir-gerade-stehen-entscheidungsbaum">7. Wo wir gerade stehen (Entscheidungsbaum)<a class="headerlink" href="#7-wo-wir-gerade-stehen-entscheidungsbaum" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Stufe 1 (beauftragt, halb abgenommen)
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>├── Memory-Pinning ............................ ✅ live bestätigt
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>└── cwd-Reparatur ............................. ⏳ Terminal-Probe steht an
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    ├── Probe besteht alle 6 Punkte → Terminal-Start wird Onboarding-Standard;
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    │   Compaction-Monitoring final abgenommen; Allowlists werden real
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    └── App-Sichtbarkeit/Messaging scheitert → Zielkonflikt dokumentiert,
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        dritter Weg gesucht (z. B. Upstream-Feature abwarten);
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>        Stufe 1 bleibt bewusst halb offen
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>Danach (eigene Entscheidungen, bewusst NICHT beauftragt):
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>├── Generationswechsel: kontrollierter Neustart der 10 ewigen Sessions
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>│   (Sicherheitsnetz: claude.md-Homes + Pre-Compact + gepinntes Memory)
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>├── Stufe 2: Worktree-pro-Agent (native App-Worktrees sind für ephemere
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>│   Sessions gebaut → für ewige Agenten eher Eigenbau mit Lifecycle-Disziplin)
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>└── Agent Teams (Beta): nur als Koordinations-Kandidat — als Gedächtnis
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>    wäre es Tool-Missbrauch (Team-Verzeichnisse sind ephemer)
+</code></pre></div>
+<h2 id="8-wie-wir-am-liebsten-arbeiten-wurden-zielbild">8. Wie wir am liebsten arbeiten würden (Zielbild)<a class="headerlink" href="#8-wie-wir-am-liebsten-arbeiten-wurden-zielbild" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Ewige, spezialisierte Kollegen bleiben das Modell</strong> — die Identitäts- und
+   Wissenskontinuität pro Agent hat sich bewährt; ephemere Subagents nur als Werkzeuge.</li>
+<li><strong>Jede Session startet im Repo</strong> mit geladenen Settings, feuernden Hooks und
+   wirksamen Allowlists — Boundaries mechanisch, nicht aspirational.</li>
+<li><strong>Kein Agent kann fremde uncommittete Arbeit zerstören</strong> (Isolation pro Agent oder
+   gleichwertiger Schutz).</li>
+<li><strong>Compaction ist beobachtbar und planbar</strong>: Monitoring meldet jede Compaction;
+   Pre-Compact läuft proaktiv deutlich vor der Schwelle, nie im Wettlauf mit ihr.</li>
+<li><strong>Der User bleibt Entscheider und Kanal-Eigentümer</strong>, aber mit minimalem
+   Relay-Aufwand (Direct Messages mit Einzelfall-Freigabe haben sich bewährt).</li>
+<li><strong>Team-Gedächtnis dreischichtig und explizit:</strong> Repo (dauerhaft, versioniert) —
+   geteiltes Memory (Blackboard, gepinnt) — Session-Kontext (flüchtig, ritualisiert
+   gesichert). Jede Schicht mit klarem Ownership.</li>
+<li><strong>Die Methode wächst nur evidenzbasiert</strong> (Essence/SEMAT): jede Änderung als
+   Register-Instanz mit Lebenszyklus, Retros werten Trials aus, nichts wird ad-hoc
+   eingeführt.</li>
+</ol>
+<h2 id="9-konkrete-fragen-an-die-externe-meinung">9. Konkrete Fragen an die externe Meinung<a class="headerlink" href="#9-konkrete-fragen-an-die-externe-meinung" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Architektur:</strong> Ist „ein gemeinsamer Working Tree für 10 long-living Agenten" mit
+   rituellen Schutzregeln haltbar, oder ist Isolation (Worktree/Clone pro Agent)
+   alternativlos? Gibt es ein drittes Muster, das wir übersehen?</li>
+<li><strong>Session-Start:</strong> Kennt jemand ein verlässliches Muster, Desktop-App-Sessions mit
+   korrekter Repo-cwd zu betreiben — oder ist der Terminal-Start tatsächlich der einzige
+   Weg, und wie lösen andere Teams den Konflikt mit App-gebundenen Funktionen (Messaging,
+   Session-Verwaltung)?</li>
+<li><strong>Gedächtnis-Architektur:</strong> Ist unsere Dreischichtung (Repo / geteiltes Memory /
+   Session-Kontext) tragfähig? Wie organisieren andere Multi-Agent-Setups persistentes
+   Team-Wissen, ohne Koordinations-Tools (wie Agent Teams) zweckzuentfremden?</li>
+<li><strong>Ewige Sessions vs. geplante Neustarts:</strong> Ist „nie neu starten" langfristig das
+   richtige Modell, oder sind regelmäßige, kontrollierte Generationswechsel (mit
+   Persistenz-Disziplin als Netz) robuster gegen Kontext-Drift und Auto-Compaction?</li>
+<li><strong>Enforcement:</strong> Welche Mechanismen nutzen andere, um Agent-Boundaries wirklich
+   durchzusetzen (statt nur zu dokumentieren), insbesondere ohne die Flexibilität eines
+   kleinen Teams zu ersticken?</li>
+<li><strong>Blinde Flecken:</strong> Was an diesem Setup wirkt aus externer Sicht überkonstruiert,
+   was unterschätzt?</li>
+</ol>
 
 
 
