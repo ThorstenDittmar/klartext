@@ -74,3 +74,40 @@ Diese Datei enthält die Basis-Regeln aus CLAUDE.md. Der SA-Agent ergänzt hier:
 - Projektspezifische Architektur-Pattern
 - Domain-übergreifende Abhängigkeiten
 - Entschiedene Abweichungen von den Defaults
+
+## Sign-off-Prozess
+
+Sign-offs laufen als **GitHub PR-Approval** (persistent), nicht als Chat-Nachricht (ephemer).
+Hintergrund: RC1 aus H01 Post-Mortem — Chat-Approvals verschwinden bei /compact oder Session-Ende.
+
+Konsequenz: Jede architekturelle Freigabe muss als PR-Approval auf GitHub nachvollziehbar sein.
+
+## SA-Prozess-Regeln (Post-Mortem H01)
+
+Gelernt aus dem H01-422-Incident (RC3/RC6 — ungeborene Kontrakte an Seams):
+
+1. **Vollständige Plan-Dokumente lesen vor Sign-off** — nicht nur die Zusammenfassung
+2. **Interface-Kontrakt an jeder Plan-Grenze verlangen** — jede Seam zwischen zwei Systemen/Agenten braucht einen expliziten Kontrakt bevor sign-off erteilt wird (RC6)
+3. **Creation-Invarianten explizit klären** — was darf bei einem POST leer sein? Welche Domain-Invarianten lehnt das Backend ab? Das muss im Plan stehen.
+4. **Negative Constraints müssen im Plan stehen** — nicht nur was erlaubt ist, sondern was verboten ist (z.B. „content darf nicht leer sein") — Frontend muss diese Constraints kennen (RC3/RC6)
+
+## Offene Diskussionen mit User
+
+Agenda für das nächste Gespräch mit dem User (eingetragen 2026-06-10):
+
+1. **Design-First-Prozess** — Klassendesign vor Implementierung; verhindert aktivistisches Draufloscodieren
+2. **Abstraktions- und Wiederverwendungsregeln** — wann abstrahieren, wann duplizieren; hohe Wiederverwendung als Ziel
+3. **Refactoring und Design-Schulden** — wie gehen wir damit um; wann ist Refactoring erlaubt/nötig
+4. **Code Asset Management** — Schutz von oft genutztem/oft durchlaufenem Code; Erkennung und Entfernung von Code-Leichen
+5. **Bidirektionale Beziehungen** — Muster: container ↔ element; `removeFrom(container)` löst Verhalten bei beiden aus; saubere Nutzung sicherstellen
+
+## ADR-Kurzreferenz
+
+Entschiedene ADRs — Kurzübersicht für schnelle Orientierung:
+
+| ADR | Entscheidung | Kernbegründung |
+|---|---|---|
+| ADR-0009 | TextArea über TipTap — dauerhaft | TipTap/ProseMirror injiziert nicht-deaktivierbare CSS-Klassen → fundamental inkompatibel mit ADR-0004 |
+| ADR-0007 | Eigene Komponentenbibliothek | Externe UI-Libraries kollidieren mit Inline-Styles (ADR-0004) |
+| ADR-0004 | Inline-Styles-only | Kein CSS-Modules, kein Tailwind — vollständige Kontrolle über Styling |
+| ADR-0006 | Architectural Linting via Semgrep | Jedes Pattern bekommt automatisierte Durchsetzung |
