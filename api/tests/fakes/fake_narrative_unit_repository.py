@@ -53,8 +53,15 @@ class FakeNarrativeUnitRepository(NarrativeUnitRepository):
         return saved
 
     async def update(self, unit: NarrativeUnit) -> NarrativeUnit:
-        """Stores the updated unit and returns it unchanged."""
+        """Stores the updated unit and returns it. Raises NarrativeUnitNotFoundError for unknown ID.
+
+        Mirrors SupabaseNarrativeUnitRepository.update(), which raises when the row
+        does not exist (strict semantics, RC3). A lenient fake would let tests pass
+        against an update path the real repository rejects.
+        """
         assert unit.id is not None
+        if unit.id not in self._units:
+            raise NarrativeUnitNotFoundError(f"Narrative unit not found: {unit.id}")
         self._units[unit.id] = unit
         return unit
 
