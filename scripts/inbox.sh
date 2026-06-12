@@ -45,6 +45,16 @@ case "$cmd" in
     send)
         [ $# -eq 3 ] || usage
         to="$1"; from="$2"; subject="$3"
+        body="$(cat -)"
+        # Empty-body guard: refuse to deliver a message with no content. An empty
+        # briefing is a silent failure — the recipient sees a heading with nothing
+        # under it and does double work guessing what was meant. Fail loudly, write
+        # nothing. Whitespace-only counts as empty.
+        if [ -z "$(printf '%s' "$body" | tr -d '[:space:]')" ]; then
+            echo "error: refusing to send an empty message body (subject: $subject)" >&2
+            echo "       pipe the body on stdin, e.g.: echo 'text' | inbox.sh send $to $from '$subject'" >&2
+            exit 1
+        fi
         dir="$BASE/$to"
         mkdir -p "$dir"
         ts="$(date -u +%Y-%m-%dT%H:%M:%S)"
@@ -56,7 +66,7 @@ case "$cmd" in
             echo
             echo "> from: $from · to: $to · $ts UTC"
             echo
-            cat -
+            printf '%s\n' "$body"
         } > "$file"; then
             echo "error: could not write message to $file" >&2
             exit 1
