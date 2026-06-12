@@ -93,7 +93,12 @@ ADRs (`docs/adr/`) · QA learnings (`docs/superpowers/qa-learnings/`) · Practic
 docs (this set) · Agent knowledge files (`agents/*/claude.md`) + start scripts · Knowledge briefings & DevOps
 briefings (formats defined, **no declared home — RC1 candidates**) · Sign-offs (**unresolved H01 pain point**) ·
 Compact log/digest (gitignored, local) · **Friction Reports** (capture-validation output; element-sweep find
-retro 2 — no declared home yet, currently routed via custody depots) · Retro records (`learnings/`).
+retro 2 — no declared home yet, currently routed via custody depots) · Retro records (`learnings/`) ·
+**Team Roster** (`agents/team.yaml`, added 2026-06-12) — advances the **Team** alpha; owner OE; maintenance
+ritual: updated in the same step as the event that changes it (onboarding/offboarding/migration); stores only
+non-derivable facts (status app|terminal, active flag, display name) — existence and worktree state stay
+derivable from `agents/*/` and `git worktree list` (RC4 guard: no second truth); consumers: launcher/morning
+tooling (DevOps mechanics).
 
 **Resources** (referenced, not produced — Essence element): external reference assets (licensed decks,
 standards PDFs) · home `assets-local/` (gitignored; README = provenance register, convention in `setup.sh`).
