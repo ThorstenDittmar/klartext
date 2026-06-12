@@ -57,6 +57,38 @@ Domain:    [Dependencies]
 Impact:    [Frontend betroffen]
 ```
 
+## Eigenwissen — Frontend-Patterns (aus H01-422 Retro)
+
+### A1 — Debounce-Test-Muster (`vi.useFakeTimers`)
+
+Die Reihenfolge ist kritisch — falsche Reihenfolge führt zum Deadlock:
+
+1. DOM mit **echten** Timern stabilisieren: `await screen.findBy*()` **bevor** `vi.useFakeTimers()`
+2. `fireEvent.change()` statt `userEvent.type()` (userEvent hat interne Timer)
+3. `await act(async () => { await vi.advanceTimersByTimeAsync(1500); })`
+4. `vi.useRealTimers()` via `afterEach`
+
+### A2 — API-Kontrakt-Falle: `content` niemals `""`
+
+`createNarrativeUnit` mit `content: ""` → **422**. Neue Fragments mit `content: null` anlegen, nie `""`.
+Kontrakt-SoT: `docs/contracts/narrative-units-fragment.md`.
+
+### A3 — In-Flight-Guard-Pattern
+
+Wenn ein Fragment-CREATE noch in-flight ist und sich ein zweites Debounce-Fenster schließt:
+`inFlightCreate.current[fragmentId]` prüfen → das laufende Promise **awaiten** statt ein zweites POST
+abzusetzen, danach UPDATE mit der Server-Id.
+
+```typescript
+} else if (inFlightCreate.current[fragmentId]) {
+  const serverId = await inFlightCreate.current[fragmentId];
+  await updateNarrativeUnit(serverId, { content: newContent });
+}
+```
+
+Typ: `Partial<Record<string, Promise<string>>>` — **nicht** `Record<...>` (sonst wertet `tsc` den
+Guard als always-true).
+
 ## Erweiterung durch UX/UI Agent
 
 Diese Datei enthält die Basis-Regeln. Der UX/UI Agent ergänzt hier:
