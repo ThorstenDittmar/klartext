@@ -76,6 +76,20 @@ class TestUpdateUnit:
         result = await service.update_unit(saved)
         assert result.title == "Neuer Titel"
 
+    async def test_update_unit_raises_not_found_for_unknown_id(
+        self, service: NarrativeUnitService
+    ) -> None:
+        """update_unit() raises NarrativeUnitNotFoundError when the ID does not exist.
+
+        Mirrors test_remove_unit_raises_not_found_for_unknown_id. The repository
+        update path is strict (RC3): updating a never-persisted unit must surface
+        as NarrativeUnitNotFoundError, not silently succeed. saved_work() carries a
+        hard-coded ID that was never added to the fake repository.
+        """
+        never_persisted = NarrativeUnitMother.saved_work()
+        with pytest.raises(NarrativeUnitNotFoundError):
+            await service.update_unit(never_persisted)
+
 
 class TestRemoveUnit:
     async def test_remove_unit_does_not_raise(self, service: NarrativeUnitService) -> None:

@@ -435,3 +435,82 @@ class TestDeleteUnitContract:
             response = await client.delete(f"/narrative-units/{unknown_id}")
         assert response.status_code == 404
         assert "not found" in response.json()["error"].lower()
+
+
+class TestDeleteUnitSemanticsContract:
+    """QA-owned complementary contract tests for the strict DELETE semantics (DELETE-404).
+
+    TestDeleteUnitContract above already covers the two core cases (204 known, 404
+    unknown) through the real service chain. These tests verify the *consequences* of
+    the strict Option-B decision that those two cases do not — the exact failure modes
+    the contract rationale names: double-deletes, stale IDs, and consistency with the
+    other mutating verb (PATCH).
+
+    Contract source: docs/contracts/narrative-units-fragment.md
+    (section: API Contract DELETE /narrative-units/{id} — rationale: "must not be
+    silently swallowed … mask bugs such as double-deletes or stale IDs").
+
+    All tests use the real NarrativeUnitService + FakeNarrativeUnitRepository so the
+    NarrativeUnitNotFoundError propagation path cannot be bypassed by a service stub.
+    """
+
+    async def test_second_delete_of_same_unit_returns_404(self) -> None:
+        """DELETE twice on the same ID: first 204, second 404 (double-delete is a client error).
+
+        Contract rationale: returning 204 for an unknown ID would mask a double-delete.
+        The first delete succeeds (204); the second targets a now-absent ID and must
+        surface as 404 — proving the strict semantics directly against the named bug.
+        """
+        repo = FakeNarrativeUnitRepository()
+        real_service = NarrativeUnitService(repository=repo)
+        app.dependency_overrides[get_narrative_unit_service] = lambda: real_service
+
+        saved = await real_service.add_unit(NarrativeUnitMother.unsaved_fragment())
+        assert saved.id is not None
+
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            first = await client.delete(f"/narrative-units/{saved.id}")
+            second = await client.delete(f"/narrative-units/{saved.id}")
+
+        assert first.status_code == 204
+        assert second.status_code == 404
+        assert second.json()["error"] == f"Narrative unit not found: {saved.id}"
+
+    async def test_patch_and_delete_unknown_unit_are_symmetric_404(self) -> None:
+        """PATCH and DELETE on an unknown ID both return 404 (the two mutating verbs agree).
+
+        Contract rationale: DELETE follows the same strict semantics as PATCH. The
+        existing PATCH-404 router test uses a service stub; this asserts the symmetry
+        through the real service + repository chain, where both verbs reach the strict
+        repository and raise NarrativeUnitNotFoundError.
+        """
+        real_service = NarrativeUnitService(repository=FakeNarrativeUnitRepository())
+        app.dependency_overrides[get_narrative_unit_service] = lambda: real_service
+
+        unknown_id = "11111111-1111-1111-1111-111111111111"
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            patch_response = await client.patch(
+                f"/narrative-units/{unknown_id}",
+                json={"content": "irrelevant"},
+            )
+            delete_response = await client.delete(f"/narrative-units/{unknown_id}")
+
+        assert patch_response.status_code == 404
+        assert delete_response.status_code == 404
+
+    async def test_delete_unknown_unit_error_body_matches_contract_verbatim(self) -> None:
+        """DELETE unknown ID returns the exact contract error body, echoing the ID.
+
+        Contract: {"error": "Narrative unit not found: <id>"} — the ID must be echoed
+        verbatim so the frontend can correlate the failure with the element it tried to
+        remove. Asserts the full body, not a substring.
+        """
+        real_service = NarrativeUnitService(repository=FakeNarrativeUnitRepository())
+        app.dependency_overrides[get_narrative_unit_service] = lambda: real_service
+
+        unknown_id = "22222222-2222-2222-2222-222222222222"
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.delete(f"/narrative-units/{unknown_id}")
+
+        assert response.status_code == 404
+        assert response.json() == {"error": f"Narrative unit not found: {unknown_id}"}

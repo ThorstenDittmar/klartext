@@ -158,6 +158,39 @@ class TestUpdate:
         finally:
             await _teardown(repo, narrative_id)
 
+    async def test_update_raises_not_found_for_unknown_id(self) -> None:
+        """update() raises NarrativeUnitNotFoundError when no row exists for the given ID.
+
+        Contract: PATCH on an unknown ID is a client error, not a silent no-op
+        (strict semantics, RC3). The real repository detects an empty PostgREST
+        update result and raises — this integration test guards that path against
+        a regression the fake cannot catch on its own.
+        """
+        repo, narrative_id = await _setup()
+        try:
+            work = await repo.add(Work.create(title="Work", narrative_id=narrative_id))
+            scene = await repo.add(
+                Scene.create(
+                    title="Scene",
+                    narrative_id=narrative_id,
+                    parent_id=work.id,  # type: ignore[arg-type]
+                    position=1,
+                )
+            )
+            # A Fragment that was never inserted — carries a non-existent ID.
+            phantom = Fragment(
+                id="00000000-0000-0000-0000-000000000000",
+                title=None,
+                content="Never persisted.",
+                position=1,
+                narrative_id=narrative_id,
+                parent_id=scene.id,
+            )
+            with pytest.raises(NarrativeUnitNotFoundError):
+                await repo.update(phantom)
+        finally:
+            await _teardown(repo, narrative_id)
+
 
 @pytest.mark.integration
 @pytest.mark.asyncio
