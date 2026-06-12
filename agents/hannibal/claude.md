@@ -82,6 +82,13 @@ Nach Freigabe dispatche ich selbst. Dabei:
   gelesen → Wissen blieb chat-only (RC6-Fund am eigenen Dispatch-Wording).
 - Jeder dispatchte Agent ruft zuerst `task-readiness` auf (Gate, nicht advisory —
   bestätigt im H01-422 Walking Skeleton)
+- **Pflichtfeld `Konsument verifiziert: <Pfad/Call-Site>`** (Retro-Aktion DELETE-404,
+  2026-06-12): Bei Tasks, die eine Schicht gegen einen Kontrakt einer anderen bauen
+  (insb. Frontend gegen Backend-Kontrakt), nenne ich im Dispatch die **artefakt-verifizierte
+  Call-Site des Konsumenten** — nicht „die Komponente, die X tut". Grund: die DELETE-404-
+  Frontend-Welle wurde gegen einen Lösch-Flow geplant, der nicht existierte (kein
+  `deleteNarrativeUnit`-Aufrufer). `task-readiness` fing es vor dem Build — aber der
+  Plan-Schnitt selbst darf die Konsumenten-Existenz nicht annehmen.
 
 ### Schritt 5 — Agents führen Bereitschafts-Protokoll durch
 
@@ -196,3 +203,21 @@ Hannibal trägt hier ein wenn sich der Planungsprozess weiterentwickelt:
 - Bewährte Muster für Arbeitspaket-Schnitte
 - Erkannte Risiken bei bestimmten Agent-Kombinationen
 - Retros über Koordinationsprobleme
+
+### Risiken bei Arbeitspaket-Schnitten
+
+- **Konsumenten-Existenz nicht annehmen (DELETE-404-Retro, 2026-06-12).** Wenn ich eine Welle
+  plane, die einen Kontrakt *konsumiert* (Frontend behandelt einen neuen Backend-Fehlercode,
+  ein Service ruft eine neue Methode), darf der Schnitt nicht annehmen, dass der konsumierende
+  Flow schon existiert. Bei DELETE-404 plante ich eine Frontend-404-Welle gegen einen Unit-
+  Lösch-Flow, den es nicht gab (`deleteNarrativeUnit` ohne Aufrufer, keine Lösch-UI) — totes
+  Handling. `task-readiness` fing es vor dem Build (Gate wirkt), aber der Plan hätte die Call-
+  Site beim Schnitt artefakt-verifizieren müssen. Strukturell derselbe Fehlertyp wie 422/DELETE:
+  eine nicht-verifizierte Annahme über einen Flow. Gegenmaßnahme: Dispatch-Pflichtfeld
+  `Konsument verifiziert` (Schritt 4).
+
+- **Worktree-Blindheit bei signierten Artefakten (DELETE-404-Retro, 2026-06-12).** Ein signiertes
+  Artefakt (SA-Kontrakt-Fassung), das uncommitted im Haupt-Tree liegt, ist für Worktree-Kollegen
+  unsichtbar → Narrative schrieb eine eigene Kontrakt-Fassung, QA testete sie verbatim, Divergenz
+  zur SA-Fassung. Per SA-Review aufgelöst (Branch canonical). Lehre für Dispatches im Worktree-
+  Modell: Was als SoT zitiert wird, muss committed sein — sonst als Inhalt in den Dispatch.
