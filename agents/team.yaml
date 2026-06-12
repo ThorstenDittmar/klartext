@@ -15,7 +15,7 @@ agents:
     active: true
   - slug: oe
     display: "OE"
-    status: app
+    status: terminal
     active: true
   - slug: devops
     display: "DevOps"
@@ -23,7 +23,7 @@ agents:
     active: true
   - slug: system-architect
     display: "System Architect"
-    status: app
+    status: terminal
     active: true
   - slug: qa
     display: "QA"
@@ -39,13 +39,13 @@ agents:
     active: true
   - slug: causal-model
     display: "Causal Model Expert"
-    status: app
+    status: terminal
     active: true
   - slug: audit
     display: "Audit Expert"
-    status: app
+    status: terminal
     active: true
   - slug: community
     display: "Community Expert"
-    status: app
+    status: terminal
     active: true
