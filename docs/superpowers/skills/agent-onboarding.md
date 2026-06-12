@@ -82,6 +82,12 @@ chmod +x agents/<name>/start.sh
 **Important sequencing:** both files must be merged to `main` before the first session start —
 the launcher reads the allowlist and the worktree checkout is based on `origin/main`.
 
+**Team Roster (mandatory, same step):** add the new agent to `agents/team.yaml` (slug, display name,
+`status: terminal`, `active: true`). The roster is the Work Product advancing the Team alpha and is
+read by the start tooling — an agent missing here is invisible to the morning script. Offboarding:
+set `active: false` (keep the entry for history). Migration app→terminal: flip `status` in the same
+step as the generation change.
+
 ---
 
 ## Step 3 — Update CLAUDE.md
