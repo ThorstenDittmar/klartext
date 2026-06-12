@@ -1713,6 +1713,11 @@ boots from disk. Cross-agent messages travel via the file inbox (<code>scripts/i
 </code></pre></div>
 <p><strong>Important sequencing:</strong> both files must be merged to <code>main</code> before the first session start —
 the launcher reads the allowlist and the worktree checkout is based on <code>origin/main</code>.</p>
+<p><strong>Team Roster (mandatory, same step):</strong> add the new agent to <code>agents/team.yaml</code> (slug, display name,
+<code>status: terminal</code>, <code>active: true</code>). The roster is the Work Product advancing the Team alpha and is
+read by the start tooling — an agent missing here is invisible to the morning script. Offboarding:
+set <code>active: false</code> (keep the entry for history). Migration app→terminal: flip <code>status</code> in the same
+step as the generation change.</p>
 <hr />
 <h2 id="step-3-update-claudemd">Step 3 — Update CLAUDE.md<a class="headerlink" href="#step-3-update-claudemd" title="Permanent link">&para;</a></h2>
 <p>Add the new agent to the <code>## Agent Roles &amp; Boundaries</code> table in <code>CLAUDE.md</code>:</p>
