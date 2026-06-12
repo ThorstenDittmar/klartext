@@ -82,13 +82,48 @@ if [ -f "$ALLOWLIST" ]; then
     done < "$ALLOWLIST"
 fi
 
-# 6. Launch in the worktree root: cwd = worktree → settings load, hooks fire.
+# 6. Resolve the tab title from the roster (team.yaml). Falls back to the slug when the
+#    roster is absent or lacks the agent — the title is cosmetic, never block the launch.
+TEAM_YAML="$REPO_ROOT/agents/team.yaml"
+AGENT_TITLE="$SLUG"
+if [ -f "$TEAM_YAML" ]; then
+    # `|| resolved=""` keeps a missing/broken python3 from aborting the launch under
+    #  set -e — the title is cosmetic and must never block an agent from starting.
+    resolved="$(python3 - "$TEAM_YAML" "$SLUG" <<'PYEOF'
+import sys, yaml
+path, slug = sys.argv[1], sys.argv[2]
+try:
+    with open(path) as f:
+        data = yaml.safe_load(f) or {}
+except Exception:
+    sys.exit(0)
+for a in (data.get("agents") or []):
+    if a.get("slug") == slug:
+        print(a.get("display", slug))
+        break
+PYEOF
+)" || resolved=""
+    [ -n "$resolved" ] && AGENT_TITLE="$resolved"
+fi
+
+# Stop Claude Code from rewriting the terminal title at runtime. Official env var
+# (docs: code.claude.com/docs/en/env-vars). Without it, claude overwrites whatever
+# title we set with conversation-derived text, defeating the per-agent tab label.
+export CLAUDE_CODE_DISABLE_TERMINAL_TITLE=1
+
+# 7. Launch in the worktree root: cwd = worktree → settings load, hooks fire.
 cd "$WORKTREE"
 if [ -n "${KLARTEXT_NO_LAUNCH:-}" ]; then
     echo "cwd=$(pwd)"
     echo "branch=$(git branch --show-current)"
     echo "allowlist-flags=${#ALLOW_FLAGS[@]}"
     echo "wake-prompt=${WAKE_PROMPT}"
+    echo "disable-terminal-title=${CLAUDE_CODE_DISABLE_TERMINAL_TITLE}"
+    echo "terminal-title=${AGENT_TITLE}"
     exit 0
 fi
+
+# Set the tab title once to the agent's roster display name. OSC 0 sequence works in
+# Terminal.app and iTerm2; it sticks because claude no longer overwrites it (above).
+printf '\033]0;%s\007' "$AGENT_TITLE"
 exec claude "${ALLOW_FLAGS[@]}" "$WAKE_PROMPT"
