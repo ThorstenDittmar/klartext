@@ -1709,6 +1709,40 @@ without an API round-trip.</p>
 <h2 id="contract-test-reference">Contract test reference<a class="headerlink" href="#contract-test-reference" title="Permanent link">&para;</a></h2>
 <p>QA owns the contract test verifying this behaviour. See: <code>api/tests/</code> (to be added by QA as
 part of H01-422 Step 2).</p>
+<hr />
+<h1 id="api-contract-delete-narrative-unitsid">API Contract: DELETE /narrative-units/{id}<a class="headerlink" href="#api-contract-delete-narrative-unitsid" title="Permanent link">&para;</a></h1>
+<p><strong>Owner:</strong> Narrative Expert (backend is canonical source of truth; consumers adapt)
+<strong>Status:</strong> Active — approved 2026-06-12, SA Sign-off: Option B (strikt)
+<strong>Relates to:</strong> DELETE-404</p>
+<hr />
+<h2 id="contract_1">Contract<a class="headerlink" href="#contract_1" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>DELETE /narrative-units/{id}
+</code></pre></div>
+<p><strong>Success:</strong> <code>204 No Content</code> — unit deleted (including descendants via ON DELETE CASCADE)</p>
+<p><strong>Error:</strong> <code>404 Not Found</code> — if no unit with the given ID exists</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="p">{</span><span class="w"> </span><span class="nt">&quot;error&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Narrative unit not found: &lt;id&gt;&quot;</span><span class="w"> </span><span class="p">}</span>
+</code></pre></div>
+<hr />
+<h2 id="rationale">Rationale<a class="headerlink" href="#rationale" title="Permanent link">&para;</a></h2>
+<p><code>DELETE</code> follows the same strict semantics as <code>PUT</code>: a request targeting a non-existent ID
+is a client error and must not be silently swallowed. Returning 204 for an unknown ID would
+mask bugs such as double-deletes or stale IDs in the frontend.</p>
+<p>Consistency with <code>update()</code> (RC3): both mutating verbs raise <code>NarrativeUnitNotFoundError</code>
+when the target does not exist. The router translates this to 404 via the central exception
+handler in <code>main.py</code>.</p>
+<hr />
+<h2 id="consumer-guidance-uxui">Consumer guidance (UX/UI)<a class="headerlink" href="#consumer-guidance-uxui" title="Permanent link">&para;</a></h2>
+<p>A <code>DELETE</code> on a unit that no longer exists must be handled explicitly:</p>
+<ul>
+<li>On <code>404</code>: show a neutral message (e.g. "Element wurde bereits entfernt") and refresh the
+  local tree state — do not leave a ghost entry in the UI.</li>
+<li>Do not retry <code>DELETE</code> on <code>404</code> — the absence is the correct final state.</li>
+</ul>
+<hr />
+<h2 id="contract-test-reference_1">Contract test reference<a class="headerlink" href="#contract-test-reference_1" title="Permanent link">&para;</a></h2>
+<p>QA owns the contract test verifying this behaviour:
+- <code>DELETE /narrative-units/{id}</code> with existing ID → 204
+- <code>DELETE /narrative-units/{id}</code> with unknown ID → 404</p>
 
 
 
