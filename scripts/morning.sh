@@ -2,11 +2,16 @@
 # morning.sh — daily startup script for terminal-mode klartext agents.
 #
 # Reads agents/team.yaml and starts all agents with status=terminal and active=true.
-# Opens one terminal tab per agent (iTerm2 preferred, Terminal.app fallback), with a
-# staggered delay between launches to avoid git index.lock contention — worktrees share
-# one object store, and simultaneous rebases compete for the same lock file.
+# Opens one new tab per agent IN THE CURRENT (frontmost) terminal window — iTerm2
+# preferred, Terminal.app fallback — with a staggered delay between launches to avoid
+# git index.lock contention (worktrees share one object store; simultaneous rebases
+# compete for the same lock file).
 #
 # Usage: bash scripts/morning.sh
+#
+# Note (Terminal.app): opening a tab in the current window uses a Cmd-T keystroke via
+# System Events, which needs Accessibility permission for the controlling app (Terminal)
+# under System Settings → Privacy & Security → Accessibility. iTerm2 needs no such grant.
 #
 # Env overrides:
 #   KLARTEXT_REPO_ROOT          main checkout (default: this script's repo)
@@ -71,7 +76,26 @@ tell application "iTerm2"
     end tell
 end tell
 APPLESCRIPT
+    # Open a NEW TAB in the frontmost window: Cmd-T (via System Events) selects a
+    # fresh tab, then the command runs in the front window's now-selected tab.
+    # `do script` with no target would open a new WINDOW instead.
+    elif osascript <<APPLESCRIPT >/dev/null 2>&1
+tell application "Terminal" to activate
+tell application "System Events" to keystroke "t" using command down
+delay 0.3
+tell application "Terminal"
+    do script "$cmd" in front window
+    set custom title of selected tab of front window to "$display"
+end tell
+APPLESCRIPT
+    then
+        :  # tab opened successfully
     else
+        # The Cmd-T keystroke needs Accessibility permission for Terminal (System
+        # Settings → Privacy & Security → Accessibility). Without it, fall back to a
+        # new window so the agent still launches, and say how to get tabs next time.
+        echo "  ⚠  Tab needs Accessibility permission for Terminal — opening a window instead." >&2
+        echo "     Grant it under System Settings → Privacy & Security → Accessibility." >&2
         osascript <<APPLESCRIPT
 tell application "Terminal"
     activate
@@ -96,7 +120,7 @@ for entry in "${AGENT_LINES[@]}"; do
     echo "  → $display ($slug)"
 
     if [ -n "${KLARTEXT_MORNING_DRY_RUN:-}" ]; then
-        echo "  [dry-run] would open tab: bash agents/$slug/start.sh"
+        echo "  [dry-run] would open a tab in the current window: bash agents/$slug/start.sh"
     else
         _open_tab "$slug" "$display"
     fi
