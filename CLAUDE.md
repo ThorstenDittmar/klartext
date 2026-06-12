@@ -4,7 +4,10 @@
 - All code in English: variable names, function names, classes, comments, commit messages, API endpoints
 - Communication with the team in German
 - User-facing strings are externalized via i18n (`t('key')`) — never hardcoded in any language.
-  See `design/i18n.md` for rules. Backend error messages that reach the API response: German.
+  See `design/i18n.md` for rules. Backend error messages that reach the API response: **English**
+  (code-level output, same rule as variable names). Translation to the user's language happens in
+  the UI layer (error key lookup / i18n table). Never hardcode German strings in exception messages
+  or JSON error bodies.
 - Documentation (technical/process/method docs): English — ADRs, skills, method docs under `docs/superpowers/`.
   Scope: development and method documentation only. Product-facing content (e.g. *Wirkgefüge*, domain terms) keeps German.
   Convention for now; candidate for future lint enforcement.

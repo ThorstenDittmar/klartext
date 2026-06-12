@@ -11,7 +11,7 @@
 agents:
   - slug: hannibal
     display: "Hannibal"
-    status: app
+    status: terminal
     active: true
   - slug: oe
     display: "OE"
@@ -27,15 +27,15 @@ agents:
     active: true
   - slug: qa
     display: "QA"
-    status: app
+    status: terminal
     active: true
   - slug: ux
     display: "UX/UI"
-    status: app
+    status: terminal
     active: true
   - slug: narrative
     display: "Narrative Expert"
-    status: app
+    status: terminal
     active: true
   - slug: causal-model
     display: "Causal Model Expert"
