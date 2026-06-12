@@ -126,11 +126,16 @@ class SupabaseNarrativeUnitRepository(NarrativeUnitRepository):
         return NarrativeUnit.from_record(row)
 
     async def remove(self, unit_id: str) -> None:
-        """Deletes the unit row. Descendants removed by ON DELETE CASCADE."""
+        """Deletes the unit row. Descendants removed by ON DELETE CASCADE.
+
+        Raises NarrativeUnitNotFoundError if no row exists for unit_id.
+        """
         self.logger.info("SupabaseNarrativeUnitRepository.remove: unit_id=%s", unit_id)
         try:
-            await self._client.table(_TABLE).delete().eq("id", unit_id).execute()
+            result = await self._client.table(_TABLE).delete().eq("id", unit_id).execute()
         except Exception as e:
             raise NarrativeUnitPersistenceError(
                 f"Failed to remove narrative unit {unit_id}: {e}"
             ) from e
+        if not result.data:
+            raise NarrativeUnitNotFoundError(f"Narrative unit not found: {unit_id}")

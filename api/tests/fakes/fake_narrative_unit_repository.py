@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import uuid
 
+from api.exceptions.narrative_unit import NarrativeUnitNotFoundError
 from api.models.narrative_unit import NarrativeUnit
 from api.repositories.narrative_unit_repository import NarrativeUnitRepository
 
@@ -58,5 +59,7 @@ class FakeNarrativeUnitRepository(NarrativeUnitRepository):
         return unit
 
     async def remove(self, unit_id: str) -> None:
-        """Removes the unit from the store. Silent no-op for unknown IDs."""
-        self._units.pop(unit_id, None)
+        """Removes the unit from the store. Raises NarrativeUnitNotFoundError for unknown IDs."""
+        if unit_id not in self._units:
+            raise NarrativeUnitNotFoundError(f"Narrative unit not found: {unit_id}")
+        del self._units[unit_id]

@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import pytest
 
+from api.exceptions.narrative_unit import NarrativeUnitNotFoundError
 from api.services.narrative_unit_service import NarrativeUnitService
 from api.tests.fakes.fake_narrative_unit_repository import FakeNarrativeUnitRepository
 from api.tests.mothers.narrative_unit_mother import (
@@ -83,3 +84,10 @@ class TestRemoveUnit:
         saved = await service.add_unit(unit)
         assert saved.id is not None
         await service.remove_unit(saved.id)  # must not raise
+
+    async def test_remove_unit_raises_not_found_for_unknown_id(
+        self, service: NarrativeUnitService
+    ) -> None:
+        """remove_unit() raises NarrativeUnitNotFoundError when the ID does not exist."""
+        with pytest.raises(NarrativeUnitNotFoundError):
+            await service.remove_unit("does-not-exist")
