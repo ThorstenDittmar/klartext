@@ -138,9 +138,10 @@ def test_morning_dry_run_prints_open_tab_command(tmp_path: Path) -> None:
     result = _run(tmp_path)
 
     assert result.returncode == 0, result.stderr
-    assert "[dry-run] would open tab: bash agents/devops/start.sh" in result.stdout, (
-        f"Expected dry-run line for devops agent missing from output:\n{result.stdout}"
-    )
+    assert (
+        "[dry-run] would open a tab in the current window: bash agents/devops/start.sh"
+        in result.stdout
+    ), f"Expected dry-run line for devops agent missing from output:\n{result.stdout}"
 
 
 def test_morning_stagger_notice_printed_between_agents_not_before_first(tmp_path: Path) -> None:
