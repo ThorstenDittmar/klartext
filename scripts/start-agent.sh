@@ -20,6 +20,7 @@
 set -euo pipefail
 
 SLUG="${1:?usage: start-agent.sh <slug>}"
+WAKE_PROMPT="${2:-Lies dein Postfach: bash scripts/inbox.sh read ${SLUG} — und folge der Handoff-Notiz.}"
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="${KLARTEXT_REPO_ROOT:-$(cd "$SCRIPT_DIR/.." && pwd)}"
@@ -51,14 +52,26 @@ else
     echo "→ worktree has uncommitted changes — skipping rebase (commit WIP, then rebase)"
 fi
 
-# 3. Surface unread inbox messages — the file-based channel for terminal sessions.
+# 3. Ensure the Python venv is reachable inside the worktree — pre-commit hooks look
+#    for api/.venv/bin/tach and api/.venv/bin/semgrep relative to the worktree root.
+#    Worktrees share the git object store but not the working tree, so we symlink the
+#    venv from the main checkout on first provision (idempotent, skipped if present).
+VENV_LINK="$WORKTREE/api/.venv"
+VENV_SOURCE="$REPO_ROOT/api/.venv"
+if [ -d "$VENV_SOURCE" ] && [ ! -e "$VENV_LINK" ]; then
+    mkdir -p "$(dirname "$VENV_LINK")"
+    ln -s "$VENV_SOURCE" "$VENV_LINK"
+    echo "→ symlinked api/.venv into worktree"
+fi
+
+# 4. Surface unread inbox messages — the file-based channel for terminal sessions.
 if [ -x "$INBOX" ]; then
     count="$(bash "$INBOX" unread "$SLUG")"
     echo "📬 inbox: $count unread message(s) for $SLUG"
     [ "$count" -gt 0 ] && echo "   read with: bash scripts/inbox.sh read $SLUG"
 fi
 
-# 4. Build the per-agent allowlist flags (if the agent declares one).
+# 5. Build the per-agent allowlist flags (if the agent declares one).
 ALLOW_FLAGS=()
 if [ -f "$ALLOWLIST" ]; then
     while IFS= read -r tool; do
@@ -69,12 +82,13 @@ if [ -f "$ALLOWLIST" ]; then
     done < "$ALLOWLIST"
 fi
 
-# 5. Launch in the worktree root: cwd = worktree → settings load, hooks fire.
+# 6. Launch in the worktree root: cwd = worktree → settings load, hooks fire.
 cd "$WORKTREE"
 if [ -n "${KLARTEXT_NO_LAUNCH:-}" ]; then
     echo "cwd=$(pwd)"
     echo "branch=$(git branch --show-current)"
     echo "allowlist-flags=${#ALLOW_FLAGS[@]}"
+    echo "wake-prompt=${WAKE_PROMPT}"
     exit 0
 fi
-exec claude "${ALLOW_FLAGS[@]}"
+exec claude "${ALLOW_FLAGS[@]}" "$WAKE_PROMPT"
