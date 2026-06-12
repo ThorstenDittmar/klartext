@@ -115,3 +115,4 @@ Entschiedene ADRs — Kurzübersicht für schnelle Orientierung:
 | ADR-0007 | Eigene Komponentenbibliothek | Externe UI-Libraries kollidieren mit Inline-Styles (ADR-0004) |
 | ADR-0004 | Inline-Styles-only | Kein CSS-Modules, kein Tailwind — vollständige Kontrolle über Styling |
 | ADR-0006 | Architectural Linting via Semgrep | Jedes Pattern bekommt automatisierte Durchsetzung |
+| ADR-0010 | Terminal-Start + Worktree-Isolation + Generationswechsel | RC5/RC4/False-Persistence gelöst; Boundaries erstmals mechanisch wirksam |
