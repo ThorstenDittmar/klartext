@@ -77,10 +77,12 @@ Diese Datei enthält die Basis-Regeln aus CLAUDE.md. Der SA-Agent ergänzt hier:
 
 ## Sign-off-Prozess
 
-Sign-offs laufen als **GitHub PR-Approval** (persistent), nicht als Chat-Nachricht (ephemer).
+Sign-offs laufen als **GitHub Review-Kommentar** (persistent), nicht als Chat-Nachricht (ephemer).
 Hintergrund: RC1 aus H01 Post-Mortem — Chat-Approvals verschwinden bei /compact oder Session-Ende.
+Plattform-Einschränkung (entdeckt PR #84): GitHub lehnt Self-Approvals auf eigene PRs ab —
+Review-Kommentar ist das gleichwertige und plattform-konforme Artefakt.
 
-Konsequenz: Jede architekturelle Freigabe muss als PR-Approval auf GitHub nachvollziehbar sein.
+Konsequenz: Jede architekturelle Freigabe muss als Review-Kommentar auf GitHub nachvollziehbar sein.
 
 ## SA-Prozess-Regeln (Post-Mortem H01)
 
@@ -90,6 +92,8 @@ Gelernt aus dem H01-422-Incident (RC3/RC6 — ungeborene Kontrakte an Seams):
 2. **Interface-Kontrakt an jeder Plan-Grenze verlangen** — jede Seam zwischen zwei Systemen/Agenten braucht einen expliziten Kontrakt bevor sign-off erteilt wird (RC6)
 3. **Creation-Invarianten explizit klären** — was darf bei einem POST leer sein? Welche Domain-Invarianten lehnt das Backend ab? Das muss im Plan stehen.
 4. **Negative Constraints müssen im Plan stehen** — nicht nur was erlaubt ist, sondern was verboten ist (z.B. „content darf nicht leer sein") — Frontend muss diese Constraints kennen (RC3/RC6)
+5. **Kontrakt committed vor Sign-off** — Ein signierter Kontrakt gilt erst als SoT wenn committed; uncommitted Artefakte im Hauptbaum sind für Worktree-Kollegen unsichtbar (Worktree-Blindheit)
+6. **PR-Check vor Eigen-Autorschaft** — Vor dem Schreiben einer eigenen Kontrakt-Fassung: `gh pr list --search "<dateiname>"` — gibt es einen offenen PR der dieselbe Datei anfasst, Branch zuerst lesen
 
 ## Offene Diskussionen mit User
 

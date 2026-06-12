@@ -82,6 +82,11 @@ chmod +x agents/<name>/start.sh
 **Important sequencing:** both files must be merged to `main` before the first session start —
 the launcher reads the allowlist and the worktree checkout is based on `origin/main`.
 
+**Landing path for knowledge-file changes (standard since 2026-06-12):** changes to
+`agents/<name>/claude.md` land via own branch (in the agent's worktree) → PR → OE review
+**comment** (formal GitHub approvals are single-account-impossible; the review comment IS the
+sign-off artifact) → CI gate → merge.
+
 **Team Roster (mandatory, same step):** add the new agent to `agents/team.yaml` (slug, display name,
 `status: terminal`, `active: true`). The roster is the Work Product advancing the Team alpha and is
 read by the start tooling — an agent missing here is invisible to the morning script. Offboarding:

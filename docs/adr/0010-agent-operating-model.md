@@ -146,6 +146,7 @@ The decision record includes rejected paths as first-class method knowledge (use
 - Terminal sessions are not visible in the app and cannot receive app messages — file inbox covers semantics at the cost of slightly more friction compared to `send_message`
 - Fresh sessions require a wake prompt before they act — the successor seed or launcher must include the initial task (pilot finding: a fresh session waits for the user's first message)
 - Mixed mode during rollout: the 9 remaining agents migrate at natural endpoints; interim period has heterogeneous session environments
+- **Stop-and-wait throughput:** every inbox handover waits for a user nudge before the recipient acts. Effective throughput in multi-agent runs is a function of user availability, not agent readiness. In sequential chains (e.g. 4 agents in a DELETE-404-style run), each step adds a human relay delay. This is a known, accepted trade-off: the user as channel is a deliberate safety invariant, not an accident. Evidence: Hannibal's retro input on the DELETE-404 run (2026-06-12). Mitigation: keep chains short; batch handoffs where semantics allow.
 
 **Ongoing obligations:**
 - `scripts/start-agent.sh` is the single startup logic home; allowlist or cwd changes go through the launcher, not individual wrappers
