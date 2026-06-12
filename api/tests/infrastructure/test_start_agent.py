@@ -44,7 +44,11 @@ def _make_repo(tmp_path: Path) -> Path:
 
 
 def _run(
-    slug: str, repo_root: Path, wt_base: Path, inbox_base: Path
+    slug: str,
+    repo_root: Path,
+    wt_base: Path,
+    inbox_base: Path,
+    wake_prompt: str | None = None,
 ) -> subprocess.CompletedProcess[str]:
     env = {
         **os.environ,
@@ -53,7 +57,10 @@ def _run(
         "KLARTEXT_INBOX_BASE": str(inbox_base),
         "KLARTEXT_NO_LAUNCH": "1",
     }
-    return subprocess.run(["bash", str(SCRIPT), slug], capture_output=True, text=True, env=env)
+    cmd = ["bash", str(SCRIPT), slug]
+    if wake_prompt is not None:
+        cmd.append(wake_prompt)
+    return subprocess.run(cmd, capture_output=True, text=True, env=env)
 
 
 def test_start_agent_script_exists_and_is_executable() -> None:
@@ -91,3 +98,60 @@ def test_reuses_existing_worktree_without_reset(tmp_path: Path) -> None:
     assert result.returncode == 0, result.stderr
     assert "reusing existing worktree" in result.stdout, result.stdout
     assert wip.exists() and wip.read_text() == "in progress\n", "WIP was disturbed on relaunch"
+
+
+def test_provisions_venv_symlink_in_worktree(tmp_path: Path) -> None:
+    """Expects api/.venv → main/api/.venv symlink in the worktree on first launch."""
+    main = _make_repo(tmp_path)
+    wt_base = tmp_path / "worktrees"
+    # Simulate an existing venv in the main checkout.
+    venv_source = main / "api" / ".venv"
+    venv_source.mkdir(parents=True)
+
+    _run("devops", main, wt_base, tmp_path / "inbox")
+
+    venv_link = wt_base / "devops" / "api" / ".venv"
+    assert venv_link.is_symlink(), f"Expected symlink at {venv_link} — pre-commit hooks need it"
+    assert venv_link.resolve() == venv_source.resolve(), (
+        f"Symlink target mismatch: {venv_link.resolve()} ≠ {venv_source.resolve()}"
+    )
+
+
+def test_venv_symlink_is_idempotent(tmp_path: Path) -> None:
+    """Expects a second launch to leave an existing venv symlink untouched."""
+    main = _make_repo(tmp_path)
+    wt_base = tmp_path / "worktrees"
+    venv_source = main / "api" / ".venv"
+    venv_source.mkdir(parents=True)
+
+    _run("devops", main, wt_base, tmp_path / "inbox")
+    _run("devops", main, wt_base, tmp_path / "inbox")
+
+    venv_link = wt_base / "devops" / "api" / ".venv"
+    assert venv_link.is_symlink(), "Symlink must still exist after second launch"
+
+
+def test_wake_prompt_defaults_to_inbox_read_instruction(tmp_path: Path) -> None:
+    """Expects KLARTEXT_NO_LAUNCH output to include the default wake-prompt for the given slug."""
+    main = _make_repo(tmp_path)
+    wt_base = tmp_path / "worktrees"
+
+    result = _run("devops", main, wt_base, tmp_path / "inbox")
+
+    assert result.returncode == 0, result.stderr
+    assert "wake-prompt=Lies dein Postfach: bash scripts/inbox.sh read devops" in result.stdout, (
+        f"Expected default wake-prompt in output:\n{result.stdout}"
+    )
+
+
+def test_wake_prompt_custom_argument_overrides_default(tmp_path: Path) -> None:
+    """Expects a custom wake-prompt argument to override the built-in default."""
+    main = _make_repo(tmp_path)
+    wt_base = tmp_path / "worktrees"
+
+    result = _run("devops", main, wt_base, tmp_path / "inbox", wake_prompt="Custom startup message")
+
+    assert result.returncode == 0, result.stderr
+    assert "wake-prompt=Custom startup message" in result.stdout, (
+        f"Expected custom wake-prompt in output:\n{result.stdout}"
+    )
