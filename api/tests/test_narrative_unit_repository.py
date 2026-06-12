@@ -13,6 +13,7 @@ import os
 import pytest
 from supabase import AsyncClient, acreate_client
 
+from api.exceptions.narrative_unit import NarrativeUnitNotFoundError
 from api.models.narrative_unit import Fragment, Scene, Work
 from api.repositories.supabase_narrative_repository import SupabaseNarrativeRepository
 from api.repositories.supabase_narrative_unit_repository import (
@@ -216,5 +217,17 @@ class TestRemove:
             tree = await repo.load_tree(narrative_id)
             assert tree is not None
             assert len(tree.children) == 0
+        finally:
+            await _teardown(repo, narrative_id)
+
+    async def test_remove_raises_not_found_for_unknown_id(self) -> None:
+        """remove() raises NarrativeUnitNotFoundError when no row exists for the given ID.
+
+        Contract: DELETE on unknown ID is a client error, not a silent no-op.
+        """
+        repo, narrative_id = await _setup()
+        try:
+            with pytest.raises(NarrativeUnitNotFoundError):
+                await repo.remove("00000000-0000-0000-0000-000000000000")
         finally:
             await _teardown(repo, narrative_id)

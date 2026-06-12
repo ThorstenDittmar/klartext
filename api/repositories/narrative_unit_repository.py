@@ -47,5 +47,6 @@ class NarrativeUnitRepository(ABC):
 
         Descendant rows are removed automatically by ON DELETE CASCADE
         (requires migration 20260608000001_narrative_units_cascade.sql).
+        Raises NarrativeUnitNotFoundError if no row exists for the given unit_id.
         Raises NarrativeUnitPersistenceError on database failure.
         """

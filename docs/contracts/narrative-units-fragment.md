@@ -71,3 +71,57 @@ without an API round-trip.
 
 QA owns the contract test verifying this behaviour. See: `api/tests/` (to be added by QA as
 part of H01-422 Step 2).
+
+---
+
+# API Contract: DELETE /narrative-units/{id}
+
+**Owner:** Narrative Expert (backend is canonical source of truth; consumers adapt)
+**Status:** Active — approved 2026-06-12, SA Sign-off: Option B (strikt)
+**Relates to:** DELETE-404
+
+---
+
+## Contract
+
+```
+DELETE /narrative-units/{id}
+```
+
+**Success:** `204 No Content` — unit deleted (including descendants via ON DELETE CASCADE)
+
+**Error:** `404 Not Found` — if no unit with the given ID exists
+
+```json
+{ "error": "Narrative unit not found: <id>" }
+```
+
+---
+
+## Rationale
+
+`DELETE` follows the same strict semantics as `PUT`: a request targeting a non-existent ID
+is a client error and must not be silently swallowed. Returning 204 for an unknown ID would
+mask bugs such as double-deletes or stale IDs in the frontend.
+
+Consistency with `update()` (RC3): both mutating verbs raise `NarrativeUnitNotFoundError`
+when the target does not exist. The router translates this to 404 via the central exception
+handler in `main.py`.
+
+---
+
+## Consumer guidance (UX/UI)
+
+A `DELETE` on a unit that no longer exists must be handled explicitly:
+
+- On `404`: show a neutral message (e.g. "Element wurde bereits entfernt") and refresh the
+  local tree state — do not leave a ghost entry in the UI.
+- Do not retry `DELETE` on `404` — the absence is the correct final state.
+
+---
+
+## Contract test reference
+
+QA owns the contract test verifying this behaviour:
+- `DELETE /narrative-units/{id}` with existing ID → 204
+- `DELETE /narrative-units/{id}` with unknown ID → 404
