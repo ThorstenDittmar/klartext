@@ -155,3 +155,55 @@ def test_wake_prompt_custom_argument_overrides_default(tmp_path: Path) -> None:
     assert "wake-prompt=Custom startup message" in result.stdout, (
         f"Expected custom wake-prompt in output:\n{result.stdout}"
     )
+
+
+def test_disables_claude_terminal_title_updates(tmp_path: Path) -> None:
+    """Expects CLAUDE_CODE_DISABLE_TERMINAL_TITLE=1 — so claude stops overwriting the tab title.
+
+    Without this env var, claude rewrites the title at runtime from conversation
+    context, defeating the per-agent tab label the launcher sets.
+    """
+    main = _make_repo(tmp_path)
+    wt_base = tmp_path / "worktrees"
+
+    result = _run("devops", main, wt_base, tmp_path / "inbox")
+
+    assert result.returncode == 0, result.stderr
+    assert "disable-terminal-title=1" in result.stdout, (
+        f"Expected CLAUDE_CODE_DISABLE_TERMINAL_TITLE=1 in output:\n{result.stdout}"
+    )
+
+
+def test_terminal_title_falls_back_to_slug_without_roster(tmp_path: Path) -> None:
+    """Expects the tab title to default to the slug when team.yaml is absent."""
+    main = _make_repo(tmp_path)
+    wt_base = tmp_path / "worktrees"
+
+    result = _run("devops", main, wt_base, tmp_path / "inbox")
+
+    assert result.returncode == 0, result.stderr
+    assert "terminal-title=devops" in result.stdout, (
+        f"Expected fallback title 'devops' when no roster present:\n{result.stdout}"
+    )
+
+
+def test_terminal_title_uses_roster_display_name(tmp_path: Path) -> None:
+    """Expects the tab title to come from the team.yaml display field for the slug."""
+    main = _make_repo(tmp_path)
+    agents_dir = main / "agents"
+    agents_dir.mkdir(parents=True, exist_ok=True)
+    (agents_dir / "team.yaml").write_text(
+        "agents:\n"
+        "  - slug: devops\n"
+        '    display: "DevOps Gatekeeper"\n'
+        "    status: terminal\n"
+        "    active: true\n"
+    )
+    wt_base = tmp_path / "worktrees"
+
+    result = _run("devops", main, wt_base, tmp_path / "inbox")
+
+    assert result.returncode == 0, result.stderr
+    assert "terminal-title=DevOps Gatekeeper" in result.stdout, (
+        f"Expected title from roster display field:\n{result.stdout}"
+    )
