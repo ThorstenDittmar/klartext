@@ -11,8 +11,8 @@
 #   - worktree present  -> derivable from `git worktree list` (NOT duplicated here)
 #   - status            -> app | terminal  (migration state during the staggered rollout)
 #   - active            -> false = offboarded/paused (kept for history, not started)
-#   - display           -> tab label for tooling (morning script)
-# Consumers: scripts/start-agent.sh tooling, scripts/morning.sh (DevOps mechanics).
+#   - display           -> label for the start tooling
+# Consumers: scripts/start-agent.sh tooling (DevOps mechanics).
 
 agents:
   - slug: hannibal

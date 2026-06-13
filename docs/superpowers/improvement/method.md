@@ -98,7 +98,7 @@ retro 2 — no declared home yet, currently routed via custody depots) · Retro 
 **Team Roster** (`agents/team.yaml`, added 2026-06-12) — advances the **Team** alpha; owner OE; maintenance
 ritual: updated in the same step as the event that changes it (onboarding/offboarding/migration); stores only
 non-derivable facts (status app|terminal, active flag, display name) — existence and worktree state stay
-derivable from `agents/*/` and `git worktree list` (RC4 guard: no second truth); consumers: launcher/morning
+derivable from `agents/*/` and `git worktree list` (RC4 guard: no second truth); consumers: launcher/start
 tooling (DevOps mechanics).
 
 **Environment Work Products** (`docs/superpowers/improvement/environment/`) — our **version-bound, falsifiable**
