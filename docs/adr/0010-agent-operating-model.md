@@ -1,6 +1,6 @@
 # 0010 — Agent Operating Model: Terminal Start, Worktree Isolation, Generational Sessions
 
-**Status:** Accepted  
+**Status:** Accepted · **§1 + "Desktop app start" rejection partially superseded by [ADR-0011](0011-return-to-desktop-app-session-start.md) (2026-06-13)** — §2 worktree isolation, §3 generational sessions, §4 shared layer remain in force.  
 **Decided by:** User (2026-06-11)  
 **Author / Sign-off:** System Architect  
 **Technical source:** DevOps specification — Improvement Register §3 "Structural change: git worktree per context + session-cwd repair"  
@@ -44,6 +44,12 @@ DevOps pilot (2026-06-11); rollout to all 10 agents proceeds at natural session 
 riskiest agent first.
 
 ### 1. Terminal start via central launcher
+
+> **Superseded by [ADR-0011](0011-return-to-desktop-app-session-start.md) (2026-06-13, gated).** The
+> decisive premise below — that the desktop app cannot start a session in the repo root — was empirically
+> refuted on Claude.app v1.12603.1 (Environment Work Product, DevOps). The launcher is retained as the
+> terminal fallback and rollback path; it is no longer the only viable entry point. The mechanics proof
+> (4/4) below remains a true record of the terminal probe.
 
 All agent sessions start via:
 
@@ -126,7 +132,7 @@ The decision record includes rejected paths as first-class method knowledge (use
 | Alternative | Verdict | Reason |
 |---|---|---|
 | **Eternal sessions (never restart)** | Rejected | Every compaction replaces verified history with an unverified summary — the False Persistence sub-class. The longer a session lives, the more its "memory" diverges from artifact state. External reference: Paperclip implements "persistent agents" as disk state loaded into fresh context per heartbeat, not eternal sessions. Identity is durable; sessions are not. |
-| **Desktop app start** | Rejected | Structurally impossible upstream. Folder selection sets the project association but never changes shell cwd. GH issues #56688 / #26287 / #60151 / #60099 confirm: no `--cwd` flag, no shipped default-directory setting. Live test 2026-06-10 (fresh app session, folder actively selected via picker): shell remains in `$HOME`. The only documented workaround is terminal start — what our always-unused `start.sh` scripts had always prescribed. |
+| **Desktop app start** | ~~Rejected~~ **Superseded by [ADR-0011](0011-return-to-desktop-app-session-start.md)** | *Original 2026-06-11 reasoning, preserved as the record:* "Structurally impossible upstream. Folder selection sets the project association but never changes shell cwd. GH issues #56688 / #26287 / #60151 / #60099 confirm: no `--cwd` flag, no shipped default-directory setting. Live test 2026-06-10 (fresh app session, folder actively selected via picker): shell remains in `$HOME`." **Refuted 2026-06-13 on v1.12603.1:** the app passes cwd through (`startSession({cwd})`); the 2026-06-10 observation came from the wrong button (`📁+` additional-dir instead of the primary working-directory picker) + TCC, not a structural limit. See ADR-0011. |
 | **Agent Teams as team memory** | Rejected | Agent Teams directories are ephemeral coordination infrastructure, not a persistence layer. Using them as a team blackboard is tool misuse — the content has no persistence contract. |
 | **Native app worktrees for long-lived agents** | Rejected / Superseded by self-managed worktrees | The app creates native worktrees for ephemeral sessions. For long-lived agents they produce diverging `claude/` branches and have no lifecycle discipline (idempotent provisioning, crash recovery, orphan cleanup). Self-managed worktrees under `$HOME/klartext-worktrees/<slug>/` keep lifecycle control in our hands — standard git, not a workaround. |
 | **Shared working tree with ritual protection** | Rejected / Superseded by worktree isolation | Three data losses in one day despite mature rituals and a passed merge-protocol stress test on the same day. External review: *"Das Grundproblem ist nicht Disziplin, sondern Physik"* — tree-global git operations violate file-ownership rules without any agent misbehaving. Ritual enforcement is permanently inferior to physical isolation per our own enforcement hierarchy (mechanical > ritual). |
