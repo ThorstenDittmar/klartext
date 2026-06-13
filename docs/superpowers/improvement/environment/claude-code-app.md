@@ -10,6 +10,9 @@
 >
 > **Status:** **frozen v1** — DevOps freeze sign-off 2026-06-13 (empirical content owned/verified by DevOps;
 > form + home by OE). Holds for app **v1.12603.1** only; re-run the **Canary** on any app update.
+> **Update 2026-06-13 (DevOps):** an **auto-memory fact-cluster** was added (Facts / Constraints / Canary (e) /
+> dependency chain) — lab-verified, see §Version-binding. **OE form review + `method.md` register-row update
+> pending** (four-eyes: empirical content is DevOps-signed; form is OE's).
 
 ## Version-binding
 
@@ -17,6 +20,9 @@
 - **Version / build:** **v1.12603.1**, Build **3df4fd**.
 - **Observed:** 2026-06-13 by **DevOps**, against an isolated clone (`~/klartext-apptest`, on `main`).
 - **Holds for this version only.** On any app update, run the **Canary** below before relying on these facts.
+- **Auto-memory cluster:** verified 2026-06-13 by **DevOps** in an isolated lab (`~/memlab`: throwaway git
+  projects with sentinel `MEMORY.md` files), app **v1.12603.x** + Claude Code CLI **2.1.177**, via fresh app
+  sessions (real trust dialog) driven by the user. Same Resource (the app), same day; bound to this app family.
 
 ## Facts
 
@@ -38,6 +44,13 @@
   prompt** ⇒ the allowlist loaded; a non-matched command (the venv absolute path `…/api/.venv/bin/semgrep`)
   raised a prompt badged **`Projekt (lokal)`** ⇒ the project policy is the active layer, **deny-by-default**.
   This is prompt-level behaviour (upgraded from *inferred* on DevOps' freeze sign-off, 2026-06-13).
+- **Project-scope `autoMemoryDirectory` is honored and overrides user-global** ✓ — an `autoMemoryDirectory` in
+  the **committed** `.claude/settings.json` (the `~/`-form expands) is read by the app **after the folder's
+  trust dialog** and **wins over** the user-global `~/.claude/settings.json` (precedence **project > user**).
+  Lab `~/memlab`, **3 cases** reproduced: (1) project-scope pin honored; (2) removing the user-global keys
+  isolates a foreign project; (3) the committed pin is self-sufficient with no user-global key. **Refutes** the
+  schemastore schema's *"ignored if set in checked-in project settings, for security"* claim — the first-party
+  docs (honored-after-trust) are correct.
 
 ### Observed, untested — carry, do not rely on
 
@@ -60,6 +73,13 @@
 - **Managed-Settings layer** (`serverManagedSettings` / MDM, "first-wins") **exists but is NOT active** today
   (our project hooks loaded + fired). The single place a future team-admin policy could centrally override our
   allowlist/hooks. Keep in mind.
+- **Auto-memory default is per-cwd, NOT per-repo** — an *unset* `autoMemoryDirectory` resolves to
+  `~/.claude/projects/<sanitized-cwd>/memory/`; **git worktrees do NOT share it** (each worktree is a different
+  cwd). A shared team blackboard therefore needs an **explicit committed pin** (byte-identical in every
+  worktree). Contradicts the app docs' *"worktrees share one default"* wording — measured, not assumed.
+- **Committed memory pin honored only in TRUSTED worktrees** — an untrusted worktree silently ignores the pin
+  and falls back to the per-cwd default (a lonely store, not the blackboard). Same trust gate as the hooks;
+  accept it on first open. This is the new fragility introduced by moving the pin off user-global.
 
 ## Canary — manual post-update checklist
 
@@ -71,6 +91,9 @@ Work Product is **presumed invalid**: the app-path and the `/clear` ritual are a
 - [ ] **(c) `/clear` reset** — `/clear` → the next prompt fires `SessionStart` (`source=startup`).
 - [ ] **(d) enforcement active** — a non-allowlisted command prompts (badge `Projekt (lokal)` = project policy
   is the active, deny-by-default layer). Covers the allowlist, not just hook loading.
+- [ ] **(e) team memory pin honored** — a session in a repo with a committed `autoMemoryDirectory` recalls
+  **that** directory's `MEMORY.md` (sentinel check), **not** the user-global one — after trust. Confirms the
+  project-scope pin still beats user-global (else the team blackboard silently shatters per-cwd).
 
 ## Dependency chain — what hangs on these facts
 
@@ -81,6 +104,7 @@ Work Product is **presumed invalid**: the app-path and the `/clear` ritual are a
 | Automatic identity reload (`agents/<name>/claude.md`) | `SessionStart` hook with a matcher that **includes `startup`** (the app reports `/clear` as `startup`) |
 | Enforcement (allowlists / hooks) | `settings.json` loading (= correct cwd) |
 | Worktree placement | TCC: keep worktrees out of `~/Desktop` / `~/Documents` / `~/Downloads` |
+| Shared team auto-memory blackboard (all worktrees) | committed `autoMemoryDirectory` honored (after trust) **and** per-cwd default NOT shared ⇒ explicit pin required (PR #99) |
 
 ## Superseded
 
