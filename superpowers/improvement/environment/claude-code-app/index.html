@@ -1667,11 +1667,13 @@ the agent sessions — what it does, how it loads our settings, and what operati
 <strong>Anti-pattern guarded.</strong> A stale app fact silently driving a decision (RC4) — the exact failure of the
 superseded ADR-0010 premise below.
 <strong>Language.</strong> English — documentation-language rule.</p>
-<p><strong>Status:</strong> <strong>frozen v1</strong> — DevOps freeze sign-off 2026-06-13 (empirical content owned/verified by DevOps;
-form + home by OE). Holds for app <strong>v1.12603.1</strong> only; re-run the <strong>Canary</strong> on any app update.
-<strong>Update 2026-06-13 (DevOps):</strong> an <strong>auto-memory fact-cluster</strong> was added (Facts / Constraints / Canary (e) /
-dependency chain) — lab-verified, see §Version-binding. <strong>OE form review + <code>method.md</code> register-row update
-pending</strong> (four-eyes: empirical content is DevOps-signed; form is OE's).</p>
+<p><strong>Status:</strong> <strong>frozen v2</strong> (2026-06-13) — re-frozen after an <strong>auto-memory fact-cluster</strong> was added (the tested
+<code>autoMemoryDirectory</code> override fact + the per-cwd / trusted-only constraints + Canary <strong>(e)</strong> + the team-memory
+dependency row; lab-verified, see §Version-binding). <strong>Four-eyes complete:</strong> empirical content owned/verified by
+<strong>DevOps</strong> (freeze sign-off 2026-06-13); <strong>form + home reviewed and signed off by OE</strong> 2026-06-13. <strong>v1</strong> froze
+the cwd / settings / <code>/clear</code> / enforcement facts the same day; <strong>v2</strong> adds the memory cluster. Holds for app
+<strong>v1.12603.x</strong> only; re-run the <strong>Canary</strong> on any app update. (Freeze version lives here, not in the <code>method.md</code>
+register — the register stores only non-derivable facts.)</p>
 </blockquote>
 <h2 id="version-binding">Version-binding<a class="headerlink" href="#version-binding" title="Permanent link">&para;</a></h2>
 <ul>
