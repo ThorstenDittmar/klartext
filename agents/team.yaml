@@ -1,6 +1,12 @@
 # Team Roster — Work Product advancing the Team alpha (see method.md, Work Products).
 # Owner: OE. Maintenance ritual: updated in the SAME step as the event that changes it
-# (onboarding, offboarding, migration app->terminal). Stores ONLY non-derivable facts:
+# (onboarding, offboarding, migration terminal<->app). Stores ONLY non-derivable facts:
+#
+# Return to the app (ADR-0011, 2026-06-13): the DevOps gate (G1 SessionStart identity hook,
+# G4 allowlist) is met team-wide, so the app path is open for every agent. Rollout is
+# PER-AGENT, when each is ready — not synchronized. status flips terminal->app on that agent's
+# own switch. Identity in the app loads via the G1 hook from the worktree-path slug, independent
+# of this file; status here drives the launcher tooling and records the migration state.
 #   - who exists        -> derivable from agents/*/ directories (NOT duplicated here)
 #   - worktree present  -> derivable from `git worktree list` (NOT duplicated here)
 #   - status            -> app | terminal  (migration state during the staggered rollout)
@@ -15,7 +21,7 @@ agents:
     active: true
   - slug: oe
     display: "OE"
-    status: terminal
+    status: app
     active: true
   - slug: devops
     display: "DevOps"
