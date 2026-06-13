@@ -1636,6 +1636,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#agent-session-identity-sessionstart-hook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent session identity (SessionStart hook)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cicd" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2193,6 +2204,23 @@
 <a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="nv">SUPABASE_SERVICE_ROLE_KEY</span><span class="o">=</span>sb_secret_...<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>python3<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>tests/<span class="w"> </span>-m<span class="w"> </span>integration<span class="w"> </span>-v
 </code></pre></div>
+<hr />
+<h2 id="agent-session-identity-sessionstart-hook">Agent session identity (SessionStart hook)<a class="headerlink" href="#agent-session-identity-sessionstart-hook" title="Permanent link">&para;</a></h2>
+<p>Each specialist agent works in its own git worktree under <code>~/klartext-worktrees/&lt;slug&gt;/</code>. So a
+session knows <em>which</em> agent it is, a <code>SessionStart</code> hook in <code>.claude/settings.json</code> injects that
+agent's Hoheitswissen at session start — and on <code>/clear</code>, which the desktop app reports as
+<code>source=startup</code>:</p>
+<ul>
+<li><strong>Script:</strong> <code>scripts/load_agent_identity.py</code> derives the slug from the worktree basename
+  (<code>CLAUDE_PROJECT_DIR</code>); if <code>agents/&lt;slug&gt;/claude.md</code> exists it emits it as SessionStart
+  <code>additionalContext</code> (an <code>EXTREMELY_IMPORTANT</code> preamble plus the full file). For any other
+  directory (main checkout, clones, CI) it is a silent no-op — exit 0, no output.</li>
+<li><strong>Matcher:</strong> <code>startup|clear|compact</code> — covers session open, <code>/clear</code>, and re-injection after a compaction.</li>
+<li><strong>Verification:</strong> <code>api/tests/infrastructure/test_session_start_hook.py</code> gates the wiring and the
+  loader behaviour. The runtime injection (the desktop app cannot be scripted) is checked by the
+  manual Canary in <a href="../superpowers/improvement/environment/claude-code-app/"><code>environment/claude-code-app.md</code></a>.</li>
+</ul>
+<p>Rationale and the return-to-app gate: <a href="../adr/0011-return-to-desktop-app-session-start/">ADR-0011</a> (condition G1).</p>
 <hr />
 <h2 id="cicd">CI/CD<a class="headerlink" href="#cicd" title="Permanent link">&para;</a></h2>
 <p>GitHub Actions workflows run on every push and pull request:</p>
