@@ -205,6 +205,26 @@ python3 -m pytest tests/ -m integration -v
 
 ---
 
+## Agent session identity (SessionStart hook)
+
+Each specialist agent works in its own git worktree under `~/klartext-worktrees/<slug>/`. So a
+session knows *which* agent it is, a `SessionStart` hook in `.claude/settings.json` injects that
+agent's Hoheitswissen at session start — and on `/clear`, which the desktop app reports as
+`source=startup`:
+
+- **Script:** `scripts/load_agent_identity.py` derives the slug from the worktree basename
+  (`CLAUDE_PROJECT_DIR`); if `agents/<slug>/claude.md` exists it emits it as SessionStart
+  `additionalContext` (an `EXTREMELY_IMPORTANT` preamble plus the full file). For any other
+  directory (main checkout, clones, CI) it is a silent no-op — exit 0, no output.
+- **Matcher:** `startup|clear|compact` — covers session open, `/clear`, and re-injection after a compaction.
+- **Verification:** `api/tests/infrastructure/test_session_start_hook.py` gates the wiring and the
+  loader behaviour. The runtime injection (the desktop app cannot be scripted) is checked by the
+  manual Canary in [`environment/claude-code-app.md`](superpowers/improvement/environment/claude-code-app.md).
+
+Rationale and the return-to-app gate: [ADR-0011](adr/0011-return-to-desktop-app-session-start.md) (condition G1).
+
+---
+
 ## CI/CD
 
 GitHub Actions workflows run on every push and pull request:

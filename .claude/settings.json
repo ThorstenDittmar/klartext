@@ -16,6 +16,17 @@
     ]
   },
   "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/scripts/load_agent_identity.py\""
+          }
+        ]
+      }
+    ],
     "PostCompact": [
       {
         "matcher": "auto",
