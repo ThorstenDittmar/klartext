@@ -8,11 +8,13 @@
 > superseded ADR-0010 premise below.
 > **Language.** English — documentation-language rule.
 >
-> **Status:** **frozen v1** — DevOps freeze sign-off 2026-06-13 (empirical content owned/verified by DevOps;
-> form + home by OE). Holds for app **v1.12603.1** only; re-run the **Canary** on any app update.
-> **Update 2026-06-13 (DevOps):** an **auto-memory fact-cluster** was added (Facts / Constraints / Canary (e) /
-> dependency chain) — lab-verified, see §Version-binding. **OE form review + `method.md` register-row update
-> pending** (four-eyes: empirical content is DevOps-signed; form is OE's).
+> **Status:** **frozen v2** (2026-06-13) — re-frozen after an **auto-memory fact-cluster** was added (the tested
+> `autoMemoryDirectory` override fact + the per-cwd / trusted-only constraints + Canary **(e)** + the team-memory
+> dependency row; lab-verified, see §Version-binding). **Four-eyes complete:** empirical content owned/verified by
+> **DevOps** (freeze sign-off 2026-06-13); **form + home reviewed and signed off by OE** 2026-06-13. **v1** froze
+> the cwd / settings / `/clear` / enforcement facts the same day; **v2** adds the memory cluster. Holds for app
+> **v1.12603.x** only; re-run the **Canary** on any app update. (Freeze version lives here, not in the `method.md`
+> register — the register stores only non-derivable facts.)
 
 ## Version-binding
 
