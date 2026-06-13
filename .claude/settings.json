@@ -1,4 +1,6 @@
 {
+  "autoMemoryEnabled": true,
+  "autoMemoryDirectory": "~/.claude/klartext-team-memory",
   "permissions": {
     "allow": [
       "Read",
