@@ -1713,6 +1713,13 @@ speculatively. Maintained via the Improvement Step practice.</p>
 <li><strong>Improvement</strong> <em>(sub-alpha, practice-defined)</em> — a possible adaptation to improve the team's Way of
   Working; states <em>Identified → Prioritized → Action Agreed → Trialed → Results Evaluated → In Use</em>. Defined
   by the Retrospective practice; instances live in the Improvement Register.</li>
+<li><strong>Environment Knowledge</strong> <em>(Practice)</em> — the repeatable way we hold <strong>version-bound, falsifiable</strong> facts
+  about our development environment (the tools we <em>use</em>, not <em>build</em>) so a stale fact cannot silently drive a
+  decision (RC4). Each fact is version-bound, has a <strong>Canary</strong>, and lists its <strong>dependency chain</strong>. Card:
+  <code>practices/environment-knowledge.md</code>; Work Products: <code>environment/</code>.</li>
+<li><strong>Canary</strong> <em>(our term)</em> — a concrete check attached to a version-bound environment fact that re-proves or
+  breaks it; when it breaks, the fact is presumed stale until re-verified. <strong>Manual</strong> where the subject tool
+  cannot be scripted (e.g. the Claude Code app), otherwise a candidate for a mechanical check.</li>
 </ul>
 <h2 id="cross-cutting-principles">Cross-cutting principles<a class="headerlink" href="#cross-cutting-principles" title="Permanent link">&para;</a></h2>
 <ul>
