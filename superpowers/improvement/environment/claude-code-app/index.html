@@ -1668,7 +1668,10 @@ the agent sessions — what it does, how it loads our settings, and what operati
 superseded ADR-0010 premise below.
 <strong>Language.</strong> English — documentation-language rule.</p>
 <p><strong>Status:</strong> <strong>frozen v1</strong> — DevOps freeze sign-off 2026-06-13 (empirical content owned/verified by DevOps;
-form + home by OE). Holds for app <strong>v1.12603.1</strong> only; re-run the <strong>Canary</strong> on any app update.</p>
+form + home by OE). Holds for app <strong>v1.12603.1</strong> only; re-run the <strong>Canary</strong> on any app update.
+<strong>Update 2026-06-13 (DevOps):</strong> an <strong>auto-memory fact-cluster</strong> was added (Facts / Constraints / Canary (e) /
+dependency chain) — lab-verified, see §Version-binding. <strong>OE form review + <code>method.md</code> register-row update
+pending</strong> (four-eyes: empirical content is DevOps-signed; form is OE's).</p>
 </blockquote>
 <h2 id="version-binding">Version-binding<a class="headerlink" href="#version-binding" title="Permanent link">&para;</a></h2>
 <ul>
@@ -1676,6 +1679,9 @@ form + home by OE). Holds for app <strong>v1.12603.1</strong> only; re-run the <
 <li><strong>Version / build:</strong> <strong>v1.12603.1</strong>, Build <strong>3df4fd</strong>.</li>
 <li><strong>Observed:</strong> 2026-06-13 by <strong>DevOps</strong>, against an isolated clone (<code>~/klartext-apptest</code>, on <code>main</code>).</li>
 <li><strong>Holds for this version only.</strong> On any app update, run the <strong>Canary</strong> below before relying on these facts.</li>
+<li><strong>Auto-memory cluster:</strong> verified 2026-06-13 by <strong>DevOps</strong> in an isolated lab (<code>~/memlab</code>: throwaway git
+  projects with sentinel <code>MEMORY.md</code> files), app <strong>v1.12603.x</strong> + Claude Code CLI <strong>2.1.177</strong>, via fresh app
+  sessions (real trust dialog) driven by the user. Same Resource (the app), same day; bound to this app family.</li>
 </ul>
 <h2 id="facts">Facts<a class="headerlink" href="#facts" title="Permanent link">&para;</a></h2>
 <h3 id="tested-freezable">Tested — freezable<a class="headerlink" href="#tested-freezable" title="Permanent link">&para;</a></h3>
@@ -1696,6 +1702,13 @@ form + home by OE). Holds for app <strong>v1.12603.1</strong> only; re-run the <
   prompt</strong> ⇒ the allowlist loaded; a non-matched command (the venv absolute path <code>…/api/.venv/bin/semgrep</code>)
   raised a prompt badged <strong><code>Projekt (lokal)</code></strong> ⇒ the project policy is the active layer, <strong>deny-by-default</strong>.
   This is prompt-level behaviour (upgraded from <em>inferred</em> on DevOps' freeze sign-off, 2026-06-13).</li>
+<li><strong>Project-scope <code>autoMemoryDirectory</code> is honored and overrides user-global</strong> ✓ — an <code>autoMemoryDirectory</code> in
+  the <strong>committed</strong> <code>.claude/settings.json</code> (the <code>~/</code>-form expands) is read by the app <strong>after the folder's
+  trust dialog</strong> and <strong>wins over</strong> the user-global <code>~/.claude/settings.json</code> (precedence <strong>project &gt; user</strong>).
+  Lab <code>~/memlab</code>, <strong>3 cases</strong> reproduced: (1) project-scope pin honored; (2) removing the user-global keys
+  isolates a foreign project; (3) the committed pin is self-sufficient with no user-global key. <strong>Refutes</strong> the
+  schemastore schema's <em>"ignored if set in checked-in project settings, for security"</em> claim — the first-party
+  docs (honored-after-trust) are correct.</li>
 </ul>
 <h3 id="observed-untested-carry-do-not-rely-on">Observed, untested — carry, do not rely on<a class="headerlink" href="#observed-untested-carry-do-not-rely-on" title="Permanent link">&para;</a></h3>
 <ul>
@@ -1718,6 +1731,13 @@ form + home by OE). Holds for app <strong>v1.12603.1</strong> only; re-run the <
 <li><strong>Managed-Settings layer</strong> (<code>serverManagedSettings</code> / MDM, "first-wins") <strong>exists but is NOT active</strong> today
   (our project hooks loaded + fired). The single place a future team-admin policy could centrally override our
   allowlist/hooks. Keep in mind.</li>
+<li><strong>Auto-memory default is per-cwd, NOT per-repo</strong> — an <em>unset</em> <code>autoMemoryDirectory</code> resolves to
+  <code>~/.claude/projects/&lt;sanitized-cwd&gt;/memory/</code>; <strong>git worktrees do NOT share it</strong> (each worktree is a different
+  cwd). A shared team blackboard therefore needs an <strong>explicit committed pin</strong> (byte-identical in every
+  worktree). Contradicts the app docs' <em>"worktrees share one default"</em> wording — measured, not assumed.</li>
+<li><strong>Committed memory pin honored only in TRUSTED worktrees</strong> — an untrusted worktree silently ignores the pin
+  and falls back to the per-cwd default (a lonely store, not the blackboard). Same trust gate as the hooks;
+  accept it on first open. This is the new fragility introduced by moving the pin off user-global.</li>
 </ul>
 <h2 id="canary-manual-post-update-checklist">Canary — manual post-update checklist<a class="headerlink" href="#canary-manual-post-update-checklist" title="Permanent link">&para;</a></h2>
 <p>Run <strong>after every app update</strong> (the app cannot be scripted — this is by hand). If <strong>any</strong> step breaks, this
@@ -1728,6 +1748,9 @@ Work Product is <strong>presumed invalid</strong>: the app-path and the <code>/c
 <li>[ ] <strong>(c) <code>/clear</code> reset</strong> — <code>/clear</code> → the next prompt fires <code>SessionStart</code> (<code>source=startup</code>).</li>
 <li>[ ] <strong>(d) enforcement active</strong> — a non-allowlisted command prompts (badge <code>Projekt (lokal)</code> = project policy
   is the active, deny-by-default layer). Covers the allowlist, not just hook loading.</li>
+<li>[ ] <strong>(e) team memory pin honored</strong> — a session in a repo with a committed <code>autoMemoryDirectory</code> recalls
+  <strong>that</strong> directory's <code>MEMORY.md</code> (sentinel check), <strong>not</strong> the user-global one — after trust. Confirms the
+  project-scope pin still beats user-global (else the team blackboard silently shatters per-cwd).</li>
 </ul>
 <h2 id="dependency-chain-what-hangs-on-these-facts">Dependency chain — what hangs on these facts<a class="headerlink" href="#dependency-chain-what-hangs-on-these-facts" title="Permanent link">&para;</a></h2>
 <table>
@@ -1757,6 +1780,10 @@ Work Product is <strong>presumed invalid</strong>: the app-path and the <code>/c
 <tr>
 <td>Worktree placement</td>
 <td>TCC: keep worktrees out of <code>~/Desktop</code> / <code>~/Documents</code> / <code>~/Downloads</code></td>
+</tr>
+<tr>
+<td>Shared team auto-memory blackboard (all worktrees)</td>
+<td>committed <code>autoMemoryDirectory</code> honored (after trust) <strong>and</strong> per-cwd default NOT shared ⇒ explicit pin required (PR #99)</td>
 </tr>
 </tbody>
 </table>

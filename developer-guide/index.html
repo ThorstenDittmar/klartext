@@ -1647,6 +1647,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#team-auto-memory-shared-blackboard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Team auto-memory (shared blackboard)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cicd" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2221,6 +2232,28 @@ agent's Hoheitswissen at session start — and on <code>/clear</code>, which the
   manual Canary in <a href="../superpowers/improvement/environment/claude-code-app/"><code>environment/claude-code-app.md</code></a>.</li>
 </ul>
 <p>Rationale and the return-to-app gate: <a href="../adr/0011-return-to-desktop-app-session-start/">ADR-0011</a> (condition G1).</p>
+<hr />
+<h2 id="team-auto-memory-shared-blackboard">Team auto-memory (shared blackboard)<a class="headerlink" href="#team-auto-memory-shared-blackboard" title="Permanent link">&para;</a></h2>
+<p>All agents share one auto-memory directory — the team blackboard at
+<code>~/.claude/klartext-team-memory</code>. Auto-memory is otherwise keyed by the sanitized <em>cwd</em>, so each
+worktree would get its own store; pinning a fixed <code>autoMemoryDirectory</code> makes every worktree resolve
+to the same directory.</p>
+<ul>
+<li><strong>Where the pin lives:</strong> the <strong>committed</strong> <code>.claude/settings.json</code> (<code>autoMemoryDirectory</code>,
+  <code>autoMemoryEnabled</code>). It is byte-identical in every worktree, so all agents share one store. The
+  desktop app honors a project-scope <code>autoMemoryDirectory</code> <strong>after the worktree's trust dialog is
+  accepted</strong> — the same gate as the hooks.</li>
+<li><strong>Trust matters:</strong> an <em>untrusted</em> worktree silently ignores the pin and falls back to a per-cwd
+  default — a lonely store, not the team blackboard. Accept the trust dialog on first open of each
+  worktree (you already do this for the SessionStart hook).</li>
+<li><strong>Not user-global:</strong> the pin must <strong>not</strong> live in <code>~/.claude/settings.json</code>. A user-global pin
+  redirects <em>every</em> machine session — klartext or not — onto the team memory. <code>setup.sh</code> cleans any
+  stale user-global pin on each run.</li>
+<li><strong>Verification:</strong> <code>api/tests/infrastructure/test_automemory_settings.py</code> gates the committed pin
+  and the setup cleanup. The runtime honoring (the desktop app cannot be scripted) was verified
+  empirically and is re-checked after app updates by the Canary in
+  <a href="../superpowers/improvement/environment/claude-code-app/"><code>environment/claude-code-app.md</code></a>.</li>
+</ul>
 <hr />
 <h2 id="cicd">CI/CD<a class="headerlink" href="#cicd" title="Permanent link">&para;</a></h2>
 <p>GitHub Actions workflows run on every push and pull request:</p>
