@@ -84,25 +84,24 @@ fi
 
 # 6. Resolve the tab title from the roster (team.yaml). Falls back to the slug when the
 #    roster is absent or lacks the agent — the title is cosmetic, never block the launch.
+#    Parsed with awk, NOT python+yaml: the roster is a fixed, flat, test-guarded format,
+#    and a cosmetic title must not depend on a PyYAML install being present (a fresh CI
+#    runner's system python3 has none — the bug this replaces). `|| resolved=""` keeps a
+#    parse failure from aborting the launch under set -e.
 TEAM_YAML="$REPO_ROOT/agents/team.yaml"
 AGENT_TITLE="$SLUG"
 if [ -f "$TEAM_YAML" ]; then
-    # `|| resolved=""` keeps a missing/broken python3 from aborting the launch under
-    #  set -e — the title is cosmetic and must never block an agent from starting.
-    resolved="$(python3 - "$TEAM_YAML" "$SLUG" <<'PYEOF'
-import sys, yaml
-path, slug = sys.argv[1], sys.argv[2]
-try:
-    with open(path) as f:
-        data = yaml.safe_load(f) or {}
-except Exception:
-    sys.exit(0)
-for a in (data.get("agents") or []):
-    if a.get("slug") == slug:
-        print(a.get("display", slug))
-        break
-PYEOF
-)" || resolved=""
+    resolved="$(awk -v target="$SLUG" '
+        /^[[:space:]]*-?[[:space:]]*slug:[[:space:]]*/ {
+            v=$0; sub(/^[^:]*:[[:space:]]*/,"",v); gsub(/[" '\'']/,"",v); cur=v
+        }
+        /^[[:space:]]*display:[[:space:]]*/ {
+            if (cur==target) {
+                d=$0; sub(/^[^:]*:[[:space:]]*/,"",d); sub(/^["'\'']/,"",d); sub(/["'\'']$/,"",d)
+                print d; exit
+            }
+        }
+    ' "$TEAM_YAML")" || resolved=""
     [ -n "$resolved" ] && AGENT_TITLE="$resolved"
 fi
 
