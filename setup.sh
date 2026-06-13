@@ -159,41 +159,49 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-# Auto-memory pinning (shared team blackboard)
+# Auto-memory location (shared team blackboard)
 # ---------------------------------------------------------------------------
 
-section "Pinning auto-memory location"
+section "Auto-memory location"
 
-# All agent sessions share one auto-memory directory — the team blackboard.
-# Auto-memory is otherwise keyed by the session's project path, which is fragile:
-# sessions started from different cwds get different memory stores. Pinning it to
-# a fixed, stable path via the user-global settings makes every session read and
-# write the same memory regardless of cwd (and survives the move to git worktrees).
+# The team blackboard lives at a fixed path that every worktree resolves to. The
+# pin now lives in the COMMITTED .claude/settings.json (autoMemoryDirectory), which
+# the desktop app honors after the worktree's trust dialog is accepted and which is
+# byte-identical in every worktree — so all agents share one memory directory.
+#
+# Why not the user-global ~/.claude/settings.json (the old approach): a user-global
+# pin redirects EVERY machine session — klartext or not — onto the team memory. This
+# setup step therefore (1) ensures the directory exists and (2) CLEANS any stale
+# user-global pin left by previous setup runs, so unrelated projects stop leaking.
+# Empirics behind this: docs/superpowers/improvement/environment/claude-code-app.md.
 MEMORY_DIR="$HOME/.claude/klartext-team-memory"
 USER_SETTINGS="$HOME/.claude/settings.json"
 
 mkdir -p "$MEMORY_DIR" "$HOME/.claude"
 
-# Merge the two keys into the user-global settings without clobbering existing
-# values (model, theme, plugins, …). Idempotent: safe to re-run.
-python3 - "$USER_SETTINGS" "$MEMORY_DIR" <<'PY'
+# Remove the stale user-global auto-memory pin without clobbering other values
+# (theme, plugins, …). Idempotent: a no-op once the keys are gone.
+if [ -f "$USER_SETTINGS" ]; then
+    python3 - "$USER_SETTINGS" <<'PY'
 import json, pathlib, sys
 
-settings_path, memory_dir = sys.argv[1], sys.argv[2]
-path = pathlib.Path(settings_path)
-data = {}
-if path.exists():
-    try:
-        data = json.loads(path.read_text())
-    except json.JSONDecodeError:
-        data = {}
-data["autoMemoryEnabled"] = True
-data["autoMemoryDirectory"] = memory_dir
-path.write_text(json.dumps(data, indent=2) + "\n")
+path = pathlib.Path(sys.argv[1])
+try:
+    data = json.loads(path.read_text())
+except (json.JSONDecodeError, FileNotFoundError):
+    sys.exit(0)
+removed = [k for k in ("autoMemoryEnabled", "autoMemoryDirectory") if k in data]
+for k in removed:
+    data.pop(k)
+if removed:
+    path.write_text(json.dumps(data, indent=2) + "\n")
+    print("cleaned stale user-global auto-memory keys: " + ", ".join(removed))
 PY
+fi
 
-success "Auto-memory pinned to $MEMORY_DIR (user-global settings)"
-info "Existing team memory is not migrated by setup.sh — copy it once if needed."
+success "Team memory at $MEMORY_DIR — pinned via committed .claude/settings.json"
+info "First open of each worktree: accept the trust dialog (same gate as the hooks)."
+info "Untrusted worktrees silently fall back to a per-cwd default — not the team blackboard."
 
 # ---------------------------------------------------------------------------
 # External reference assets
