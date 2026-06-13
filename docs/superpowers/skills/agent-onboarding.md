@@ -88,9 +88,9 @@ the launcher reads the allowlist and the worktree checkout is based on `origin/m
 sign-off artifact) → CI gate → merge.
 
 **Team Roster (mandatory, same step):** add the new agent to `agents/team.yaml` (slug, display name,
-`status: terminal`, `active: true`). The roster is the Work Product advancing the Team alpha and is
-read by the start tooling — an agent missing here is invisible to the morning script. Offboarding:
-set `active: false` (keep the entry for history). Migration app→terminal: flip `status` in the same
+`status: app`, `active: true`). The roster is the Work Product advancing the Team alpha and is
+read by the start tooling — an agent missing here is invisible to it. Offboarding:
+set `active: false` (keep the entry for history). Migration terminal↔app: flip `status` in the same
 step as the generation change.
 
 ---
