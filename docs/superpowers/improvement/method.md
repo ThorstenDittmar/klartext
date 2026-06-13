@@ -36,6 +36,7 @@
 | Document Scoping | Way of Working | ritual | — | ✅ `practices/document-scoping.md` |
 | Retrospective | Way of Working (tracks Improvement sub-alpha) | ritual | ✓ (Work cannot reach *Closed* without it) | ✅ `practices/retrospective.md` |
 | Merge Protocol | Work | ritual | ✓ (for parallel dispatches) | ✅ `practices/merge-protocol.md` |
+| Environment Knowledge | Way of Working | ritual (manual canary — flagship Resource not scriptable) | ✓ (before an env-fact-dependent decision; after a tool update) | ✅ `practices/environment-knowledge.md` |
 
 ## Practices — enacted as skills (cards pending)
 
@@ -99,6 +100,13 @@ ritual: updated in the same step as the event that changes it (onboarding/offboa
 non-derivable facts (status app|terminal, active flag, display name) — existence and worktree state stay
 derivable from `agents/*/` and `git worktree list` (RC4 guard: no second truth); consumers: launcher/morning
 tooling (DevOps mechanics).
+
+**Environment Work Products** (`docs/superpowers/improvement/environment/`) — our **version-bound, falsifiable**
+knowledge about the tools we *use* (Claude Code app/CLI, git, Supabase, macOS); produced by the **Environment
+Knowledge** practice. Each carries version-binding + a manual **Canary** + a **dependency chain** + status tags
+(tested / observed-untested / inferred / superseded). First instance: `claude-code-app.md` (v1.12603.1). Owner
+OE (form + home); empirical content four-eyes-verified by the testing agent (DevOps). Distinct from **Resources**
+below (which we *reference*, not *produce*).
 
 **Resources** (referenced, not produced — Essence element): external reference assets (licensed decks,
 standards PDFs) · home `assets-local/` (gitignored; README = provenance register, convention in `setup.sh`).
