@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/adr/0010-agent-operating-model/">
+        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/adr/0011-return-to-desktop-app-session-start/">
       
       
       
@@ -23,7 +23,7 @@
     
     
       
-        <title>0010 — Agent Operating Model: Terminal Start, Worktree Isolation, Generational Sessions - klartext.jetzt – Spezifikation</title>
+        <title>0011 — Return to the Desktop App for Session Start (Gated) - klartext.jetzt – Spezifikation</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#0010-agent-operating-model-terminal-start-worktree-isolation-generational-sessions" class="md-skip">
+        <a href="#0011-return-to-the-desktop-app-for-session-start-gated" class="md-skip">
           Zum Inhalt
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              0010 — Agent Operating Model: Terminal Start, Worktree Isolation, Generational Sessions
+              0011 — Return to the Desktop App for Session Start (Gated)
             
           </span>
         </div>
@@ -1650,7 +1650,7 @@
 
 
   
-    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/adr/0010-agent-operating-model.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/adr/0011-return-to-desktop-app-session-start.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1658,177 +1658,151 @@
   
 
 
-<h1 id="0010-agent-operating-model-terminal-start-worktree-isolation-generational-sessions">0010 — Agent Operating Model: Terminal Start, Worktree Isolation, Generational Sessions<a class="headerlink" href="#0010-agent-operating-model-terminal-start-worktree-isolation-generational-sessions" title="Permanent link">&para;</a></h1>
-<p><strong>Status:</strong> Accepted · <strong>§1 + "Desktop app start" rejection partially superseded by <a href="../0011-return-to-desktop-app-session-start/">ADR-0011</a> (2026-06-13)</strong> — §2 worktree isolation, §3 generational sessions, §4 shared layer remain in force.<br />
-<strong>Decided by:</strong> User (2026-06-11)<br />
-<strong>Author / Sign-off:</strong> System Architect<br />
-<strong>Technical source:</strong> DevOps specification — Improvement Register §3 "Structural change: git worktree per context + session-cwd repair"<br />
-<strong>External evidence:</strong> <code>docs/superpowers/improvement/2026-06-10-external-review-brief.md</code> + <code>2026-06-10-external-review-response.md</code></p>
+<h1 id="0011-return-to-the-desktop-app-for-session-start-gated">0011 — Return to the Desktop App for Session Start (Gated)<a class="headerlink" href="#0011-return-to-the-desktop-app-for-session-start-gated" title="Permanent link">&para;</a></h1>
+<p><strong>Status:</strong> Accepted (Gate) — decision made, execution conditional on the Gate below
+<strong>Decided by:</strong> User (2026-06-13), direction set; conditions authored by System Architect
+<strong>Author / Sign-off:</strong> System Architect
+<strong>Supersedes:</strong> ADR-0010 §1 "Terminal start via central launcher" and the rejected alternative "Desktop app start". ADR-0010 §2 (worktree isolation), §3 (generational sessions) and §4 (shared layer pinned) remain in force and are carried forward unchanged.
+<strong>Evidence:</strong> <code>docs/superpowers/improvement/environment/claude-code-app.md</code> — Environment Work Product, <strong>frozen v1</strong>, DevOps-verified 2026-06-13, version-bound to Claude.app <strong>v1.12603.1</strong> (Build 3df4fd).</p>
 <h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
-<p>The klartext project uses 10 specialized Claude Code agents as long-living sessions. Until 2026-06-10
-the shared operating model had three structural failure modes, discovered in a single day.</p>
-<p><strong>1. Shared working tree (RC5)</strong><br />
-All 10 agents operated on one working tree (<code>/Users/thormar/klartext</code>). Any <code>git reset</code>, <code>checkout</code>,
-or branch deletion is tree-global — it reaches uncommitted edits of every other agent regardless of
-file-ownership discipline. Three data losses on 2026-06-10: OE (5 register rows, 13:46), Causal Model
-Expert (3 claude.md sections, branch deleted), System Architect (4 claude.md sections, mechanism unknown).
-All three recovered independently — by luck and redundancy, not protection.</p>
-<p><strong>2. Sessions never starting in the repo root (RC4 variant)</strong><br />
-All sessions started via the Claude desktop app from <code>$HOME</code>. Consequences:<br />
-- Project <code>.claude/settings.json</code> (including PostCompact hooks) never loaded<br />
-- Per-agent allowlists in <code>agents/&lt;name&gt;/start.sh</code> were never active<br />
-- The compact-monitor hook chain never fired in a real session  </p>
-<p>Forensic evidence: memory-key analysis proved no session ever ran from the repo root.
-The first real hook firing happened on the terminal probe (2026-06-11).</p>
-<p><strong>3. Eternal sessions compacting into unreliable summaries (False Persistence)</strong><br />
-Sessions that compact indefinitely replace verified artifact state with unverified summaries.
-Three independent instances of False Persistence were documented on 2026-06-10.
-External review: <em>"Paradox formuliert: Die kompaktierte ewige Session ist die mit dem
-unzuverlässigeren Gedächtnis."</em> A fresh session that boots from disk has exclusively
-artifact-verified knowledge; a compacted session has summaries.</p>
-<p>Root causes: RC5 (destructive git ops in shared tree) · RC4 "documented vs. actual" ·
-False Persistence sub-class.</p>
+<p>ADR-0010 mandated <strong>terminal start via <code>scripts/start-agent.sh</code></strong> as the only viable session
+entry point. Its decisive justification was that the desktop app could not start a session in the
+repository root — recorded in the rejected alternative "Desktop app start" as <em>"structurally
+impossible upstream … no <code>--cwd</code> flag, folder selection never changes shell cwd."</em> That conclusion
+was drawn from a single black-box test on 2026-06-10.</p>
+<p>On 2026-06-13 DevOps re-tested the app empirically on <strong>v1.12603.1</strong> against an isolated clone
+(<code>~/klartext-apptest</code>). The result, frozen as an Environment Work Product, refutes the premise:</p>
+<ul>
+<li><strong>Primary cwd = repo</strong> ✓ — via the <strong>working-directory picker</strong> (the folder-name chip →
+  <em>„Ordner öffnen…"</em>), <strong>not</strong> the <code>📁+</code> button (which only adds an <em>additional</em> dir and leaves the
+  primary at <code>$HOME</code> — the cause of every earlier failed attempt).</li>
+<li><strong>Project <code>settings.json</code> + hooks load</strong> ✓ — <code>/compact</code> fired the PostCompact hook with the branch
+  correctly resolved (⇒ <code>CLAUDE_PROJECT_DIR</code> was set).</li>
+<li><strong>Allowlist enforcement is project-local, deny-by-default</strong> ✓ — an allowlisted command ran without
+  a prompt; a non-matched command prompted with badge <code>Projekt (lokal)</code>.</li>
+<li><strong><code>/clear</code> works and fires <code>SessionStart</code></strong> ✓ — reported as <code>source=startup</code>, lazily on the next prompt.</li>
+</ul>
+<p>The app passes cwd through (<code>startSession({cwd})</code>). The earlier observation "folder selected, still
+<code>$HOME</code>" had two real causes: (a) the wrong button (additional dir, not primary picker), and
+(b) TCC — <code>~/Desktop</code>/<code>~/Documents</code>/<code>~/Downloads</code> need a macOS file-access grant; Home-root does not.</p>
+<p><strong>Important framing (no fault):</strong> the ADR-0010 migration was <strong>correct at the time</strong> — it was taken
+under the old eternal-session-from-Home model (pre-April redesign), where the observed behaviour was
+real. It is <strong>no longer alternativlos</strong>, not "was always wrong." This ADR re-opens only the
+session-start mechanism; it does not relitigate the operating model.</p>
 <h2 id="decision">Decision<a class="headerlink" href="#decision" title="Permanent link">&para;</a></h2>
-<p>The User decided on a new operating model with four pillars. All four were validated by a
-DevOps pilot (2026-06-11); rollout to all 10 agents proceeds at natural session boundaries,
-riskiest agent first.</p>
-<h3 id="1-terminal-start-via-central-launcher">1. Terminal start via central launcher<a class="headerlink" href="#1-terminal-start-via-central-launcher" title="Permanent link">&para;</a></h3>
-<blockquote>
-<p><strong>Superseded by <a href="../0011-return-to-desktop-app-session-start/">ADR-0011</a> (2026-06-13, gated).</strong> The
-decisive premise below — that the desktop app cannot start a session in the repo root — was empirically
-refuted on Claude.app v1.12603.1 (Environment Work Product, DevOps). The launcher is retained as the
-terminal fallback and rollback path; it is no longer the only viable entry point. The mechanics proof
-(4/4) below remains a true record of the terminal probe.</p>
-</blockquote>
-<p>All agent sessions start via:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>scripts/start-agent.sh &lt;slug&gt;
-</code></pre></div>
-<p>The central launcher carries all startup logic (cwd, allowlist injection). The 10
-<code>agents/&lt;name&gt;/start.sh</code> remain as thin one-line wrappers — single logic home, no ten-way
-drift, documented identity entry point per colleague preserved.</p>
-<p>Allowlists are read from <code>agents/&lt;name&gt;/allowed-tools.txt</code> before the <code>cd</code> into the worktree,
-so they are always read from the canonical main-tree version.</p>
-<p><strong>Proof:</strong> Terminal probe 2026-06-11 — mechanics 4/4 pass: cwd in repo ✓ · project settings
-+ PostCompact hooks loaded ✓ · memory pinned ✓ · hook fired on real <code>/compact</code> (first time
-in project history) ✓.</p>
-<h3 id="2-worktree-per-colleague">2. Worktree per colleague<a class="headerlink" href="#2-worktree-per-colleague" title="Permanent link">&para;</a></h3>
-<p>Each agent gets its own isolated working directory:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>$HOME/klartext-worktrees/&lt;slug&gt;/
-</code></pre></div>
-<p>Persistent home branch: <code>agent/&lt;slug&gt;</code>. Code lands on main only via PR gate — merge-protocol
-rule 5 fulfills its sunset clause.</p>
-<p>Lifecycle rules (DevOps domain):
-- Provisioning is idempotent: exists → reuse, never reset
-- Teardown via <code>worktree remove</code> + <code>prune</code>, never <code>rm -rf</code>
-- Crash recovery via <code>worktree repair</code>; orphan check as health step</p>
-<p><strong>Consequence:</strong> RC5 is solved structurally. A <code>git reset</code> by one agent is physically impossible
-in another agent's worktree. No rule or discipline required — the strongest enforcement is the
-kind that needs no rule.</p>
-<p><strong>Architecture principle:</strong> "Isolate code, share comms/memory/audit."</p>
-<h3 id="3-generational-sessions-as-the-normal-mode">3. Generational sessions as the normal mode<a class="headerlink" href="#3-generational-sessions-as-the-normal-mode" title="Permanent link">&para;</a></h3>
-<p><em>Colleague</em> = <code>claude.md</code> + domain knowledge + memory + role.<br />
-<em>Session</em> = a working day.<br />
-<em>Generational change</em> = end of day, not end of identity.</p>
-<p>Proactive restart replaces compaction:</p>
-<ol>
-<li>Pre-Restart ritual (formerly Pre-Compact) — artifact-verified, well before context threshold</li>
-<li>Session ended by user</li>
-<li>Fresh session booted via launcher into the same worktree</li>
-<li>Fresh session reads disk (claude.md + pinned memory) — exclusively artifact-verified state</li>
-</ol>
-<p><strong>Pilot proof:</strong> DevOps generation change 2026-06-11. Successor seed: full pre-restart ritual
-+ handoff note in own inbox. New session booted via launcher; channel proof artifact-verified
-(inbox message received and read). First colleague with real cwd, firing hooks, active allowlists
-and worktree isolation.</p>
-<p>WIP-commit discipline: with an own worktree, frequent small commits are safe (no shared tree
-risk). The volatile in-session layer shrinks from days to minutes.</p>
-<h3 id="4-shared-layer-centrally-pinned">4. Shared layer centrally pinned<a class="headerlink" href="#4-shared-layer-centrally-pinned" title="Permanent link">&para;</a></h3>
-<p>Shared infrastructure lives under <code>~/.claude/klartext-team-memory/</code>:</p>
+<p><strong>The agent sessions return to the Claude desktop app for session start, once the Gate below is met.</strong></p>
+<p>Rationale:
+- The decisive blocker for the app path (no repo cwd ⇒ no settings/hooks/allowlists) <strong>no longer
+  exists</strong> on v1.12603.1. The four mechanics ADR-0010 demanded of terminal start — cwd in repo,
+  settings + hooks loaded, allowlists active, hooks firing on real lifecycle events — are now all
+  reproducible <strong>in the app</strong>.
+- The app additionally restores ergonomics the terminal path gave up (session list, in-app UX) and
+  supports the <code>/clear</code> generation-change ritual natively.
+- <strong>Migration cost is low and reversible:</strong> the worktree layout, branches, shared memory, and file
+  inbox (ADR-0010 §2/§4) are environment-agnostic — both terminal and app point the same picker at the
+  same <code>~/klartext-worktrees/&lt;slug&gt;/</code>. Switching entry point does not touch the isolation guarantees.</p>
+<p>This decision changes <strong>only the session-start entry point</strong> (ADR-0010 §1). It explicitly does <strong>not</strong>
+change:
+- <strong>§2 Worktree per colleague</strong> — isolation that solved RC5 (cross-agent data destruction) stays. The
+  app points its picker at the existing <code>~/klartext-worktrees/&lt;slug&gt;/</code>; no native app worktrees for
+  long-lived agents (still rejected, ADR-0010).
+- <strong>§3 Generational sessions</strong> — fresh-session-from-disk over eternal compaction stays. In the app the
+  generation change is <code>/clear</code> (discards context) rather than ending the OS process; the Pre-Restart
+  ritual is unchanged.
+- <strong>§4 Shared layer pinned</strong> — auto-memory, file inbox, compact log stay exactly as pinned. <strong>The file
+  inbox remains the cross-agent channel</strong> under this ADR — see Open Questions.</p>
+<h2 id="gate-conditions-for-a-clean-return">Gate — conditions for a clean return<a class="headerlink" href="#gate-conditions-for-a-clean-return" title="Permanent link">&para;</a></h2>
+<p>The return is <strong>blocked</strong> until every condition is satisfied. This list is the basis of the DevOps
+briefing.</p>
 <table>
 <thead>
 <tr>
-<th>Component</th>
-<th>Purpose</th>
+<th>#</th>
+<th>Condition</th>
+<th>Owner</th>
+<th>Status</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Auto-memory (team blackboard)</td>
-<td>Pinned via <code>autoMemoryDirectory</code>; content copied from original (rollback); bootstrapped in <code>setup.sh</code>; CI-validated on fresh runner</td>
+<td>G1</td>
+<td><strong><code>SessionStart</code> hook that loads <code>agents/&lt;name&gt;/claude.md</code></strong> from the worktree path, with a matcher that <strong>includes <code>startup</code></strong> (the app reports <code>/clear</code> as <code>source=startup</code>, lazily on next prompt). Today <code>settings.json</code> has only a PostCompact hook — identity reload on session/<code>/clear</code> is <strong>missing</strong>.</td>
+<td>DevOps</td>
+<td><strong>OPEN — blocking</strong></td>
 </tr>
 <tr>
-<td>File inbox (<code>inbox/&lt;slug&gt;/</code>)</td>
-<td><code>scripts/inbox.sh send\|read\|unread</code>; replaces app messaging; user nudges recipient — same semantics as <code>send_message</code>, no unsolicited delivery</td>
+<td>G2</td>
+<td><strong>Local-mode invariant</strong> — sessions run only in the app's <strong>Local</strong> environment. Cloud / Remote Control do not see <code>~/klartext-worktrees</code> or <code>.claude/settings.json</code>. To be asserted as an operating invariant (and, where possible, a startup/health check).</td>
+<td>DevOps + OE</td>
+<td>OPEN</td>
 </tr>
 <tr>
-<td>Compact log</td>
-<td>Centrally pinned; one launchd instance covers all worktrees; branch field identifies which agent compacted</td>
+<td>G3</td>
+<td><strong>TCC placement</strong> — worktrees stay out of <code>~/Desktop</code>/<code>~/Documents</code>/<code>~/Downloads</code> (those need a macOS grant). <code>~/klartext-worktrees/&lt;slug&gt;/</code> (Home-root) is fine and already in use. Document as a placement rule.</td>
+<td>DevOps</td>
+<td>Met by current layout; document</td>
+</tr>
+<tr>
+<td>G4</td>
+<td><strong>Allowlist patterns match the real invocation form</strong> — <code>Bash(semgrep*)</code> covers the bare call but <strong>not</strong> the real <code>…/api/.venv/bin/semgrep</code> absolute path the pre-commit hooks use, so the genuine invocations would prompt. Refine allowlist patterns to the actual (venv-absolute) form.</td>
+<td>DevOps + SA</td>
+<td>OPEN</td>
+</tr>
+<tr>
+<td>G5</td>
+<td><strong>Version binding + Canary</strong> — these facts hold for <strong>v1.12603.1 only</strong>. The manual Canary in the Work Product must be re-run after <strong>any</strong> app update; a failing Canary presumes this ADR's premise invalid until re-verified.</td>
+<td>DevOps</td>
+<td>Standing obligation</td>
+</tr>
+<tr>
+<td>G6</td>
+<td><strong>Managed-Settings / MDM watch</strong> — the <code>serverManagedSettings</code> (MDM, "first-wins") layer is <strong>inactive today</strong> but is the single place a future central policy could override our allowlist/hooks. Record as a risk/watch, not a blocker.</td>
+<td>SA</td>
+<td>Watch (non-blocking)</td>
 </tr>
 </tbody>
 </table>
-<p>App messaging (<code>send_message</code>, session list) is not used: terminal sessions do not appear
-in the app session list and cannot receive app messages. The file inbox is the durable
-substitute with equivalent semantics.</p>
-<h2 id="rejected-alternatives">Rejected Alternatives<a class="headerlink" href="#rejected-alternatives" title="Permanent link">&para;</a></h2>
-<p>The decision record includes rejected paths as first-class method knowledge (user requirement, 2026-06-10).</p>
-<table>
-<thead>
-<tr>
-<th>Alternative</th>
-<th>Verdict</th>
-<th>Reason</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Eternal sessions (never restart)</strong></td>
-<td>Rejected</td>
-<td>Every compaction replaces verified history with an unverified summary — the False Persistence sub-class. The longer a session lives, the more its "memory" diverges from artifact state. External reference: Paperclip implements "persistent agents" as disk state loaded into fresh context per heartbeat, not eternal sessions. Identity is durable; sessions are not.</td>
-</tr>
-<tr>
-<td><strong>Desktop app start</strong></td>
-<td>~~Rejected~~ <strong>Superseded by <a href="../0011-return-to-desktop-app-session-start/">ADR-0011</a></strong></td>
-<td><em>Original 2026-06-11 reasoning, preserved as the record:</em> "Structurally impossible upstream. Folder selection sets the project association but never changes shell cwd. GH issues #56688 / #26287 / #60151 / #60099 confirm: no <code>--cwd</code> flag, no shipped default-directory setting. Live test 2026-06-10 (fresh app session, folder actively selected via picker): shell remains in <code>$HOME</code>." <strong>Refuted 2026-06-13 on v1.12603.1:</strong> the app passes cwd through (<code>startSession({cwd})</code>); the 2026-06-10 observation came from the wrong button (<code>📁+</code> additional-dir instead of the primary working-directory picker) + TCC, not a structural limit. See ADR-0011.</td>
-</tr>
-<tr>
-<td><strong>Agent Teams as team memory</strong></td>
-<td>Rejected</td>
-<td>Agent Teams directories are ephemeral coordination infrastructure, not a persistence layer. Using them as a team blackboard is tool misuse — the content has no persistence contract.</td>
-</tr>
-<tr>
-<td><strong>Native app worktrees for long-lived agents</strong></td>
-<td>Rejected / Superseded by self-managed worktrees</td>
-<td>The app creates native worktrees for ephemeral sessions. For long-lived agents they produce diverging <code>claude/</code> branches and have no lifecycle discipline (idempotent provisioning, crash recovery, orphan cleanup). Self-managed worktrees under <code>$HOME/klartext-worktrees/&lt;slug&gt;/</code> keep lifecycle control in our hands — standard git, not a workaround.</td>
-</tr>
-<tr>
-<td><strong>Shared working tree with ritual protection</strong></td>
-<td>Rejected / Superseded by worktree isolation</td>
-<td>Three data losses in one day despite mature rituals and a passed merge-protocol stress test on the same day. External review: <em>"Das Grundproblem ist nicht Disziplin, sondern Physik"</em> — tree-global git operations violate file-ownership rules without any agent misbehaving. Ritual enforcement is permanently inferior to physical isolation per our own enforcement hierarchy (mechanical &gt; ritual).</td>
-</tr>
-<tr>
-<td><strong>Hybrid: high-risk agents terminal, advisors in app</strong></td>
-<td>Superseded by uniform terminal</td>
-<td>Proposed as a fallback if the file inbox proved unworkable. Discarded after the inbox was validated (PR #70, 5 infra tests passing). Uniform terminal with file inbox is simpler, consistent, and avoids split enforcement.</td>
-</tr>
-</tbody>
-</table>
+<p><strong>Sequencing (strictly serial):</strong> this ADR-gate first → then DevOps builds G1/G4 (and asserts G2/G3)
+→ then OE delivers the operating-model update + the <code>team.yaml</code> app/terminal flip. No step starts
+before the prior one lands.</p>
+<h2 id="open-questions">Open Questions<a class="headerlink" href="#open-questions" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Cross-agent messaging in the app.</strong> ADR-0010 §4 moved to the <strong>file inbox</strong> because terminal
+  sessions were invisible to app messaging. Back in the app, in-app messaging (<code>send_message</code>, session
+  list) may be available again. This ADR <strong>keeps the file inbox</strong> as the channel — it is durable,
+  worktree-independent, and CI-tested — and does <strong>not</strong> re-enable app messaging by default. Whether to
+  layer app messaging back on top is a <strong>separate decision (SA + OE + user)</strong>, out of scope here.</li>
+<li><strong><code>/clear</code> vs. process restart as the generation boundary.</strong> ADR-0010 §3 framed the generation change
+  as ending the session process. In the app, <code>/clear</code> discards context within a living process and fires
+  <code>SessionStart</code>. Functionally equivalent for the False-Persistence guarantee (fresh state from disk),
+  but the operating ritual wording is OE's to update.</li>
+</ul>
 <h2 id="consequences">Consequences<a class="headerlink" href="#consequences" title="Permanent link">&para;</a></h2>
-<p><strong>Positive:</strong>
-- RC5 solved structurally — cross-agent data destruction is physically impossible
-- Settings, hooks, and allowlists are real for the first time; enforcement is mechanical
-- PostCompact hook chain proven end-to-end (first real firing: 2026-06-11)
-- Fresh sessions load exclusively artifact-verified state; False Persistence dissolved by design
-- WIP commits are safe and cheap; volatile layer shrinks from days to minutes
-- Rollout playbook documented and proven via DevOps pilot</p>
-<p><strong>Negative / Risks:</strong>
-- Terminal sessions are not visible in the app and cannot receive app messages — file inbox covers semantics at the cost of slightly more friction compared to <code>send_message</code>
-- Fresh sessions require a wake prompt before they act — the successor seed or launcher must include the initial task (pilot finding: a fresh session waits for the user's first message)
-- Mixed mode during rollout: the 9 remaining agents migrate at natural endpoints; interim period has heterogeneous session environments
-- <strong>Stop-and-wait throughput:</strong> every inbox handover waits for a user nudge before the recipient acts. Effective throughput in multi-agent runs is a function of user availability, not agent readiness. In sequential chains (e.g. 4 agents in a DELETE-404-style run), each step adds a human relay delay. This is a known, accepted trade-off: the user as channel is a deliberate safety invariant, not an accident. Evidence: Hannibal's retro input on the DELETE-404 run (2026-06-12). Mitigation: keep chains short; batch handoffs where semantics allow.</p>
-<p><strong>Ongoing obligations:</strong>
-- <code>scripts/start-agent.sh</code> is the single startup logic home; allowlist or cwd changes go through the launcher, not individual wrappers
-- Worktree lifecycle (provision, teardown, repair, orphan check) is DevOps domain
-- File inbox semantics are identical to <code>send_message</code> semantics: user nudges the recipient; no unsolicited delivery without the user as channel</p>
+<p><strong>Positive</strong>
+- The single hard blocker behind the terminal mandate is gone; the app path is verified, not inferred.
+- Native session list and in-app UX return; <code>/clear</code> gives a first-class generation-change ritual.
+- All ADR-0010 safety guarantees (worktree isolation, generational sessions, shared/pinned layer)
+  carry forward untouched — this is an entry-point swap, not an operating-model change.</p>
+<p><strong>Negative / Risks</strong>
+- <strong>Hard dependency on G1:</strong> without the <code>startup</code>-matcher <code>SessionStart</code> hook, an app session boots
+  <strong>without</strong> loading its <code>agents/&lt;name&gt;/claude.md</code> — identity drift. The return must not proceed before
+  G1 lands. (This is why the gate is serial.)
+- <strong>Version-bound (G5):</strong> the decision rests on v1.12603.1 behaviour. An app update can silently break
+  cwd/hooks/<code>/clear</code>; the manual Canary is the only detector and depends on human discipline.
+- <strong>Allowlist mismatch (G4):</strong> until patterns match the venv-absolute form, the real pre-commit
+  invocations prompt — friction that can erode the deny-by-default posture if worked around.
+- <strong>MDM latent override (G6):</strong> dormant today; a future managed-settings policy is the one layer that
+  could centrally disable our hooks/allowlist without our consent.</p>
+<p><strong>Ongoing obligations</strong>
+- The Environment Work Product is the <strong>single source</strong> for these app facts; this ADR cites it rather
+  than copying it. When the Canary fails, this ADR's "Accepted" status is <strong>presumed suspended</strong> until
+  the Work Product is re-frozen for the new version.
+- <code>scripts/start-agent.sh</code> and the per-agent <code>start.sh</code> wrappers are <strong>not deleted</strong> — they remain the
+  terminal fallback while G1–G4 are pending and as the documented rollback path.</p>
+<h2 id="rollback">Rollback<a class="headerlink" href="#rollback" title="Permanent link">&para;</a></h2>
+<p>Reversible at low cost: re-select terminal start via <code>scripts/start-agent.sh</code> (kept intact). The
+worktrees, branches, shared memory, and inbox are unchanged by the entry-point choice, so a rollback
+touches only how a session is launched — no data migration.</p>
 
 
 
