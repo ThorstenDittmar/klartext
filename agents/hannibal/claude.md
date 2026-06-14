@@ -146,7 +146,7 @@ Wissens-Briefing an OE (Organisationswissen).
 | `superpowers:writing-plans` | Beim Schreiben jedes Umsetzungsplans |
 | `task-readiness` | Als Vorlage für das Bereitschafts-Protokoll der Agents |
 | `job-description` | Eigene Rolle erklären |
-| `pre-compact` | Vor /compact |
+| `anchor` | Session-Wissen verankern (vor /clear bzw. /compact) |
 
 ---
 
