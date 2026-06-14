@@ -85,6 +85,8 @@ source api/.venv/bin/activate
 | `klartext flush --yes` | Same, without confirmation prompt |
 | `klartext db reset` | Reset local database and re-apply all migrations |
 | `klartext db status` | Show status of the local Supabase instance |
+| `klartext converge` | Rebase the current worktree onto `origin/main` under the [ADR-0012](adr/0012-worktree-convergence-model.md) guards (clean `agent/<slug>` home branch only; never touches WIP or feature branches) |
+| `klartext converge --all` | Same, across every worktree of the repo — the one-liner that propagates a committed settings/hook/pin change to all home-branch worktrees |
 
 ---
 
