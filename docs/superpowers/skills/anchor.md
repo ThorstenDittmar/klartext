@@ -216,6 +216,20 @@ Inhalt der Notiz:
 (`inbox.sh unread <self>` / `wc -l` auf die Datei) — der Seed ist die Verlust-Versicherung, er darf nicht
 selbst dem False-Persistence-Bug zum Opfer fallen.
 
+## Schritt 4.7 — Worktree aktuell? (NUR im Restart-Modus, Hinweis)
+
+**Überspringen, wenn Checkpoint.** Im Restart-Modus ist der Worktree nach Schritt 4 sauber (alles
+committet) — ein sicherer Moment, ihn mit `main` zu synchronisieren, damit die Nachfolge-Session auf
+aktuellem `main` startet (die App rebaset beim Start **nicht** automatisch — Drift-Lücke, siehe
+Improvement-Register „App has no auto-rebase at session start").
+
+Dieser Skill **rebaset nicht selbst** — er *verweist* nur auf das mechanische Tooling:
+- `git rebase origin/main` (wenn der Worktree sauber ist und auf seiner `agent/<slug>`-Home-Branch sitzt), **oder**
+- `klartext worktree-sync` (geguardeter Sync, sobald DevOps ihn ausliefert — die Aktions-Hälfte der Drift-Warnung).
+
+**Nicht** auf einem Feature-Branch mit offenem PR zwangs-rebasen — der bekommt `main` beim PR-Merge.
+Kosmetisch/optional: blockiert den `/clear` nie.
+
 ## Schritt 5 — Kurze Zusammenfassung
 
 Kurze Zusammenfassung geben:
