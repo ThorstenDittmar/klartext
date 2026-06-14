@@ -1665,6 +1665,24 @@ Er stellt sicher, dass Wissen das in einer Session entsteht, beim richtigen Eige
 auch wenn es im falschen Domain-Kontext aufgetaucht ist.</p>
 <p><strong>Grundregel:</strong> Der User ist immer der Kanal. Kein Agent schreibt direkt in die Dateien eines anderen Agents.
 Alle Wissens-Briefings gehen durch den User, der entscheidet und weiterleitet.</p>
+<h3 id="kanal-politik-inbox-is-the-floor-app-is-the-doorbell-decided-2026-06-14-108">Kanal-Politik — „Inbox is the floor, app is the doorbell" (Decided 2026-06-14, #108)<a class="headerlink" href="#kanal-politik-inbox-is-the-floor-app-is-the-doorbell-decided-2026-06-14-108" title="Permanent link">&para;</a></h3>
+<p>Seit der Rückkehr in die Desktop-App (ADR-0011) gibt es <strong>zwei</strong> Transportwege zwischen Agents:
+die File-Inbox (<code>scripts/inbox.sh</code>) und App-Direktnachrichten (<code>ccd_session_mgmt</code>). Damit der
+Empfänger nichts verpasst, gilt <strong>ein Kanal von Record</strong>:</p>
+<ul>
+<li><strong>Inbox = Floor (verbindlich, durable).</strong> Alles <strong>Aktionsrelevante oder Persistente</strong> — Briefings,
+  Approval-Requests, Handoffs, Entscheidungen — <strong>muss</strong> in den Inbox des Empfängers. Wenn es zählt,
+  steht es im Inbox. Punkt.</li>
+<li><strong>App-DM = Klingel (optional, ephemer).</strong> Erlaubt nur als Sofort-Nudge <em>zusätzlich</em> zum Inbox-Eintrag
+  („hab dir X in den Inbox gelegt") <strong>oder</strong> für rein ephemere Klärung ohne Aktion/Persistenz.
+  <strong>Niemals alleiniger Träger</strong> eines aktionsrelevanten Items.</li>
+<li><strong>Reconciliation läuft über den Inbox.</strong> Der Empfänger arbeitet seinen Inbox ab; er muss den App-Kanal
+  nicht nach verlorener Arbeit absuchen. So kann das Lesen des Inbox <strong>nie</strong> aktionsrelevante Arbeit verpassen.</li>
+</ul>
+<p><strong>Begründung:</strong> Am 2026-06-14 erreichten zwei Kollegen OE nur über den App-Kanal; OEs Inbox war leer,
+zwei merge-blockierende Approvals (#110/#111) wären ohne User-Hinweis verpasst worden. „Inbox by choice"
+als bloße Konvention hielt nicht — der App-Kanal sickert durch, weil er verfügbar und bequem ist. Daher:
+Inbox als verbindlicher Boden, App nur als Klingel darüber.</p>
 <hr />
 <h2 id="schritt-1-jeden-wissenspunkt-klassifizieren">Schritt 1 — Jeden Wissenspunkt klassifizieren<a class="headerlink" href="#schritt-1-jeden-wissenspunkt-klassifizieren" title="Permanent link">&para;</a></h2>
 <p>Für jeden Kandidaten aus dem Persistenz-Check fragen:</p>
