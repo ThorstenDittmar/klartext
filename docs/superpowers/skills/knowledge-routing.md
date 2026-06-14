@@ -1,7 +1,7 @@
 ---
 name: knowledge-routing
 description: >
-  Use during every pre-compact to identify knowledge that emerged in the session
+  Use during every anchor (session-safeguard ritual) to identify knowledge that emerged in the session
   but belongs to another agent's domain. Classifies knowledge into three types and
   formulates Wissens-Briefings for the user to route. Always runs — the user is always
   the relay. No agent writes directly to another agent's files.
@@ -9,7 +9,7 @@ description: >
 
 # Wissens-Routing
 
-Dieser Schritt läuft als Teil von **jedem** pre-compact.
+Dieser Schritt läuft als Teil von **jedem** anchor (Session-Safeguard-Ritual).
 Er stellt sicher, dass Wissen das in einer Session entsteht, beim richtigen Eigentümer landet —
 auch wenn es im falschen Domain-Kontext aufgetaucht ist.
 
@@ -33,7 +33,7 @@ Für jeden Kandidaten aus dem Persistenz-Check fragen:
 | **Grenzwissen** | Betrifft zwei Agents | Ein Koordinationsmuster zwischen Narrative + Audit |
 | **Organisationswissen** | Betrifft Struktur oder Zusammenarbeit im Multi-Agent-System | Eine Rollenunklarheit, ein neues Kollaborationsmuster |
 
-Eigenwissen → normaler pre-compact Fluss.
+Eigenwissen → normaler anchor Fluss.
 Alle anderen Typen → Wissens-Briefing formulieren.
 
 ---

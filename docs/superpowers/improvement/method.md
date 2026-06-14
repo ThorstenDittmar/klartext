@@ -49,8 +49,8 @@ inverse of RC1 (*enforced-ish but not described* instead of *described but not e
 | QA Review | `qa-review` skill (called by `tdd` step 3) | Software System | ritual | ✓ | ❌ |
 | QA Retro | `qa-retro` skill (test-gap learning loop) | Way of Working, Software System | ritual | ✓ (when triggered) | ❌ |
 | Task Readiness | `task-readiness` skill | Work | ritual — **validated H01-422: invoked 3/3 dispatches** (drained to `main` PR #52) | ✓ | ❌ |
-| Knowledge Routing | `knowledge-routing` skill | Team, Way of Working | ritual (anchored in pre-compact) | ✓ | ❌ |
-| Pre-Compact Capture | `pre-compact` skill | Way of Working | ritual (user-triggered) | ✓ (North Star: no insight lost) | ❌ |
+| Knowledge Routing | `knowledge-routing` skill | Team, Way of Working | ritual (runs within the anchor ritual) | ✓ | ❌ |
+| Anchor — session safeguard (formerly *Pre-Compact Capture*; renamed 2026-06-13 — no longer tied to /compact, the loss-free path is /clear; +conditional successor-seed step) | `anchor` skill (`docs/superpowers/skills/anchor.md`) | Way of Working | ritual (user-triggered) | ✓ (North Star: no insight lost) | ❌ |
 | Frontend Verification | `verify` skill (QA owns criteria, UX/UI executes — four-eyes instance) | Software System | ritual | ✓ (for UI changes) | ❌ |
 | Systematic Debugging | `systematic-debugging` skill | Software System | ritual | — | ❌ |
 | Frontend Standards | `frontend` skill | Software System | ritual | — | ❌ |

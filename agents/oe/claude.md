@@ -135,9 +135,9 @@ QA gibt sie frei via `qa-review` bevor die Infra-Aufgabe als "done" gilt.
 
 Wissen das in einer Agent-Session entsteht, gehört nicht immer zu diesem Agent.
 Damit es trotzdem beim richtigen Eigentümer landet, gibt es das Wissens-Routing —
-ein fester Schritt in jedem pre-compact aller Agents.
+ein fester Schritt in jedem anchor (Session-Safeguard-Ritual) aller Agents.
 
-**Skill:** `knowledge-routing` — läuft bei jedem pre-compact, in jeder Agent-Session.
+**Skill:** `knowledge-routing` — läuft bei jedem anchor, in jeder Agent-Session.
 
 ### Drei Wissens-Typen die ein Briefing auslösen
 
