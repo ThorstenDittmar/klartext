@@ -115,4 +115,6 @@ Entschiedene ADRs — Kurzübersicht für schnelle Orientierung:
 | ADR-0007 | Eigene Komponentenbibliothek | Externe UI-Libraries kollidieren mit Inline-Styles (ADR-0004) |
 | ADR-0004 | Inline-Styles-only | Kein CSS-Modules, kein Tailwind — vollständige Kontrolle über Styling |
 | ADR-0006 | Architectural Linting via Semgrep | Jedes Pattern bekommt automatisierte Durchsetzung |
-| ADR-0010 | Terminal-Start + Worktree-Isolation + Generationswechsel | RC5/RC4/False-Persistence gelöst; Boundaries erstmals mechanisch wirksam |
+| ADR-0010 | Terminal-Start + Worktree-Isolation + Generationswechsel | RC5/RC4/False-Persistence gelöst; Boundaries erstmals mechanisch wirksam (§1 Terminal-Start superseded by ADR-0011; §2/§3/§4 in Kraft) |
+| ADR-0011 | Rückkehr zur Desktop-App für Session-Start (Rollout complete) | App-cwd-Blocker auf v1.12603.1 widerlegt; Worktree-Isolation bleibt, App-Kanal zurück; Entry-Point-Swap, kein Operating-Model-Wechsel |
+| ADR-0012 | Geguardete freiwillige Konvergenz der Agenten-Worktrees | Pull/Konsens/Eventual/explizit, whole-branch; `klartext converge` + Drift-Warnung; ohne das Auto-Rebase aus ADR-0011 driftet das shared layer (RC4) |
