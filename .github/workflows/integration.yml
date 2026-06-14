@@ -5,8 +5,19 @@ name: Integration Tests
 # because they require a running database. This workflow provides the database.
 
 on:
+  # push only on main (post-merge signal). PR validation runs via pull_request.
+  # Without the branch filter, a branch push with an open PR fires BOTH events on
+  # the same SHA -> two duplicate check runs; a single flaky run among the
+  # duplicates then blocks merge even though its twin is green (cf. #118).
   push:
+    branches: [main]
   pull_request:
+
+concurrency:
+  # Supersede in-flight runs for the same ref. cancel-in-progress only for PRs —
+  # never cancel a push/main run.
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   integration:
