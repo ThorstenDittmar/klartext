@@ -2095,6 +2095,14 @@
 <td><code>klartext db status</code></td>
 <td>Show status of the local Supabase instance</td>
 </tr>
+<tr>
+<td><code>klartext converge</code></td>
+<td>Rebase the current worktree onto <code>origin/main</code> under the <a href="../adr/0012-worktree-convergence-model/">ADR-0012</a> guards (clean <code>agent/&lt;slug&gt;</code> home branch only; never touches WIP or feature branches)</td>
+</tr>
+<tr>
+<td><code>klartext converge --all</code></td>
+<td>Same, across every worktree of the repo — the one-liner that propagates a committed settings/hook/pin change to all home-branch worktrees</td>
+</tr>
 </tbody>
 </table>
 <hr />
