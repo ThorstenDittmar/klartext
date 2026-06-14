@@ -6,12 +6,12 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Use when adding a new specialist agent to the klartext multi-agent system. OE skill — guides OE through domain definition, start script creation, knowledge file, CLAUDE.md update, and agent handoff.
+        <meta name="description" content="Anchor the session — secure everything that only lives in the chat to durable storage BEFORE context is lost (via /clear, /compact, or session end). Use whenever the user says "anchor", "session sichern", "nichts vergessen", "alles sichern", "vor clear", "vor neustart", "vor compact", or anything suggesting they want to checkpoint the session before context is reset. On a RESTART (generation change: next step is /clear and a successor session takes over) it also seeds the successor. Supersedes the former `pre-compact` skill — renamed because the ritual is no longer tied to /compact (the loss-free path is /clear; /compact only summarizes and is False-Persistence-prone).
 ">
       
       
       
-        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/superpowers/skills/agent-onboarding/">
+        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/superpowers/skills/anchor/">
       
       
       
@@ -24,7 +24,7 @@
     
     
       
-        <title>Agent Onboarding - klartext.jetzt – Spezifikation</title>
+        <title>Anchor — Session Safeguard - klartext.jetzt – Spezifikation</title>
       
     
     
@@ -75,7 +75,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#agent-onboarding" class="md-skip">
+        <a href="#anchor-session-safeguard" class="md-skip">
           Zum Inhalt
         </a>
       
@@ -111,7 +111,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Agent Onboarding
+              Anchor — Session Safeguard
             
           </span>
         </div>
@@ -1651,7 +1651,7 @@
 
 
   
-    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/superpowers/skills/agent-onboarding.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/superpowers/skills/anchor.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1659,150 +1659,267 @@
   
 
 
-<h1 id="agent-onboarding">Agent Onboarding<a class="headerlink" href="#agent-onboarding" title="Permanent link">&para;</a></h1>
-<p>This skill is used by <strong>OE</strong> when integrating a new specialist agent into the klartext
-multi-agent system. OE owns <code>agents/</code> vollständig — start script, knowledge file, domain entry,
-alles in OE-Hand. Kein DevOps Briefing nötig.</p>
-<p>Each agent lives in its own directory: <code>agents/&lt;name&gt;/</code>
-- <code>agents/&lt;name&gt;/start.sh</code> — thin wrapper, delegates to the central launcher <code>scripts/start-agent.sh</code>
-- <code>agents/&lt;name&gt;/allowed-tools.txt</code> — the agent's tool allowlist (one entry per line, read by the launcher)
-- <code>agents/&lt;name&gt;/claude.md</code> — Hoheitswissen und domänenspezifische Regeln (wird von Claude Code als CLAUDE.md erkannt und automatisch geladen)</p>
-<p><strong>Operating model (since 2026-06-11, see the structural ADR):</strong> every agent session is started
-<strong>from the terminal</strong> via the central launcher — never via the desktop app (the app cannot set the
-shell cwd; settings, hooks and allowlists would stay dead). The launcher provisions a persistent
-worktree (<code>$HOME/klartext-worktrees/&lt;name&gt;/</code>, home branch <code>agent/&lt;name&gt;</code>) idempotently, rebases it
-on <code>origin/main</code>, shows unread inbox messages and starts <code>claude</code> inside the worktree. Sessions are
-<strong>workdays, not lifetimes</strong>: they end with a pre-restart ritual (anchor skill) and a successor
-boots from disk. Cross-agent messages travel via the file inbox (<code>scripts/inbox.sh send/read</code>).</p>
-<hr />
-<h2 id="step-1-clarify-the-domain">Step 1 — Clarify the domain<a class="headerlink" href="#step-1-clarify-the-domain" title="Permanent link">&para;</a></h2>
-<p>Before touching any file, answer these questions (ask the user if unclear):</p>
+<h1 id="anchor-session-safeguard">Anchor — Session Safeguard<a class="headerlink" href="#anchor-session-safeguard" title="Permanent link">&para;</a></h1>
+<p>Deine Aufgabe: die aktuelle Session systematisch durchgehen, <strong>bevor der Kontext verloren geht</strong> —
+durch <code>/clear</code> (Generationswechsel, verwirft), <code>/compact</code> (fasst zusammen) oder Session-Ende. Ziel:
+nichts Wichtiges verlieren — Entscheidungen, Begründungen, mündliche Anweisungen, offene TODOs, der
+aktuelle Arbeitsstand. Der Name <strong>anchor</strong>: das flüchtige Chat-Wissen am festen Grund (Platte)
+verankern; bei einem Restart zusätzlich einen Anker werfen, an dem die Nachfolge-Session wieder anlegt.</p>
+<h2 id="modus-bestimmen-zuerst">Modus bestimmen (zuerst)<a class="headerlink" href="#modus-bestimmen-zuerst" title="Permanent link">&para;</a></h2>
+<p>Kläre — fragen, wenn unklar: ist das ein <strong>Restart</strong> oder ein <strong>Checkpoint</strong>?</p>
 <ul>
-<li><strong>Name</strong>: What is the agent called? (e.g. <code>narrative</code>, <code>qa</code>, <code>ux</code>)</li>
-<li><strong>Domain</strong>: Which directories/files does this agent own (write access)?</li>
-<li><strong>Read-only</strong>: What does the agent need to read but not write?</li>
-<li><strong>Conflicts</strong>: Does the domain overlap with an existing agent?</li>
+<li><strong>Restart</strong> (Generationswechsel): als Nächstes kommt <code>/clear</code>, eine Nachfolge-Session übernimmt.
+  → alle Schritte <strong>inklusive Successor-Seed</strong> (Schritt 4.6).</li>
+<li><strong>Checkpoint</strong> (mid-session): du sicherst nur zwischendurch und arbeitest danach weiter.
+  → Successor-Seed <strong>überspringen</strong> (sonst landen veraltete Handoff-Notizen im Postfach).</li>
 </ul>
-<p>The domain defines the entries in <code>allowed-tools.txt</code>. Be specific — narrow domains are safer.</p>
+<h2 id="was-einen-kontext-reset-uberlebt">Was einen Kontext-Reset überlebt<a class="headerlink" href="#was-einen-kontext-reset-uberlebt" title="Permanent link">&para;</a></h2>
+<p>Diese Quellen sind sicher — sie liegen auf der Festplatte und werden bei jeder Session neu geladen:
+- <code>CLAUDE.md</code> im Projekt-Root
+- <strong>Das Method-Dokumentenset</strong> unter <code>docs/superpowers/improvement/</code>: <code>continuous-improvement.md</code>
+  (Entscheidungen + Begründungen + Improvement-Register §3), <code>method.md</code> (Element-Register),
+  <code>semat-definition.md</code> / <code>semat-glossary.md</code>, <code>alpha-states.md</code>, <code>practices/</code> (Practice-Karten),
+  <code>learnings/</code> (Way-of-Working-Learnings)
+- <code>docs/superpowers/plans/PENDING.md</code> (Delegations-Tracking)
+- <code>assets-local/README.md</code> (Provenienz-Register externer Referenzen)
+- Memory-Dateien unter <code>~/.claude/</code>
+- Code, Kommentare, Docstrings im Repo
+- Commit-Messages in Git
+- GitHub Issues und TODOs im Code
+- Skill-Dateien unter <code>docs/superpowers/skills/</code> (projekt-spezifische Skills) und <code>~/.claude/skills/</code> (User-Skills)</p>
+<p><strong>Was verloren gehen kann:</strong> Alles, was nur im Gesprächsverlauf steht. Das ist der blinde Fleck —
+und <code>/clear</code> <em>verwirft</em> ihn ersatzlos, <code>/compact</code> <em>fasst ihn zusammen</em> (lückenhaft, False-Persistence-Risiko).</p>
+<h2 id="schritt-1-konversation-scannen">Schritt 1 — Konversation scannen<a class="headerlink" href="#schritt-1-konversation-scannen" title="Permanent link">&para;</a></h2>
+<p>Lies die gesamte bisherige Konversation durch. Sammle Kandidaten für jede dieser Kategorien:</p>
+<ol>
+<li><strong>Architektur-Entscheidungen</strong> — Strukturelle oder technische Entscheidungen die in dieser Session getroffen wurden</li>
+<li><strong>Regeländerungen</strong> — Neue Regeln oder Anpassungen an bestehenden Regeln, die noch nicht in CLAUDE.md oder Memory-Dateien stehen</li>
+<li><strong>Begründungen (Warum)</strong> — Erklärungen warum etwas so und nicht anders gemacht wurde</li>
+<li><strong>Mündliche Anweisungen</strong> — Anweisungen die der User im Chat gegeben hat, die aber nirgends schriftlich festgehalten sind</li>
+<li><strong>Offene TODOs</strong> — Angefangenes das nicht fertig ist, nächste Schritte, bekannte Probleme die vertagt wurden</li>
+<li><strong>Arbeitsstand</strong> — Was wurde in dieser Session abgeschlossen? Was ist in Arbeit? Was ist blockiert?</li>
+<li><strong>Geparkte Befunde / Retro-Inputs</strong> — Befunde die bewusst vertagt wurden (für eine Retro, einen
+   Entscheid, ein anderes Arbeitspaket) und noch kein dauerhaftes Zuhause haben</li>
+</ol>
+<p>Sei großzügig beim Sammeln. Lieber einen Punkt zu viel aufnehmen als einen zu übersehen.</p>
+<h2 id="schritt-15-delegations-befund-check">Schritt 1.5 — Delegations-/Befund-Check<a class="headerlink" href="#schritt-15-delegations-befund-check" title="Permanent link">&para;</a></h2>
+<p><strong>Trigger:</strong> Nur ausführen, wenn es in dieser Session echt offene Delegationen oder ausgehende Befunde
+gibt — sonst explizit überspringen ("Schritt 1.5: keine offenen Delegationen").</p>
+<p>Für <strong>Koordinations-Agents</strong> (OE, Hannibal): Konversation nach <strong>ausgehenden Delegationen</strong> durchsuchen.
+Für <strong>Domain-Agents</strong> ist das Muster stattdessen: <strong>empfangene Tasks</strong> (sind sie abgeschlossen oder
+rückgemeldet?) und <strong>ausgehende Befunde</strong> (Dinge die ein anderer Agent wissen/entscheiden muss).
+- Wissens-Briefings die an andere Agents formuliert wurden
+- Aufgaben die an einen anderen Agent delegiert wurden
+- Bitten an den User mit der Erwartung dass ein anderer Agent tätig wird
+- Befunde aus der eigenen Arbeit, die an einen Owner außerhalb der eigenen Domain gehören</p>
+<p>Für jede Delegation prüfen ob sie erledigt wurde:
+1. Zieldatei lesen — ist die Änderung drin?
+2. Gibt es eine explizite Bestätigung in der Konversation?</p>
+<p><strong>Erledigt</strong> → Reset ist sicher, kein Handlungsbedarf.</p>
+<p><strong>Nicht erledigt</strong> → Sub-Agent dispatchen der den Pending-Eintrag direkt schreibt:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Sub-Agent Auftrag:
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>Lies agents/&lt;ziel-agent&gt;/claude.md als Kontext.
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>Trage folgende offene Delegation in docs/superpowers/plans/PENDING.md ein,
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>Abschnitt &quot;## Offene Delegationen&quot;, als neue Tabellenzeile:
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>| &lt;Ziel-Agent&gt; | &lt;Aufgabe kurz&gt; | &lt;Dieser Agent&gt; | &lt;Datum heute&gt; |
+</code></pre></div>
+<p><strong>Wichtig:</strong> Sub-Agenten erben die Permissions des aufrufenden Agents.
+Daher muss jeder Agent Write-Access auf <code>docs/superpowers/plans/PENDING.md</code> in seiner <code>start.sh</code> haben.</p>
+<p><strong>Ausnahme:</strong> Pending-Einträge werden <strong>direkt geschrieben</strong> — kein Briefing an den User nötig.
+Das ist die einzige Ausnahme vom "User als Kanal"-Prinzip: hier geht es um Tracking, nicht um Domain-Wissen.</p>
 <hr />
-<h2 id="step-2-create-the-agent-directory-wrapper-and-allowlist">Step 2 — Create the agent directory, wrapper and allowlist<a class="headerlink" href="#step-2-create-the-agent-directory-wrapper-and-allowlist" title="Permanent link">&para;</a></h2>
-<p>OE owns <code>agents/</code> vollständig — kein DevOps Briefing nötig.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>agents/&lt;name&gt;
-</code></pre></div>
-<p>Create <code>agents/&lt;name&gt;/start.sh</code> (thin wrapper — all logic lives in the central launcher):</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="ch">#!/bin/bash</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># &lt;Agent Name&gt; — Agent startup script</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1">#</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># Domain: &lt;one-line description&gt;</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1">#</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="c1"># Allowlists live in agents/&lt;name&gt;/allowed-tools.txt (one entry per line),</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># read by the central launcher scripts/start-agent.sh.</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="nb">exec</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>dirname<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$0</span><span class="s2">&quot;</span><span class="k">)</span><span class="s2">/../../scripts/start-agent.sh&quot;</span><span class="w"> </span>&lt;name&gt;
-</code></pre></div>
-<p>Create <code>agents/&lt;name&gt;/allowed-tools.txt</code> (one tool grant per line):</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Edit(docs/superpowers/plans/PENDING.md)
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>Write(docs/superpowers/plans/PENDING.md)
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>Edit(&lt;domain-path&gt;/)
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>Write(&lt;domain-path&gt;/)
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>Edit(agents/&lt;name&gt;/)
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>Write(agents/&lt;name&gt;/)
-</code></pre></div>
-<p>The PENDING.md lines are mandatory for every agent (anchor delegation tracking).</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>chmod<span class="w"> </span>+x<span class="w"> </span>agents/&lt;name&gt;/start.sh
-</code></pre></div>
-<p><strong>Important sequencing:</strong> both files must be merged to <code>main</code> before the first session start —
-the launcher reads the allowlist and the worktree checkout is based on <code>origin/main</code>.</p>
-<p><strong>Landing path for knowledge-file changes (standard since 2026-06-12):</strong> changes to
-<code>agents/&lt;name&gt;/claude.md</code> land via own branch (in the agent's worktree) → PR → OE review
-<strong>comment</strong> (formal GitHub approvals are single-account-impossible; the review comment IS the
-sign-off artifact) → CI gate → merge.</p>
-<p><strong>Team Roster (mandatory, same step):</strong> add the new agent to <code>agents/team.yaml</code> (slug, display name,
-<code>status: app</code>, <code>active: true</code>). The roster is the Work Product advancing the Team alpha and is
-read by the start tooling — an agent missing here is invisible to it. Offboarding:
-set <code>active: false</code> (keep the entry for history). Migration terminal↔app: flip <code>status</code> in the same
-step as the generation change.</p>
+<h2 id="schritt-2-persistenzcheck">Schritt 2 — Persistenzcheck<a class="headerlink" href="#schritt-2-persistenzcheck" title="Permanent link">&para;</a></h2>
+<p>Für jeden gefundenen Punkt prüfen: Ist er bereits sicher gespeichert?
+- In <code>CLAUDE.md</code>?
+- Im Method-Set (<code>continuous-improvement.md</code> inkl. Improvement-Register, <code>method.md</code>, Glossar/Definition,
+  <code>alpha-states.md</code>, einer Practice-Karte, <code>learnings/</code>)?
+- In <code>PENDING.md</code> oder <code>assets-local/README.md</code>?
+- In einer Memory-Datei?
+- In einem Code-Kommentar oder Docstring?
+- In einer Commit-Message?
+- In einem GitHub Issue oder TODO-Kommentar im Code?</p>
+<p>Jeden Punkt als <strong>bereits gesichert</strong> oder <strong>noch nicht gesichert</strong> markieren.</p>
+<h2 id="schritt-25-wissens-routing">Schritt 2.5 — Wissens-Routing<a class="headerlink" href="#schritt-25-wissens-routing" title="Permanent link">&para;</a></h2>
+<p>Für jeden noch nicht gesicherten Punkt aus Schritt 2 klassifizieren.</p>
+<p>Zwei Fragen stellen — beide zählen:</p>
+<blockquote>
+<p><strong>1. Woher kommt das Wissen?</strong> Liegt es in meinem Domain?
+<strong>2. Wer hat fachliche Autorität darüber?</strong> Wer entscheidet was hier "richtig" ist?</p>
+</blockquote>
+<p>Frage 2 bezieht sich auf <strong>Expertise und Autorität</strong>, nicht auf Datei-Eigentümerschaft.
+Beispiel: UX/UI entdeckt eine Lücke in den Verifikationskriterien → fachliche Autorität liegt bei QA
+(auch wenn das Thema "Frontend" klingt und die Datei <code>verify.md</code> heißt).</p>
+<p>Wenn Frage 2 einen anderen Agent nennt: mindestens Grenzwissen.</p>
+<table>
+<thead>
+<tr>
+<th>Typ</th>
+<th>Beschreibung</th>
+<th>Konsequenz</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Eigenwissen</strong></td>
+<td>Gehört in meinen Domain</td>
+<td>→ Schritt 3: normal speichern</td>
+</tr>
+<tr>
+<td><strong>Fremdwissen</strong></td>
+<td>Gehört vollständig zu einem anderen Agent</td>
+<td>→ Wissens-Briefing formulieren</td>
+</tr>
+<tr>
+<td><strong>Grenzwissen</strong></td>
+<td>Betrifft zwei Agents gleichzeitig</td>
+<td>→ je ein Wissens-Briefing pro Agent</td>
+</tr>
+<tr>
+<td><strong>Organisationswissen</strong></td>
+<td>Betrifft Struktur oder Zusammenarbeit</td>
+<td>→ Wissens-Briefing an OE</td>
+</tr>
+</tbody>
+</table>
+<p>Wissens-Briefing Format:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Wissens-Briefing an &lt;Agent&gt;
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>Typ:      [Fremdwissen / Grenzwissen / Organisationswissen]
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>Inhalt:   [Das konkrete Wissen — Entscheidung, Regel, Muster]
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>Kontext:  [Warum ist es entstanden? Aus welchem Problem?]
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>Ziel:     [In agents/&lt;name&gt;/claude.md eintragen, Abschnitt: ...]
+</code></pre></div></p>
+<p>Der User ist immer der Kanal — kein Agent schreibt direkt in die Dateien eines anderen Agents.</p>
 <hr />
-<h2 id="step-3-update-claudemd">Step 3 — Update CLAUDE.md<a class="headerlink" href="#step-3-update-claudemd" title="Permanent link">&para;</a></h2>
-<p>Add the new agent to the <code>## Agent Roles &amp; Boundaries</code> table in <code>CLAUDE.md</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>| &lt;Agent Name&gt; | &lt;Domain description&gt; |
+<h2 id="schritt-3-mit-dem-user-durchgehen">Schritt 3 — Mit dem User durchgehen<a class="headerlink" href="#schritt-3-mit-dem-user-durchgehen" title="Permanent link">&para;</a></h2>
+<p>Befunde klar und strukturiert präsentieren — auf Deutsch. Zuerst kurz bestätigen was bereits gesichert ist und wo.</p>
+<p>Dann in zwei Blöcken:</p>
+<p><strong>Block A — Eigenwissen</strong> (gehört in meinen Domain):
+Für jeden Punkt fragen:
+- Muss das gesichert werden?
+- Wenn ja: wo? Home nach Inhaltstyp wählen:
+  - <strong>Domain-Agents zuerst hier:</strong> eigenes Hoheitswissen (Muster, Regeln, Heuristiken der eigenen Domain)
+    → <code>agents/&lt;name&gt;/claude.md</code> · Domain-Learnings → das Learnings-Home der eigenen Domain
+    (z.B. QA: <code>docs/superpowers/qa-learnings/</code>)
+  - Entscheidung + Begründung zur Arbeitsweise → <code>continuous-improvement.md</code> <em>(via OE, wenn ohne Write-Access:
+    Briefing formulieren)</em>
+  - Prozess-Learning → <code>learnings/</code>
+  - Neues/geändertes Methoden-Element → Practice-Karte + <code>method.md</code> (im selben Schritt; <strong>nur OE</strong> — andere
+    Agents: Briefing an OE)
+  - Begriff → <code>semat-glossary.md</code>
+  - Verbesserungs-Kandidat → Improvement-Register (<code>continuous-improvement.md</code> §3; ohne Write-Access:
+    Briefing an OE)
+  - Geparkter Befund (Kategorie 7) → benanntes Verwahr-Depot mit Freigabe-/Löschbedingung (Memory-Park-Pattern)
+  - Sonst: CLAUDE.md, Memory-Datei, Code-Kommentar, Commit-Message, neues Issue
+- <strong>Schreibrechte vorher prüfen:</strong> Nur Homes wählen, auf die diese Session laut ihrer <code>start.sh</code> schreiben
+  darf — sonst Briefing an den Owner formulieren statt still zu scheitern.
+- Den konkreten Eintrag formulieren und dem User zeigen — <strong>erst dann speichern wenn er explizit zustimmt</strong></p>
+<p><strong>Block B — Wissens-Briefings</strong> (gehört zu anderen Agents):
+Alle formulierten Briefings präsentieren und fragen:
+- Weiterleiten? Formulierung anpassen? Überspringen?
+- <strong>Niemals ohne Bestätigung weiterleiten</strong></p>
+<p>Niemals auto-speichern. Immer auf Bestätigung warten.</p>
+<p><strong>Wichtig:</strong> Der User hat explizit gesagt, dass er es vorzieht zu viele Fragen gestellt zu bekommen als dass etwas übersehen wird. Im Zweifel fragen.</p>
+<h2 id="schritt-4-bestatigte-punkte-speichern-artefakt-verifikation">Schritt 4 — Bestätigte Punkte speichern + Artefakt-Verifikation<a class="headerlink" href="#schritt-4-bestatigte-punkte-speichern-artefakt-verifikation" title="Permanent link">&para;</a></h2>
+<p>Nach Bestätigung durch den User: Eintrag an der vereinbarten Stelle speichern. Passende Tools verwenden (Edit/Write für Dateien, Bash für git commits).</p>
+<p>Wenn ein Eintrag in CLAUDE.md geht: Bestehenden Abschnitt aufrufen und passend einfügen — nie überschreiben, nie duplizieren.</p>
+<p><strong>Pflicht-Abschluss — Artefakt-Verifikation (False-Persistence-Schutz):</strong> Nach ALLEN Speicherungen
+<code>git status</code> / <code>git diff --stat</code> (bzw. <code>ls -la</code> für Dateien außerhalb des Repos) ausführen und die
+tatsächlich geänderten Dateien gegen die Liste der beabsichtigten Speicherungen abgleichen. <strong>Der eigenen
+Erinnerung oder einer Session-Summary wird nicht geglaubt — nur dem Artefakt.</strong> (Beleg: 2× behaupteten
+kompaktierte Summaries Schreibvorgänge, die nie stattfanden — RC4-Variante "False Persistence", 2026-06-10.)</p>
+<h2 id="schritt-46-successor-seed-nur-im-restart-modus">Schritt 4.6 — Successor-Seed (NUR im Restart-Modus)<a class="headerlink" href="#schritt-46-successor-seed-nur-im-restart-modus" title="Permanent link">&para;</a></h2>
+<p><strong>Überspringen, wenn Checkpoint.</strong> Im Restart-Modus: eine Handoff-Notiz ins <strong>eigene</strong> Postfach legen,
+damit die Nachfolge-Session ohne Lücke weitermacht (claude.md lädt die Identität, der Seed liefert den
+<em>Stand</em>):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>bash scripts/inbox.sh send &lt;self&gt; &lt;self&gt; &quot;Successor-Seed: &lt;kurzer Betreff&gt;&quot;
 </code></pre></div>
-<p>If the agent owns paths that are not yet in any agent's domain, add them to the table.
-Do NOT modify the Infrastructure Perimeter section without a separate DevOps decision.</p>
+<p>Inhalt der Notiz:
+- <strong>Stand:</strong> was ist erledigt / in Arbeit / blockiert (mit PR-/Branch-/Commit-Bezügen)
+- <strong>Offene Fäden:</strong> was als Nächstes ansteht, geparkte Befunde, wartende Briefings
+- <strong>Wake-Prompt:</strong> eine konkrete erste Anweisung — eine frische Session handelt nicht von selbst,
+  bevor der User die erste Nachricht gibt (Pilot-Lehre 2026-06-11)</p>
+<p><strong>Artefakt-Verifikation auch hier:</strong> prüfen, dass die Inbox-Datei tatsächlich existiert und nicht leer ist
+(<code>inbox.sh unread &lt;self&gt;</code> / <code>wc -l</code> auf die Datei) — der Seed ist die Verlust-Versicherung, er darf nicht
+selbst dem False-Persistence-Bug zum Opfer fallen.</p>
+<h2 id="schritt-5-kurze-zusammenfassung">Schritt 5 — Kurze Zusammenfassung<a class="headerlink" href="#schritt-5-kurze-zusammenfassung" title="Permanent link">&para;</a></h2>
+<p>Kurze Zusammenfassung geben:
+- Wie viele Punkte wurden gefunden
+- Was war bereits gesichert
+- Was wurde neu gesichert
+- Was wurde bewusst übersprungen
+- (Restart) ob der Successor-Seed liegt und verifiziert ist</p>
+<h2 id="schritt-6-prozess-verbesserungen">Schritt 6 — Prozess-Verbesserungen<a class="headerlink" href="#schritt-6-prozess-verbesserungen" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>Anbindung an die Methode:</strong> Dieser Schritt ist ein <em>Capture</em>-Schritt, keine Retro — die eigentliche
+Bewertung gehört in die <strong>Retrospective-Practice</strong> (<code>practices/retrospective.md</code>). Jeder hier gefundene
+Verbesserungs-Kandidat wird als <strong>Improvement-Instanz ins Register</strong> eingetragen
+(<code>continuous-improvement.md</code> §3, Zustand <em>Identified</em>) — nicht nur als loses TODO. Die nächste Retro
+priorisiert und bewertet.</p>
+</blockquote>
+<h3 id="teil-a-neue-skill-kandidaten">Teil A — Neue Skill-Kandidaten<a class="headerlink" href="#teil-a-neue-skill-kandidaten" title="Permanent link">&para;</a></h3>
+<p>Kurz fragen:</p>
+<blockquote>
+<p><em>"Gab es in dieser Session etwas das sich wiederholt hat — eine Abfolge von Schritten, ein Muster, eine Aufgabe die du dir als wiederverwendbaren Skill vorstellen könntest?"</em></p>
+</blockquote>
+<p>Wenn ja: Kurz beschreiben was der Skill tun würde und festhalten. Der User entscheidet ob er den Skill jetzt oder später bauen will — kein Druck.</p>
+<p>Wenn nein oder der User überspringen möchte: kein Problem.</p>
+<h3 id="teil-b-bestehende-prozess-artefakte-prufen">Teil B — Bestehende Prozess-Artefakte prüfen<a class="headerlink" href="#teil-b-bestehende-prozess-artefakte-prufen" title="Permanent link">&para;</a></h3>
+<p>Nur fragen wenn in der Session etwas Relevantes passiert ist — kein Pflicht-Protokoll:</p>
+<ol>
+<li><strong>Bestehende Skills veraltet?</strong>
+   Hat ein Skill (<code>tdd</code>, <code>frontend</code>, <code>verify</code>, <code>anchor</code>) in dieser Session nicht geholfen, etwas Falsches vorgegeben oder war unvollständig? Wenn ja: was konkret ändern?
+   → Sofort fixen oder als Improvement-Instanz ins Register (<code>continuous-improvement.md</code> §3)</li>
+</ol>
+<p>1b. <strong>Practice-Karten aktuell?</strong>
+   Hat sich in dieser Session geändert, <em>wie</em> wir arbeiten? Dann prüfen: stimmen die betroffenen
+   Practice-Karten (<code>docs/superpowers/improvement/practices/</code>) und <code>method.md</code> noch?
+   → <strong>Nur OE:</strong> Karte + <code>method.md</code> im selben Schritt aktualisieren (Maintenance-Ritual).
+   → <strong>Domain-Agents</strong> (kein Write-Access auf <code>practices/</code>): Befund als Briefing an OE formulieren
+   und dem User zeigen — Frage 1b damit erledigt, nicht überspringen.</p>
+<ol>
+<li>
+<p><strong>Tool-Config-Auffälligkeiten?</strong>
+   Gab es Linter-, Typecheck- oder Tach-Ausgaben die ignoriert oder umgangen wurden? Fehlt eine Konfigurationsregel die mehrfach hilfreich gewesen wäre?
+   → Sofort in <code>ruff.toml</code>, <code>mypy.ini</code>, <code>tsconfig.json</code>, <code>tach.toml</code> etc. fixen oder als TODO
+   → <strong>⚠️ Infrastructure Perimeter:</strong> <code>api/pyproject.toml</code> (ruff/mypy), <code>tach.toml</code>, <code>.pre-commit-config.yaml</code>, <code>.github/workflows/</code> und <code>frontend/</code>-Configs gehören zum Infrastructure Perimeter und dürfen nur vom DevOps-Agent direkt geändert werden. Wenn dieser Agent nicht DevOps ist: kein direkter Fix — stattdessen ein DevOps Briefing formulieren und dem User zeigen:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>DevOps Briefing
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>Need:    [Was konkret geändert werden soll]
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>Why:     [Technischer Grund]
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>Domain:  [Dependencies / CI/CD / Config / Other]
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>Impact:  [Welche Agents/Environments betroffen]
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Verify-Skills aktuell?</strong>
+   Wurden neue Screens, Komponenten oder API-Endpoints hinzugefügt? Dann prüfen: sind <code>docs/superpowers/skills/verify.md</code> und <code>verify-backend.md</code> noch vollständig?
+   → Skill-Datei direkt updaten wenn nötig</p>
+</li>
+<li>
+<p><strong>GitHub Issues vollständig?</strong>
+   Wurden <code>TODO</code>-Kommentare im Code hinzugefügt ohne entsprechendes Issue? Wurden Issues in dieser Session implizit gelöst aber nicht geschlossen?
+   → Issue anlegen oder schließen</p>
+</li>
+<li>
+<p><strong>ADR nötig?</strong>
+   Wurde eine Architekturentscheidung getroffen die in <code>docs/adr/</code> festgehalten werden sollte? Format: <code>docs/adr/NNNN-kurztitel.md</code>, Status: <code>Proposed</code>.
+   → ADR-Datei anlegen wenn der User zustimmt</p>
+</li>
+</ol>
 <hr />
-<h2 id="step-4-create-the-agent-knowledge-file">Step 4 — Create the agent knowledge file<a class="headerlink" href="#step-4-create-the-agent-knowledge-file" title="Permanent link">&para;</a></h2>
-<p>Create <code>agents/&lt;name&gt;/claude.md</code> with the agent's domain knowledge.
-Use <code>agents/devops/claude.md</code> or <code>agents/qa/claude.md</code> as reference.</p>
-<p>Mindest-Inhalt:
-- Rolle (ein Satz)
-- Domain — Write Access (Pfade mit Erklärung)
-- Domain — Read Only
-- Domänenspezifische Standards
-- Skills-Tabelle
-- DevOps Briefing Template
-- Abschnitt "Erweiterung durch <Agent>" — Platzhalter für Wissen das der Agent selbst einträgt</p>
-<p><strong>Wichtig:</strong> Die Datei heißt <code>claude.md</code> (lowercase). Claude Code erkennt sie automatisch
-als CLAUDE.md und lädt sie beim Start — kein explizites Lesen nötig.</p>
-<hr />
-<h2 id="step-4b-create-agent-skills-if-needed">Step 4b — Create agent skills (if needed)<a class="headerlink" href="#step-4b-create-agent-skills-if-needed" title="Permanent link">&para;</a></h2>
-<p>If the agent needs project-specific skills, create them in:</p>
+<p><strong>Abschluss:</strong> Erst nach allen Schritten sagen, dass alles gesichert <strong>und verifiziert</strong> ist. Dann den
+nächsten Schritt nennen — je nach Modus:</p>
 <ul>
-<li><code>docs/superpowers/skills/&lt;skill-name&gt;.md</code> — project-level skill (committed to repo)</li>
-<li><code>~/.claude/skills/&lt;skill-name&gt;/</code> — user-level skill (richer format, local to machine)</li>
+<li><strong>Restart:</strong> <em>"Alles gesichert und verifiziert, Successor-Seed liegt. Du kannst jetzt <code>/clear</code> ausführen —
+  verlustfreier Generationswechsel: <code>/clear</code> verwirft sauber, die Nachfolge bootet aus <code>claude.md</code> +
+  liest den Seed."</em></li>
+<li><strong>Checkpoint:</strong> <em>"Alles gesichert und verifiziert. Du kannst weiterarbeiten."</em></li>
 </ul>
-<p>Use the <code>skill-creator</code> skill to create or refine skill files.</p>
-<hr />
-<h2 id="step-5-commit">Step 5 — Commit<a class="headerlink" href="#step-5-commit" title="Permanent link">&para;</a></h2>
-<p>Commit all changes together:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>git add agents/&lt;name&gt;/ CLAUDE.md docs/superpowers/skills/
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>git commit -m &quot;Add &lt;name&gt; agent: start script, knowledge file, domain entry&quot;
-</code></pre></div>
-<hr />
-<h2 id="step-6-handoff-message">Step 6 — Handoff message<a class="headerlink" href="#step-6-handoff-message" title="Permanent link">&para;</a></h2>
-<p>Send the following to the new agent (adapt the placeholders):</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>Willkommen im klartext Team.
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>Du lebst in einer Terminal-Session in deinem eigenen Worktree
-<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>($HOME/klartext-worktrees/&lt;name&gt;/, Branch agent/&lt;name&gt;). Der User startet dich mit
-<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>`bash agents/&lt;name&gt;/start.sh` und beendet deine Session am natürlichen Arbeitsende —
-<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>deine Identität persistiert auf Platte, die Session ist dein Arbeitstag. Vor jedem
-<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>Session-Ende fährst du das anchor-Ritual (Pre-Restart) und hinterlegst deiner
-<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>Nachfolge-Session eine Handoff-Notiz im eigenen Postfach.
-<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>
-<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>Dein Agent-Verzeichnis: agents/&lt;name&gt;/
-<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>  - start.sh           → dein Startweg (Terminal, nie Desktop-App)
-<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>  - allowed-tools.txt  → deine Permissions (vom Launcher gelesen)
-<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>  - claude.md          → dein Hoheitswissen (wird automatisch von Claude Code geladen)
-<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>
-<a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>Nachrichten an Kollegen: bash scripts/inbox.sh send &lt;empfänger&gt; &lt;name&gt; &quot;...&quot;
-<a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a>Dein Postfach lesen:     bash scripts/inbox.sh read &lt;name&gt;
-<a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a>Der User stupst den Empfänger an — er ist immer der Kanal.
-<a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a>
-<a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a>Was du ohne Rückfrage darfst:
-<a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a>  - Lesen: alles (Read, git diff/log/status/show, grep, ls, find, semgrep)
-<a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a>  - Schreiben: nur dein Domain (steht in agents/&lt;name&gt;/claude.md)
-<a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a>
-<a id="__codelineno-6-23" name="__codelineno-6-23" href="#__codelineno-6-23"></a>Was eine Rückfrage braucht: alles außerhalb deines Domains.
-<a id="__codelineno-6-24" name="__codelineno-6-24" href="#__codelineno-6-24"></a>
-<a id="__codelineno-6-25" name="__codelineno-6-25" href="#__codelineno-6-25"></a>Infrastruktur-Änderungen (CI, Dependencies, Scripts, settings.json):
-<a id="__codelineno-6-26" name="__codelineno-6-26" href="#__codelineno-6-26"></a>  → DevOps Briefing schicken (Format in CLAUDE.md unter &quot;DevOps Briefing Protocol&quot;)
-<a id="__codelineno-6-27" name="__codelineno-6-27" href="#__codelineno-6-27"></a>  → DevOps entscheidet wie es umgesetzt wird
-<a id="__codelineno-6-28" name="__codelineno-6-28" href="#__codelineno-6-28"></a>
-<a id="__codelineno-6-29" name="__codelineno-6-29" href="#__codelineno-6-29"></a>Gemeinsame Coding-Standards: CLAUDE.md (für alle Agents gleich)
-<a id="__codelineno-6-30" name="__codelineno-6-30" href="#__codelineno-6-30"></a>Dein Hoheitswissen erweitern: trage domain-spezifisches Wissen in agents/&lt;name&gt;/claude.md ein
-<a id="__codelineno-6-31" name="__codelineno-6-31" href="#__codelineno-6-31"></a>
-<a id="__codelineno-6-32" name="__codelineno-6-32" href="#__codelineno-6-32"></a>Wissens-Routing: Bei jedem anchor prüfst du ob Wissen entstanden ist, das einem
-<a id="__codelineno-6-33" name="__codelineno-6-33" href="#__codelineno-6-33"></a>  anderen Agent gehört — Schritt 6 / Teil C führt dich durch den Prozess.
-<a id="__codelineno-6-34" name="__codelineno-6-34" href="#__codelineno-6-34"></a>  Fremdwissen, Grenzwissen und Organisationswissen werden als Wissens-Briefings
-<a id="__codelineno-6-35" name="__codelineno-6-35" href="#__codelineno-6-35"></a>  formuliert und dem User übergeben. Kein Agent schreibt direkt in fremde Dateien.
-</code></pre></div>
-<hr />
-<h2 id="reference">Reference<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Infrastructure Perimeter and DevOps Briefing Protocol: <code>CLAUDE.md § Agent Roles &amp; Boundaries</code></li>
-<li>Base permissions for all agents: <code>.claude/settings.json</code></li>
-<li>Existing agent directories: <code>agents/</code></li>
-</ul>
+<p><strong><code>/clear</code> und <code>/compact</code> NIE selbst ausführen</strong> — warten bis der User es explizit auslöst.</p>
+<p><strong><code>/clear</code> ist <code>/compact</code> vorzuziehen:</strong> <code>/clear</code> <em>verwirft</em> (zwingt dazu, dass vorher wirklich alles
+persistiert wurde — genau dieses Ritual), <code>/compact</code> <em>fasst zusammen</em> (lückenhaft, False-Persistence-Risiko).
+Der Skript hieß früher <code>pre-compact</code>; umbenannt zu <strong>anchor</strong>, weil der Name an einen Befehl gebunden war,
+der nicht mehr der bevorzugte Weg ist — <code>anchor</code> benennt das Wesen (Wissen verankern), nicht den Befehl.</p>
 
 
 

@@ -1738,15 +1738,16 @@ the answer is RC3 evidence, even when it is "nobody".</p>
   session. Two variants:</li>
 <li><strong>(a) Artifact-mediated (preferred, cheap):</strong> a forked subagent represents the participant, reading
     their knowledge file + the work products. <strong>Valid only if</strong> that agent's session knowledge was captured
-    to disk (pre-compact-style capture with a held completion checklist) <strong>at or after work-package end</strong>.
+    to disk (anchor-style capture with a held completion checklist) <strong>at or after work-package end</strong>.
     Without that, the subagent is a simulation that misses exactly the evidence the retro exists to collect
     (precedent: the "simulated Hannibal", deliberately discarded).</li>
 <li><strong>(b) Live session (fallback, expensive):</strong> query the agent's long-living session via the user as
     channel. <strong>Required</strong> whenever (a)'s precondition is not confirmed — when in doubt, (b).</li>
 <li><strong>Entry criterion (per work-package participant):</strong> capture confirmed → (a); otherwise → (b).</li>
 </ul>
-<p><em>Current state (2026-06-10):</em> the capture practice (<code>pre-compact</code>) is German-only, unversioned
-(<code>~/.claude/skills/</code>), and validated only on OE sessions → (a) is <strong>not yet trustworthy</strong> for other agents;
+<p><em>Current state (2026-06-10; skill renamed to <code>anchor</code> 2026-06-13):</em> the capture practice (<code>anchor</code>, formerly
+<code>pre-compact</code>) is German-only; a versioned repo copy was added 2026-06-13 (<code>docs/superpowers/skills/anchor.md</code>,
+machine-local install pending DevOps), and it is validated only on OE sessions → (a) is <strong>not yet trustworthy</strong> for other agents;
 active input therefore uses (b) until the capture practice is promoted (see the Improvement Register —
 that improvement is the enabler of cheap retros).</p>
 <p><em>Activation note:</em> the record-review tier becomes meaningful only after the team refresh (team-wide Method
