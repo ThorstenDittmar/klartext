@@ -225,7 +225,7 @@ Improvement-Register „App has no auto-rebase at session start").
 
 Dieser Skill **rebaset nicht selbst** — er *verweist* nur auf das mechanische Tooling:
 - `git rebase origin/main` (wenn der Worktree sauber ist und auf seiner `agent/<slug>`-Home-Branch sitzt), **oder**
-- `klartext worktree-sync` (geguardeter Sync, sobald DevOps ihn ausliefert — die Aktions-Hälfte der Drift-Warnung).
+- `klartext converge` (geguardeter Sync, sobald DevOps ihn ausliefert — die Aktions-Hälfte der Drift-Warnung).
 
 **Nicht** auf einem Feature-Branch mit offenem PR zwangs-rebasen — der bekommt `main` beim PR-Merge.
 Kosmetisch/optional: blockiert den `/clear` nie.
