@@ -1644,6 +1644,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Agent session identity (SessionStart hook)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#session-health-drift-warning-sessionstart-hook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Session health / drift warning (SessionStart hook)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2240,6 +2257,20 @@ agent's Hoheitswissen at session start — and on <code>/clear</code>, which the
   manual Canary in <a href="../superpowers/improvement/environment/claude-code-app/"><code>environment/claude-code-app.md</code></a>.</li>
 </ul>
 <p>Rationale and the return-to-app gate: <a href="../adr/0011-return-to-desktop-app-session-start/">ADR-0011</a> (condition G1).</p>
+<h3 id="session-health-drift-warning-sessionstart-hook">Session health / drift warning (SessionStart hook)<a class="headerlink" href="#session-health-drift-warning-sessionstart-hook" title="Permanent link">&para;</a></h3>
+<p>A second <code>SessionStart</code> hook (<code>scripts/session_health.py</code>, matcher <code>startup|clear</code>) warns — <strong>never
+blocks</strong> — when the worktree is behind <code>origin/main</code>, so a session does not resume work on a stale
+substrate. This is the <em>"verify current before resume"</em> clause of the Controlled-Method-Rollout
+practice and the detection half of <a href="../adr/0012-worktree-convergence-model/">ADR-0012</a>; the action is
+<code>klartext converge</code>.</p>
+<ul>
+<li><strong>Fail-soft:</strong> stdlib only; any error or an unreachable remote → exit 0, no warning (never nags on
+  a state it cannot verify, never blocks a session).</li>
+<li><strong>Detection behind a port:</strong> <code>DriftSignal</code> with the L1 <code>CommitCountDrift</code> adapter; a later L2
+  (shared-layer-weighted) is an adapter swap (OE's Drift-Awareness practice).</li>
+<li><strong>Verification:</strong> <code>api/tests/infrastructure/test_session_health.py</code> (pure signal, real-git
+  assessment, e2e hook, settings wiring).</li>
+</ul>
 <hr />
 <h2 id="team-auto-memory-shared-blackboard">Team auto-memory (shared blackboard)<a class="headerlink" href="#team-auto-memory-shared-blackboard" title="Permanent link">&para;</a></h2>
 <p>All agents share one auto-memory directory — the team blackboard at
