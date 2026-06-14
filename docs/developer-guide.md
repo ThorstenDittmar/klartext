@@ -225,6 +225,21 @@ agent's Hoheitswissen at session start — and on `/clear`, which the desktop ap
 
 Rationale and the return-to-app gate: [ADR-0011](adr/0011-return-to-desktop-app-session-start.md) (condition G1).
 
+### Session health / drift warning (SessionStart hook)
+
+A second `SessionStart` hook (`scripts/session_health.py`, matcher `startup|clear`) warns — **never
+blocks** — when the worktree is behind `origin/main`, so a session does not resume work on a stale
+substrate. This is the *"verify current before resume"* clause of the Controlled-Method-Rollout
+practice and the detection half of [ADR-0012](adr/0012-worktree-convergence-model.md); the action is
+`klartext converge`.
+
+- **Fail-soft:** stdlib only; any error or an unreachable remote → exit 0, no warning (never nags on
+  a state it cannot verify, never blocks a session).
+- **Detection behind a port:** `DriftSignal` with the L1 `CommitCountDrift` adapter; a later L2
+  (shared-layer-weighted) is an adapter swap (OE's Drift-Awareness practice).
+- **Verification:** `api/tests/infrastructure/test_session_health.py` (pure signal, real-git
+  assessment, e2e hook, settings wiring).
+
 ---
 
 ## Team auto-memory (shared blackboard)
