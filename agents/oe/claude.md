@@ -162,10 +162,12 @@ Der Default bleibt, Briefings dem User zu präsentieren.
 (Briefings, Approval-Requests, Handoffs, Entscheidungen) **muss** in den Inbox des Empfängers. Die
 App-DM (`send_message`) ist nur die **Klingel**: erlaubt als Sofort-Nudge *zusätzlich* zum Inbox-Eintrag
 oder für rein ephemere Klärung — **nie alleiniger Träger** eines aktionsrelevanten Items. Reconciliation
-läuft über den Inbox, so kann das Lesen des Inbox nie aktionsrelevante Arbeit verpassen. Begründung:
-am 2026-06-14 erreichten DevOps + SA OE nur über den App-Kanal, OEs Inbox war leer — zwei
-merge-blockierende Approvals (#110/#111) wären ohne User-Relay verpasst worden. Operative Regel: siehe
-`docs/superpowers/skills/knowledge-routing.md`.
+läuft über den Inbox, so kann das Lesen des Inbox nie aktionsrelevante Arbeit verpassen. Begründung
+(präzisiert nach Faktencheck): am 2026-06-14 landete das Item „#111 braucht OE-Gate" **nie in OEs
+Inbox** — SAs ADR-0012-Hinweis ging (korrekt, für den Build) an DevOps, DevOps' „Ball bei OE" nur
+über den verbalen User-Relay; #110s Gate-Anfrage kam dagegen sehr wohl über den Inbox. Also fehlender/
+fehladressierter Inbox-Eintrag, kein „falscher Kanal" und kein Zustell-Bug. Korollar: beim Senden die
+Empfänger-Slug prüfen. Operative Regel: siehe `docs/superpowers/skills/knowledge-routing.md`.
 
 ### Was OE mit einem Wissens-Briefing macht
 1. Wenn es die **Struktur des Systems** betrifft (neue Abgrenzung, neues Kollaborationsmuster):
