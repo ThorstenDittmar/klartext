@@ -1689,7 +1689,7 @@ empirical content) · <strong>Advances Alpha:</strong> Way of Working
 <tr>
 <td><strong>Uncontrolled</strong> (external-like)</td>
 <td>app <code>autoMemory</code> resolution (pin honored? per-cwd default? trust), <code>~/.claude</code> semantics, filesystem</td>
-<td><strong>Environment Knowledge</strong> work product (version-bound + <strong>Canary</strong>) — lifts the existing empirical finding <code>reference_automemory_scope_behavior</code> into the repo</td>
+<td><strong>Environment Knowledge</strong> work product (version-bound + <strong>Canary</strong>) — <strong>already in the repo</strong>: the autoMemory resolution lives in <code>environment/claude-code-app.md</code> (v2, #99/#103); same Resource = the app, so no separate card</td>
 <td>DevOps (empirical, four-eyes)</td>
 </tr>
 <tr>
@@ -1725,7 +1725,7 @@ check).</p>
 <td><strong>C1</strong></td>
 <td>The team memory resolves to the <strong>same shared path for every agent</strong>, independent of worktree/cwd (committed <code>autoMemoryDirectory</code>).</td>
 <td>Agents read/write <em>different</em> memories → divergent truth (the autoMemory cutover pain).</td>
-<td>Health-check asserts the resolved memory path == the committed shared path.</td>
+<td>Health-check asserts the resolved memory path == the committed shared path — <strong>live in the session-health hook (#117)</strong>.</td>
 <td>✅ (after the pin rollout)</td>
 </tr>
 <tr>
@@ -1739,22 +1739,34 @@ check).</p>
 <td><strong>C3</strong></td>
 <td>The inbox is <strong>readable/writable by every session at a git-worktree-independent path</strong>.</td>
 <td>Cross-agent messages land where the recipient cannot see them (the #108 / mis-address class).</td>
-<td>Health-check asserts <code>inbox.sh</code> base resolves outside the worktree and is reachable.</td>
+<td>Health-check asserts <code>inbox.sh</code> base resolves outside the worktree and is reachable — <strong>live in the session-health hook (#117)</strong>.</td>
 <td>✅</td>
 </tr>
 <tr>
 <td><strong>C4</strong></td>
 <td><strong>Concurrent writes</strong> (e.g. parallel memory consolidation) corrupt neither the <code>MEMORY.md</code> index nor any inbox message.</td>
 <td>Lost/garbled memories or index under simultaneous agent activity.</td>
-<td><em>(to define with the check)</em></td>
-<td>⚠️ <strong>OPEN — not yet guaranteed</strong></td>
+<td>Index-integrity assertion (every <code>MEMORY.md</code> entry → a real file; no duplicate entries) in the health-check.</td>
+<td>✅ <strong>Decided (lean), 2026-06-14 — see below</strong></td>
 </tr>
 </tbody>
 </table>
-<p><strong>C4 is an explicit open decision, not an assumption.</strong> Surfaced 2026-06-14 when multiple agents consolidated
-the shared memory simultaneously; no corruption was observed, but nothing <em>guarantees</em> it. Naming it as a
-contract clause turns a hope into a decision: either prove/limit concurrency is safe, or add a guard
-(lock / append-only / single-writer convention). To be decided as its own Improvement Step.</p>
+<p><strong>C4 — Decided (lean: eventual + reconcile), 2026-06-14 (user, by practice).</strong> The exposure is <strong>narrow</strong>:
+per-fact files are <strong>single-owner</strong> (distinct files → no collision) and inbox messages are <strong>one file each
+with a unique timestamp+slug name</strong> (no collision). The <em>only</em> shared hot file is <strong><code>MEMORY.md</code></strong> (the index).
+Guarantee: <em>no lost or garbled memory under normal concurrent operation</em> — held by a <strong>convention + reconciler</strong>,
+not a lock:</p>
+<ul>
+<li><strong>Fact files stay single-owner</strong> — never concurrently co-edited; a cross-owner change is routed via OE
+  (<code>knowledge-routing</code>), not edited in place.</li>
+<li><strong><code>MEMORY.md</code></strong> — each agent <strong>appends its own one-line entry</strong>; OE's <strong><code>consolidate-memory</code></strong> pass is the
+  reconciler/structural writer, and the <strong>index-integrity check</strong> (every entry → a real file, no duplicates —
+  exactly the check OE ran on 2026-06-14) catches and surfaces any rare clobber for repair.</li>
+</ul>
+<p>A hard guard (lock / single-writer index) was <strong>considered and rejected</strong> as disproportionate for a
+rarely-written index whose only observed concurrency (parallel consolidation, 2026-06-14) produced no
+corruption. If the index-integrity check ever <em>does</em> trip in practice, that is the falsifiable signal to
+revisit (a new Improvement Step) — the lean stance is itself monitored.</p>
 <h2 id="why-a-contract-the-lever-the-seam-gives-us">Why a contract (the lever the seam gives us)<a class="headerlink" href="#why-a-contract-the-lever-the-seam-gives-us" title="Permanent link">&para;</a></h2>
 <p>Because we <strong>own</strong> the inner face, the contract reveals <strong>design levers</strong>, not just risk to watch: with the
 Claude app or GitHub we can only observe + Canary; here we can <em>build</em> the substrate to satisfy the contract
@@ -1770,11 +1782,16 @@ of invariants.</p>
 <li><strong>Drift Awareness</strong> (register #106) / <strong>ADR-0012</strong> — convergence keeps a worktree's <em>copy</em> of the substrate
   current; the contract states what the substrate must guarantee in the first place.</li>
 </ul>
-<h2 id="open">Open<a class="headerlink" href="#open" title="Permanent link">&para;</a></h2>
+<h2 id="status-open">Status &amp; open<a class="headerlink" href="#status-open" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>C4 concurrency</strong> — decide the guarantee + its guard (own Improvement Step).</li>
-<li>Lift <code>reference_automemory_scope_behavior</code> into an Environment Knowledge work product (DevOps, four-eyes).</li>
-<li>Build the substrate health-check asserting C1–C3 now, C4 once decided (DevOps, co-located with G2).</li>
+<li><strong>C1, C3</strong> — ✅ live in the session-health hook (#117).</li>
+<li><strong>C2</strong> (durability) — holds; its explicit hook assertion is still pending (DevOps, fold into the hook).</li>
+<li><strong>C4</strong> — ✅ <strong>decided lean (2026-06-14)</strong>; its check = the <strong>index-integrity assertion</strong> (every entry → a real
+  file, no duplicates), to be added to the hook (DevOps).</li>
+<li>Uncontrolled face (autoMemory resolution) — ✅ already an Environment Knowledge work product
+  (<code>environment/claude-code-app.md</code>, v2); no separate card.</li>
+<li><strong>Monitor (OE):</strong> if the index-integrity check ever trips in practice, revisit the lean stance (new
+  Improvement Step).</li>
 </ul>
 
 
