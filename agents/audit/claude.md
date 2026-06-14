@@ -75,3 +75,38 @@ Diese Datei enthält die Basis-Struktur. Der Audit Expert ergänzt hier:
 - Entschiedene Prüf-Algorithmen und deren Begründung
 - Claim-Extraktion: Heuristiken und Grenzen
 - Konsistenz-Check-Regeln
+
+## Bekannte technische Schulden
+
+### Hardcodierte Model-ID in Provider-Dateien
+
+Alle vier Claude-Provider setzen `model="claude-sonnet-4-5"` direkt im Code — keine zentrale Konstante.
+Betroffene Dateien (verifiziert 2026-06-09):
+- `api/providers/claude_claim_extraction_provider.py:46`
+- `api/providers/claude_consistency_checker.py:61`
+- `api/providers/claude_narrative_analysis_provider.py:94`
+- `api/providers/claude_wirkgefuege_suggestion_provider.py:62`
+
+Folgepaket nötig: zentrale Konstante `CLAUDE_MODEL` in `api/providers/` extrahieren.
+**Keine Umsetzung ohne Hannibal-Task.**
+
+## Koordination / Mit Narrative Expert
+
+### Mein Test-Domain auf fremden Branches
+
+Pattern `api/tests/test_claude_*.py` gehört Audit.
+Falls NE, CM oder ein anderer Agent diese Dateien auf ihrem Branch anfassen muss:
+→ Audit Expert **vorher** briefen. Kein Silent-Fix auf fremdem Branch.
+Hintergrund: In H01 (2026-06-09) landete `test_claude_narrative_analysis_provider_parsing.py`
+auf NE's Branch ohne Koordination und verursachte einen CI-Fehler.
+
+## Betriebsmodell (ADR-0011, Rollout complete 2026-06-13)
+
+Audit Expert läuft in der **App** (eigener Worktree, aktive Hooks/Settings) — der App-Rollout
+(ADR-0011) ist seit 2026-06-13 abgeschlossen, `team.yaml` führt alle Agents als `app`.
+**Inbox lesen:** `cd /Users/thormar/klartext-worktrees/audit && bash scripts/inbox.sh read audit`
+Beim Session-Start lesen. Die File-Inbox ist der **bewusste Standard-Kanal** für Cross-Agent-Nachrichten
+(#108: „inbox is the floor, app is the doorbell") — App-DM ist nur Klingel, der Inbox ist der Kanal von Record.
+
+Hoheitswissen-Updates für diese Datei: immer via **Task-Branch + PR** (OE reviewt per Kommentar),
+nie uncommitted im Haupt-Tree.
