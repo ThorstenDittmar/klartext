@@ -1842,6 +1842,16 @@ damit die Nachfolge-Session ohne Lücke weitermacht (claude.md lädt die Identit
 <p><strong>Artefakt-Verifikation auch hier:</strong> prüfen, dass die Inbox-Datei tatsächlich existiert und nicht leer ist
 (<code>inbox.sh unread &lt;self&gt;</code> / <code>wc -l</code> auf die Datei) — der Seed ist die Verlust-Versicherung, er darf nicht
 selbst dem False-Persistence-Bug zum Opfer fallen.</p>
+<h2 id="schritt-47-worktree-aktuell-nur-im-restart-modus-hinweis">Schritt 4.7 — Worktree aktuell? (NUR im Restart-Modus, Hinweis)<a class="headerlink" href="#schritt-47-worktree-aktuell-nur-im-restart-modus-hinweis" title="Permanent link">&para;</a></h2>
+<p><strong>Überspringen, wenn Checkpoint.</strong> Im Restart-Modus ist der Worktree nach Schritt 4 sauber (alles
+committet) — ein sicherer Moment, ihn mit <code>main</code> zu synchronisieren, damit die Nachfolge-Session auf
+aktuellem <code>main</code> startet (die App rebaset beim Start <strong>nicht</strong> automatisch — Drift-Lücke, siehe
+Improvement-Register „App has no auto-rebase at session start").</p>
+<p>Dieser Skill <strong>rebaset nicht selbst</strong> — er <em>verweist</em> nur auf das mechanische Tooling:
+- <code>git rebase origin/main</code> (wenn der Worktree sauber ist und auf seiner <code>agent/&lt;slug&gt;</code>-Home-Branch sitzt), <strong>oder</strong>
+- <code>klartext worktree-sync</code> (geguardeter Sync, sobald DevOps ihn ausliefert — die Aktions-Hälfte der Drift-Warnung).</p>
+<p><strong>Nicht</strong> auf einem Feature-Branch mit offenem PR zwangs-rebasen — der bekommt <code>main</code> beim PR-Merge.
+Kosmetisch/optional: blockiert den <code>/clear</code> nie.</p>
 <h2 id="schritt-5-kurze-zusammenfassung">Schritt 5 — Kurze Zusammenfassung<a class="headerlink" href="#schritt-5-kurze-zusammenfassung" title="Permanent link">&para;</a></h2>
 <p>Kurze Zusammenfassung geben:
 - Wie viele Punkte wurden gefunden
