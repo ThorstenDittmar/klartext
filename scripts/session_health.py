@@ -85,12 +85,59 @@ def assess_drift(project_dir: Path, signal: DriftSignal | None = None) -> str | 
     )
 
 
+def _team_memory_dir() -> Path:
+    """The shared team-memory directory every agent's auto-memory pin must resolve to."""
+    return Path.home() / ".claude" / "klartext-team-memory"
+
+
+def check_pin(project_dir: Path, expected_dir: Path | None = None) -> str | None:
+    """Memory-substrate C1: the committed autoMemoryDirectory resolves to the shared team path.
+
+    Applies only to an agent worktree (a `.claude/` dir present); a bare directory is not a finding.
+    A wrong/absent pin is exactly the "lonely store" failure the cutover off user-global introduces.
+    """
+    if not (project_dir / ".claude").is_dir():
+        return None
+    expected = expected_dir or _team_memory_dir()
+    try:
+        data = json.loads((project_dir / ".claude" / "settings.json").read_text())
+    except (OSError, ValueError):
+        return "⚠ .claude/settings.json missing or unreadable — memory pin cannot be verified."
+    pin = data.get("autoMemoryDirectory")
+    if not pin:
+        return "⚠ no autoMemoryDirectory pin in .claude/settings.json — team memory may not be shared."
+    if Path(os.path.expanduser(pin)) != expected:
+        return (
+            f"⚠ autoMemoryDirectory ({pin}) does not resolve to the shared team path "
+            f"({expected}) — this worktree may write to a lonely memory store."
+        )
+    return None
+
+
+def check_inbox(project_dir: Path) -> str | None:
+    """Memory-substrate C3: the cross-agent inbox transport is reachable from this worktree.
+
+    Applies only to an agent worktree. The inbox base is created on demand by inbox.sh, so the
+    worktree-side requirement is that the transport script itself is present.
+    """
+    if not (project_dir / ".claude").is_dir():
+        return None
+    if not (project_dir / "scripts" / "inbox.sh").is_file():
+        return "⚠ scripts/inbox.sh missing — the cross-agent inbox is unreachable from this worktree."
+    return None
+
+
 def build_warnings(project_dir: Path) -> str | None:
     """Collects all session-health warnings for project_dir, or None if everything is healthy.
 
-    PR2 carries the drift check; the memory-substrate (C1/C3) and Local-mode checks attach here.
+    Drift (ADR-0012) + the memory-substrate contract: C1 (pin resolves) and C3 (inbox reachable).
     """
-    parts = [w for w in (assess_drift(project_dir),) if w]
+    checks = (
+        assess_drift(project_dir),
+        check_pin(project_dir),
+        check_inbox(project_dir),
+    )
+    parts = [w for w in checks if w]
     return "\n".join(parts) if parts else None
 
 
