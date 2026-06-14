@@ -4,7 +4,10 @@ name: Setup Smoke Test
 # the same starting point a new developer or a Codespace would have.
 
 on:
+  # push only on main; PRs validated via pull_request. Without the branch filter
+  # a PR touching these paths fires both events on the same SHA (duplicate runs).
   push:
+    branches: [main]
     paths:
       - "setup.sh"
       - "api/pyproject.toml"
@@ -17,6 +20,10 @@ on:
       - "frontend/package*.json"
       - ".github/workflows/setup-smoke-test.yml"
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   smoke-test:
