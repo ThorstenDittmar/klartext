@@ -28,6 +28,15 @@
             "command": "python3 \"$CLAUDE_PROJECT_DIR/scripts/load_agent_identity.py\""
           }
         ]
+      },
+      {
+        "matcher": "startup|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/scripts/session_health.py\""
+          }
+        ]
       }
     ],
     "PostCompact": [
