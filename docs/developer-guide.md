@@ -237,8 +237,12 @@ practice and the detection half of [ADR-0012](adr/0012-worktree-convergence-mode
   a state it cannot verify, never blocks a session).
 - **Detection behind a port:** `DriftSignal` with the L1 `CommitCountDrift` adapter; a later L2
   (shared-layer-weighted) is an adapter swap (OE's Drift-Awareness practice).
+- **Memory-substrate checks:** the same hook also warns on a broken memory substrate (the
+  [contract](superpowers/improvement/contracts/memory-substrate.md)) — **C1** the committed
+  `autoMemoryDirectory` resolves to the shared team path, **C3** the cross-agent inbox transport
+  (`scripts/inbox.sh`) is reachable. Both apply only to an agent worktree (a `.claude/` dir present).
 - **Verification:** `api/tests/infrastructure/test_session_health.py` (pure signal, real-git
-  assessment, e2e hook, settings wiring).
+  assessment, e2e hook, settings wiring, C1/C3 checks).
 
 ---
 

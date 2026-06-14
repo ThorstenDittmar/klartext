@@ -260,3 +260,162 @@ def test_hook_emits_no_stray_stdout_when_healthy(tmp_path: Path) -> None:
     assert result.returncode == 0, result.stderr
     assert result.stdout == "", f"unexpected stdout on healthy session: {result.stdout!r}"
     assert result.stdout.strip() == ""
+
+
+# --- memory-substrate checks: C1 (pin resolves) + C3 (inbox reachable) ----------
+
+
+def _make_klartext_dir(
+    tmp_path: Path, *, pin: str | None = "~/.claude/klartext-team-memory", with_inbox: bool = True
+) -> Path:
+    """Builds a klartext-worktree-like dir: .claude/settings.json + optional scripts/inbox.sh.
+
+    The .claude/ dir marks it as an agent worktree; the memory-substrate checks apply only there
+    (a bare directory is not a finding). `pin=None` writes settings.json without the pin key.
+    """
+    d = tmp_path / "wt"
+    (d / ".claude").mkdir(parents=True)
+    data: dict = {}
+    if pin is not None:
+        data["autoMemoryDirectory"] = pin
+    (d / ".claude" / "settings.json").write_text(json.dumps(data))
+    if with_inbox:
+        (d / "scripts").mkdir()
+        (d / "scripts" / "inbox.sh").write_text("#!/usr/bin/env bash\n")
+    return d
+
+
+def test_check_pin_none_for_non_klartext_dir(tmp_path: Path) -> None:
+    """Expects no finding for a plain dir without .claude/ — it is not an agent worktree."""
+    assert _load_module().check_pin(tmp_path) is None
+
+
+def test_check_pin_passes_for_correct_pin(tmp_path: Path) -> None:
+    """Expects no finding when autoMemoryDirectory resolves to the expected team path (C1)."""
+    expected = tmp_path / "team-memory"
+    d = _make_klartext_dir(tmp_path, pin=str(expected))
+    assert _load_module().check_pin(d, expected_dir=expected) is None
+
+
+def test_check_pin_warns_for_wrong_pin(tmp_path: Path) -> None:
+    """Expects a finding when the pin does not resolve to the shared team path (C1 violated)."""
+    d = _make_klartext_dir(tmp_path, pin="/somewhere/else")
+    warning = _load_module().check_pin(d, expected_dir=tmp_path / "team-memory")
+    assert warning is not None
+    assert "autoMemoryDirectory" in warning
+
+
+def test_check_pin_warns_when_pin_absent(tmp_path: Path) -> None:
+    """Expects a finding when an agent worktree's settings.json carries no autoMemoryDirectory."""
+    d = _make_klartext_dir(tmp_path, pin=None)
+    assert _load_module().check_pin(d, expected_dir=tmp_path / "team-memory") is not None
+
+
+def test_check_inbox_none_for_non_klartext_dir(tmp_path: Path) -> None:
+    """Expects no finding for a plain dir without .claude/ — not an agent worktree."""
+    assert _load_module().check_inbox(tmp_path) is None
+
+
+def test_check_inbox_passes_when_script_present(tmp_path: Path) -> None:
+    """Expects no finding when scripts/inbox.sh is reachable from the worktree (C3)."""
+    d = _make_klartext_dir(tmp_path, with_inbox=True)
+    assert _load_module().check_inbox(d) is None
+
+
+def test_check_inbox_warns_when_script_missing(tmp_path: Path) -> None:
+    """Expects a finding when scripts/inbox.sh is missing — the cross-agent inbox is unreachable."""
+    d = _make_klartext_dir(tmp_path, with_inbox=False)
+    warning = _load_module().check_inbox(d)
+    assert warning is not None
+    assert "inbox" in warning.lower()
+
+
+def test_build_warnings_aggregates_pin_finding(tmp_path: Path) -> None:
+    """Expects build_warnings to include a memory-substrate finding (here: a wrong pin)."""
+    d = _make_klartext_dir(tmp_path, pin="/wrong/path")  # never equals the real default team path
+    warning = _load_module().build_warnings(d)
+    assert warning is not None
+    assert "autoMemoryDirectory" in warning
+
+
+# --- QA gap-fill: tilde resolution, malformed settings, fail-soft, multi-finding ---
+
+
+def test_check_pin_passes_for_tilde_pin_against_default_team_dir(tmp_path: Path) -> None:
+    """Expects the PRODUCTION tilde pin to resolve against _team_memory_dir() — no finding.
+
+    The committed pin in .claude/settings.json is the tilde form `~/.claude/klartext-team-memory`,
+    and the default expected path comes from _team_memory_dir() (Path.home()/.claude/...). Every
+    other C1 test passes an ABSOLUTE expected_dir, so none of them exercise the tilde-expand +
+    _team_memory_dir() agreement that the live hook actually depends on. If _team_memory_dir()
+    stopped expanding ~ (or os.path.expanduser were dropped from check_pin), this test catches it
+    while production would otherwise warn on every healthy session.
+    """
+    m = _load_module()
+    d = _make_klartext_dir(tmp_path, pin="~/.claude/klartext-team-memory")
+    # No expected_dir → check_pin uses _team_memory_dir(); both sides must resolve to home-expanded.
+    assert m.check_pin(d) is None, (
+        "production tilde pin must resolve against _team_memory_dir() — drift here means the live "
+        "hook warns on a correctly-pinned worktree"
+    )
+
+
+def test_check_pin_warns_on_malformed_settings_json(tmp_path: Path) -> None:
+    """Expects the except (OSError/ValueError) branch on malformed JSON — a finding, not a crash.
+
+    `.claude/` present but settings.json is invalid JSON — the json.loads failure branch. Without
+    this test that branch is untested and a refactor could let the JSONDecodeError escape.
+    """
+    m = _load_module()
+    d = tmp_path / "wt"
+    (d / ".claude").mkdir(parents=True)
+    (d / ".claude" / "settings.json").write_text("{ this is not json")
+    warning = m.check_pin(d, expected_dir=tmp_path / "team-memory")
+    assert warning is not None
+    assert "settings.json" in warning
+
+
+def test_check_pin_warns_when_settings_json_missing(tmp_path: Path) -> None:
+    """Expects the OSError branch to fire when .claude/ exists but settings.json is absent.
+
+    Agent worktree (.claude/ present) with no settings.json → read_text raises OSError, which the
+    except must catch and turn into a finding rather than let it propagate to build_warnings.
+    """
+    m = _load_module()
+    d = tmp_path / "wt"
+    (d / ".claude").mkdir(parents=True)
+    warning = m.check_pin(d, expected_dir=tmp_path / "team-memory")
+    assert warning is not None
+    assert "settings.json" in warning
+
+
+def test_build_warnings_aggregates_pin_and_inbox_together(tmp_path: Path) -> None:
+    """Expects BOTH C1 and C3 findings to combine into one newline-joined block (multi-finding).
+
+    Only the single-finding aggregation is covered above. This asserts that when the pin is wrong
+    AND inbox.sh is missing, build_warnings returns one string containing both — newline-joined,
+    not silently dropping one. Guards the newline-join path with more than one part.
+    """
+    m = _load_module()
+    d = _make_klartext_dir(tmp_path, pin="/wrong/path", with_inbox=False)
+    warning = m.build_warnings(d)
+    assert warning is not None
+    assert "autoMemoryDirectory" in warning
+    assert "inbox" in warning.lower()
+    assert "\n" in warning, "two findings must be joined, not collapsed to one"
+
+
+def test_hook_stays_exit_zero_when_substrate_finding_present(tmp_path: Path) -> None:
+    """Expects the e2e hook to exit 0 and emit valid JSON when a C1 finding fires (not just drift).
+
+    The pure check tests prove check_pin returns a string; this proves the full hook path — through
+    build_warnings, main(), json.dump — survives a substrate-only finding (no git drift) and still
+    produces a parseable SessionStart payload. A substrate finding must never block or corrupt.
+    """
+    d = _make_klartext_dir(tmp_path, pin="/wrong/path")
+    # Sanity: this dir is not a git repo, so drift is None — the finding is C1 only.
+    result = _run_hook(d)
+    assert result.returncode == 0, result.stderr
+    payload = json.loads(result.stdout)
+    assert payload["hookSpecificOutput"]["hookEventName"] == "SessionStart"
+    assert "autoMemoryDirectory" in payload["hookSpecificOutput"]["additionalContext"]
