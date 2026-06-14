@@ -37,6 +37,7 @@
 | Retrospective | Way of Working (tracks Improvement sub-alpha) | ritual | ✓ (Work cannot reach *Closed* without it) | ✅ `practices/retrospective.md` |
 | Merge Protocol | Work | ritual | ✓ (for parallel dispatches) | ✅ `practices/merge-protocol.md` |
 | Environment Knowledge | Way of Working | ritual (manual canary — flagship Resource not scriptable) | ✓ (before an env-fact-dependent decision; after a tool update) | ✅ `practices/environment-knowledge.md` |
+| Controlled Method Rollout | Way of Working | ritual (classification gate + drift/G2 verify = mechanical promotions, DevOps) | ✓ (every way-of-working change: classify breaking-for-a-drifted-agent → rolling default / barrier for breaking) | ✅ `practices/controlled-method-rollout.md` |
 
 ## Practices — enacted as skills (cards pending)
 
@@ -107,6 +108,14 @@ Knowledge** practice. Each carries version-binding + a manual **Canary** + a **d
 (tested / observed-untested / inferred / superseded). First instance: `claude-code-app.md` (v1.12603.1). Owner
 OE (form + home); empirical content four-eyes-verified by the testing agent (DevOps). Distinct from **Resources**
 below (which we *reference*, not *produce*).
+
+**Dependency Contracts** (`docs/superpowers/improvement/contracts/`) — the **invariants our way of working
+requires from** a central IT component we depend on (the *upstream* counterpart to a **dependency chain**,
+which lists the downstream blast radius). Each clause carries its blast radius + a falsifiable check. New lean
+element (2026-06-14), KB-confirmed distinct from the dependency chain. Owner OE (form + clauses); mechanization
++ empirical content four-eyes (DevOps). First instance: `contracts/memory-substrate.md` (the team memory + inbox
++ pin substrate; C1–C3 hold, C4 concurrency open). Bind only **central** functionality this way — *Flut
+vermeiden*.
 
 **Resources** (referenced, not produced — Essence element): external reference assets (licensed decks,
 standards PDFs) · home `assets-local/` (gitignored; README = provenance register, convention in `setup.sh`).
