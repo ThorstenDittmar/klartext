@@ -16,6 +16,31 @@ auch wenn es im falschen Domain-Kontext aufgetaucht ist.
 **Grundregel:** Der User ist immer der Kanal. Kein Agent schreibt direkt in die Dateien eines anderen Agents.
 Alle Wissens-Briefings gehen durch den User, der entscheidet und weiterleitet.
 
+### Kanal-Politik — „Inbox is the floor, app is the doorbell" (Decided 2026-06-14, #108)
+
+Seit der Rückkehr in die Desktop-App (ADR-0011) gibt es **zwei** Transportwege zwischen Agents:
+die File-Inbox (`scripts/inbox.sh`) und App-Direktnachrichten (`ccd_session_mgmt`). Damit der
+Empfänger nichts verpasst, gilt **ein Kanal von Record**:
+
+- **Inbox = Floor (verbindlich, durable).** Alles **Aktionsrelevante oder Persistente** — Briefings,
+  Approval-Requests, Handoffs, Entscheidungen — **muss** in den Inbox des Empfängers. Wenn es zählt,
+  steht es im Inbox. Punkt.
+- **App-DM = Klingel (optional, ephemer).** Erlaubt nur als Sofort-Nudge *zusätzlich* zum Inbox-Eintrag
+  („hab dir X in den Inbox gelegt") **oder** für rein ephemere Klärung ohne Aktion/Persistenz.
+  **Niemals alleiniger Träger** eines aktionsrelevanten Items.
+- **Reconciliation läuft über den Inbox.** Der Empfänger arbeitet seinen Inbox ab; er muss den App-Kanal
+  nicht nach verlorener Arbeit absuchen. So kann das Lesen des Inbox **nie** aktionsrelevante Arbeit verpassen.
+
+**Begründung (Evidenz 2026-06-14, präzisiert nach Faktencheck):** Das aktionsrelevante Item „#111
+(ADR-0012) braucht OE-Gate + Merge" landete **nie in OEs Inbox** — SAs Inbox-Hinweis zu ADR-0012 ging
+(korrekt, für den Build) an *DevOps*, und DevOps' „Ball bei OE" erreichte OE nur über den verbalen
+User-Relay. OE erfuhr von der merge-blockierenden Arbeit allein über den User, nicht über den Boden.
+(#110s Gate-Anfrage kam dagegen sehr wohl über OEs Inbox an und wurde bearbeitet — das Versagen war also
+ein **fehlender bzw. fehladressierter Inbox-Eintrag**, kein „falscher Kanal" als solcher und kein
+Zustell-Bug.) Lehre: Aktionsrelevantes muss in den **richtigen** Empfänger-Inbox deponiert werden — der
+Inbox ist der verbindliche Boden; ein App-Ping oder verbaler Hinweis ersetzt ihn nie. Korollar: Beim
+Senden die Empfänger-Slug prüfen.
+
 ---
 
 ## Schritt 1 — Jeden Wissenspunkt klassifizieren
