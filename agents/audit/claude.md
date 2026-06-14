@@ -100,11 +100,13 @@ Falls NE, CM oder ein anderer Agent diese Dateien auf ihrem Branch anfassen muss
 Hintergrund: In H01 (2026-06-09) landete `test_claude_narrative_analysis_provider_parsing.py`
 auf NE's Branch ohne Koordination und verursachte einen CI-Fehler.
 
-## Betriebsmodell (seit ADR-0010)
+## Betriebsmodell (ADR-0011, Rollout complete 2026-06-13)
 
-Audit Expert läuft im Terminal-Modell (eigener Worktree, aktive Hooks/Settings).
-**Inbox lesen:** `cd /Users/thormar/klartext && bash scripts/inbox.sh read audit`
-Beim Session-Start lesen — dort landen Cross-Agent-Nachrichten, die nicht über die App kommen.
+Audit Expert läuft in der **App** (eigener Worktree, aktive Hooks/Settings) — der App-Rollout
+(ADR-0011) ist seit 2026-06-13 abgeschlossen, `team.yaml` führt alle Agents als `app`.
+**Inbox lesen:** `cd /Users/thormar/klartext-worktrees/audit && bash scripts/inbox.sh read audit`
+Beim Session-Start lesen. Die File-Inbox ist der **bewusste Standard-Kanal** für Cross-Agent-Nachrichten
+(#108: „inbox is the floor, app is the doorbell") — App-DM ist nur Klingel, der Inbox ist der Kanal von Record.
 
 Hoheitswissen-Updates für diese Datei: immer via **Task-Branch + PR** (OE reviewt per Kommentar),
 nie uncommitted im Haupt-Tree.
