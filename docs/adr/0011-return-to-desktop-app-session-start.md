@@ -1,6 +1,6 @@
 # 0011 — Return to the Desktop App for Session Start (Gated)
 
-**Status:** Accepted (Gate) — decision made, execution conditional on the Gate below
+**Status:** Accepted — **rollout complete 2026-06-13.** The gated decision below was executed end-to-end; the Gate is satisfied. The original gated framing is preserved as the decision record; see the **Addendum (2026-06-13)** at the end for what was completed.
 **Decided by:** User (2026-06-13), direction set; conditions authored by System Architect
 **Author / Sign-off:** System Architect
 **Supersedes:** ADR-0010 §1 "Terminal start via central launcher" and the rejected alternative "Desktop app start". ADR-0010 §2 (worktree isolation), §3 (generational sessions) and §4 (shared layer pinned) remain in force and are carried forward unchanged.
@@ -68,7 +68,7 @@ briefing.
 
 | # | Condition | Owner | Status |
 |---|---|---|---|
-| G1 | **`SessionStart` hook that loads `agents/<name>/claude.md`** from the worktree path, with a matcher that **includes `startup`** (the app reports `/clear` as `source=startup`, lazily on next prompt). Today `settings.json` has only a PostCompact hook — identity reload on session/`/clear` is **missing**. | DevOps | **OPEN — blocking** |
+| G1 | **`SessionStart` hook that loads `agents/<name>/claude.md`** from the worktree path, with a matcher that **includes `startup`** (the app reports `/clear` as `source=startup`, lazily on next prompt). Today `settings.json` has only a PostCompact hook — identity reload on session/`/clear` is **missing**. | DevOps | **DONE** — PR #95 (merged 2026-06-13); proven live in the app at rollout |
 | G2 | **Local-mode invariant** — sessions run only in the app's **Local** environment. Cloud / Remote Control do not see `~/klartext-worktrees` or `.claude/settings.json`. To be asserted as an operating invariant (and, where possible, a startup/health check). | DevOps + OE | OPEN |
 | G3 | **TCC placement** — worktrees stay out of `~/Desktop`/`~/Documents`/`~/Downloads` (those need a macOS grant). `~/klartext-worktrees/<slug>/` (Home-root) is fine and already in use. Document as a placement rule. | DevOps | Met by current layout; document |
 | G4 | **Allowlist patterns match the real invocation form** — `Bash(semgrep*)` covers the bare call but **not** the real `api/.venv/bin/semgrep` path the pre-commit `entry` uses (a **relative**, repo-rooted path — not absolute), so the genuine invocations would prompt. Refine allowlist patterns to the actual (venv-relative) form, anchored — **no leading wildcard** (`Bash(*…*)` would un-anchor the pattern and weaken deny-by-default; rejected). An infra test ties the pattern to the pre-commit `entry` so the two cannot drift. | DevOps + SA | **DONE** — PR #96 (SA sign-off 2026-06-13, option A: relative-only, anchored) |
@@ -122,3 +122,35 @@ before the prior one lands.
 Reversible at low cost: re-select terminal start via `scripts/start-agent.sh` (kept intact). The
 worktrees, branches, shared memory, and inbox are unchanged by the entry-point choice, so a rollback
 touches only how a session is launched — no data migration.
+
+## Addendum — Rollout complete (2026-06-13)
+
+The gated return was executed end-to-end on the same day the gate was authored. Recorded here so the
+decision is not left reading as "pending."
+
+**1. Rollout complete — all 10 agents on `status: app`.** The staggered per-agent rollout the Decision
+anticipated is **done**: every colleague was brought into the app, its terminal session closed, and all
+ten boot and operate in the app. The G1 `SessionStart` identity hook was proven **live in the app** (the
+agent's `agents/<name>/claude.md` loads on `startup`, this rollout's OE session included). `team.yaml`
+flips all ten to `status: app` — PR #100 (merged 2026-06-13). The gate is satisfied: G1 done (PR #95),
+G4 done (PR #96), G2/G3 asserted by the current layout; G5 (Canary) and G6 (MDM) carry forward as
+standing obligations, unchanged.
+
+**2. `morning.sh` retired.** The terminal **bulk** launcher only ever started `status: terminal` agents
+and is obsolete once all ten are on `status: app`; it is stood down — PR #101 (merged 2026-06-13,
+coordinated with DevOps). This does **not** retire the terminal path itself: `terminal` remains a valid
+`team.yaml` status value and `scripts/start-agent.sh` / the per-agent `start.sh` wrappers stay intact as
+the documented single-agent fallback and rollback path (consistent with *Ongoing obligations* above).
+
+**3. The ADR-0010 trade-off is now resolved without sacrifice.** The architecture principle from
+ADR-0010 §2 — *"isolate code, share comms/memory/audit"* — is now satisfied **without** the cost that
+model had to pay. ADR-0010 achieved isolation by moving session start to the terminal, which made app
+sessions invisible/unreachable/mute and forced the file inbox as the cross-agent channel (§4). ADR-0011
+brings the app channel back **while keeping the worktree isolation** (agents still run in their
+`~/klartext-worktrees/<slug>/`): isolation stays, the channel returns. The earlier trade-off was a
+property of the terminal-start mechanism, not of the isolation guarantee.
+
+**Open (not part of this addendum — flagged for a separate Improvement Step):** the file inbox now runs
+**in parallel** with the re-available app channel. The user has set the file inbox as the standing
+cross-agent channel; a deliberate placement — one channel, not two by accident — is its own decision
+(SA + OE + user), consistent with the Open Question on app messaging above. Recorded, not decided here.

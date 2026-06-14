@@ -1,4 +1,6 @@
 {
+  "autoMemoryEnabled": true,
+  "autoMemoryDirectory": "~/.claude/klartext-team-memory",
   "permissions": {
     "allow": [
       "Read",
@@ -12,7 +14,8 @@
       "Bash(find *)",
       "Bash(grep*)",
 
-      "Bash(semgrep*)"
+      "Bash(semgrep*)",
+      "Bash(api/.venv/bin/semgrep*)"
     ]
   },
   "hooks": {

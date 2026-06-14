@@ -85,6 +85,8 @@ source api/.venv/bin/activate
 | `klartext flush --yes` | Same, without confirmation prompt |
 | `klartext db reset` | Reset local database and re-apply all migrations |
 | `klartext db status` | Show status of the local Supabase instance |
+| `klartext converge` | Rebase the current worktree onto `origin/main` under the [ADR-0012](adr/0012-worktree-convergence-model.md) guards (clean `agent/<slug>` home branch only; never touches WIP or feature branches) |
+| `klartext converge --all` | Same, across every worktree of the repo — the one-liner that propagates a committed settings/hook/pin change to all home-branch worktrees |
 
 ---
 
@@ -222,6 +224,30 @@ agent's Hoheitswissen at session start — and on `/clear`, which the desktop ap
   manual Canary in [`environment/claude-code-app.md`](superpowers/improvement/environment/claude-code-app.md).
 
 Rationale and the return-to-app gate: [ADR-0011](adr/0011-return-to-desktop-app-session-start.md) (condition G1).
+
+---
+
+## Team auto-memory (shared blackboard)
+
+All agents share one auto-memory directory — the team blackboard at
+`~/.claude/klartext-team-memory`. Auto-memory is otherwise keyed by the sanitized *cwd*, so each
+worktree would get its own store; pinning a fixed `autoMemoryDirectory` makes every worktree resolve
+to the same directory.
+
+- **Where the pin lives:** the **committed** `.claude/settings.json` (`autoMemoryDirectory`,
+  `autoMemoryEnabled`). It is byte-identical in every worktree, so all agents share one store. The
+  desktop app honors a project-scope `autoMemoryDirectory` **after the worktree's trust dialog is
+  accepted** — the same gate as the hooks.
+- **Trust matters:** an *untrusted* worktree silently ignores the pin and falls back to a per-cwd
+  default — a lonely store, not the team blackboard. Accept the trust dialog on first open of each
+  worktree (you already do this for the SessionStart hook).
+- **Not user-global:** the pin must **not** live in `~/.claude/settings.json`. A user-global pin
+  redirects *every* machine session — klartext or not — onto the team memory. `setup.sh` cleans any
+  stale user-global pin on each run.
+- **Verification:** `api/tests/infrastructure/test_automemory_settings.py` gates the committed pin
+  and the setup cleanup. The runtime honoring (the desktop app cannot be scripted) was verified
+  empirically and is re-checked after app updates by the Canary in
+  [`environment/claude-code-app.md`](superpowers/improvement/environment/claude-code-app.md).
 
 ---
 
