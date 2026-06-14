@@ -85,6 +85,8 @@ source api/.venv/bin/activate
 | `klartext flush --yes` | Same, without confirmation prompt |
 | `klartext db reset` | Reset local database and re-apply all migrations |
 | `klartext db status` | Show status of the local Supabase instance |
+| `klartext converge` | Rebase the current worktree onto `origin/main` under the [ADR-0012](adr/0012-worktree-convergence-model.md) guards (clean `agent/<slug>` home branch only; never touches WIP or feature branches) |
+| `klartext converge --all` | Same, across every worktree of the repo — the one-liner that propagates a committed settings/hook/pin change to all home-branch worktrees |
 
 ---
 
@@ -202,6 +204,69 @@ SUPABASE_URL=http://127.0.0.1:54321 \
 SUPABASE_SERVICE_ROLE_KEY=sb_secret_... \
 python3 -m pytest tests/ -m integration -v
 ```
+
+---
+
+## Agent session identity (SessionStart hook)
+
+Each specialist agent works in its own git worktree under `~/klartext-worktrees/<slug>/`. So a
+session knows *which* agent it is, a `SessionStart` hook in `.claude/settings.json` injects that
+agent's Hoheitswissen at session start — and on `/clear`, which the desktop app reports as
+`source=startup`:
+
+- **Script:** `scripts/load_agent_identity.py` derives the slug from the worktree basename
+  (`CLAUDE_PROJECT_DIR`); if `agents/<slug>/claude.md` exists it emits it as SessionStart
+  `additionalContext` (an `EXTREMELY_IMPORTANT` preamble plus the full file). For any other
+  directory (main checkout, clones, CI) it is a silent no-op — exit 0, no output.
+- **Matcher:** `startup|clear|compact` — covers session open, `/clear`, and re-injection after a compaction.
+- **Verification:** `api/tests/infrastructure/test_session_start_hook.py` gates the wiring and the
+  loader behaviour. The runtime injection (the desktop app cannot be scripted) is checked by the
+  manual Canary in [`environment/claude-code-app.md`](superpowers/improvement/environment/claude-code-app.md).
+
+Rationale and the return-to-app gate: [ADR-0011](adr/0011-return-to-desktop-app-session-start.md) (condition G1).
+
+### Session health / drift warning (SessionStart hook)
+
+A second `SessionStart` hook (`scripts/session_health.py`, matcher `startup|clear`) warns — **never
+blocks** — when the worktree is behind `origin/main`, so a session does not resume work on a stale
+substrate. This is the *"verify current before resume"* clause of the Controlled-Method-Rollout
+practice and the detection half of [ADR-0012](adr/0012-worktree-convergence-model.md); the action is
+`klartext converge`.
+
+- **Fail-soft:** stdlib only; any error or an unreachable remote → exit 0, no warning (never nags on
+  a state it cannot verify, never blocks a session).
+- **Detection behind a port:** `DriftSignal` with the L1 `CommitCountDrift` adapter; a later L2
+  (shared-layer-weighted) is an adapter swap (OE's Drift-Awareness practice).
+- **Memory-substrate checks:** the same hook also warns on a broken memory substrate (the
+  [contract](superpowers/improvement/contracts/memory-substrate.md)) — **C1** the committed
+  `autoMemoryDirectory` resolves to the shared team path, **C3** the cross-agent inbox transport
+  (`scripts/inbox.sh`) is reachable. Both apply only to an agent worktree (a `.claude/` dir present).
+- **Verification:** `api/tests/infrastructure/test_session_health.py` (pure signal, real-git
+  assessment, e2e hook, settings wiring, C1/C3 checks).
+
+---
+
+## Team auto-memory (shared blackboard)
+
+All agents share one auto-memory directory — the team blackboard at
+`~/.claude/klartext-team-memory`. Auto-memory is otherwise keyed by the sanitized *cwd*, so each
+worktree would get its own store; pinning a fixed `autoMemoryDirectory` makes every worktree resolve
+to the same directory.
+
+- **Where the pin lives:** the **committed** `.claude/settings.json` (`autoMemoryDirectory`,
+  `autoMemoryEnabled`). It is byte-identical in every worktree, so all agents share one store. The
+  desktop app honors a project-scope `autoMemoryDirectory` **after the worktree's trust dialog is
+  accepted** — the same gate as the hooks.
+- **Trust matters:** an *untrusted* worktree silently ignores the pin and falls back to a per-cwd
+  default — a lonely store, not the team blackboard. Accept the trust dialog on first open of each
+  worktree (you already do this for the SessionStart hook).
+- **Not user-global:** the pin must **not** live in `~/.claude/settings.json`. A user-global pin
+  redirects *every* machine session — klartext or not — onto the team memory. `setup.sh` cleans any
+  stale user-global pin on each run.
+- **Verification:** `api/tests/infrastructure/test_automemory_settings.py` gates the committed pin
+  and the setup cleanup. The runtime honoring (the desktop app cannot be scripted) was verified
+  empirically and is re-checked after app updates by the Canary in
+  [`environment/claude-code-app.md`](superpowers/improvement/environment/claude-code-app.md).
 
 ---
 

@@ -89,15 +89,16 @@ The two tiers need different mechanisms, because they need different knowledge:
   session. Two variants:
   - **(a) Artifact-mediated (preferred, cheap):** a forked subagent represents the participant, reading
     their knowledge file + the work products. **Valid only if** that agent's session knowledge was captured
-    to disk (pre-compact-style capture with a held completion checklist) **at or after work-package end**.
+    to disk (anchor-style capture with a held completion checklist) **at or after work-package end**.
     Without that, the subagent is a simulation that misses exactly the evidence the retro exists to collect
     (precedent: the "simulated Hannibal", deliberately discarded).
   - **(b) Live session (fallback, expensive):** query the agent's long-living session via the user as
     channel. **Required** whenever (a)'s precondition is not confirmed — when in doubt, (b).
 - **Entry criterion (per work-package participant):** capture confirmed → (a); otherwise → (b).
 
-*Current state (2026-06-10):* the capture practice (`pre-compact`) is German-only, unversioned
-(`~/.claude/skills/`), and validated only on OE sessions → (a) is **not yet trustworthy** for other agents;
+*Current state (2026-06-10; skill renamed to `anchor` 2026-06-13):* the capture practice (`anchor`, formerly
+`pre-compact`) is German-only; a versioned repo copy was added 2026-06-13 (`docs/superpowers/skills/anchor.md`,
+machine-local install pending DevOps), and it is validated only on OE sessions → (a) is **not yet trustworthy** for other agents;
 active input therefore uses (b) until the capture practice is promoted (see the Improvement Register —
 that improvement is the enabler of cheap retros).
 

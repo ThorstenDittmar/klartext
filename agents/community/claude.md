@@ -47,6 +47,16 @@ Domain:    [Database oder Config]
 Impact:    [Community Domain, ggf. alle Agents die Auth nutzen]
 ```
 
+## RC6 — Tacit Assumptions im Auth-Flow
+
+Der Auth-Flow (`api/*/user*`) trägt besonders viele implizite Contracts:
+- Pflichtfelder bei der Registrierung
+- Erwartete Error-Codes im Frontend (z.B. bei doppelter E-Mail)
+- Session-Handling-Semantik
+
+Vor jeder Frontend-Welle: explizite Contracts formulieren und mit UX/UI abgleichen,
+bevor die erste Zeile implementiert wird. (Mapping: RC6 — "unborn assumptions at seams")
+
 ## Erweiterung durch Community Expert Agent
 
 Diese Datei enthält die Basis-Struktur. Der Community Expert ergänzt hier:
