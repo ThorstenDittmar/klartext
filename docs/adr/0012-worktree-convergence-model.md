@@ -41,7 +41,7 @@ are the transferable asset; the position below is klartext's deliberate choice.
 |---|---|---|
 | **Direction** | **Pull**, not Push | The agent pulls on its own initiative. A push (someone rebasing a worktree from outside) reaches into a working directory the agent owns. |
 | **Coercion** | **Consensus**, not Force | Convergence **never touches WIP** and **never auto-rebases feature branches**. It is an invitation, not a command. |
-| **Consistency** | **Eventual**, not Strong | Worktrees are *allowed* to lag. Convergence is an explicit act, not a precondition for work. |
+| **Consistency** | **Eventual**, not Strong | Worktrees are *allowed* to lag. Convergence is an explicit act, not a precondition for work. *(Refined by the [Addendum — Two-mode consistency](#addendum--two-mode-consistency-for-breaking-way-of-working-changes-2026-06-14): eventual by default, but a stop-the-world **barrier** for a change that is **breaking for a drifted agent**.)* |
 | **Activation** | **Explicitly forced**, not implicitly emergent | A **named command** plus a **drift warning** — not a hidden launcher side effect as before. The mechanism is visible and owned. |
 | **Convergence unit** | **Whole-branch** (`rebase origin/main`), not partial | Motivated by the shared layer: settings + hooks + allowlists + pins + standards form one coherent state. A partial pull would produce an incoherent mix. *(Point A.)* |
 
@@ -114,3 +114,67 @@ ADR.
 The command is **`klartext converge`** (conceptual name, chosen by the user — explicitly **not**
 `worktree-sync`). The rename from the earlier working name `worktree-sync` is carried through the method
 docs and the `anchor` skill by OE (PR #109 / Improvement Register #106), separately from this ADR.
+
+## Addendum — Two-mode consistency for breaking way-of-working changes (2026-06-14)
+
+**Status:** Accepted — **Decided by:** User (by practice, 2026-06-14) · **Author / Sign-off:** System
+Architect · **Gate:** OE. **Trigger incident:** the **2026-06-14 anchor break** — a breaking
+way-of-working change landed on `main` while some worktrees were still drifted; the `anchor` ritual a
+drifted agent ran no longer matched the new state and broke **before** that agent ever converged.
+
+### Why the base decision needs a refinement
+
+The Decision sets the **Consistency** axis to *eventual* and rejects *strong consistency* as a standing
+rule. That is correct for ordinary work. But eventual convergence has a hole for **breaking changes to
+the way of working**: eventual consistency assumes the *old* state keeps working until an agent catches
+up — which is exactly false for a breaking change. A drifted agent runs the now-broken ritual in the
+window before it converges. The anchor break is that hole realised.
+
+### Decision — refine the Consistency axis (scoped to way-of-working changes)
+
+> **Consistency = eventual by default; strong / barrier when the change is breaking for a drifted agent.**
+
+| Mode | When | Behaviour |
+|---|---|---|
+| **Rolling** *(default)* | Backward-compatible change — a drifted agent keeps running correctly and picks it up later | No global halt. Each agent converges on its own initiative at its next session — the base ADR-0012 path, unchanged. |
+| **Barrier** *(stop-the-world)* | **Breaking** change — the old state breaks (anchored command / path / skill no longer matches) | All agents stabilise + pause, the change lands, all resync **and verify current** before resuming. |
+
+**Trigger — classify every way-of-working change explicitly.** Each way-of-working PR answers one
+question: *"Is this breaking for a **drifted** agent?"* — **no silent default** (recorded as a PR
+label / checklist answer), and **uncertainty resolves to breaking** (fail-safe: a needless halt is
+cheaper than breaking a drifted agent).
+
+**Lever — expand–contract first.** Before classifying a change *breaking*, make it backward-compatible
+where possible (e.g. keep the old command / path as an **alias** during a transition window, then
+remove it). A change built this way is **Rolling**, not Barrier. This is the primary lever to keep the
+barrier set small — the barrier is the exception, not the norm.
+
+### Reconciliation with the base decision (this is not a reversal)
+
+- **Scope.** This addendum governs **way-of-working / shared-substrate changes only** — skills, rituals,
+  `settings.json` / hooks / allowlists, and the commands and paths they reference. **Product changes**
+  (code, ADRs, domain docs — which advance the Software System, not the Way of Working) are **out of
+  scope** and remain purely eventual.
+- **The Barrier mode does not revive the rejected "Strong consistency — block work until synced"
+  alternative.** That rejection stands: convergence is *not* a standing precondition for all work. The
+  barrier is a **bounded, coordinated, land-time event** for a single breaking method change — declared,
+  executed, and over. Outside a declared barrier, convergence stays voluntary and eventual, and the
+  **non-blocking guarantee (Point D) is fully preserved** on the default rolling path.
+
+### Procedure and mechanism live elsewhere — referenced, not duplicated
+
+- **Procedure:** the rollout steps (Barrier = *Stabilise & Halt* (the `anchor` ritual) → *Update* incl.
+  tooling bootstrap → *Resync & Verify current*) are owned by OE's Practice **Controlled Method Rollout**
+  (`docs/superpowers/improvement/practices/controlled-method-rollout.md`, PR #115). This addendum records
+  only the **decision**; the Practice carries the **how**.
+- **Mechanism (DevOps):** the per-PR **classification gate** ("breaking?") and the
+  **verify-current-before-resume** check — which is exactly the SessionStart **drift / G2** check (the
+  detection half of *Drift Awareness*, Register #106). The convergence action remains `klartext converge`
+  (base decision). Until those land, the barrier is run by hand, as it was on 2026-06-14.
+
+### Consequences
+
+- Closes the eventual-consistency hole for breaking method changes **without** giving up the cheap
+  rolling default for everything else.
+- **Cost:** a real classification step on every way-of-working PR, plus an occasional coordinated halt.
+  Mitigated by expand–contract keeping most changes on the rolling path.

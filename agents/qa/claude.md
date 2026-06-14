@@ -123,14 +123,22 @@ Gelernt aus H01/H01-422:
 1. **FakeService = Domain-Bypass.** Router-Test mit `FakeXService` ruft `X.create()` nie auf. Ein
    bestandener Test beweist nicht, dass die Domain-Invariante läuft.
 
-2. **Asymmetrie update vs. remove.** `update()` prüft das DB-Ergebnis und wirft `NarrativeUnitNotFoundError`.
-   `remove()` ist idempotent — kein Check, kein raise, auch bei unbekannter ID. Der globale Handler in
-   `main.py` greift für DELETE/404 daher **nie**. Ein Test `test_remove_unknown_unit_returns_404` ist in
-   Production unerreichbar. Status: PARKED → `PENDING.md`, Entscheid in der Retro.
+2. **Asymmetrie update vs. remove — RESOLVED (DELETE-404, 2026-06-12).** Früher war `remove()` idempotent
+   (kein Check, kein raise), während `update()` strikt das DB-Ergebnis prüfte — der DELETE/404-Pfad war in
+   Production unerreichbar. Mit **Option B (strikt, SA-Sign-off 2026-06-12, PR #81/#82)** sind jetzt **beide**
+   Verben strikt: `remove()` wirft `NarrativeUnitNotFoundError` bei unbekannter ID → 404, analog `update()`.
+   `test_remove_unknown_unit_returns_404` ist damit erreichbar. (War: PARKED → `PENDING.md`.)
 
 3. **qa-review findet echte Bugs.** H01-422: 5 weitere Tests entdeckt die echte Vertragslücken abdeckten
    (Happy Path fehlte; Work-Typ nicht in Contract-Klasse; parent_id-Cases). qa-review ist kein reiner
    Coverage-Checker — es ist QA-Urteilsvermögen.
+
+4. **Fake = Verhaltens-Parity, nicht nur Return-Values.** Ein Fake muss dieselben Exceptions auf denselben
+   Bedingungen werfen wie das echte Repo — nicht nur silent-constant Return-Values vermeiden. Konkret:
+   wirft das echte `SupabaseXRepository.update()/remove()` `NotFoundError` bei unbekannter ID, **muss** der
+   Fake das auch. Asymmetrie **im Fake** (ein Verb strikt, das andere lenient, während das echte Repo beide
+   gleich behandelt) ist ein Red Flag. Aufgedeckt durch einen Real-Chain-Symmetrie-Test (DELETE-404).
+   Quelle: `docs/superpowers/qa-learnings/2026-06-12-fake-error-behaviour-parity.md`; qa-categories Kat. 4.
 
 ## Debug Tools Registry
 
