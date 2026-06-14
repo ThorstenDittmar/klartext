@@ -8,10 +8,21 @@ a PR's state permits merging.
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 import typer
 
-from api.cli import _evaluate_checks, _evaluate_preconditions, _validate_merge_method
+from api.cli import (
+    ConvergeAction,
+    _converge_decision,
+    _evaluate_checks,
+    _evaluate_preconditions,
+    _is_home_branch,
+    _is_worktree_clean,
+    _parse_worktree_list,
+    _validate_merge_method,
+)
 
 # ---------------------------------------------------------------------------
 # Merge-method policy: squash + merge allowed, rebase excluded (stack footgun)
@@ -244,3 +255,114 @@ def test_preconditions_reject_dirty_state_even_if_mergeable_unknown() -> None:
     ok, reason = _evaluate_preconditions(pr)
     assert ok is False
     assert reason != ""
+
+
+# ---------------------------------------------------------------------------
+# `klartext converge` — pure guard logic (ADR-0012: guarded voluntary convergence)
+#
+# The live git fetch/rebase is gated end-to-end against real temp repos in
+# api/tests/infrastructure/test_converge.py. Here we pin the pure decisions the
+# guards hang on: what counts as a home branch, what counts as clean, and which
+# action a (branch, clean, behind) triple resolves to.
+# ---------------------------------------------------------------------------
+
+
+def test_is_home_branch_true_for_agent_slug() -> None:
+    """Expects `agent/<slug>` to be recognised as a home branch (the converge target)."""
+    assert _is_home_branch("agent/devops") is True
+
+
+def test_is_home_branch_false_for_feature_branch() -> None:
+    """Expects a feature branch (feat/…) to be rejected — converge never touches it (ADR §B)."""
+    assert _is_home_branch("feat/klartext-converge") is False
+
+
+def test_is_home_branch_false_for_nested_under_agent() -> None:
+    """Expects `agent/<slug>/<more>` to be rejected — only the exact `agent/<slug>` is home."""
+    assert _is_home_branch("agent/devops/experiment") is False
+
+
+def test_is_home_branch_false_for_main() -> None:
+    """Expects `main` to be rejected — the home branch is an agent branch, not main itself."""
+    assert _is_home_branch("main") is False
+
+
+def test_worktree_clean_for_empty_porcelain() -> None:
+    """Expects an empty `git status --porcelain` to count as clean."""
+    assert _is_worktree_clean("") is True
+
+
+def test_worktree_clean_ignores_untracked_venv() -> None:
+    """Expects an untracked `api/.venv` (the symlinked venv) to be ignored — still clean.
+
+    Every worktree carries an untracked `api/.venv` symlink; it must never count as WIP.
+    """
+    assert _is_worktree_clean("?? api/.venv\n") is True
+
+
+def test_worktree_dirty_for_modified_file() -> None:
+    """Expects a modified tracked file to count as dirty (WIP must block convergence)."""
+    assert _is_worktree_clean(" M api/cli.py\n") is False
+
+
+def test_worktree_dirty_for_other_untracked_file() -> None:
+    """Expects an untracked file other than api/.venv to count as dirty."""
+    assert _is_worktree_clean("?? scratch.py\n") is False
+
+
+def test_worktree_dirty_mixes_venv_and_real_change() -> None:
+    """Expects dirty when api/.venv is untracked AND a real change exists — the real change wins."""
+    assert _is_worktree_clean("?? api/.venv\n M api/cli.py\n") is False
+
+
+def test_converge_skips_feature_branch() -> None:
+    """Expects SKIP_NOT_HOME_BRANCH on a feature branch even when behind — never touch it."""
+    assert (
+        _converge_decision("feat/x", is_clean=True, commits_behind=5)
+        == ConvergeAction.SKIP_NOT_HOME_BRANCH
+    )
+
+
+def test_converge_skips_feature_branch_even_if_dirty() -> None:
+    """Expects the home-branch guard to take precedence over the dirty guard on a feature branch."""
+    assert (
+        _converge_decision("feat/x", is_clean=False, commits_behind=5)
+        == ConvergeAction.SKIP_NOT_HOME_BRANCH
+    )
+
+
+def test_converge_skips_dirty_home_branch() -> None:
+    """Expects SKIP_DIRTY on a home branch with WIP — convergence must not disturb it (consent)."""
+    assert (
+        _converge_decision("agent/devops", is_clean=False, commits_behind=3)
+        == ConvergeAction.SKIP_DIRTY
+    )
+
+
+def test_converge_already_current_when_not_behind() -> None:
+    """Expects ALREADY_CURRENT on a clean home branch with 0 commits behind — idempotent no-op."""
+    assert (
+        _converge_decision("agent/devops", is_clean=True, commits_behind=0)
+        == ConvergeAction.ALREADY_CURRENT
+    )
+
+
+def test_converge_syncs_clean_home_branch_behind() -> None:
+    """Expects SYNC on a clean home branch that is behind main — the one case that rebases."""
+    assert (
+        _converge_decision("agent/devops", is_clean=True, commits_behind=3) == ConvergeAction.SYNC
+    )
+
+
+def test_parse_worktree_list_extracts_paths() -> None:
+    """Expects the worktree paths to be pulled from `git worktree list --porcelain` output."""
+    porcelain = (
+        "worktree /a/main\nHEAD aaa\nbranch refs/heads/agent/devops\n\n"
+        "worktree /a/wt/qa\nHEAD bbb\nbranch refs/heads/agent/qa\n\n"
+    )
+    assert _parse_worktree_list(porcelain) == [Path("/a/main"), Path("/a/wt/qa")]
+
+
+def test_parse_worktree_list_empty_is_empty() -> None:
+    """Expects empty porcelain output to yield no worktrees."""
+    assert _parse_worktree_list("") == []
