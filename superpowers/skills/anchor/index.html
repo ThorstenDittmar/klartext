@@ -1849,7 +1849,7 @@ aktuellem <code>main</code> startet (die App rebaset beim Start <strong>nicht</s
 Improvement-Register „App has no auto-rebase at session start").</p>
 <p>Dieser Skill <strong>rebaset nicht selbst</strong> — er <em>verweist</em> nur auf das mechanische Tooling:
 - <code>git rebase origin/main</code> (wenn der Worktree sauber ist und auf seiner <code>agent/&lt;slug&gt;</code>-Home-Branch sitzt), <strong>oder</strong>
-- <code>klartext worktree-sync</code> (geguardeter Sync, sobald DevOps ihn ausliefert — die Aktions-Hälfte der Drift-Warnung).</p>
+- <code>klartext converge</code> (geguardeter Sync, sobald DevOps ihn ausliefert — die Aktions-Hälfte der Drift-Warnung).</p>
 <p><strong>Nicht</strong> auf einem Feature-Branch mit offenem PR zwangs-rebasen — der bekommt <code>main</code> beim PR-Merge.
 Kosmetisch/optional: blockiert den <code>/clear</code> nie.</p>
 <h2 id="schritt-5-kurze-zusammenfassung">Schritt 5 — Kurze Zusammenfassung<a class="headerlink" href="#schritt-5-kurze-zusammenfassung" title="Permanent link">&para;</a></h2>
