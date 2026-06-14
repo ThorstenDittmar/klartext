@@ -1744,9 +1744,9 @@ briefing.</p>
 </tr>
 <tr>
 <td>G4</td>
-<td><strong>Allowlist patterns match the real invocation form</strong> — <code>Bash(semgrep*)</code> covers the bare call but <strong>not</strong> the real <code>…/api/.venv/bin/semgrep</code> absolute path the pre-commit hooks use, so the genuine invocations would prompt. Refine allowlist patterns to the actual (venv-absolute) form.</td>
+<td><strong>Allowlist patterns match the real invocation form</strong> — <code>Bash(semgrep*)</code> covers the bare call but <strong>not</strong> the real <code>api/.venv/bin/semgrep</code> path the pre-commit <code>entry</code> uses (a <strong>relative</strong>, repo-rooted path — not absolute), so the genuine invocations would prompt. Refine allowlist patterns to the actual (venv-relative) form, anchored — <strong>no leading wildcard</strong> (<code>Bash(*…*)</code> would un-anchor the pattern and weaken deny-by-default; rejected). An infra test ties the pattern to the pre-commit <code>entry</code> so the two cannot drift.</td>
 <td>DevOps + SA</td>
-<td>OPEN</td>
+<td><strong>DONE</strong> — PR #96 (SA sign-off 2026-06-13, option A: relative-only, anchored)</td>
 </tr>
 <tr>
 <td>G5</td>
