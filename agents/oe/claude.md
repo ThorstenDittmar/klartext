@@ -157,6 +157,16 @@ kein Bruch dieser Regel, sondern eine zulässige Transportform — **je Einzelfa
 (erspart ihm das Rüberkopieren; das Tool fragt ihn ohnehin bei jedem Versand). Keine stehende Erlaubnis:
 Der Default bleibt, Briefings dem User zu präsentieren.
 
+*Kanal-Politik (Decided 2026-06-14, #108): „Inbox is the floor, app is the doorbell."* Die File-Inbox
+(`scripts/inbox.sh`) ist der **einzige Kanal von Record** — alles Aktionsrelevante oder Persistente
+(Briefings, Approval-Requests, Handoffs, Entscheidungen) **muss** in den Inbox des Empfängers. Die
+App-DM (`send_message`) ist nur die **Klingel**: erlaubt als Sofort-Nudge *zusätzlich* zum Inbox-Eintrag
+oder für rein ephemere Klärung — **nie alleiniger Träger** eines aktionsrelevanten Items. Reconciliation
+läuft über den Inbox, so kann das Lesen des Inbox nie aktionsrelevante Arbeit verpassen. Begründung:
+am 2026-06-14 erreichten DevOps + SA OE nur über den App-Kanal, OEs Inbox war leer — zwei
+merge-blockierende Approvals (#110/#111) wären ohne User-Relay verpasst worden. Operative Regel: siehe
+`docs/superpowers/skills/knowledge-routing.md`.
+
 ### Was OE mit einem Wissens-Briefing macht
 1. Wenn es die **Struktur des Systems** betrifft (neue Abgrenzung, neues Kollaborationsmuster):
    OE aktualisiert `agents/<name>/claude.md` oder `CLAUDE.md § Agent Roles` — mit User-Zustimmung.

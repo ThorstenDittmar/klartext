@@ -16,6 +16,26 @@ auch wenn es im falschen Domain-Kontext aufgetaucht ist.
 **Grundregel:** Der User ist immer der Kanal. Kein Agent schreibt direkt in die Dateien eines anderen Agents.
 Alle Wissens-Briefings gehen durch den User, der entscheidet und weiterleitet.
 
+### Kanal-Politik — „Inbox is the floor, app is the doorbell" (Decided 2026-06-14, #108)
+
+Seit der Rückkehr in die Desktop-App (ADR-0011) gibt es **zwei** Transportwege zwischen Agents:
+die File-Inbox (`scripts/inbox.sh`) und App-Direktnachrichten (`ccd_session_mgmt`). Damit der
+Empfänger nichts verpasst, gilt **ein Kanal von Record**:
+
+- **Inbox = Floor (verbindlich, durable).** Alles **Aktionsrelevante oder Persistente** — Briefings,
+  Approval-Requests, Handoffs, Entscheidungen — **muss** in den Inbox des Empfängers. Wenn es zählt,
+  steht es im Inbox. Punkt.
+- **App-DM = Klingel (optional, ephemer).** Erlaubt nur als Sofort-Nudge *zusätzlich* zum Inbox-Eintrag
+  („hab dir X in den Inbox gelegt") **oder** für rein ephemere Klärung ohne Aktion/Persistenz.
+  **Niemals alleiniger Träger** eines aktionsrelevanten Items.
+- **Reconciliation läuft über den Inbox.** Der Empfänger arbeitet seinen Inbox ab; er muss den App-Kanal
+  nicht nach verlorener Arbeit absuchen. So kann das Lesen des Inbox **nie** aktionsrelevante Arbeit verpassen.
+
+**Begründung:** Am 2026-06-14 erreichten zwei Kollegen OE nur über den App-Kanal; OEs Inbox war leer,
+zwei merge-blockierende Approvals (#110/#111) wären ohne User-Hinweis verpasst worden. „Inbox by choice"
+als bloße Konvention hielt nicht — der App-Kanal sickert durch, weil er verfügbar und bequem ist. Daher:
+Inbox als verbindlicher Boden, App nur als Klingel darüber.
+
 ---
 
 ## Schritt 1 — Jeden Wissenspunkt klassifizieren
