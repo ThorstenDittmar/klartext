@@ -1679,10 +1679,15 @@ Empfänger nichts verpasst, gilt <strong>ein Kanal von Record</strong>:</p>
 <li><strong>Reconciliation läuft über den Inbox.</strong> Der Empfänger arbeitet seinen Inbox ab; er muss den App-Kanal
   nicht nach verlorener Arbeit absuchen. So kann das Lesen des Inbox <strong>nie</strong> aktionsrelevante Arbeit verpassen.</li>
 </ul>
-<p><strong>Begründung:</strong> Am 2026-06-14 erreichten zwei Kollegen OE nur über den App-Kanal; OEs Inbox war leer,
-zwei merge-blockierende Approvals (#110/#111) wären ohne User-Hinweis verpasst worden. „Inbox by choice"
-als bloße Konvention hielt nicht — der App-Kanal sickert durch, weil er verfügbar und bequem ist. Daher:
-Inbox als verbindlicher Boden, App nur als Klingel darüber.</p>
+<p><strong>Begründung (Evidenz 2026-06-14, präzisiert nach Faktencheck):</strong> Das aktionsrelevante Item „#111
+(ADR-0012) braucht OE-Gate + Merge" landete <strong>nie in OEs Inbox</strong> — SAs Inbox-Hinweis zu ADR-0012 ging
+(korrekt, für den Build) an <em>DevOps</em>, und DevOps' „Ball bei OE" erreichte OE nur über den verbalen
+User-Relay. OE erfuhr von der merge-blockierenden Arbeit allein über den User, nicht über den Boden.
+(#110s Gate-Anfrage kam dagegen sehr wohl über OEs Inbox an und wurde bearbeitet — das Versagen war also
+ein <strong>fehlender bzw. fehladressierter Inbox-Eintrag</strong>, kein „falscher Kanal" als solcher und kein
+Zustell-Bug.) Lehre: Aktionsrelevantes muss in den <strong>richtigen</strong> Empfänger-Inbox deponiert werden — der
+Inbox ist der verbindliche Boden; ein App-Ping oder verbaler Hinweis ersetzt ihn nie. Korollar: Beim
+Senden die Empfänger-Slug prüfen.</p>
 <hr />
 <h2 id="schritt-1-jeden-wissenspunkt-klassifizieren">Schritt 1 — Jeden Wissenspunkt klassifizieren<a class="headerlink" href="#schritt-1-jeden-wissenspunkt-klassifizieren" title="Permanent link">&para;</a></h2>
 <p>Für jeden Kandidaten aus dem Persistenz-Check fragen:</p>
