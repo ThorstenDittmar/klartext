@@ -25,15 +25,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
           cache: pip
           cache-dependency-path: api/pyproject.toml
 
-      - uses: supabase/setup-cli@v1
+      - uses: supabase/setup-cli@v2.1.1
         with:
           # Pinned: supabase CLI v2.106.0 (released 2026-06-11 12:01 UTC) changed the
           # local instance's default table privileges, breaking every integration test
