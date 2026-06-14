@@ -1710,7 +1710,7 @@ are the transferable asset; the position below is klartext's deliberate choice.<
 <tr>
 <td><strong>Consistency</strong></td>
 <td><strong>Eventual</strong>, not Strong</td>
-<td>Worktrees are <em>allowed</em> to lag. Convergence is an explicit act, not a precondition for work.</td>
+<td>Worktrees are <em>allowed</em> to lag. Convergence is an explicit act, not a precondition for work. <em>(Refined by the <a href="#addendum--two-mode-consistency-for-breaking-way-of-working-changes-2026-06-14">Addendum — Two-mode consistency</a>: eventual by default, but a stop-the-world </em><em>barrier</em><em> for a change that is </em><em>breaking for a drifted agent</em><em>.)</em></td>
 </tr>
 <tr>
 <td><strong>Activation</strong></td>
@@ -1802,6 +1802,80 @@ ADR.</p>
 <p>The command is <strong><code>klartext converge</code></strong> (conceptual name, chosen by the user — explicitly <strong>not</strong>
 <code>worktree-sync</code>). The rename from the earlier working name <code>worktree-sync</code> is carried through the method
 docs and the <code>anchor</code> skill by OE (PR #109 / Improvement Register #106), separately from this ADR.</p>
+<h2 id="addendum-two-mode-consistency-for-breaking-way-of-working-changes-2026-06-14">Addendum — Two-mode consistency for breaking way-of-working changes (2026-06-14)<a class="headerlink" href="#addendum-two-mode-consistency-for-breaking-way-of-working-changes-2026-06-14" title="Permanent link">&para;</a></h2>
+<p><strong>Status:</strong> Accepted — <strong>Decided by:</strong> User (by practice, 2026-06-14) · <strong>Author / Sign-off:</strong> System
+Architect · <strong>Gate:</strong> OE. <strong>Trigger incident:</strong> the <strong>2026-06-14 anchor break</strong> — a breaking
+way-of-working change landed on <code>main</code> while some worktrees were still drifted; the <code>anchor</code> ritual a
+drifted agent ran no longer matched the new state and broke <strong>before</strong> that agent ever converged.</p>
+<h3 id="why-the-base-decision-needs-a-refinement">Why the base decision needs a refinement<a class="headerlink" href="#why-the-base-decision-needs-a-refinement" title="Permanent link">&para;</a></h3>
+<p>The Decision sets the <strong>Consistency</strong> axis to <em>eventual</em> and rejects <em>strong consistency</em> as a standing
+rule. That is correct for ordinary work. But eventual convergence has a hole for <strong>breaking changes to
+the way of working</strong>: eventual consistency assumes the <em>old</em> state keeps working until an agent catches
+up — which is exactly false for a breaking change. A drifted agent runs the now-broken ritual in the
+window before it converges. The anchor break is that hole realised.</p>
+<h3 id="decision-refine-the-consistency-axis-scoped-to-way-of-working-changes">Decision — refine the Consistency axis (scoped to way-of-working changes)<a class="headerlink" href="#decision-refine-the-consistency-axis-scoped-to-way-of-working-changes" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p><strong>Consistency = eventual by default; strong / barrier when the change is breaking for a drifted agent.</strong></p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>When</th>
+<th>Behaviour</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Rolling</strong> <em>(default)</em></td>
+<td>Backward-compatible change — a drifted agent keeps running correctly and picks it up later</td>
+<td>No global halt. Each agent converges on its own initiative at its next session — the base ADR-0012 path, unchanged.</td>
+</tr>
+<tr>
+<td><strong>Barrier</strong> <em>(stop-the-world)</em></td>
+<td><strong>Breaking</strong> change — the old state breaks (anchored command / path / skill no longer matches)</td>
+<td>All agents stabilise + pause, the change lands, all resync <strong>and verify current</strong> before resuming.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Trigger — classify every way-of-working change explicitly.</strong> Each way-of-working PR answers one
+question: <em>"Is this breaking for a </em><em>drifted</em><em> agent?"</em> — <strong>no silent default</strong> (recorded as a PR
+label / checklist answer), and <strong>uncertainty resolves to breaking</strong> (fail-safe: a needless halt is
+cheaper than breaking a drifted agent).</p>
+<p><strong>Lever — expand–contract first.</strong> Before classifying a change <em>breaking</em>, make it backward-compatible
+where possible (e.g. keep the old command / path as an <strong>alias</strong> during a transition window, then
+remove it). A change built this way is <strong>Rolling</strong>, not Barrier. This is the primary lever to keep the
+barrier set small — the barrier is the exception, not the norm.</p>
+<h3 id="reconciliation-with-the-base-decision-this-is-not-a-reversal">Reconciliation with the base decision (this is not a reversal)<a class="headerlink" href="#reconciliation-with-the-base-decision-this-is-not-a-reversal" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Scope.</strong> This addendum governs <strong>way-of-working / shared-substrate changes only</strong> — skills, rituals,
+  <code>settings.json</code> / hooks / allowlists, and the commands and paths they reference. <strong>Product changes</strong>
+  (code, ADRs, domain docs — which advance the Software System, not the Way of Working) are <strong>out of
+  scope</strong> and remain purely eventual.</li>
+<li><strong>The Barrier mode does not revive the rejected "Strong consistency — block work until synced"
+  alternative.</strong> That rejection stands: convergence is <em>not</em> a standing precondition for all work. The
+  barrier is a <strong>bounded, coordinated, land-time event</strong> for a single breaking method change — declared,
+  executed, and over. Outside a declared barrier, convergence stays voluntary and eventual, and the
+  <strong>non-blocking guarantee (Point D) is fully preserved</strong> on the default rolling path.</li>
+</ul>
+<h3 id="procedure-and-mechanism-live-elsewhere-referenced-not-duplicated">Procedure and mechanism live elsewhere — referenced, not duplicated<a class="headerlink" href="#procedure-and-mechanism-live-elsewhere-referenced-not-duplicated" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Procedure:</strong> the rollout steps (Barrier = <em>Stabilise &amp; Halt</em> (the <code>anchor</code> ritual) → <em>Update</em> incl.
+  tooling bootstrap → <em>Resync &amp; Verify current</em>) are owned by OE's Practice <strong>Controlled Method Rollout</strong>
+  (<code>docs/superpowers/improvement/practices/controlled-method-rollout.md</code>, PR #115). This addendum records
+  only the <strong>decision</strong>; the Practice carries the <strong>how</strong>.</li>
+<li><strong>Mechanism (DevOps):</strong> the per-PR <strong>classification gate</strong> ("breaking?") and the
+  <strong>verify-current-before-resume</strong> check — which is exactly the SessionStart <strong>drift / G2</strong> check (the
+  detection half of <em>Drift Awareness</em>, Register #106). The convergence action remains <code>klartext converge</code>
+  (base decision). Until those land, the barrier is run by hand, as it was on 2026-06-14.</li>
+</ul>
+<h3 id="consequences_1">Consequences<a class="headerlink" href="#consequences_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Closes the eventual-consistency hole for breaking method changes <strong>without</strong> giving up the cheap
+  rolling default for everything else.</li>
+<li><strong>Cost:</strong> a real classification step on every way-of-working PR, plus an occasional coordinated halt.
+  Mitigated by expand–contract keeping most changes on the rolling path.</li>
+</ul>
 
 
 
