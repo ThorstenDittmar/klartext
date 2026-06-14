@@ -1,4 +1,6 @@
 {
+  "autoMemoryEnabled": true,
+  "autoMemoryDirectory": "~/.claude/klartext-team-memory",
   "permissions": {
     "allow": [
       "Read",
@@ -12,10 +14,31 @@
       "Bash(find *)",
       "Bash(grep*)",
 
-      "Bash(semgrep*)"
+      "Bash(semgrep*)",
+      "Bash(api/.venv/bin/semgrep*)"
     ]
   },
   "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/scripts/load_agent_identity.py\""
+          }
+        ]
+      },
+      {
+        "matcher": "startup|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/scripts/session_health.py\""
+          }
+        ]
+      }
+    ],
     "PostCompact": [
       {
         "matcher": "auto",

@@ -22,7 +22,7 @@ Each agent lives in its own directory: `agents/<name>/`
 shell cwd; settings, hooks and allowlists would stay dead). The launcher provisions a persistent
 worktree (`$HOME/klartext-worktrees/<name>/`, home branch `agent/<name>`) idempotently, rebases it
 on `origin/main`, shows unread inbox messages and starts `claude` inside the worktree. Sessions are
-**workdays, not lifetimes**: they end with a pre-restart ritual (pre-compact skill) and a successor
+**workdays, not lifetimes**: they end with a pre-restart ritual (anchor skill) and a successor
 boots from disk. Cross-agent messages travel via the file inbox (`scripts/inbox.sh send/read`).
 
 ---
@@ -73,7 +73,7 @@ Edit(agents/<name>/)
 Write(agents/<name>/)
 ```
 
-The PENDING.md lines are mandatory for every agent (pre-compact delegation tracking).
+The PENDING.md lines are mandatory for every agent (anchor delegation tracking).
 
 ```bash
 chmod +x agents/<name>/start.sh
@@ -88,9 +88,9 @@ the launcher reads the allowlist and the worktree checkout is based on `origin/m
 sign-off artifact) → CI gate → merge.
 
 **Team Roster (mandatory, same step):** add the new agent to `agents/team.yaml` (slug, display name,
-`status: terminal`, `active: true`). The roster is the Work Product advancing the Team alpha and is
-read by the start tooling — an agent missing here is invisible to the morning script. Offboarding:
-set `active: false` (keep the entry for history). Migration app→terminal: flip `status` in the same
+`status: app`, `active: true`). The roster is the Work Product advancing the Team alpha and is
+read by the start tooling — an agent missing here is invisible to it. Offboarding:
+set `active: false` (keep the entry for history). Migration terminal↔app: flip `status` in the same
 step as the generation change.
 
 ---
@@ -160,7 +160,7 @@ Du lebst in einer Terminal-Session in deinem eigenen Worktree
 ($HOME/klartext-worktrees/<name>/, Branch agent/<name>). Der User startet dich mit
 `bash agents/<name>/start.sh` und beendet deine Session am natürlichen Arbeitsende —
 deine Identität persistiert auf Platte, die Session ist dein Arbeitstag. Vor jedem
-Session-Ende fährst du das pre-compact-Ritual (Pre-Restart) und hinterlegst deiner
+Session-Ende fährst du das anchor-Ritual (Pre-Restart) und hinterlegst deiner
 Nachfolge-Session eine Handoff-Notiz im eigenen Postfach.
 
 Dein Agent-Verzeichnis: agents/<name>/
@@ -185,7 +185,7 @@ Infrastruktur-Änderungen (CI, Dependencies, Scripts, settings.json):
 Gemeinsame Coding-Standards: CLAUDE.md (für alle Agents gleich)
 Dein Hoheitswissen erweitern: trage domain-spezifisches Wissen in agents/<name>/claude.md ein
 
-Wissens-Routing: Bei jedem pre-compact prüfst du ob Wissen entstanden ist, das einem
+Wissens-Routing: Bei jedem anchor prüfst du ob Wissen entstanden ist, das einem
   anderen Agent gehört — Schritt 6 / Teil C führt dich durch den Prozess.
   Fremdwissen, Grenzwissen und Organisationswissen werden als Wissens-Briefings
   formuliert und dem User übergeben. Kein Agent schreibt direkt in fremde Dateien.

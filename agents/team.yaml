@@ -1,51 +1,57 @@
 # Team Roster — Work Product advancing the Team alpha (see method.md, Work Products).
 # Owner: OE. Maintenance ritual: updated in the SAME step as the event that changes it
-# (onboarding, offboarding, migration app->terminal). Stores ONLY non-derivable facts:
+# (onboarding, offboarding, migration terminal<->app). Stores ONLY non-derivable facts:
+#
+# Return to the app (ADR-0011): the DevOps gate (G1 SessionStart identity hook, G4 allowlist)
+# was met team-wide and the staggered rollout COMPLETED 2026-06-13 — all 10 agents now run in
+# the app. Identity in the app loads via the G1 hook from the worktree-path slug, independent of
+# this file; status here records the migration state. terminal stays a valid value for the
+# manual single-agent fallback via agents/<slug>/start.sh.
 #   - who exists        -> derivable from agents/*/ directories (NOT duplicated here)
 #   - worktree present  -> derivable from `git worktree list` (NOT duplicated here)
 #   - status            -> app | terminal  (migration state during the staggered rollout)
 #   - active            -> false = offboarded/paused (kept for history, not started)
-#   - display           -> tab label for tooling (morning script)
-# Consumers: scripts/start-agent.sh tooling, scripts/morning.sh (DevOps mechanics).
+#   - display           -> label for the start tooling
+# Consumers: scripts/start-agent.sh tooling (DevOps mechanics).
 
 agents:
   - slug: hannibal
     display: "Hannibal"
-    status: terminal
+    status: app
     active: true
   - slug: oe
     display: "OE"
-    status: terminal
+    status: app
     active: true
   - slug: devops
     display: "DevOps"
-    status: terminal
+    status: app
     active: true
   - slug: system-architect
     display: "System Architect"
-    status: terminal
+    status: app
     active: true
   - slug: qa
     display: "QA"
-    status: terminal
+    status: app
     active: true
   - slug: ux
     display: "UX/UI"
-    status: terminal
+    status: app
     active: true
   - slug: narrative
     display: "Narrative Expert"
-    status: terminal
+    status: app
     active: true
   - slug: causal-model
     display: "Causal Model Expert"
-    status: terminal
+    status: app
     active: true
   - slug: audit
     display: "Audit Expert"
-    status: terminal
+    status: app
     active: true
   - slug: community
     display: "Community Expert"
-    status: terminal
+    status: app
     active: true

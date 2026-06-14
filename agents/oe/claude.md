@@ -135,9 +135,9 @@ QA gibt sie frei via `qa-review` bevor die Infra-Aufgabe als "done" gilt.
 
 Wissen das in einer Agent-Session entsteht, gehört nicht immer zu diesem Agent.
 Damit es trotzdem beim richtigen Eigentümer landet, gibt es das Wissens-Routing —
-ein fester Schritt in jedem pre-compact aller Agents.
+ein fester Schritt in jedem anchor (Session-Safeguard-Ritual) aller Agents.
 
-**Skill:** `knowledge-routing` — läuft bei jedem pre-compact, in jeder Agent-Session.
+**Skill:** `knowledge-routing` — läuft bei jedem anchor, in jeder Agent-Session.
 
 ### Drei Wissens-Typen die ein Briefing auslösen
 
@@ -156,6 +156,18 @@ der entscheidet und in der Ziel-Agent-Session eingibt.
 kein Bruch dieser Regel, sondern eine zulässige Transportform — **je Einzelfall vom User freigegeben**
 (erspart ihm das Rüberkopieren; das Tool fragt ihn ohnehin bei jedem Versand). Keine stehende Erlaubnis:
 Der Default bleibt, Briefings dem User zu präsentieren.
+
+*Kanal-Politik (Decided 2026-06-14, #108): „Inbox is the floor, app is the doorbell."* Die File-Inbox
+(`scripts/inbox.sh`) ist der **einzige Kanal von Record** — alles Aktionsrelevante oder Persistente
+(Briefings, Approval-Requests, Handoffs, Entscheidungen) **muss** in den Inbox des Empfängers. Die
+App-DM (`send_message`) ist nur die **Klingel**: erlaubt als Sofort-Nudge *zusätzlich* zum Inbox-Eintrag
+oder für rein ephemere Klärung — **nie alleiniger Träger** eines aktionsrelevanten Items. Reconciliation
+läuft über den Inbox, so kann das Lesen des Inbox nie aktionsrelevante Arbeit verpassen. Begründung
+(präzisiert nach Faktencheck): am 2026-06-14 landete das Item „#111 braucht OE-Gate" **nie in OEs
+Inbox** — SAs ADR-0012-Hinweis ging (korrekt, für den Build) an DevOps, DevOps' „Ball bei OE" nur
+über den verbalen User-Relay; #110s Gate-Anfrage kam dagegen sehr wohl über den Inbox. Also fehlender/
+fehladressierter Inbox-Eintrag, kein „falscher Kanal" und kein Zustell-Bug. Korollar: beim Senden die
+Empfänger-Slug prüfen. Operative Regel: siehe `docs/superpowers/skills/knowledge-routing.md`.
 
 ### Was OE mit einem Wissens-Briefing macht
 1. Wenn es die **Struktur des Systems** betrifft (neue Abgrenzung, neues Kollaborationsmuster):

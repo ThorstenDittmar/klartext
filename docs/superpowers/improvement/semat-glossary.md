@@ -56,6 +56,13 @@ The authoritative register of our method's elements (practices, patterns, work p
 - **Improvement** *(sub-alpha, practice-defined)* — a possible adaptation to improve the team's Way of
   Working; states *Identified → Prioritized → Action Agreed → Trialed → Results Evaluated → In Use*. Defined
   by the Retrospective practice; instances live in the Improvement Register.
+- **Environment Knowledge** *(Practice)* — the repeatable way we hold **version-bound, falsifiable** facts
+  about our development environment (the tools we *use*, not *build*) so a stale fact cannot silently drive a
+  decision (RC4). Each fact is version-bound, has a **Canary**, and lists its **dependency chain**. Card:
+  `practices/environment-knowledge.md`; Work Products: `environment/`.
+- **Canary** *(our term)* — a concrete check attached to a version-bound environment fact that re-proves or
+  breaks it; when it breaks, the fact is presumed stale until re-verified. **Manual** where the subject tool
+  cannot be scripted (e.g. the Claude Code app), otherwise a candidate for a mechanical check.
 
 ## Cross-cutting principles
 
