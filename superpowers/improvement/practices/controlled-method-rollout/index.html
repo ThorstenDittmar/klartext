@@ -1748,10 +1748,13 @@ coordinated verify.</em></p>
 <li>[ ] <strong>Barrier:</strong> Stabilize &amp; Halt → Update (+bootstrap) → Resync &amp; <strong>Verify current</strong> completed before resume.</li>
 </ul>
 <h2 id="enforcement">Enforcement<a class="headerlink" href="#enforcement" title="Permanent link">&para;</a></h2>
-<p><strong>Ritual (Enforcement Hierarchy level 2) today.</strong> The two mechanical promotions are owned by DevOps: the
-<strong>classification gate</strong> at PR time and the <strong>drift/G2 verify-before-resume</strong> check. Until those land, the
-barrier is run by hand (as it was on 2026-06-14). A classification with no gate is documentation, not a
-standard — so this card is incomplete until the gate exists.</p>
+<p><strong>Partly mechanical (2026-06-15).</strong> The two mechanical promotions are owned by DevOps:
+- <strong>Classification gate</strong> at PR time — <strong>LIVE + ENFORCED</strong> (PR #125; <code>Classification (rolling|breaking)</code>
+  is a required status check on <code>main</code>, strict, since 2026-06-15). A WoW-PR without a <code>rolling</code>/<code>breaking</code>
+  label is now blocked at merge. <em>(Scope still narrow — method docs under <code>docs/superpowers/improvement/**</code>
+  not yet triggered; revisit after a practice window — see register.)</em>
+- <strong>Drift / G2 verify-before-resume</strong> check — still pending (DevOps). Until it lands, the <em>resync-and-verify</em>
+  step of a barrier is run by hand (as on 2026-06-14).</p>
 <h2 id="notes">Notes<a class="headerlink" href="#notes" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>First enactment = the 2026-06-14 anchor incident.</strong> A breaking way-of-working change on <code>main</code> broke the
