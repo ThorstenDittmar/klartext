@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import ManuscriptView from "./ManuscriptView";
+import { ApiError } from "../lib/api";
 import type { NarrativeUnitResponse } from "../lib/api";
 
 vi.mock("../lib/api", async (importOriginal) => {
@@ -137,6 +138,20 @@ describe("ManuscriptView", () => {
     renderManuscript();
     const errorText = await screen.findByText(/Fehler:/);
     expect(errorText).toBeInTheDocument();
+  });
+
+  it("displays the German backend message verbatim when the load fails with an ApiError", async () => {
+    /** Expects: a rejected load carrying an ApiError shows the backend's German message
+     *  ("Narrativ nicht gefunden"), not a raw "ApiError: ..." toString. */
+    const { getNarrativeTree } = await import("../lib/api");
+    vi.mocked(getNarrativeTree).mockRejectedValueOnce(
+      new ApiError(404, "Narrativ nicht gefunden")
+    );
+
+    renderManuscript();
+    expect(
+      await screen.findByText("Fehler: Narrativ nicht gefunden")
+    ).toBeInTheDocument();
   });
 
   // ── Happy path ────────────────────────────────────────────────────────────────
