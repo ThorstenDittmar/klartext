@@ -161,6 +161,14 @@
          <lastmod>2026-06-15</lastmod>
     </url>
     <url>
+         <loc>https://thorstendittmar.github.io/klartext/adr/0013-separating-method-from-product/</loc>
+         <lastmod>2026-06-15</lastmod>
+    </url>
+    <url>
+         <loc>https://thorstendittmar.github.io/klartext/adr/0014-agent-provenance-trailer/</loc>
+         <lastmod>2026-06-15</lastmod>
+    </url>
+    <url>
          <loc>https://thorstendittmar.github.io/klartext/contracts/narrative-units-fragment/</loc>
          <lastmod>2026-06-15</lastmod>
     </url>
