@@ -2,8 +2,11 @@
 __pycache__/
 *.py[cod]
 *.pyo
-.venv/
-venv/
+# No trailing slash: in worktrees the venv is often a symlink to a shared
+# venv (e.g. api/.venv -> ~/klartext/api/.venv). A trailing-slash pattern
+# matches directories only, not symlinks, letting the symlink show as untracked.
+.venv
+venv
 .env
 *.egg-info/
 dist/
