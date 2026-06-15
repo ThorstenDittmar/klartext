@@ -1,0 +1,29 @@
+name: CI Scope
+description: >
+  Decide which App check groups (api/frontend) a pull request needs to run, so method-only
+  PRs skip the App checks. Outputs are empty on non-PR events and on failure, which the
+  caller reads conservatively (run everything unless a group is explicitly "false").
+
+outputs:
+  api:
+    description: '"true"/"false" — whether API checks should run (empty = run conservatively)'
+    value: ${{ steps.decide.outputs.api }}
+  frontend:
+    description: '"true"/"false" — whether frontend checks should run (empty = run conservatively)'
+    value: ${{ steps.decide.outputs.frontend }}
+
+runs:
+  using: composite
+  steps:
+    # PR only: on push (main) we leave the outputs empty so every group runs.
+    # continue-on-error: a gh/diff failure must NOT skip checks — empty outputs fall through
+    # to the caller's conservative "run unless explicitly false" guard.
+    - id: decide
+      if: github.event_name == 'pull_request'
+      continue-on-error: true
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        changed="$(gh pr diff ${{ github.event.pull_request.number }} --name-only)"
+        python3 scripts/ci_scope.py --changed-paths "$changed" >> "$GITHUB_OUTPUT"
