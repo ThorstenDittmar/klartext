@@ -41,6 +41,22 @@ Zustell-Bug.) Lehre: Aktionsrelevantes muss in den **richtigen** Empfänger-Inbo
 Inbox ist der verbindliche Boden; ein App-Ping oder verbaler Hinweis ersetzt ihn nie. Korollar: Beim
 Senden die Empfänger-Slug prüfen.
 
+### Memory-Provenance — Self-Stamp (Decided 2026-06-15, Contract-Klausel C5)
+
+Das geteilte Team-Memory ist **nicht versioniert** und alle Agents + der User schreiben unter **einer**
+Identität — niemand kann sonst sagen, *wer* eine Memory-Datei zuletzt geändert hat. Daher: **wer eine
+Memory-Datei schreibt/ändert, stempelt sich selbst** ins Frontmatter `metadata`:
+
+```yaml
+metadata:
+  last-edited-by: <dein-slug>     # oe, devops, audit, …
+  last-edited-at: <YYYY-MM-DD>
+```
+
+Gilt für jede Memory-Datei unter `~/.claude/klartext-team-memory/` (nicht nur die eigene). Ist eine
+Ritual-Konvention (Memory liegt nicht in CI); ein Health-Check warnt nur bei einer ungestempelten
+Änderung. Details: `docs/superpowers/improvement/contracts/memory-substrate.md` (C5).
+
 ---
 
 ## Schritt 1 — Jeden Wissenspunkt klassifizieren
