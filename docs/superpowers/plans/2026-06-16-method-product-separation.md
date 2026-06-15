@@ -1,0 +1,74 @@
+# Frozen Plan — Method / Product Separation Refactoring
+
+> **Status:** DRAFT (OE-authored, 2026-06-16) — pending DevOps verification of the mechanic sections (§6 gates, §7 rollback) and the joint **freeze**. **Nothing is executed until this plan is frozen.**
+> **Owners (method coordination):** OE + DevOps. **Hannibal is OUT** (product coordinator, not method). **SA:** architecture landed (ADR-0013/0014). **QA:** coverage-audit + qa-review gate owner.
+> **Decision records:** [ADR-0013](../../adr/0013-separating-method-from-product.md) (layer architecture, path-based classification, distribution), [ADR-0014](../../adr/0014-agent-provenance-trailer.md) (agent provenance). **Practice:** `improvement/practices/controlled-method-rollout.md` (barrier mode). **Contract:** `improvement/contracts/memory-substrate.md` (C1–C5).
+> **This document is the coordination backbone** — it is designed to **survive the rebuild** (§2). The substrate (inbox/memory) it coordinates is itself in scope of the change, so coordination runs over **this repo artifact + the user out-of-band**, not over the substrate.
+
+## 1. Purpose & scope
+
+Separate klartext's **collaboration method** from the **product/app code**, realizing the Essence **Library vs. Method-in-use** architecture (ADR-0013). Three tasks, one question ("what is our method as a thing, and how does it relate to the projects that use it"):
+
+- **#1 App ↔ method separation** — (#1a) coarse CI directory-scoping now; (#1b) card-wise extraction of Layer 3 along the path convention.
+- **#2 Agent git-attribution** — the provenance trailer (ADR-0014), = C5 generalized to git.
+- **#3 klartext ↔ semAIt isolation** — (#3a) urgent user-global-state isolation; (#3b) skill-distribution isolation (cut-dependent).
+
+**Out of scope:** product code logic; semAIt's own product build (it seeds once from our **post-cut** state and diverges; it is a *consumer of a product*, not a co-user of our method).
+
+## 2. Coordination model — lead-and-spawn BARRIER
+
+This refactoring is a **breaking way-of-working change** → **barrier mode** of the Controlled Method Rollout practice (Stabilize & Halt → Update → Resync & Verify). It is executed via **lead-and-spawn**, *not* the steady-state long-lived-session + inbox model (which is unchanged):
+
+- One **lead** at a time (OE or DevOps) orchestrates by **spawning fresh sub-agents** for sub-tasks. Fresh spawns read the laid-down state → **drift = 0**. The current all-clean state (every non-OE/DevOps agent filed + clean) is the window that makes this cheap.
+- **Channel that survives the rebuild:** this frozen plan (repo artifact) + the **user out-of-band**. The **inbox is used only for wake-signals while it is stable**; once the substrate/inbox is itself being changed (#3/F3), coordination is plan + user only. *Rationale: you cannot coordinate a substrate change through the substrate being changed; the Memory-Substrate Contract's C1–C5 are not guaranteed mid-change.*
+
+### Guardrails (mandatory)
+1. **Lead-handoff = anchor-complete.** Before the other lead takes over, the outgoing lead has filed + verified everything.
+2. **Domain authority preserved.** A spawned sub-agent is **seeded with its domain's Hoheitswissen**; the **real domain agent wakes afterwards to verify/ratify** its domain's changes. The lead executes under barrier; the domain owner ratifies on return. (Validated on the ADR: OE-spawn-draft → SA-ratify → real SA owned + landed.)
+3. **Spawn-aware provenance.** Commits/memory edits stamp `Agent: <lead> (spawned <task>)` (ADR-0014 / C5).
+4. **Lead controls parallelism** (avoids the C4 concurrency case on the repo).
+5. **Scope is announced** ("now in lead-and-spawn barrier mode for X") to avoid mode-confusion; **wake-verify per touched domain is mandatory.**
+
+## 3. Roles & sleep/wake
+
+- **Awake (method crew):** OE, DevOps, SA, QA. (Method-driving roles — generic.)
+- **Asleep (product-domain experts):** Narrative, Causal Model, Audit, Community, UX. (Layer-2/product — woken only if their domain is touched, and then **converge-first** before working.)
+- **Leads:** **OE F0–F1**, **DevOps F2–F3**, anchor-handoff between. SA on-call for ADR follow-ups (ADR-0014). QA on-call for the coverage-audit gate + qa-reviews (spawned per the lead-and-spawn model; real QA ratifies).
+
+## 4. The cut (F0) — the gating design deliverable (OE-led)
+
+- **Path convention** (ADR-0013): **L3 stems** = `scripts/`, the converge part of `api/cli.py`, method-related `.github/workflows/`, hooks, and **`docs/method/library/`** (generic definitions + the Essence summary + generic skills). **L2 stems** = **`docs/method/enactment/`** (klartext runs/evidence/friction/register/learnings/environment) + klartext-specific skills. `docs/superpowers/skills/` classified per file (OE-confirmed table in ADR-0013).
+- **Semantic criterion:** L3 = holds for ANY endeavour using the practice; L2 = specific to klartext's runs/decisions/evidence/product. **OE/SA classify once; a CI check (DevOps) enforces forever.**
+- **F0 acceptance criterion (the gate):** the cut is **DONE only when every method object is automatically classifiable** by the path rule — the CI check rejects (i) method content outside the L3/L2 stems and (ii) any still-"mixed" card. The per-card split of `practices/` and `contracts/` (line-by-line generic-definition vs klartext-evidence) is the bulk of F0's work, under SA review.
+- **Consequence:** because classification = path, the F3 extraction (`git filter-repo --path` on L3 stems) runs **mechanically**, so DevOps can lead it without per-object judgment.
+
+## 5. Sequence F0 → F3
+
+| Phase | Lead | Work | Gate to next |
+|---|---|---|---|
+| **F0** | OE | Draw the 2↔3 cut → machine-checkable path classification (CI check exists; every object classifiable). | **F0 acceptance criterion green** (no mixed cards, no out-of-stem method files). |
+| **F1** | OE (DevOps spawns mechanic bits) | **#3a** urgent isolation (per-project memory pin, settings, MCP — semAIt is spinning up *now*) · **#1a** coarse CI directory-scoping (footgun-safe, classify-gate pattern — *DevOps already started, TDD + qa-review-gated*) · first inventory. Cut-independent → may run in parallel with F0. | #3a isolation verified; #1a landed (qa-review-gated). |
+| **F2** | DevOps | **Three HARD gates** (see §6): coverage audit · first-pass contract audit · tested out-of-band backup/restore. | **All three gates pass.** |
+| **F3** | DevOps | **#3b** skill-distribution isolation · **#1b** card-wise extraction (`filter-repo` on L3 stems, full history; squash-snapshot for the semAIt seed) · **#2** provenance trailer (ADR-0014). Under lead-and-spawn barrier. | Extraction verified; provenance live; substrate restored-and-verified. |
+
+**Then:** semAIt seeds **once** from the **post-cut** state; F-execution closes; agents wake + converge; steady-state resumes.
+
+## 6. The three hard gates (F2) — explicit pass criteria
+
+1. **Coverage audit** — *owners DevOps + QA, qa-review-gated.* Audit existing test coverage of the mechanics we touch (`converge`, `classify_gate`, `session_health`, `cli`) incl. error/edge cases; produce a gap list; close the load-bearing gaps **TDD-first**. *DevOps has started the cut-independent mechanic inventory; the "seams we touch" sharpening attaches after F0.* **Pass = no untested load-bearing seam at the cut points; qa-review sign-off.**
+2. **First-pass contract audit** — *owner OE.* The contract set **is** the 2↔3 interface from the protection side. Bar (the "Schnur"): contract a seam **iff** central **and** a future semAIt-update could change it non-obviously (same bar as the memory-substrate contract — avoid Flut). **Pass = every load-bearing 2↔3 seam has a contract clause; OE sign-off.**
+3. **Tested out-of-band backup/restore** — *mechanic DevOps; scope + integrity criterion OE (substrate is OE/shared domain).* Back up the **non-versioned substrate**: `~/.claude/klartext-team-memory/` (memory + inbox + `.read`), `~/.claude` user-state (settings/skills/plugins/MCP), `.env` (secrets, confidential), per-worktree WIP (git-stash bundles) → a **local external timestamped path**. **Pass = restore into a sandbox verified via the C4 index-integrity check** (an un-replayed backup is False Persistence). *Bonus: a versioned out-of-band store also addresses the C5 versioning gap — keep lean, the safety net is primary.*
+
+## 7. Rollback — two axes
+- **Code:** standard git (revert/branch).
+- **Substrate:** the §6.3 out-of-band backup with **tested** restore. *git does not cover the non-versioned substrate — this axis is mandatory before F3 touches it.*
+> §6 and §7 mechanics are **DevOps-owned — DevOps to verify/refine these sections before freeze.**
+
+## 8. Open follow-ups (tracked, not blocking the cut)
+- **ADR-0014 mechanic** — commit-msg hook + CI check for the `Agent: <slug>` trailer (DevOps Briefing per ADR-0014).
+- **Package/plugin name** for the L3 distributable — at the Phase-2 trigger (first consumption / third-party), not now.
+- **semAIt seed** — taken from the **post-cut** state (User decision); semAIt holds no diverged method today (clean seed).
+- **Field Report channel** (klartext → semAIt evidence) — first draft is OE-domain; separate from this refactoring.
+
+## 9. Freeze
+This plan is **frozen** when: DevOps has verified §6/§7, OE and DevOps both sign off, and it is merged to `main`. **F0 starts only after the freeze.** Until then: planning only — no refactoring file is touched.
