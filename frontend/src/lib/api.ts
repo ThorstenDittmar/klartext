@@ -1,11 +1,52 @@
 const BASE = "http://127.0.0.1:8000";
 
+/** Shown when no specific German message can be derived from the response. */
+const GENERIC_ERROR_MESSAGE = "Ein unerwarteter Fehler ist aufgetreten.";
+
+/** Raised when the API responds with a non-2xx status. Carries the HTTP status
+ *  and the backend's German error message so callers can show it directly. */
+export class ApiError extends Error {
+  readonly status: number;
+  readonly body: unknown;
+
+  constructor(status: number, message: string, body?: unknown) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+    this.body = body;
+  }
+}
+
+/** Turns a failed Response into an ApiError, surfacing the backend's German
+ *  `error` message. Tolerates non-JSON or error-free bodies via a generic fallback. */
+async function toApiError(response: Response): Promise<ApiError> {
+  let body: unknown;
+  try {
+    body = await response.json();
+  } catch {
+    body = undefined;
+  }
+  const message =
+    typeof body === "object" &&
+    body !== null &&
+    "error" in body &&
+    typeof (body as { error: unknown }).error === "string"
+      ? (body as { error: string }).error
+      : GENERIC_ERROR_MESSAGE;
+  return new ApiError(response.status, message, body);
+}
+
+/** Returns a user-displayable German message for any caught value. */
+export function errorMessage(err: unknown): string {
+  return err instanceof ApiError ? err.message : GENERIC_ERROR_MESSAGE;
+}
+
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const response = await fetch(`${BASE}${path}`, {
     headers: { "Content-Type": "application/json" },
     ...options,
   });
-  if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
+  if (!response.ok) throw await toApiError(response);
   return response.json();
 }
 
@@ -14,7 +55,7 @@ async function requestVoid(path: string, options?: RequestInit): Promise<void> {
     headers: { "Content-Type": "application/json" },
     ...options,
   });
-  if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
+  if (!response.ok) throw await toApiError(response);
 }
 
 export interface Axiom {
