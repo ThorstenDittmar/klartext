@@ -81,10 +81,13 @@ coordinated verify.*
 
 ## Enforcement
 
-**Ritual (Enforcement Hierarchy level 2) today.** The two mechanical promotions are owned by DevOps: the
-**classification gate** at PR time and the **drift/G2 verify-before-resume** check. Until those land, the
-barrier is run by hand (as it was on 2026-06-14). A classification with no gate is documentation, not a
-standard — so this card is incomplete until the gate exists.
+**Partly mechanical (2026-06-15).** The two mechanical promotions are owned by DevOps:
+- **Classification gate** at PR time — **LIVE + ENFORCED** (PR #125; `Classification (rolling|breaking)`
+  is a required status check on `main`, strict, since 2026-06-15). A WoW-PR without a `rolling`/`breaking`
+  label is now blocked at merge. *(Scope still narrow — method docs under `docs/superpowers/improvement/**`
+  not yet triggered; revisit after a practice window — see register.)*
+- **Drift / G2 verify-before-resume** check — still pending (DevOps). Until it lands, the *resync-and-verify*
+  step of a barrier is run by hand (as on 2026-06-14).
 
 ## Notes
 
