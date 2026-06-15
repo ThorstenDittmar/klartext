@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   createNarrativeUnit,
+  errorMessage,
   getNarrativeTree,
   type NarrativeUnitResponse,
   updateNarrativeUnit,
@@ -66,7 +67,7 @@ export default function ManuscriptView() {
           setContentMap(initial);
         }
       })
-      .catch((err: unknown) => setError(String(err)))
+      .catch((err: unknown) => setError(errorMessage(err)))
       .finally(() => setLoading(false));
   }, [narrativeId]);
 
