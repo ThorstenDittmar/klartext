@@ -36,6 +36,7 @@ check).
 | **C2** | The substrate is **durable across sessions and session-types** (terminal *and* app). | Knowledge meant to outlive a session is lost on restart/clear → False-Persistence class. | Health-check asserts the dir exists + is writable from this session type. | ✅ |
 | **C3** | The inbox is **readable/writable by every session at a git-worktree-independent path**. | Cross-agent messages land where the recipient cannot see them (the #108 / mis-address class). | Health-check asserts `inbox.sh` base resolves outside the worktree and is reachable — **live in the session-health hook (#117)**. | ✅ |
 | **C4** | **Concurrent writes** (e.g. parallel memory consolidation) corrupt neither the `MEMORY.md` index nor any inbox message. | Lost/garbled memories or index under simultaneous agent activity. | Index-integrity assertion (every `MEMORY.md` entry → a real file; no duplicate entries) in the health-check. | ✅ **Decided (lean), 2026-06-14 — see below** |
+| **C5** | **Every memory edit is attributable** — who last changed a memory file is recoverable. | Unattributable shared state: 11 agents + the user write the same memory under one OS/git identity → "who wrote this?" is unanswerable (surfaced 2026-06-15). | Health-check warns on a memory file whose `mtime` advanced without a matching `last-edited-by`/`last-edited-at` stamp. | ⚠️→✅ **Decided (lean self-stamp), 2026-06-15 — see below** |
 
 **C4 — Decided (lean: eventual + reconcile), 2026-06-14 (user, by practice).** The exposure is **narrow**:
 per-fact files are **single-owner** (distinct files → no collision) and inbox messages are **one file each
@@ -53,6 +54,29 @@ A hard guard (lock / single-writer index) was **considered and rejected** as dis
 rarely-written index whose only observed concurrency (parallel consolidation, 2026-06-14) produced no
 corruption. If the index-integrity check ever *does* trip in practice, that is the falsifiable signal to
 revisit (a new Improvement Step) — the lean stance is itself monitored.
+
+**C5 — Decided (lean self-stamp), 2026-06-15 (user, by practice).** Trigger: an edit to
+`project_automemory_migration_status.md` could not be attributed — OE wrongly guessed "the user". Root
+cause is structural: the team memory is **not version-controlled** (no author, only `mtime`) **and** all 11
+agents + the user commit/write under one shared identity (`ThorstenDittmar`), so neither the filesystem nor
+git can say *who*. Decision: a **self-stamp convention** — every agent that writes a memory file stamps its
+own slug in the frontmatter `metadata`:
+
+```yaml
+metadata:
+  last-edited-by: <agent-slug>      # e.g. oe, devops, audit
+  last-edited-at: <YYYY-MM-DD>
+```
+
+This builds on the existing `originSessionId` (which records *origin*, not *edits*). It gives the **last
+editor** — exactly the question that arose. **Rejected as disproportionate (for now):** version-controlling
+the whole memory dir — heavier, and the shared git identity means it still would not attribute to an agent
+without the stamp anyway. **Enforcement is honest about its limit:** memory is not in CI and the
+memory-*writing* behaviour is driven by the system prompt (not an OE-editable surface), so the stamp is a
+**ritual** (Enforcement Hierarchy level 2); the health-check above is the mechanical *detection* half
+(warn on an unstamped change), the stamp is the human action. The convention is surfaced to all agents via
+`knowledge-routing.md` (loaded at every anchor). Ties to the open shared-blackboard ownership question
+(`continuous-improvement.md`, the cwd-shared-auto-memory row).
 
 ## Why a contract (the lever the seam gives us)
 
