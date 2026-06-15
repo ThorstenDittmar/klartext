@@ -276,9 +276,31 @@ GitHub Actions workflows run on every push and pull request:
 
 | Workflow | Trigger | What it does |
 |---|---|---|
-| `lint.yml` | push / PR | `ruff check`, `ruff format --check`, `mypy` on API; `eslint`, `tsc` on frontend |
-| `test.yml` | push / PR | Unit tests (no Supabase required) |
+| `lint.yml` | push to `main` / PR | `ruff check`, `ruff format --check`, `mypy` on API; `eslint`, `tsc` on frontend |
+| `test.yml` | push to `main` / PR | Unit tests (no Supabase required) |
+| `classify-gate.yml` | PR | Requires a `rolling`/`breaking` label on Way-of-Working PRs (see below) |
 | `deploy-docs.yml` | push to `main` (docs/** changed) | Builds and deploys MkDocs to GitHub Pages |
+
+> CI triggers on `push` are restricted to `main`; PRs are validated via the `pull_request`
+> event. This avoids duplicate `push`+`pull_request` check runs on the same commit.
+
+### Classification labels (`rolling` / `breaking`)
+
+A PR that touches a **Way-of-Working surface** must carry exactly one classification label,
+per [ADR-0012](adr/0012-worktree-convergence-model.md). `classify-gate.yml` enforces this; the
+decision lives in `scripts/classify_gate.py`.
+
+| Label | Meaning |
+|---|---|
+| `rolling` | Additive / backward-compatible. Worktrees adopt it lazily via `klartext converge`. |
+| `breaking` | Changes the meaning of an existing rule, hook, path, or contract. Needs a coordinated rollout (all worktrees converge before it is relied upon). |
+
+**In-scope surfaces:** `CLAUDE.md`, `docs/superpowers/skills/**`, `agents/**/claude.md`,
+`.claude/settings.json`, `scripts/**`, `api/cli.py`.
+
+The gate is **default-free** — if unsure, choose `breaking`. PRs that touch no Way-of-Working
+surface need no label (the gate passes automatically). Adding the label re-runs the check
+without a new commit (it listens for `labeled`/`unlabeled` events).
 
 ---
 
