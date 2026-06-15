@@ -1,0 +1,40 @@
+name: Classification Gate
+
+# ADR-0012 two-mode consistency: a PR that touches a Way-of-Working surface (method docs,
+# agent Hoheitswissen, infra config) must carry exactly one classification label —
+# `rolling` or `breaking`. The decision lives in scripts/classify_gate.py (unit-tested in
+# api/tests/infrastructure/test_classify_gate.py); this workflow only collects the changed
+# paths + labels and forwards the exit code.
+#
+# Intentionally NOT path-filtered: the job always runs and always reports a status, so it
+# can be a required check without the "skipped required check blocks merge forever" footgun.
+# The script decides applicability (non-WoW PRs pass instantly). `labeled`/`unlabeled` let a
+# label added after the fact turn the check green without a new commit.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  classify:
+    name: Classification (rolling|breaking)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Run classification gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          # JSON array of the PR's label names; scripts/classify_gate.py parses JSON or
+          # newline/comma-separated input.
+          LABELS: ${{ toJson(github.event.pull_request.labels.*.name) }}
+        run: |
+          changed_paths="$(gh pr diff "${{ github.event.pull_request.number }}" --name-only)"
+          python3 scripts/classify_gate.py \
+            --changed-paths "$changed_paths" \
+            --labels "$LABELS"
