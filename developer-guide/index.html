@@ -1683,6 +1683,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="CI/CD">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#classification-labels-rolling-breaking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Classification labels (rolling / breaking)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2311,13 +2328,18 @@ to the same directory.</p>
 <tbody>
 <tr>
 <td><code>lint.yml</code></td>
-<td>push / PR</td>
+<td>push to <code>main</code> / PR</td>
 <td><code>ruff check</code>, <code>ruff format --check</code>, <code>mypy</code> on API; <code>eslint</code>, <code>tsc</code> on frontend</td>
 </tr>
 <tr>
 <td><code>test.yml</code></td>
-<td>push / PR</td>
+<td>push to <code>main</code> / PR</td>
 <td>Unit tests (no Supabase required)</td>
+</tr>
+<tr>
+<td><code>classify-gate.yml</code></td>
+<td>PR</td>
+<td>Requires a <code>rolling</code>/<code>breaking</code> label on Way-of-Working PRs (see below)</td>
 </tr>
 <tr>
 <td><code>deploy-docs.yml</code></td>
@@ -2326,6 +2348,37 @@ to the same directory.</p>
 </tr>
 </tbody>
 </table>
+<blockquote>
+<p>CI triggers on <code>push</code> are restricted to <code>main</code>; PRs are validated via the <code>pull_request</code>
+event. This avoids duplicate <code>push</code>+<code>pull_request</code> check runs on the same commit.</p>
+</blockquote>
+<h3 id="classification-labels-rolling-breaking">Classification labels (<code>rolling</code> / <code>breaking</code>)<a class="headerlink" href="#classification-labels-rolling-breaking" title="Permanent link">&para;</a></h3>
+<p>A PR that touches a <strong>Way-of-Working surface</strong> must carry exactly one classification label,
+per <a href="../adr/0012-worktree-convergence-model/">ADR-0012</a>. <code>classify-gate.yml</code> enforces this; the
+decision lives in <code>scripts/classify_gate.py</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Label</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>rolling</code></td>
+<td>Additive / backward-compatible. Worktrees adopt it lazily via <code>klartext converge</code>.</td>
+</tr>
+<tr>
+<td><code>breaking</code></td>
+<td>Changes the meaning of an existing rule, hook, path, or contract. Needs a coordinated rollout (all worktrees converge before it is relied upon).</td>
+</tr>
+</tbody>
+</table>
+<p><strong>In-scope surfaces:</strong> <code>CLAUDE.md</code>, <code>docs/superpowers/skills/**</code>, <code>agents/**/claude.md</code>,
+<code>.claude/settings.json</code>, <code>scripts/**</code>, <code>api/cli.py</code>.</p>
+<p>The gate is <strong>default-free</strong> — if unsure, choose <code>breaking</code>. PRs that touch no Way-of-Working
+surface need no label (the gate passes automatically). Adding the label re-runs the check
+without a new commit (it listens for <code>labeled</code>/<code>unlabeled</code> events).</p>
 <hr />
 <h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>klartext/
