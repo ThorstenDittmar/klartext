@@ -1749,6 +1749,13 @@ check).</p>
 <td>Index-integrity assertion (every <code>MEMORY.md</code> entry → a real file; no duplicate entries) in the health-check.</td>
 <td>✅ <strong>Decided (lean), 2026-06-14 — see below</strong></td>
 </tr>
+<tr>
+<td><strong>C5</strong></td>
+<td><strong>Every memory edit is attributable</strong> — who last changed a memory file is recoverable.</td>
+<td>Unattributable shared state: 11 agents + the user write the same memory under one OS/git identity → "who wrote this?" is unanswerable (surfaced 2026-06-15).</td>
+<td>Health-check warns on a memory file whose <code>mtime</code> advanced without a matching <code>last-edited-by</code>/<code>last-edited-at</code> stamp.</td>
+<td>⚠️→✅ <strong>Decided (lean self-stamp), 2026-06-15 — see below</strong></td>
+</tr>
 </tbody>
 </table>
 <p><strong>C4 — Decided (lean: eventual + reconcile), 2026-06-14 (user, by practice).</strong> The exposure is <strong>narrow</strong>:
@@ -1767,6 +1774,25 @@ not a lock:</p>
 rarely-written index whose only observed concurrency (parallel consolidation, 2026-06-14) produced no
 corruption. If the index-integrity check ever <em>does</em> trip in practice, that is the falsifiable signal to
 revisit (a new Improvement Step) — the lean stance is itself monitored.</p>
+<p><strong>C5 — Decided (lean self-stamp), 2026-06-15 (user, by practice).</strong> Trigger: an edit to
+<code>project_automemory_migration_status.md</code> could not be attributed — OE wrongly guessed "the user". Root
+cause is structural: the team memory is <strong>not version-controlled</strong> (no author, only <code>mtime</code>) <strong>and</strong> all 11
+agents + the user commit/write under one shared identity (<code>ThorstenDittmar</code>), so neither the filesystem nor
+git can say <em>who</em>. Decision: a <strong>self-stamp convention</strong> — every agent that writes a memory file stamps its
+own slug in the frontmatter <code>metadata</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">metadata</span><span class="p">:</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">last-edited-by</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;agent-slug&gt;</span><span class="w">      </span><span class="c1"># e.g. oe, devops, audit</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">last-edited-at</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;YYYY-MM-DD&gt;</span>
+</code></pre></div>
+<p>This builds on the existing <code>originSessionId</code> (which records <em>origin</em>, not <em>edits</em>). It gives the <strong>last
+editor</strong> — exactly the question that arose. <strong>Rejected as disproportionate (for now):</strong> version-controlling
+the whole memory dir — heavier, and the shared git identity means it still would not attribute to an agent
+without the stamp anyway. <strong>Enforcement is honest about its limit:</strong> memory is not in CI and the
+memory-<em>writing</em> behaviour is driven by the system prompt (not an OE-editable surface), so the stamp is a
+<strong>ritual</strong> (Enforcement Hierarchy level 2); the health-check above is the mechanical <em>detection</em> half
+(warn on an unstamped change), the stamp is the human action. The convention is surfaced to all agents via
+<code>knowledge-routing.md</code> (loaded at every anchor). Ties to the open shared-blackboard ownership question
+(<code>continuous-improvement.md</code>, the cwd-shared-auto-memory row).</p>
 <h2 id="why-a-contract-the-lever-the-seam-gives-us">Why a contract (the lever the seam gives us)<a class="headerlink" href="#why-a-contract-the-lever-the-seam-gives-us" title="Permanent link">&para;</a></h2>
 <p>Because we <strong>own</strong> the inner face, the contract reveals <strong>design levers</strong>, not just risk to watch: with the
 Claude app or GitHub we can only observe + Canary; here we can <em>build</em> the substrate to satisfy the contract
