@@ -13,7 +13,7 @@
 > **L3 definition:** [`../../library/practices/systematic-debugging.md`](../../library/practices/systematic-debugging.md)
 > **Upstream Resource:** [`../../library/resources/superpowers.md`](../../library/resources/superpowers.md) (`superpowers:systematic-debugging`)
 > **Status:** living (ritual) · **Owner:** QA · **Advances Alpha:** Software System + Way of Working · **NN:** ✓
-> **Enacted as:** the `systematic-debugging` skill (`docs/superpowers/skills/systematic-debugging/SKILL.md`) → loads upstream, then the `qa-retro` skill
+> **Enacted as:** the `systematic-debugging` skill (`docs/method/enactment/skills/systematic-debugging/SKILL.md`) → loads upstream, then the `qa-retro` skill
 
 ## klartext bindings
 
@@ -57,4 +57,4 @@ QA/Improvement-Register decision.
 - Upstream Resource: [`../../library/resources/superpowers.md`](../../library/resources/superpowers.md).
 - Dependency contract: [`../contracts/superpowers.md`](../contracts/superpowers.md) (S2 — QA ratifies the wrapped debugging discipline still carries its Iron Law).
 - Periodic sibling enactment: [`retrospective.md`](retrospective.md).
-- The skill source: `docs/superpowers/skills/systematic-debugging/SKILL.md` (F3 — not modified by this package).
+- The skill source: `docs/method/enactment/skills/systematic-debugging/SKILL.md` (F3 — not modified by this package).

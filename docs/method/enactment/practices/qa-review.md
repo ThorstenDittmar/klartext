@@ -10,7 +10,7 @@
 >
 > **L3 definition:** [`../../library/practices/qa-review.md`](../../library/practices/qa-review.md)
 > **Status:** living (ritual) · **Owner:** QA · **Advances Alpha:** Software System · **NN:** ✓
-> **Enacted as:** the `qa-review` skill (`docs/superpowers/skills/qa-review/` — SKILL.md + qa-categories.md + report-format.md + domain-composition-rules.md)
+> **Enacted as:** the `qa-review` skill (`docs/method/enactment/skills/qa-review/` — SKILL.md + qa-categories.md + report-format.md + domain-composition-rules.md)
 
 ## klartext bindings
 
@@ -70,4 +70,4 @@ coverage counter.
 
 - L3 definition: [`../../library/practices/qa-review.md`](../../library/practices/qa-review.md).
 - The composition that calls it: [`tdd.md`](tdd.md) (Step 3) · the test-gap sibling: [`qa-retro.md`](qa-retro.md).
-- The skill source: `docs/superpowers/skills/qa-review/` (F3 — not modified by this package).
+- The skill source: `docs/method/enactment/skills/qa-review/` (F3 — not modified by this package).

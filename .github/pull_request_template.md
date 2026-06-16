@@ -1,6 +1,6 @@
 <!--
   Classification (ADR-0012)
-  If this PR touches a Way-of-Working surface — CLAUDE.md, docs/superpowers/skills/**,
+  If this PR touches a Way-of-Working surface — CLAUDE.md, docs/method/enactment/skills/**,
   agents/**/claude.md, .claude/settings.json, scripts/**, api/cli.py — add EXACTLY ONE label:
 
     • rolling  — additive / backward-compatible. Worktrees adopt it lazily via `klartext converge`.

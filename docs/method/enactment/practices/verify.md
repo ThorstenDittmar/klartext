@@ -6,7 +6,7 @@
 > **External dependencies (referenced Resources):** the browser-driving MCP (`Claude_in_Chrome`, fallback `Claude_Preview`) — load-bearing: the observe step drives a real browser through it. The app's own runtime (Vite on `:5173`, FastAPI on `:8000`, Supabase, optionally the Anthropic API for analysis screens) is the *system under test*, not a referenced method Resource.
 > **Enforcement:** ritual (run for UI changes before done; four-eyes — QA owns the criteria, UX/UI executes)  ·  **NN:** ✓ (for UI changes)
 > **Status:** living  ·  **Owner:** UX/UI (executes) — QA owns the verification *criteria*
-> **Enacted as:** the `verify` skill (`docs/superpowers/skills/verify.md`)
+> **Enacted as:** the `verify` skill (`docs/method/enactment/skills/verify.md`)
 >
 > **Scope.** This is a **wholly-L2** card: it has **no generic L3 sibling**. The flow hardcodes the
 > klartext app — the concrete ports (`5173`/`8000`), the `klartext start` / `klartext testdata` commands,
@@ -83,5 +83,5 @@ eyeballs rendered shades); the structural fallback when the live path is blocked
 
 - The standards being verified: [[frontend]].
 - The orthogonal unit-test completeness layer (mocked, no browser): [[frontend-testing]] (QA-owned).
-- The skill source: `docs/superpowers/skills/verify.md` (F3 — not modified by this package).
+- The skill source: `docs/method/enactment/skills/verify.md` (F3 — not modified by this package).
 - Register row: *Frontend Verification* in [`../method.md`](../method.md).

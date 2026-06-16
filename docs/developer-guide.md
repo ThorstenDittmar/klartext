@@ -87,12 +87,12 @@ source api/.venv/bin/activate
 | `klartext db status` | Show status of the local Supabase instance |
 | `klartext converge` | Rebase the current worktree onto `origin/main` under the [ADR-0012](adr/0012-worktree-convergence-model.md) guards (clean `agent/<slug>` home branch only; never touches WIP or feature branches) |
 | `klartext converge --all` | Same, across every worktree of the repo — the one-liner that propagates a committed settings/hook/pin change to all home-branch worktrees |
-| `klartext skills sync` | Install klartext's own skills from `docs/superpowers/skills/` into `~/.claude/skills/` (where Claude Code loads them). The repo is the single source of truth; idempotent and prune-safe (marks managed dirs `.repo-managed`, removes managed skills whose source was deleted, never touches foreign/plugin skills). Run by `setup.sh`. |
+| `klartext skills sync` | Install klartext's own skills from `docs/method/enactment/skills/` into `~/.claude/skills/` (where Claude Code loads them). The repo is the single source of truth; idempotent and prune-safe (marks managed dirs `.repo-managed`, removes managed skills whose source was deleted, never touches foreign/plugin skills). Run by `setup.sh`. |
 
 ### Skill distribution
 
 klartext's cross-agent and ritual skills (`tdd`, `systematic-debugging`, `anchor`, `qa-review`, …) are
-versioned under `docs/superpowers/skills/` — the **single source of truth**. `~/.claude/skills/` is a
+versioned under `docs/method/enactment/skills/` — the **single source of truth**. `~/.claude/skills/` is a
 *derived* install, populated by `klartext skills sync` (run automatically by `setup.sh`). Each skill is
 either a flat `<name>.md` file or a `<name>/` directory (multi-file skills like `qa-review` keep their
 companion docs); both install as `~/.claude/skills/<name>/SKILL.md`. Add or edit a skill in the repo, then
@@ -306,7 +306,7 @@ decision lives in `scripts/classify_gate.py`.
 | `rolling` | Additive / backward-compatible. Worktrees adopt it lazily via `klartext converge`. |
 | `breaking` | Changes the meaning of an existing rule, hook, path, or contract. Needs a coordinated rollout (all worktrees converge before it is relied upon). |
 
-**In-scope surfaces:** `CLAUDE.md`, `docs/method/**`, `docs/superpowers/skills/**`,
+**In-scope surfaces:** `CLAUDE.md`, `docs/method/**`, `docs/method/enactment/skills/**`,
 `agents/**/claude.md`, `.claude/settings.json`, `scripts/**`, `api/cli.py`.
 
 The gate is **default-free** — if unsure, choose `breaking`. PRs that touch no Way-of-Working

@@ -10,7 +10,7 @@
 > wrap. For provenance, the version pin, and the *referenced-never-vendored* rule see the L3 Resource
 > card: [`../../library/resources/superpowers.md`](../../library/resources/superpowers.md).
 > **Why a contract here.** This is a **seam**, like the memory substrate — but tilted toward the
-> *external* face: we **own** the thin wrapper skills (`docs/superpowers/skills/tdd/`,
+> *external* face: we **own** the thin wrapper skills (`docs/method/enactment/skills/tdd/`,
 > `systematic-debugging/`) that *invoke* `superpowers:*`, but we **do not own** the disciplines those
 > skills load. A wrapper card is written against a specific upstream invariant ("all rules apply without
 > exception"); if that invariant shifts under us (plugin update, skill rename, content drift), the wrapper
@@ -27,7 +27,7 @@
 | Face | What | Modeled as | Owner |
 |---|---|---|---|
 | **Uncontrolled** (external) | the `superpowers` plugin itself — its skill *content*, skill *names*, the marketplace install, the version available | the **Resource card** (`../../library/resources/superpowers.md`) + the version pin; an upstream change is observed, not authored by us | DevOps (install/pin) + upstream (content) |
-| **Controlled** (our artifact) | the thin wrapper skills `docs/superpowers/skills/tdd/SKILL.md` + `systematic-debugging/SKILL.md` that `invoke` the upstream skill, and the klartext delta they add (test pyramid, qa-review, qa-retro tail) | our own skill files + the L3/L2 wrapper cards | OE (cards) / QA (systematic-debugging accuracy) / DevOps (skill install mechanism) |
+| **Controlled** (our artifact) | the thin wrapper skills `docs/method/enactment/skills/tdd/SKILL.md` + `systematic-debugging/SKILL.md` that `invoke` the upstream skill, and the klartext delta they add (test pyramid, qa-review, qa-retro tail) | our own skill files + the L3/L2 wrapper cards | OE (cards) / QA (systematic-debugging accuracy) / DevOps (skill install mechanism) |
 | **The seam** | the invariants below — *whichever* side provides them | **this Dependency Contract** | OE |
 
 ## The contract — invariants

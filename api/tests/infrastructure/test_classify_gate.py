@@ -78,7 +78,7 @@ def test_each_trigger_pattern_matches_a_representative_path() -> None:
     """Expects every Way-of-Working trigger pattern to be recognised for a representative path."""
     representatives = [
         "CLAUDE.md",
-        "docs/superpowers/skills/tdd.md",
+        "docs/method/enactment/skills/tdd.md",
         "docs/method/library/practices/tdd.md",
         "agents/devops/claude.md",
         ".claude/settings.json",
@@ -169,7 +169,7 @@ def test_near_miss_paths_are_not_triggers() -> None:
       * 'CLAUDEXmd'                 — exact-match pattern must not fuzzy-match.
       * 'scripts'                   — bare dir name (no slash) must not match 'scripts/**'.
       * 'xapi/cli.py'               — suffix collision must not match the exact 'api/cli.py'.
-      * 'docs/superpowers/skillsX/' — prefix collision: 'skills/**' keeps its trailing slash,
+      * 'docs/method/enactment/skillsX/' — prefix collision: 'skills/**' keeps its trailing slash,
                                        so 'skillsX/...' must NOT match.
       * 'api/cli.py.bak'            — exact-match pattern must not match a longer path.
     """
@@ -177,7 +177,7 @@ def test_near_miss_paths_are_not_triggers() -> None:
         "CLAUDEXmd",
         "scripts",
         "xapi/cli.py",
-        "docs/superpowers/skillsX/foo.md",
+        "docs/methodX/foo.md",
         "api/cli.py.bak",
     ]
     for path in near_misses:

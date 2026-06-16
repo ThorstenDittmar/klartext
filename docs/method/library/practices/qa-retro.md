@@ -6,7 +6,7 @@
 > **External dependencies (referenced Resources):** none — this is a klartext-own QA practice (not a superpowers wrapper)
 > **Enforcement:** ritual (invoked when a bug is found that tests should have caught; the `systematic-debugging` and `tdd` bug-fix flows append it)  ·  **NN:** ✓ (when triggered)
 > **Status:** living  ·  **Owner:** QA
-> **Enacted as:** the `qa-retro` skill (`docs/superpowers/skills/qa-retro/SKILL.md`)
+> **Enacted as:** the `qa-retro` skill (`docs/method/enactment/skills/qa-retro/SKILL.md`)
 
 > **Seeded by an OE-spawned sub-agent (F0.2-P-C, BARRIER mode); awaits ratification by real QA on wake (Guardrail 2).**
 
