@@ -39,7 +39,7 @@ ritual that stands in).
 | # | Invariant | Blast radius if violated | Falsifiable check | Holds today? |
 |---|---|---|---|---|
 | **S1** | The plugin **resolves at the pinned version** — `superpowers` 5.1.0 is installed and loadable in the consumer's Claude Code environment. | Both wrapper practices break: `tdd` Step 1 and `systematic-debugging` Step 1 invoke a skill that cannot load → the klartext deltas run on top of *nothing* → the Iron Law / root-cause discipline silently vanishes. | The plugin dir exists at the pinned path (`~/.claude/plugins/cache/claude-plugins-official/superpowers/5.1.0/`) **and** its `plugin.json` reports `"version": "5.1.0"`. Candidate for the session-health hook (DevOps); ritual until then. | ⚠️ **Aspirational** — install confirmed manually (5.1.0 present); not yet a hook check |
-| **S2** | The **wrapped skills exist under the names our cards declare** — `superpowers:test-driven-development` and `superpowers:systematic-debugging` are present and carry their core discipline (TDD's *NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST*; debugging's *NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST*). | A rename or content gutting upstream means our wrapper invokes a skill that no longer loads (rename) or no longer enforces the invariant the klartext delta assumes (content drift) — the wrapper card becomes a paraphrase of a discipline that is gone (RC4 by omission). | `skills/test-driven-development/SKILL.md` and `skills/systematic-debugging/SKILL.md` exist under the pinned install **and** each still states its Iron Law. QA ratifies the systematic-debugging half (QA-owned discipline). Ritual today; mechanizable as a grep against the pinned install. | ⚠️ **Aspirational (ritual)** — verified by reading the pinned 5.1.0 install; QA-ratification pending for S2/debugging |
+| **S2** | The **wrapped skills exist under the names our cards declare** — `superpowers:test-driven-development` and `superpowers:systematic-debugging` are present and carry their core discipline (TDD's *NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST*; debugging's *NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST*). | A rename or content gutting upstream means our wrapper invokes a skill that no longer loads (rename) or no longer enforces the invariant the klartext delta assumes (content drift) — the wrapper card becomes a paraphrase of a discipline that is gone (RC4 by omission). | `skills/test-driven-development/SKILL.md` and `skills/systematic-debugging/SKILL.md` exist under the pinned install **and** each still states its Iron Law. QA ratified the systematic-debugging half (QA-owned discipline). Ritual today; mechanizable as a grep against the pinned install. | ⚠️ **Ritual** — accuracy **QA-ratified (2026-06-16, PR #148)** against pinned 5.1.0; mechanization (grep) open |
 | **S3** | **Skill-invocation is the consumption seam** — our wrappers *load* the upstream skill (`invoke superpowers:<skill>`); they never *copy* its text. | If a wrapper inlines upstream content, we hold a second source of truth that drifts independently of the plugin (vendoring-by-paraphrase, RC4) — the contract can no longer tell whether "what we say TDD is" matches "what superpowers says TDD is". | The wrapper skill files and the wrapper cards contain a `superpowers:<skill>` invocation/declaration and **no restatement** of the upstream rules — only the klartext delta. Reviewable; candidate for a vendoring lint (SA). | ✅ (by construction — the current `tdd`/`systematic-debugging` skills are thin loaders) |
 | **S4** | A **version bump is a deliberate, reviewed event**, not an automatic float — the pin (5.1.0) only moves when someone re-reads the wrapped disciplines and confirms the klartext deltas still compose. | An auto-updating plugin can change the wrapped discipline *under us* between sessions; the wrapper cards silently describe the wrong upstream. This is exactly the **Controlled Method Rollout** "breaking for a drifted consumer" case. | The version pin lives in the Resource card + this contract; bumping it requires re-ratifying S2 (the wrapped invariants still hold at the new version) and updating both wrapper cards in the same change. Convention today (no auto-update configured). | ✅ (convention — pin is explicit; no float configured) |
 
@@ -50,10 +50,11 @@ discipline the wrapper assumes has moved." Both are silent at change-time — th
 just runs on top of something other than what its card declares. That silence is exactly the seam
 condition the L3 element describes.
 
-**S2 — QA ratification flag.** The `systematic-debugging` discipline is **QA-owned** (the
-`qa-retro` tail composes on it). This sub-agent ratified S2's accuracy *as if QA* against the pinned
-5.1.0 install (the Iron Law *NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST* is present; the four-phase
-structure is present). **Real QA ratifies on wake** — until then S2's debugging half is provisional.
+**S2 — QA ratification.** The `systematic-debugging` discipline is **QA-owned** (the
+`qa-retro` tail composes on it). **Real QA ratified S2's debugging half on 2026-06-16** (review on PR #148)
+against the pinned 5.1.0 install — the Iron Law *NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST* and the
+four-phase structure are present. QA ratifies the *accuracy*; the clause stays ritual until the mechanized
+check (grep against the pinned install) lands — an open OE/DevOps candidate.
 
 ## Why a contract here (the lever this seam gives us)
 
@@ -74,7 +75,7 @@ upstream rename *or* a wrapper that drifted into paraphrase — is caught agains
 ## Status & open
 
 - **S1** (version resolves) — ⚠️ aspirational; install confirmed manually, hook check is a DevOps candidate.
-- **S2** (wrapped skills exist + carry their Iron Law) — ⚠️ aspirational (ritual); verified against the pinned 5.1.0 install. **QA-ratification pending** for the systematic-debugging half.
+- **S2** (wrapped skills exist + carry their Iron Law) — ⚠️ ritual; verified against the pinned 5.1.0 install. **QA-ratified (2026-06-16, PR #148)** for the systematic-debugging half; mechanization open.
 - **S3** (load, never copy) — ✅ by construction.
 - **S4** (pin is deliberate) — ✅ convention; no auto-float.
 - **Open (OE/DevOps):** whether S1/S2 graduate from ritual to a session-health check that asserts the pinned install + greps the two skills for their Iron Law. Non-blocking; tracked as a candidate Improvement Step.

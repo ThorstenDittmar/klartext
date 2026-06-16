@@ -8,9 +8,10 @@
 > **Status:** living  ·  **Owner:** QA (this is QA-owned discipline — the `qa-retro` tail composes on it)
 > **Enacted as:** the `systematic-debugging` skill (`docs/superpowers/skills/systematic-debugging/SKILL.md`) — a thin loader that invokes the upstream skill, then appends the `qa-retro` step
 
-> **QA-RATIFICATION FLAG.** This card is QA-owned. This sub-agent (spawned by OE for F0.2-P-B) drafted it
-> *as if QA* against the pinned superpowers 5.1.0 install — **real QA ratifies the accuracy of the
-> wrapped-discipline claim on wake.** Do not treat the composition as QA-blessed until then.
+> **QA-RATIFIED (2026-06-16, review on PR #148).** This card is QA-owned; drafted by an OE-spawned
+> sub-agent and **ratified by real QA** against the pinned superpowers 5.1.0 install (the Iron Law +
+> four-phase structure confirmed present). The composition is QA-blessed; mechanization (a session-health
+> grep against the pinned install) remains an open OE/DevOps candidate.
 
 ## Purpose
 

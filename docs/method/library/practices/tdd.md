@@ -5,7 +5,7 @@
 > **Activity / Activity Space:** Implement the System → write the failing test, then the minimal code that passes
 > **External dependencies (referenced Resources):** **superpowers (Resource)** — wraps `superpowers:test-driven-development`
 > **Enforcement:** ritual (the skill is invoked at the start of every feature/bugfix; the structural test-coverage check is mechanical — see L2)  ·  **NN:** ✓
-> **Status:** living  ·  **Owner:** SA (composition shape) · QA (the test-level standards in L2)
+> **Status:** living  ·  **Owner:** OE (composition shape, L3) · QA (test-level standards, L2). *SA stakes (not ownership): the L2 test levels stay consistent with the layer architecture; the S3 vendoring lint is SA-built (`.semgrep/rules/arch/`).*
 > **Enacted as:** the `tdd` skill (`docs/superpowers/skills/tdd/SKILL.md`) — a thin loader that invokes the upstream skill, then applies the klartext standards
 
 ## Purpose

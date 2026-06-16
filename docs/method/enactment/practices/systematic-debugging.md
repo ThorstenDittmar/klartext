@@ -7,8 +7,8 @@
 > `superpowers:systematic-debugging`, **referenced, not restated** here. The composition delta — see the
 > L3 wrapper card.
 > **Language.** English — documentation-language rule.
-> **QA-OWNED.** This is QA-owned discipline; drafted by an OE-spawned sub-agent *as if QA*. **Real QA
-> ratifies on wake** (see the L3 card's ratification flag).
+> **QA-OWNED — QA-RATIFIED (2026-06-16, review on PR #148).** Drafted by an OE-spawned sub-agent and
+> **ratified by real QA** (see the L3 card).
 >
 > **L3 definition:** [`../../library/practices/systematic-debugging.md`](../../library/practices/systematic-debugging.md)
 > **Upstream Resource:** [`../../library/resources/superpowers.md`](../../library/resources/superpowers.md) (`superpowers:systematic-debugging`)

@@ -10,7 +10,7 @@
 >
 > **L3 definition:** [`../../library/practices/tdd.md`](../../library/practices/tdd.md)
 > **Upstream Resource:** [`../../library/resources/superpowers.md`](../../library/resources/superpowers.md) (`superpowers:test-driven-development`)
-> **Status:** living (ritual) · **Owner:** QA (test standards) / SA (composition shape) · **Advances Alpha:** Software System + Way of Working · **NN:** ✓
+> **Status:** living (ritual) · **Owner:** QA (test standards) / OE (composition shape, L3) · **Advances Alpha:** Software System + Way of Working · **NN:** ✓
 > **Enacted as:** the `tdd` skill (`docs/superpowers/skills/tdd/SKILL.md`) + the structural coverage check (`scripts/check_test_coverage.py`)
 
 ## klartext bindings
