@@ -416,13 +416,16 @@ Project-level baseline permissions (all agents): `.claude/settings.json`
 
 Our way of working is being forged as an explicit, evolving **method**, using **Essence/SEMAT** as the
 meta-language. Before proposing changes to how we work, read the method document set under
-`docs/superpowers/improvement/`:
+`docs/method/` (split by the F0 method/product cut, ADR-0013, into **L3** generic definitions in
+`docs/method/library/` and **L2** klartext enactment in `docs/method/enactment/`):
 
-- `semat-definition.md` — self-contained reference for the meta-language (Kernel, Alphas, Practices, Methods)
-- `alpha-states.md` — the kernel Alpha state checklists (the checkable lifecycle)
-- `semat-glossary.md` — our process/method vocabulary (the terms to use)
-- `practices/` — our Practices (composable how-tos; e.g. `improvement-step.md`, `document-scoping.md`)
-- `continuous-improvement.md` — our decisions, rationale, RCA and plan
+- `library/semat-definition.md` (L3) — self-contained reference for the meta-language (Kernel, Alphas, Practices, Methods)
+- `library/alpha-states.md` (L3) — the kernel Alpha state checklists (the checkable lifecycle)
+- `library/semat-glossary.md` (L3) — generic process/method vocabulary; klartext-specific terms live in
+  `enactment/semat-glossary-klartext.md` (L2)
+- `library/practices/` (L3) — generic Practice definitions (e.g. `improvement-step.md`, `document-scoping.md`);
+  their klartext enactments live in `enactment/practices/` (L2)
+- `enactment/continuous-improvement.md` (L2) — our decisions, rationale, RCA and plan
 
 Having read these, communicate with OE about the way of working **using this vocabulary** (Alphas, states,
 Practices, Methods) and propose changes that slot into the Kernel rather than reinventing it.

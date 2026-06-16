@@ -111,7 +111,7 @@ Knowledge** practice. Each carries version-binding + a manual **Canary** + a **d
 OE (form + home); empirical content four-eyes-verified by the testing agent (DevOps). Distinct from **Resources**
 below (which we *reference*, not *produce*).
 
-**Dependency Contracts** (`docs/superpowers/improvement/contracts/`) — the **invariants our way of working
+**Dependency Contracts** (`contracts/`, L2 clauses; the generic L3 element is `../library/dependency-contract.md`) — the **invariants our way of working
 requires from** a central IT component we depend on (the *upstream* counterpart to a **dependency chain**,
 which lists the downstream blast radius). Each clause carries its blast radius + a falsifiable check. New lean
 element (2026-06-14), KB-confirmed distinct from the dependency chain. Owner OE (form + clauses); mechanization

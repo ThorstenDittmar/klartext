@@ -35,8 +35,9 @@ Diese Quellen sind sicher — sie liegen auf der Festplatte und werden bei jeder
   - **L2 (Enactment)** unter `docs/method/enactment/`: `continuous-improvement.md`
     (Entscheidungen + Begründungen + Improvement-Register §3), `method.md` (Element-Register),
     `learnings/` (Way-of-Working-Learnings), `environment/`
-  - generisch/Kernel unter `docs/superpowers/improvement/`: `semat-definition.md` /
-    `semat-glossary.md`, `alpha-states.md`, `practices/` (Practice-Karten)
+  - **L3 (Library)** generisch/Kernel unter `docs/method/library/`: `semat-definition.md` /
+    `semat-glossary.md`, `alpha-states.md`, `practices/` (generische Practice-Karten; die
+    klartext-Enactments liegen unter `docs/method/enactment/practices/`)
 - `docs/superpowers/plans/PENDING.md` (Delegations-Tracking)
 - `assets-local/README.md` (Provenienz-Register externer Referenzen)
 - Memory-Dateien unter `~/.claude/`
@@ -168,7 +169,8 @@ Für jeden Punkt fragen:
   - Prozess-Learning → `learnings/`
   - Neues/geändertes Methoden-Element → Practice-Karte + `method.md` (im selben Schritt; **nur OE** — andere
     Agents: Briefing an OE)
-  - Begriff → `semat-glossary.md`
+  - Begriff → Glossar: generischer Methoden-Begriff → `docs/method/library/semat-glossary.md` (L3);
+    klartext-spezifischer Begriff → `docs/method/enactment/semat-glossary-klartext.md` (L2)
   - Verbesserungs-Kandidat → Improvement-Register (`continuous-improvement.md` §3; ohne Write-Access:
     Briefing an OE)
   - Geparkter Befund (Kategorie 7) → benanntes Verwahr-Depot mit Freigabe-/Löschbedingung (Memory-Park-Pattern)
@@ -244,7 +246,8 @@ Kurze Zusammenfassung geben:
 ## Schritt 6 — Prozess-Verbesserungen
 
 > **Anbindung an die Methode:** Dieser Schritt ist ein *Capture*-Schritt, keine Retro — die eigentliche
-> Bewertung gehört in die **Retrospective-Practice** (`practices/retrospective.md`). Jeder hier gefundene
+> Bewertung gehört in die **Retrospective-Practice** (`docs/method/library/practices/retrospective.md`,
+> generische Definition; klartext-Enactment: `docs/method/enactment/practices/retrospective.md`). Jeder hier gefundene
 > Verbesserungs-Kandidat wird als **Improvement-Instanz ins Register** eingetragen
 > (`continuous-improvement.md` §3, Zustand *Identified*) — nicht nur als loses TODO. Die nächste Retro
 > priorisiert und bewertet.
@@ -269,8 +272,9 @@ Nur fragen wenn in der Session etwas Relevantes passiert ist — kein Pflicht-Pr
 
 1b. **Practice-Karten aktuell?**
    Hat sich in dieser Session geändert, *wie* wir arbeiten? Dann prüfen: stimmen die betroffenen
-   Practice-Karten (`docs/superpowers/improvement/practices/`) und `method.md` noch?
-   → **Nur OE:** Karte + `method.md` im selben Schritt aktualisieren (Maintenance-Ritual).
+   Practice-Karten (L3-Definition unter `docs/method/library/practices/`, klartext-Enactment unter
+   `docs/method/enactment/practices/`) und das Element-Register (`docs/method/enactment/method.md`) noch?
+   → **Nur OE:** Karte(n) + `method.md` im selben Schritt aktualisieren (Maintenance-Ritual).
    → **Domain-Agents** (kein Write-Access auf `practices/`): Befund als Briefing an OE formulieren
    und dem User zeigen — Frage 1b damit erledigt, nicht überspringen.
 
