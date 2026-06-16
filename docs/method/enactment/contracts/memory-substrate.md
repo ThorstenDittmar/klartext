@@ -1,10 +1,10 @@
-# Dependency Contract: Memory Substrate
+# Dependency Contract (instance): Memory Substrate
 
-> **What this is.** A **Dependency Contract** — the **invariants our way of working requires from** the
-> storage substrate it runs on. It is the *upstream* counterpart to Environment Knowledge's **dependency
-> chain**: the dependency chain lists *what of ours breaks* if a fact changes (downstream blast radius); a
-> Dependency Contract lists *what we require to hold* (the invariants). Complementary, not duplicate — each
-> clause names its blast radius.
+> **What this is.** The klartext-specific **Dependency Contract** for the storage substrate our way of
+> working runs on — the concrete clauses C1–C5 below. For *what a Dependency Contract is* (the generic
+> element: when to forge one, the clause / blast-radius / falsifiable-check structure, the relation to
+> Environment Knowledge's dependency chain), see the L3 element card:
+> [`../../library/dependency-contract.md`](../../library/dependency-contract.md).
 > **The substrate.** The durable team memory (`~/.claude/klartext-team-memory/`), the file inbox
 > (`scripts/inbox.sh`), the `MEMORY.md` index, and the `autoMemoryDirectory` pin that makes the app resolve
 > the shared path. Not "external" (we build `inbox.sh`, the layout, the convention) and not purely ours (the
@@ -13,8 +13,6 @@
 >
 > **Status:** draft v1 (2026-06-14) · **Owner:** OE (contract form + clauses) · DevOps (mechanization +
 > empirical content) · **Advances Alpha:** Way of Working
-> **Source check:** new lean element **Dependency Contract**, KB-confirmed distinct from the existing
-> *dependency chain* (Environment Knowledge). No Kernel change — an artifact type alongside Work Products.
 
 ## The seam — three parts
 
@@ -84,20 +82,22 @@ finding). The detection therefore needs a **content/git-based design** (e.g. *co
 update*), not `mtime`. **The self-stamp ritual is unaffected and stands.** This is an OE-owned design strand
 (OE substrate + DevOps mechanic), non-blocking.
 
-## Why a contract (the lever the seam gives us)
+## Why a contract here (the lever this seam gives us)
 
 Because we **own** the inner face, the contract reveals **design levers**, not just risk to watch: with the
 Claude app or GitHub we can only observe + Canary; here we can *build* the substrate to satisfy the contract
 (make the inbox concurrency-safe, keep the pin path absolute + committed). A violation on **either** side is
 checked against the **same** contract — so "what changed under us" and "what we changed" are caught by one set
-of invariants.
+of invariants. (The generic form of this lever is in the L3 element card.)
 
 ## Relationship to other elements
 
-- **Environment Knowledge** (`practices/environment-knowledge.md`) — provides the uncontrolled-face work
-  product + Canary; the contract's external clauses reference it.
-- **Controlled Method Rollout** (`practices/controlled-method-rollout.md`) — a change that violates a contract
-  clause for a *drifted* agent is **breaking** → barrier mode. The contract feeds that classification.
+- **Dependency Contract (L3 element)** (`../../library/dependency-contract.md`) — the generic definition this
+  file is an instance of.
+- **Environment Knowledge** — provides the uncontrolled-face work product + Canary; the contract's external
+  clauses reference it (`environment/claude-code-app.md`).
+- **Controlled Method Rollout** — a change that violates a contract clause for a *drifted* agent is
+  **breaking** → barrier mode. The contract feeds that classification.
 - **Drift Awareness** (register #106) / **ADR-0012** — convergence keeps a worktree's *copy* of the substrate
   current; the contract states what the substrate must guarantee in the first place.
 
