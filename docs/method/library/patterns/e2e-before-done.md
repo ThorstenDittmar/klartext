@@ -2,6 +2,7 @@
 
 > **Essence type:** Activity
 > **Advances Alpha:** Software System (proves the change works end to end before it lands)  ·  **Work Products:** captured evidence of the end-to-end run
+> **Activity / Activity Space:** Test the System → verify the change works end-to-end on the live system before it lands
 > **External dependencies (referenced Resources):** none
 > **Enforcement:** ritual  ·  **NN:** ✓ (before marking work Done / before merge)
 > **Status:** living  ·  **Owner / enactment owner:** Hannibal (work-package coordinator; first run H01-422)

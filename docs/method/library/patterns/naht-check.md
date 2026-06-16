@@ -2,6 +2,7 @@
 
 > **Essence type:** Activity
 > **Advances Alpha:** Work (clean integration onto the mainline)  ·  **Work Products:** none (a verification over an existing PR)
+> **Activity / Activity Space:** Coordinate Activity → verify a PR contains exactly the intended files, nothing else, before it lands
 > **External dependencies (referenced Resources):** none
 > **Enforcement:** ritual  ·  **NN:** ✓ (every increment)
 > **Status:** living  ·  **Owner / enactment owner:** DevOps (enacted on every increment since #45)
