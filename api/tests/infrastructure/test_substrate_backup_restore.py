@@ -255,3 +255,146 @@ def test_backup_root_from_env_when_not_passed(tmp_path: Path) -> None:
         assert (tmp_path / "envbk") in backup.parents
     finally:
         del os.environ["KLARTEXT_BACKUP_ROOT"]
+
+
+# --- QA gap coverage (qa-review 2026-06-16): untested failure modes of named §6.3 behaviours ---
+
+
+def test_g4_untracked_files_captured_as_list(tmp_path: Path) -> None:
+    """Expects G4 to record a dirty worktree's untracked files as a LIST (§6.3 untracked-as-LIST).
+
+    The whole-tree backup deliberately does NOT copy untracked bytes; it records their paths only.
+    Nothing asserted that list content before — a regression dropping the untracked capture would
+    have passed unnoticed.
+    """
+    import json
+
+    home = _make_home(tmp_path)
+    wt = _make_worktree(tmp_path, "wt-a", wip=True)  # scratch.txt is untracked
+    backup = sb.backup_substrate(home=home, worktrees=[wt], backup_root=tmp_path / "bk")
+
+    manifest = json.loads((backup / "manifest.json").read_text())
+    entry = next(e for e in manifest["wip"] if e["worktree"] == "wt-a")
+    assert "scratch.txt" in entry["untracked"]
+
+
+def test_g4_clean_worktree_yields_no_stash_and_no_bundle(tmp_path: Path) -> None:
+    """Expects a clean worktree to produce a wip entry with no stash key and no bundle.
+
+    The `if stash:` backup branch and the `if not stash: continue` verify branch both hinge on this
+    distinction; only the dirty path was exercised before.
+    """
+    import json
+
+    home = _make_home(tmp_path)
+    clean = _make_worktree(tmp_path, "wt-clean", wip=False)  # committed base, no WIP
+    backup = sb.backup_substrate(home=home, worktrees=[clean], backup_root=tmp_path / "bk")
+
+    manifest = json.loads((backup / "manifest.json").read_text())
+    entry = next(e for e in manifest["wip"] if e["worktree"] == "wt-clean")
+    assert "stash" not in entry, "a clean worktree must not record a stash commit"
+    assert not (backup / "wip" / "wt-clean").exists(), (
+        "a clean worktree must not produce a bundle dir"
+    )
+
+
+def test_verify_flags_missing_manifest(tmp_path: Path) -> None:
+    """Expects verify_restore to fail loud with a named message when the backup manifest is absent.
+
+    manifest.json carries the SHA256 baseline; without it 'tested-valid' is unsound, so the early
+    guard must report rather than silently skip the manifest checks.
+    """
+    home = _make_home(tmp_path)
+    backup = sb.backup_substrate(home=home, worktrees=[], backup_root=tmp_path / "bk")
+    sandbox = tmp_path / "sandbox"
+    sr.restore_substrate(backup, sandbox)
+    (backup / "manifest.json").unlink()
+
+    violations = sr.verify_restore(backup, sandbox)
+
+    assert any("manifest.json missing" in v for v in violations)
+
+
+def test_verify_flags_g1_file_missing_from_restore(tmp_path: Path) -> None:
+    """Expects (b) byte-identity to flag a backup file absent from the restore (a deletion)."""
+    home = _make_home(tmp_path)
+    backup = sb.backup_substrate(home=home, worktrees=[], backup_root=tmp_path / "bk")
+    sandbox = tmp_path / "sandbox"
+    sr.restore_substrate(backup, sandbox)
+    (sandbox / "team-memory" / _MARKER).unlink()
+
+    violations = sr.verify_restore(backup, sandbox)
+
+    assert any(_MARKER in v and "missing from the restore" in v for v in violations)
+
+
+def test_verify_flags_extra_file_in_restore(tmp_path: Path) -> None:
+    """Expects (b) byte-identity to flag a file present in the restore but not in the backup."""
+    home = _make_home(tmp_path)
+    backup = sb.backup_substrate(home=home, worktrees=[], backup_root=tmp_path / "bk")
+    sandbox = tmp_path / "sandbox"
+    sr.restore_substrate(backup, sandbox)
+    (sandbox / "team-memory" / "smuggled.md").write_text("not in the backup\n")
+
+    violations = sr.verify_restore(backup, sandbox)
+
+    assert any("smuggled.md" in v and "not the backup" in v for v in violations)
+
+
+def test_verify_flags_wip_bundle_missing_from_restore(tmp_path: Path) -> None:
+    """Expects (G4) to flag a recorded stash whose bundle is missing from the restore.
+
+    A corrupted/partial restore that lost a WIP bundle must not pass as tested-valid — the recorded
+    stash would be unrecoverable.
+    """
+    home = _make_home(tmp_path)
+    wt = _make_worktree(tmp_path, "wt-a", wip=True)
+    backup = sb.backup_substrate(home=home, worktrees=[wt], backup_root=tmp_path / "bk")
+    sandbox = tmp_path / "sandbox"
+    sr.restore_substrate(backup, sandbox)
+    next((sandbox / "wip").rglob("*.bundle")).unlink()
+
+    violations = sr.verify_restore(backup, sandbox)
+
+    assert any("(G4)" in v and "bundle missing" in v for v in violations)
+
+
+def test_verify_flags_inbox_completeness_drift(tmp_path: Path) -> None:
+    """Expects the (c) inbox-completeness check to fire when a slug's unread/read counts drift.
+
+    G1 integrity is (a)∧(b)∧(c); (c) had no failing-mode test. Moving a message from unread into
+    .read/ in the restore changes the per-slug counts and must be reported as a (c) violation.
+    """
+    home = _make_home(tmp_path)
+    backup = sb.backup_substrate(home=home, worktrees=[], backup_root=tmp_path / "bk")
+    sandbox = tmp_path / "sandbox"
+    sr.restore_substrate(backup, sandbox)
+    devops = sandbox / "team-memory" / "inbox" / "devops"
+    (devops / "live.md").rename(devops / ".read" / "live.md")  # unread→read: counts drift
+
+    violations = sr.verify_restore(backup, sandbox)
+
+    assert any("(c) inbox completeness" in v and "devops" in v for v in violations)
+
+
+def test_restore_main_usage_error_returns_2(tmp_path: Path) -> None:
+    """Expects substrate_restore.main with the wrong argument count to return the usage code 2."""
+    assert sr.main(["only-one-arg"]) == 2
+
+
+def test_restore_main_happy_path_returns_0(tmp_path: Path) -> None:
+    """Expects substrate_restore.main to restore and return 0 for a valid backup→target pair."""
+    home = _make_home(tmp_path)
+    backup = sb.backup_substrate(home=home, worktrees=[], backup_root=tmp_path / "bk")
+    code = sr.main([str(backup), str(tmp_path / "out")])
+    assert code == 0
+    assert (tmp_path / "out" / "manifest.json").is_file()
+
+
+def test_backup_main_returns_1_when_substrate_absent(tmp_path: Path, monkeypatch) -> None:
+    """Expects substrate_backup.main to fail (exit 1) when team-memory substrate is absent."""
+    empty_home = tmp_path / "empty-home"
+    (empty_home / ".claude").mkdir(parents=True)
+    monkeypatch.setattr(Path, "home", classmethod(lambda cls: empty_home))
+
+    assert sb.main([]) == 1
