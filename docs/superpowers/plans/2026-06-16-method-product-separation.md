@@ -1,6 +1,6 @@
 # Frozen Plan — Method / Product Separation Refactoring
 
-> **Status:** READY TO FREEZE — §6/§7 mechanic verified + sharpened by DevOps (2026-06-16); OE + DevOps signed off. **Freeze = merge of this PR.** **Nothing is executed until frozen; F0 starts only after the freeze.**
+> **Status:** FROZEN — F0 in progress (OE-led, started 2026-06-16). §6/§7 mechanic verified + sharpened by DevOps; OE + DevOps signed off; plan merged to `main` (#130). F0 = produce the method as well-formed Essence objects, path-classified (§4), executed in lead-and-spawn barrier mode (§2).
 > **Owners (method coordination):** OE + DevOps. **Hannibal is OUT** (product coordinator, not method). **SA:** architecture landed (ADR-0013/0014). **QA:** coverage-audit + qa-review gate owner.
 > **Decision records:** [ADR-0013](../../adr/0013-separating-method-from-product.md) (layer architecture, path-based classification, distribution), [ADR-0014](../../adr/0014-agent-provenance-trailer.md) (agent provenance). **Practice:** `improvement/practices/controlled-method-rollout.md` (barrier mode). **Contract:** `improvement/contracts/memory-substrate.md` (C1–C5).
 > **This document is the coordination backbone** — it is designed to **survive the rebuild** (§2). The substrate (inbox/memory) it coordinates is itself in scope of the change, so coordination runs over **this repo artifact + the user out-of-band**, not over the substrate.
