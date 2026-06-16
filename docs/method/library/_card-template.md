@@ -28,11 +28,16 @@ Products it produces, and the Activities/Activity Spaces it fills.**
 | **Owner** | The accountable agent/role. | ✓ |
 | **Enacted as** | The skill/hook/script that executes this element today, if any. | when applicable |
 
-> **CI-check scope (SA ratification, PR #137).** The half-(ii) well-formedness check (F0.3, DevOps)
-> enforces only the **Essence core**: `{Essence type, Advances Alpha, Work Products, Activity Space,
-> External dependencies}`. The remaining fields (Enforcement, NN, Status, Owner, Enacted as) are
-> klartext **operating** fields, not a `semat-definition.md` §3 requirement — the CI check must not
-> demand them, or it checks the wrong set.
+> **CI-check scope (SA ratification, PR #137 + #142) — TYPE-CONDITIONAL.** The half-(ii)
+> well-formedness check (F0.3, DevOps) is **type-aware**, not a flat 5-field mandate:
+> - **Always required (every card type):** `Essence type` (a clean enum token — keep clarifiers OUT of
+>   the value) and `External dependencies` (`none` is allowed; silence is not).
+> - **Required for `Practice` cards only:** `Advances Alpha`, `Work Products`, `Activity Space`
+>   (per `semat-definition.md` §3 — these describe a Practice; a Work-Product / Resource / element card
+>   is not obliged to carry them).
+> The remaining fields (Enforcement, NN, Status, Owner, Enacted as) are klartext **operating** fields,
+> not a §3 requirement — the CI check must not demand them. Build the check type-aware, or it checks the
+> wrong set.
 
 ## The wrapper rule (composition over an external Resource)
 
