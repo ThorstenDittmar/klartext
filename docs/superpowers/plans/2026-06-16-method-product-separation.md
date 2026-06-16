@@ -103,10 +103,13 @@ This plan is **frozen** when: DevOps has verified §6/§7, OE and DevOps both si
   `agent/system-architect` `f2e2942`. Rollback ordering: **substrate first, then code** (§7).
 
 ### F3 steps (sequence) — status
-- [ ] **#3b** skill-distribution isolation *(substrate-touching; superpowers-contract S1–S4 / state-isolation
-  boundary impact → clear with OE via user before hardening — OE owns contract impact)*.
-- [ ] **#1b** filter-repo extraction along the L3 stems (`docs/method/library/`) — full history; squash snapshot
-  for the semAIt seed. Mechanical (F0 produced well-formed L3 objects); flag any path-classification surprise here.
+- [x] **#3b** skill-distribution isolation — **DONE** (#160 merged `58cb989`; all 12 skill executables →
+  `docs/method/enactment/skills/`, generic defs stay in L3 cards; SA all-12→L2 + OE S2/S3 + OE closing
+  countersign; the 5-stale-ref skill-body catch fixed in `439eaa5`; full sweep clean).
+- [ ] **#1b** filter-repo extraction along the L3 stems — **BLOCKED on OE cut call for the code stems.**
+  `docs/method/library/` is clean/ready; but `scripts/`, method `.github/workflows/`, hooks were never
+  per-object cut-classified (F0 did only `docs/method/`) and `api/cli.py`'s converge slice is not
+  path-separable. Concrete path-set proposal posted as a #159 comment — awaiting OE's seed-scope confirm.
 - [ ] **#2** ADR-0014 provenance hook (commit-msg hook + CI check for the `Agent: <slug>` trailer) → status Accepted.
 
 ### F3 exit (OE-countersigned via user)
