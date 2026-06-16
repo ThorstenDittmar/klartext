@@ -315,9 +315,11 @@ principle decks · Method-Agnostic Agility cards. Decks are form-gated PDF downl
 manual download by the user (the site blocks automated fetches).
 
 **Minimal document set (English) + Document Scoping convention.**
-The method now has a minimal, self-contained document set under `docs/superpowers/improvement/`:
-`semat-definition.md` (self-contained meta-language reference — independent of the external SEMAT site, RC4),
-`semat-glossary.md` (our terms), `practices/improvement-step.md` + `practices/document-scoping.md`, and this
+The method now has a minimal, self-contained document set under `docs/method/{library,enactment}/`
+(originally created under `docs/superpowers/improvement/`; relocated by the F0 method/product cut, ADR-0013):
+`library/semat-definition.md` (self-contained meta-language reference — independent of the external SEMAT site, RC4),
+`library/semat-glossary.md` (our terms), `library/practices/improvement-step.md` + `library/practices/document-scoping.md`
+(L3 definitions, with their L2 enactments under `enactment/practices/`), and this
 master document. **New convention (a Practice):** every document opens with a **scope header**
 (scope · out-of-scope + link · anti-pattern guarded → RC catalog / §0 · language). Recorded in
 `practices/document-scoping.md`; applied across the set. The meta-language is referenced from `CLAUDE.md`

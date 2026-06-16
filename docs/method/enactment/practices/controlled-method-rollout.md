@@ -24,9 +24,9 @@
   shared venv carries the new commands, and run any skill-sync.
 - **Barrier step 1 (Stabilize)** = the `anchor` ritual on every agent.
 - **Barrier step 3 (Resync)** = `klartext converge` + the SessionStart drift / G2 check is green.
-- **Companion:** the **Memory-Substrate Dependency Contract** (`../../../superpowers/improvement/contracts/memory-substrate.md`)
+- **Companion:** the **Memory-Substrate Dependency Contract** (`../contracts/memory-substrate.md`)
   tells you *what the storage substrate guarantees*; a change that violates a contract clause for a drifted
-  agent is breaking. *(See dangling-ref note below — contracts/ has not yet migrated under docs/method/.)*
+  agent is breaking.
 
 ## Mechanization (klartext)
 

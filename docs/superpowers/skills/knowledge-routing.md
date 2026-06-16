@@ -55,7 +55,7 @@ metadata:
 
 Gilt für jede Memory-Datei unter `~/.claude/klartext-team-memory/` (nicht nur die eigene). Ist eine
 Ritual-Konvention (Memory liegt nicht in CI); ein Health-Check warnt nur bei einer ungestempelten
-Änderung. Details: `docs/superpowers/improvement/contracts/memory-substrate.md` (C5).
+Änderung. Details: `docs/method/enactment/contracts/memory-substrate.md` (C5).
 
 ---
 
