@@ -28,6 +28,12 @@ Products it produces, and the Activities/Activity Spaces it fills.**
 | **Owner** | The accountable agent/role. | ✓ |
 | **Enacted as** | The skill/hook/script that executes this element today, if any. | when applicable |
 
+> **CI-check scope (SA ratification, PR #137).** The half-(ii) well-formedness check (F0.3, DevOps)
+> enforces only the **Essence core**: `{Essence type, Advances Alpha, Work Products, Activity Space,
+> External dependencies}`. The remaining fields (Enforcement, NN, Status, Owner, Enacted as) are
+> klartext **operating** fields, not a `semat-definition.md` §3 requirement — the CI check must not
+> demand them, or it checks the wrong set.
+
 ## The wrapper rule (composition over an external Resource)
 
 If the element **wraps** an external Resource (the L3 generic definition lives *upstream*, not with
@@ -46,6 +52,9 @@ us — e.g. `tdd` over `superpowers`):
 - **Resource card** (L3): declares external material we *reference but do not produce* — provenance,
   version binding, and the rule **referenced, never vendored, never extracted** (a consumer installs
   it themselves). Has no Work Products. First instances: `superpowers` plugin, Essence Kernel/Language.
+  *(SA ratification, PR #137: "never extracted" applies to the referenced **material**, not to the
+  Resource **card** — the card is itself a normal L3 object and travels with the `filter-repo`
+  extraction. The extraction author must not exclude Resource cards from the L3 stem.)*
 - **Method card** (L2): klartext's method = the composition of L3 Library practices in use, with
   their lived Alpha states. Lists the composed practices; does not redefine them.
 - **Pattern card**: a named recurring structure; advances an Alpha, has enforcement, usually no
