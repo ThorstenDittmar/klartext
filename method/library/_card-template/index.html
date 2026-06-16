@@ -1740,8 +1740,10 @@ Products it produces, and the Activities/Activity Spaces it fills.</strong></p>
 <blockquote>
 <p><strong>CI-check scope (SA ratification, PR #137 + #142) — TYPE-CONDITIONAL.</strong> The half-(ii)
 well-formedness check (F0.3, DevOps) is <strong>type-aware</strong>, not a flat 5-field mandate:
-- <strong>Always required (every card type):</strong> <code>Essence type</code> (a clean enum token — keep clarifiers OUT of
-  the value) and <code>External dependencies</code> (<code>none</code> is allowed; silence is not).
+- <strong>Always required (every <em>standalone</em> card):</strong> <code>Essence type</code> (a clean enum token — keep clarifiers OUT
+  of the value) and <code>External dependencies</code> (<code>none</code> is allowed; silence is not). <strong>Exception — a delegating
+  L2 card</strong> (one that carries an <code>L3 definition:</code> pointer) inherits <code>Essence type</code> / <code>External dependencies</code>
+  / §3 from its L3 sibling and need not repeat them (see the delegate-XOR-standalone note below).
 - <strong>Required for <code>Practice</code> cards only:</strong> <code>Advances Alpha</code>, <code>Work Products</code>, <code>Activity Space</code>
   (per <code>semat-definition.md</code> §3 — these describe a Practice; a Work-Product / Resource / element card
   is not obliged to carry them).
@@ -1754,6 +1756,13 @@ exactly one card: on the <strong>L3 sibling</strong> for a split practice (the L
 <code>L3 definition:</code> pointer), or <strong>inline</strong> for a wholly-L2 practice that has no L3 sibling. The half-(ii)
 check accepts an L2 practice card iff it either delegates (carries an <code>L3 definition:</code> pointer) or carries
 the §3 fields inline.</p>
+<p><strong>delegate-XOR-standalone (the unified rule — OE F0.3 ruling, SA to confirm).</strong> Exactly one must hold:
+<em>(a) delegating</em> — has an <code>L3 definition:</code> pointer; <code>Essence type</code> / <code>External dependencies</code> / §3 live on
+the L3 sibling, so the L2 card carries only the pointer + klartext bindings. <em>(b) standalone</em> — has
+<code>Essence type</code> + <code>External dependencies</code> (+ §3 inline if a Practice) and <strong>no</strong> <code>L3 definition:</code> pointer.
+A card carrying <strong>both</strong> a pointer <strong>and</strong> its own <code>Essence type</code> is a malformed half-split (the mechanical
+"mixed-card" signal for the half-(i) gate). Verified 2026-06-16: all 16 L2 cards conform (13 delegating, 3
+standalone) — no rework.</p>
 </blockquote>
 <h2 id="the-wrapper-rule-composition-over-an-external-resource">The wrapper rule (composition over an external Resource)<a class="headerlink" href="#the-wrapper-rule-composition-over-an-external-resource" title="Permanent link">&para;</a></h2>
 <p>If the element <strong>wraps</strong> an external Resource (the L3 generic definition lives <em>upstream</em>, not with
