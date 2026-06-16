@@ -1,6 +1,6 @@
 # Frozen Plan — Method / Product Separation Refactoring
 
-> **Status:** DRAFT (OE-authored, 2026-06-16) — pending DevOps verification of the mechanic sections (§6 gates, §7 rollback) and the joint **freeze**. **Nothing is executed until this plan is frozen.**
+> **Status:** READY TO FREEZE — §6/§7 mechanic verified + sharpened by DevOps (2026-06-16); OE + DevOps signed off. **Freeze = merge of this PR.** **Nothing is executed until frozen; F0 starts only after the freeze.**
 > **Owners (method coordination):** OE + DevOps. **Hannibal is OUT** (product coordinator, not method). **SA:** architecture landed (ADR-0013/0014). **QA:** coverage-audit + qa-review gate owner.
 > **Decision records:** [ADR-0013](../../adr/0013-separating-method-from-product.md) (layer architecture, path-based classification, distribution), [ADR-0014](../../adr/0014-agent-provenance-trailer.md) (agent provenance). **Practice:** `improvement/practices/controlled-method-rollout.md` (barrier mode). **Contract:** `improvement/contracts/memory-substrate.md` (C1–C5).
 > **This document is the coordination backbone** — it is designed to **survive the rebuild** (§2). The substrate (inbox/memory) it coordinates is itself in scope of the change, so coordination runs over **this repo artifact + the user out-of-band**, not over the substrate.
@@ -65,14 +65,18 @@ F0 is **not just "draw the path cut."** It is **"produce klartext's method as a 
 
 ## 6. The three hard gates (F2) — explicit pass criteria
 
-1. **Coverage audit** — *owners DevOps + QA, qa-review-gated.* Audit existing test coverage of the mechanics we touch (`converge`, `classify_gate`, `session_health`, `cli`) incl. error/edge cases; produce a gap list; close the load-bearing gaps **TDD-first**. *DevOps has started the cut-independent mechanic inventory; the "seams we touch" sharpening attaches after F0.* **Pass = no untested load-bearing seam at the cut points; qa-review sign-off.**
+1. **Coverage audit** — *owners DevOps + QA, qa-review-gated.* Audit existing test coverage of the mechanics we touch (`converge`, `classify_gate`, `session_health`, `cli`) incl. error/edge cases; close the load-bearing gaps **TDD-first**. **Cut-independent inventory DONE (DevOps, 2026-06-15):** `converge` 10 · `classify_gate` 23 · `session_health` 28 · `cli` 42 · `session_start_hook` 14 tests, incl. error/edge cases (rebase-abort, offline-fetch, bare-worktree, dirty-WIP) — **no acute gaps in the L3 mechanics.** The "seams we touch" sharpening attaches after F0. **Pass = no untested load-bearing seam at the cut points; qa-review sign-off (spawned qa-review; real QA ratifies on wake).**
 2. **First-pass contract audit** — *owner OE.* The contract set **is** the 2↔3 interface from the protection side. Bar (the "Schnur"): contract a seam **iff** central **and** a future semAIt-update could change it non-obviously (same bar as the memory-substrate contract — avoid Flut). **Pass = every load-bearing 2↔3 seam has a contract clause; OE sign-off.**
-3. **Tested out-of-band backup/restore** — *mechanic DevOps; scope + integrity criterion OE (substrate is OE/shared domain).* Back up the **non-versioned substrate**: `~/.claude/klartext-team-memory/` (memory + inbox + `.read`), `~/.claude` user-state (settings/skills/plugins/MCP), `.env` (secrets, confidential), per-worktree WIP (git-stash bundles) → a **local external timestamped path**. **Pass = restore into a sandbox verified via the C4 index-integrity check** (an un-replayed backup is False Persistence). *Bonus: a versioned out-of-band store also addresses the C5 versioning gap — keep lean, the safety net is primary.*
+3. **Tested out-of-band backup/restore** — *mechanic DevOps (verified 2026-06-16); scope + integrity criterion OE (substrate is OE/shared domain).* Built in F2, **tested before F3**.
+   - **Backup** (`scripts/substrate_backup.py`) → `$KLARTEXT_BACKUP_ROOT/<UTC-ISO-timestamp>/` (local external path; **fail-loud** if unset/unreachable). Contents: `~/.claude/klartext-team-memory/` (memory+inbox+`.read`) → `team-memory/`; `~/.claude` user-state (settings.json, skills/, plugin/MCP config; no caches) → `claude-user-state/`; **`.env` of all worktrees separately → `secrets/` mode 600, manifest-flagged confidential (never in plaintext logs)**; per-worktree WIP via `git stash create` → `git bundle` + untracked list → `wip/<worktree>/`; `manifest.json` (source paths, SHA256 per tree, worktree HEADs, timestamp).
+   - **Restore** (`scripts/substrate_restore.py`) → into a **SANDBOX** (never over the live substrate during the test) → integrity via **OE's C4 index-integrity check** against the sandbox copy.
+   - **Gate flow:** Backup → sandbox-restore → **C4 green** → only THEN may F3 touch the live substrate. **Pass = C4 green on the restore** (an un-replayed backup is False Persistence).
+   - *Bonus: a versioned out-of-band store also addresses the C5 versioning gap — keep lean, the safety net is primary.*
 
-## 7. Rollback — two axes
-- **Code:** standard git (revert/branch).
-- **Substrate:** the §6.3 out-of-band backup with **tested** restore. *git does not cover the non-versioned substrate — this axis is mandatory before F3 touches it.*
-> §6 and §7 mechanics are **DevOps-owned — DevOps to verify/refine these sections before freeze.**
+## 7. Rollback — two axes (mechanic verified, DevOps 2026-06-16)
+- **Code:** before F3, an **annotated tag `pre-f3-<timestamp>`** on `main` + recorded branch HEADs → rollback via revert/reset.
+- **Substrate:** on F3 failure, restore the live substrate from the §6.3 backup **using the procedure already verified in the sandbox**.
+- **Ordering:** **substrate first** (critical, non-versioned), then code. Trigger = F3 lead (DevOps); restore **before** the next attempt. *git alone does not cover the non-versioned substrate — this axis is mandatory before F3 touches it.*
 
 ## 8. Open follow-ups (tracked, not blocking the cut)
 - **ADR-0014 mechanic** — commit-msg hook + CI check for the `Agent: <slug>` trailer (DevOps Briefing per ADR-0014).
