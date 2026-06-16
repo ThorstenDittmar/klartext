@@ -44,6 +44,7 @@ Verwahr-Depot der Retro-Inputs: Hannibal-Memory `project_h01422_retro_inputs.md`
 | SA | CLAUDE.md § Agent Roles & Boundaries auf das neue Startmodell aktualisieren (Terminal-Launcher statt App, `allowed-tools.txt`, Worktrees, Generationswechsel) — passt zum ADR-0010-Auftrag, gleiche Quelle (Register-Zeile Strukturumbau) | OE | 2026-06-11 |
 | OE (Nachfolge-Session) | Merge-Methoden-Policy in `practices/merge-protocol.md` eintragen, sobald Hannibal ratifiziert hat (DevOps-Vorschlag: squash default / `--method merge` für Stacks / kein rebase — Anfrage liegt in Hannibals Postfach seit 2026-06-12); danach DevOps Bescheid geben („ratifizierung ausstehend" aus der Spec streichen) | OE (Pre-Restart 2026-06-12) | 2026-06-12 |
 | OE (Nachfolge-Session) | Record-Review-Addenda DELETE-404 einsammeln: Community ✅ (kein Befund), CME + Audit ausstehend (Record-Auftrag lag in ihren Postfächern vor der Migration — bei den Nachfolge-Sessions nachhaken); danach Einzeiler im Register | OE (Pre-Restart 2026-06-12) | 2026-06-12 |
+| DevOps | ADR-0014 Agent-Provenance: commit-msg-Hook + CI-Check für Trailer `Agent: <slug>` (spawn-aware) bauen — Briefing liegt in DevOps' Inbox, unblocked seit #129 auf main | System Architect | 2026-06-16 |
 
 ---
 
