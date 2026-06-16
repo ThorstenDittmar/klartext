@@ -1,10 +1,11 @@
 # E2E-before-done
 
-> **Essence type:** Activity (gate)
+> **Essence type:** Activity
 > **Advances Alpha:** Software System (proves the change works end to end before it lands)  ·  **Work Products:** captured evidence of the end-to-end run
 > **External dependencies (referenced Resources):** none
 > **Enforcement:** ritual  ·  **NN:** ✓ (before marking work Done / before merge)
 > **Status:** living  ·  **Owner / enactment owner:** Hannibal (work-package coordinator; first run H01-422)
+> *(Subtype: gate — a pre-merge verification Activity; clarifier kept out of the Essence-type enum value.)*
 
 ## Purpose
 

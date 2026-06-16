@@ -1,10 +1,11 @@
 # Method Keeper
 
-> **Essence type:** Pattern (role)
+> **Essence type:** Pattern
 > **Advances Alpha:** Way of Working (the method stays coherent and owned)  ·  **Work Products:** none (a role/discipline applied to method topics)
 > **External dependencies (referenced Resources):** none
 > **Enforcement:** ritual  ·  **NN:** —
 > **Status:** living  ·  **Owner:** OE (owns the method)
+> *(Subtype: role pattern — a discipline applied by a role; clarifier kept out of the Essence-type enum value.)*
 
 ## Purpose
 
