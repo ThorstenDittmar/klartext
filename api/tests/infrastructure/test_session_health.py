@@ -419,3 +419,256 @@ def test_hook_stays_exit_zero_when_substrate_finding_present(tmp_path: Path) -> 
     payload = json.loads(result.stdout)
     assert payload["hookSpecificOutput"]["hookEventName"] == "SessionStart"
     assert "autoMemoryDirectory" in payload["hookSpecificOutput"]["additionalContext"]
+
+
+# --- Memory-substrate C2: durable substrate (the team memory exists and is writable) ---
+
+
+def test_check_durable_passes_when_memory_dir_exists_and_writable(tmp_path: Path) -> None:
+    """Expects no C2 finding when the team-memory dir exists and is writable."""
+    m = _load_module()
+    d = _make_klartext_dir(tmp_path)
+    mem = tmp_path / "team-memory"
+    mem.mkdir()
+    assert m.check_durable(d, memory_dir=mem) is None
+
+
+def test_check_durable_warns_when_memory_dir_missing(tmp_path: Path) -> None:
+    """Expects a C2 finding when the team-memory dir does not exist (False-Persistence class)."""
+    m = _load_module()
+    d = _make_klartext_dir(tmp_path)
+    warning = m.check_durable(d, memory_dir=tmp_path / "absent")
+    assert warning is not None and "C2" in warning
+
+
+def test_check_durable_warns_when_memory_dir_not_writable(tmp_path: Path) -> None:
+    """Expects a C2 finding when the team-memory dir exists but is read-only.
+
+    Durability means writable: a read-only substrate cannot persist knowledge meant to
+    outlive the session. chmod 0o500 removes write; restored in finally so tmp cleanup works.
+    """
+    m = _load_module()
+    d = _make_klartext_dir(tmp_path)
+    mem = tmp_path / "ro"
+    mem.mkdir()
+    mem.chmod(0o500)
+    try:
+        warning = m.check_durable(d, memory_dir=mem)
+    finally:
+        mem.chmod(0o700)
+    assert warning is not None and "C2" in warning
+
+
+def test_check_durable_noops_outside_agent_worktree(tmp_path: Path) -> None:
+    """Expects no C2 finding for a bare directory (no .claude/) — the check is worktree-gated."""
+    m = _load_module()
+    assert m.check_durable(tmp_path, memory_dir=tmp_path / "absent") is None
+
+
+# --- Memory-substrate C4: MEMORY.md index integrity (every entry -> a real file, no duplicates) ---
+
+
+def test_check_index_integrity_passes_for_consistent_index(tmp_path: Path) -> None:
+    """Expects no C4 finding when every MEMORY.md entry points at an existing file."""
+    m = _load_module()
+    d = _make_klartext_dir(tmp_path)
+    mem = tmp_path / "team-memory"
+    mem.mkdir()
+    (mem / "foo.md").write_text("x")
+    (mem / "MEMORY.md").write_text("# Memory Index\n\n- [Foo](foo.md) — a hook\n")
+    assert m.check_index_integrity(d, memory_dir=mem) is None
+
+
+def test_check_index_integrity_warns_on_missing_target(tmp_path: Path) -> None:
+    """Expects a C4 finding naming the missing file when an entry points at a non-existent file."""
+    m = _load_module()
+    d = _make_klartext_dir(tmp_path)
+    mem = tmp_path / "team-memory"
+    mem.mkdir()
+    (mem / "MEMORY.md").write_text("- [Ghost](ghost.md) — gone\n")
+    warning = m.check_index_integrity(d, memory_dir=mem)
+    assert warning is not None and "ghost.md" in warning and "C4" in warning
+
+
+def test_check_index_integrity_warns_on_duplicate_entry(tmp_path: Path) -> None:
+    """Expects a C4 finding when the same target appears twice in the index (clobber signal)."""
+    m = _load_module()
+    d = _make_klartext_dir(tmp_path)
+    mem = tmp_path / "team-memory"
+    mem.mkdir()
+    (mem / "a.md").write_text("x")
+    (mem / "MEMORY.md").write_text("- [A](a.md) — one\n- [A again](a.md) — two\n")
+    warning = m.check_index_integrity(d, memory_dir=mem)
+    assert warning is not None and "duplicate" in warning.lower()
+
+
+def test_check_index_integrity_noops_when_no_index(tmp_path: Path) -> None:
+    """Expects no C4 finding when MEMORY.md does not exist yet (nothing to verify)."""
+    m = _load_module()
+    d = _make_klartext_dir(tmp_path)
+    mem = tmp_path / "team-memory"
+    mem.mkdir()
+    assert m.check_index_integrity(d, memory_dir=mem) is None
+
+
+def test_check_index_integrity_ignores_external_http_links(tmp_path: Path) -> None:
+    """Expects http(s) links in the index to be ignored — they are not local memory files."""
+    m = _load_module()
+    d = _make_klartext_dir(tmp_path)
+    mem = tmp_path / "team-memory"
+    mem.mkdir()
+    (mem / "MEMORY.md").write_text("- [A PR](https://github.com/x/y/pull/1) — external\n")
+    assert m.check_index_integrity(d, memory_dir=mem) is None
+
+
+# --- QA gap-fill: C2 file-not-dir; C4 subpath / both-problems / wikilink / mixed / empty;
+#     build_warnings integration of the two new checks; e2e JSON for a C2/C4-only finding ---
+
+
+def test_check_durable_warns_when_memory_path_is_a_file_not_dir(tmp_path: Path) -> None:
+    """Expects a C2 finding when the memory path exists but is a FILE, not a directory.
+
+    `check_durable` gates on `is_dir()`, so a regular file at the memory path is the same
+    failure class as a missing dir — the substrate cannot hold the memory tree. No existing
+    test exercises the exists-but-not-a-dir case (the missing case uses an absent path).
+    """
+    m = _load_module()
+    d = _make_klartext_dir(tmp_path)
+    mem = tmp_path / "memfile"
+    mem.write_text("not a directory")
+    warning = m.check_durable(d, memory_dir=mem)
+    assert warning is not None and "C2" in warning
+
+
+def test_check_index_integrity_resolves_subpath_link_target(tmp_path: Path) -> None:
+    """Expects a nested link target `](sub/dir/foo.md)` to resolve relative to the memory dir.
+
+    The capture regex grabs the whole subpath and `(mem / t).is_file()` must join it correctly.
+    Existing tests only use flat targets, so the regex/path-join agreement for nested targets is
+    unverified — if either drifted, a valid nested entry would be flagged as missing (false C4).
+    """
+    m = _load_module()
+    d = _make_klartext_dir(tmp_path)
+    mem = tmp_path / "team-memory"
+    mem.mkdir()
+    (mem / "sub" / "dir").mkdir(parents=True)
+    (mem / "sub" / "dir" / "foo.md").write_text("x")
+    (mem / "MEMORY.md").write_text("- [Foo](sub/dir/foo.md) — nested\n")
+    assert m.check_index_integrity(d, memory_dir=mem) is None
+
+
+def test_check_index_integrity_reports_both_missing_and_duplicate(tmp_path: Path) -> None:
+    """Expects a single C4 finding to name BOTH a missing target and a duplicate target.
+
+    Exercises the multi-problem `" ".join(problems)` path: one entry points at a non-existent
+    file while a different target appears twice. Existing tests only ever trigger one problem at
+    a time, so a regression that dropped one branch's message would go unnoticed.
+    """
+    m = _load_module()
+    d = _make_klartext_dir(tmp_path)
+    mem = tmp_path / "team-memory"
+    mem.mkdir()
+    (mem / "dup.md").write_text("x")
+    (mem / "MEMORY.md").write_text(
+        "- [Ghost](ghost.md) — missing\n- [Dup](dup.md) — one\n- [Dup again](dup.md) — two\n"
+    )
+    warning = m.check_index_integrity(d, memory_dir=mem)
+    assert warning is not None
+    assert "ghost.md" in warning
+    assert "dup.md" in warning
+    assert "missing" in warning.lower() and "duplicate" in warning.lower()
+
+
+def test_check_index_integrity_ignores_wikilinks(tmp_path: Path) -> None:
+    """Expects `[[wikilink]]` syntax to be ignored — it is not a markdown `](...)` link.
+
+    A wikilink has no `](...)` form, so the capture regex must not pick it up; otherwise a
+    wikilink would be treated as a (missing) local file and produce a false C4 finding.
+    """
+    m = _load_module()
+    d = _make_klartext_dir(tmp_path)
+    mem = tmp_path / "team-memory"
+    mem.mkdir()
+    (mem / "MEMORY.md").write_text("- See [[some-wikilink-note]] for context\n")
+    assert m.check_index_integrity(d, memory_dir=mem) is None
+
+
+def test_check_index_integrity_checks_local_when_mixed_with_http(tmp_path: Path) -> None:
+    """Expects local targets to still be verified when an http link sits in the same file.
+
+    The http-only test proves external links are skipped; this proves the filtering does not
+    also drop the local entry beside it — a missing local file in a mixed index must still warn.
+    """
+    m = _load_module()
+    d = _make_klartext_dir(tmp_path)
+    mem = tmp_path / "team-memory"
+    mem.mkdir()
+    (mem / "MEMORY.md").write_text(
+        "- [A PR](https://github.com/x/y/pull/1) — external\n- [Local](missing-local.md) — gone\n"
+    )
+    warning = m.check_index_integrity(d, memory_dir=mem)
+    assert warning is not None
+    assert "missing-local.md" in warning
+    assert "github.com" not in warning
+
+
+def test_build_warnings_includes_durable_finding(tmp_path: Path, monkeypatch) -> None:
+    """Expects build_warnings to surface a C2 finding — proves check_durable is actually wired in.
+
+    The pure check tests prove check_durable returns a string, but build_warnings calls it with no
+    injectable memory dir. Monkeypatching `_team_memory_dir` to an absent path makes the C2 check
+    fire deterministically, asserting it is part of the aggregate and not an unreferenced function.
+    Pin is correct and there is no git repo, so C2 is the only substrate finding.
+    """
+    m = _load_module()
+    absent = tmp_path / "absent-team-memory"
+    d = _make_klartext_dir(tmp_path, pin=str(absent))
+    monkeypatch.setattr(m, "_team_memory_dir", lambda: absent)
+    warning = m.build_warnings(d)
+    assert warning is not None
+    assert "C2" in warning
+
+
+def test_build_warnings_includes_index_integrity_finding(tmp_path: Path, monkeypatch) -> None:
+    """Expects build_warnings to surface a C4 finding — proves check_index_integrity is wired in.
+
+    Monkeypatches `_team_memory_dir` to a dir with a broken MEMORY.md so the C4 check fires through
+    the aggregate. Pin is correct and the dir exists+writable (no C2), so the C4 line is isolated —
+    proving build_warnings invokes check_index_integrity, not just the pure function in isolation.
+    """
+    m = _load_module()
+    mem = tmp_path / "team-memory"
+    mem.mkdir()
+    (mem / "MEMORY.md").write_text("- [Ghost](ghost.md) — gone\n")
+    d = _make_klartext_dir(tmp_path, pin=str(mem))
+    monkeypatch.setattr(m, "_team_memory_dir", lambda: mem)
+    warning = m.build_warnings(d)
+    assert warning is not None
+    assert "C4" in warning
+
+
+def test_main_emits_valid_json_when_index_finding_is_only_finding(
+    tmp_path: Path, monkeypatch, capsys
+) -> None:
+    """Expects main() to exit 0 with valid SessionStart JSON when a C4 finding is the ONLY finding.
+
+    Existing e2e coverage only drives a C1 (pin) finding through main()->json.dump. This drives a
+    C4-only finding (correct pin, no git drift, broken index) through the full main() path and
+    asserts the payload still parses and carries the C4 text — proving a C4 finding neither blocks
+    nor corrupts the hook output. The team-memory dir is injected via monkeypatching
+    `_team_memory_dir` because build_warnings/main give no env hook for it (a real subprocess would
+    have to write into the developer's actual ~/.claude — not acceptable in a test).
+    """
+    m = _load_module()
+    expected = tmp_path / "team-memory"
+    expected.mkdir()
+    (expected / "MEMORY.md").write_text("- [Ghost](ghost.md) — gone\n")
+    d = _make_klartext_dir(tmp_path, pin=str(expected))
+    monkeypatch.setattr(m, "_team_memory_dir", lambda: expected)
+    monkeypatch.setenv("CLAUDE_PROJECT_DIR", str(d))
+    rc = m.main()
+    out = capsys.readouterr().out
+    assert rc == 0
+    payload = json.loads(out)
+    assert payload["hookSpecificOutput"]["hookEventName"] == "SessionStart"
+    assert "C4" in payload["hookSpecificOutput"]["additionalContext"]
