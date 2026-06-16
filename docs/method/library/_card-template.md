@@ -30,8 +30,10 @@ Products it produces, and the Activities/Activity Spaces it fills.**
 
 > **CI-check scope (SA ratification, PR #137 + #142) — TYPE-CONDITIONAL.** The half-(ii)
 > well-formedness check (F0.3, DevOps) is **type-aware**, not a flat 5-field mandate:
-> - **Always required (every card type):** `Essence type` (a clean enum token — keep clarifiers OUT of
->   the value) and `External dependencies` (`none` is allowed; silence is not).
+> - **Always required (every *standalone* card):** `Essence type` (a clean enum token — keep clarifiers OUT
+>   of the value) and `External dependencies` (`none` is allowed; silence is not). **Exception — a delegating
+>   L2 card** (one that carries an `L3 definition:` pointer) inherits `Essence type` / `External dependencies`
+>   / §3 from its L3 sibling and need not repeat them (see the delegate-XOR-standalone note below).
 > - **Required for `Practice` cards only:** `Advances Alpha`, `Work Products`, `Activity Space`
 >   (per `semat-definition.md` §3 — these describe a Practice; a Work-Product / Resource / element card
 >   is not obliged to carry them).
@@ -45,6 +47,14 @@ Products it produces, and the Activities/Activity Spaces it fills.**
 > `L3 definition:` pointer), or **inline** for a wholly-L2 practice that has no L3 sibling. The half-(ii)
 > check accepts an L2 practice card iff it either delegates (carries an `L3 definition:` pointer) or carries
 > the §3 fields inline.
+>
+> **delegate-XOR-standalone (the unified rule — OE F0.3 ruling, SA to confirm).** Exactly one must hold:
+> *(a) delegating* — has an `L3 definition:` pointer; `Essence type` / `External dependencies` / §3 live on
+> the L3 sibling, so the L2 card carries only the pointer + klartext bindings. *(b) standalone* — has
+> `Essence type` + `External dependencies` (+ §3 inline if a Practice) and **no** `L3 definition:` pointer.
+> A card carrying **both** a pointer **and** its own `Essence type` is a malformed half-split (the mechanical
+> "mixed-card" signal for the half-(i) gate). Verified 2026-06-16: all 16 L2 cards conform (13 delegating, 3
+> standalone) — no rework.
 
 ## The wrapper rule (composition over an external Resource)
 
