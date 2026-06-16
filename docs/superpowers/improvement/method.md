@@ -114,8 +114,8 @@ requires from** a central IT component we depend on (the *upstream* counterpart 
 which lists the downstream blast radius). Each clause carries its blast radius + a falsifiable check. New lean
 element (2026-06-14), KB-confirmed distinct from the dependency chain. Owner OE (form + clauses); mechanization
 + empirical content four-eyes (DevOps). First instance: `contracts/memory-substrate.md` (the team memory + inbox
-+ pin substrate; C1–C5 specified — C1/C3 live in the session-health hook #117, C4 decided *lean* 2026-06-14,
-C5 provenance/self-stamp decided *lean* 2026-06-15). Bind only **central** functionality this way — *Flut vermeiden*.
++ pin substrate; C1–C5 specified — C1/C3 live #117, **C2/C4 live #133**, C5 provenance = self-stamp *ritual*
+(mechanical detection deferred: mtime unreliable → content/git-based design strand, OE-owned)). Bind only **central** functionality this way — *Flut vermeiden*.
 
 **Resources** (referenced, not produced — Essence element): external reference assets (licensed decks,
 standards PDFs) · home `assets-local/` (gitignored; README = provenance register, convention in `setup.sh`).

@@ -33,10 +33,10 @@ check).
 | # | Invariant | Blast radius if violated | Check | Holds today? |
 |---|---|---|---|---|
 | **C1** | The team memory resolves to the **same shared path for every agent**, independent of worktree/cwd (committed `autoMemoryDirectory`). | Agents read/write *different* memories → divergent truth (the autoMemory cutover pain). | Health-check asserts the resolved memory path == the committed shared path — **live in the session-health hook (#117)**. | ✅ (after the pin rollout) |
-| **C2** | The substrate is **durable across sessions and session-types** (terminal *and* app). | Knowledge meant to outlive a session is lost on restart/clear → False-Persistence class. | Health-check asserts the dir exists + is writable from this session type. | ✅ |
+| **C2** | The substrate is **durable across sessions and session-types** (terminal *and* app). | Knowledge meant to outlive a session is lost on restart/clear → False-Persistence class. | `check_durable` asserts the dir exists + is writable — **live in the session-health hook (#133)**. | ✅ |
 | **C3** | The inbox is **readable/writable by every session at a git-worktree-independent path**. | Cross-agent messages land where the recipient cannot see them (the #108 / mis-address class). | Health-check asserts `inbox.sh` base resolves outside the worktree and is reachable — **live in the session-health hook (#117)**. | ✅ |
-| **C4** | **Concurrent writes** (e.g. parallel memory consolidation) corrupt neither the `MEMORY.md` index nor any inbox message. | Lost/garbled memories or index under simultaneous agent activity. | Index-integrity assertion (every `MEMORY.md` entry → a real file; no duplicate entries) in the health-check. | ✅ **Decided (lean), 2026-06-14 — see below** |
-| **C5** | **Every memory edit is attributable** — who last changed a memory file is recoverable. | Unattributable shared state: 11 agents + the user write the same memory under one OS/git identity → "who wrote this?" is unanswerable (surfaced 2026-06-15). | Health-check warns on a memory file whose `mtime` advanced without a matching `last-edited-by`/`last-edited-at` stamp. | ⚠️→✅ **Decided (lean self-stamp), 2026-06-15 — see below** |
+| **C4** | **Concurrent writes** (e.g. parallel memory consolidation) corrupt neither the `MEMORY.md` index nor any inbox message. | Lost/garbled memories or index under simultaneous agent activity. | `check_index_integrity` (every `MEMORY.md` entry → a real file; no duplicate entries) — **live in the session-health hook (#133)**. | ✅ **Decided (lean), 2026-06-14 — live #133** |
+| **C5** | **Every memory edit is attributable** — who last changed a memory file is recoverable. | Unattributable shared state: 11 agents + the user write the same memory under one OS/git identity → "who wrote this?" is unanswerable (surfaced 2026-06-15). | **Detection DEFERRED** — the `mtime`-based check is unreliable (mtime advances on non-content ops → false positives); needs a content/git-based design. The **self-stamp ritual stands**. | ⚠️ **Ritual decided 2026-06-15; mechanical detection deferred (own strand)** |
 
 **C4 — Decided (lean: eventual + reconcile), 2026-06-14 (user, by practice).** The exposure is **narrow**:
 per-fact files are **single-owner** (distinct files → no collision) and inbox messages are **one file each
@@ -73,10 +73,16 @@ editor** — exactly the question that arose. **Rejected as disproportionate (fo
 the whole memory dir — heavier, and the shared git identity means it still would not attribute to an agent
 without the stamp anyway. **Enforcement is honest about its limit:** memory is not in CI and the
 memory-*writing* behaviour is driven by the system prompt (not an OE-editable surface), so the stamp is a
-**ritual** (Enforcement Hierarchy level 2); the health-check above is the mechanical *detection* half
-(warn on an unstamped change), the stamp is the human action. The convention is surfaced to all agents via
+**ritual** (Enforcement Hierarchy level 2). The convention is surfaced to all agents via
 `knowledge-routing.md` (loaded at every anchor). Ties to the open shared-blackboard ownership question
 (`continuous-improvement.md`, the cwd-shared-auto-memory row).
+
+**Mechanical detection DEFERRED (2026-06-16, own strand).** The originally-named check ("warn on a memory
+file whose `mtime` advanced without a matching stamp") is **unreliable**: in practice `mtime` advances on
+**non-content operations** (converge/checkout/sync/backup-restore) → false positives (DevOps, Essence-audit
+finding). The detection therefore needs a **content/git-based design** (e.g. *content changed without a stamp
+update*), not `mtime`. **The self-stamp ritual is unaffected and stands.** This is an OE-owned design strand
+(OE substrate + DevOps mechanic), non-blocking.
 
 ## Why a contract (the lever the seam gives us)
 
@@ -98,9 +104,9 @@ of invariants.
 ## Status & open
 
 - **C1, C3** — ✅ live in the session-health hook (#117).
-- **C2** (durability) — holds; its explicit hook assertion is still pending (DevOps, fold into the hook).
-- **C4** — ✅ **decided lean (2026-06-14)**; its check = the **index-integrity assertion** (every entry → a real
-  file, no duplicates), to be added to the hook (DevOps).
+- **C2** (durability) — ✅ `check_durable` **live in the session-health hook (#133)**.
+- **C4** (index-integrity) — ✅ `check_index_integrity` **live in the session-health hook (#133)** (decided lean 2026-06-14). Double-benefit: this is also the **restore-integrity criterion** for the Frozen-Plan §6.3 backup gate.
+- **C5** (provenance) — self-stamp **ritual** stands; **mechanical detection deferred** (mtime unreliable → own content/git-based design strand, OE-owned).
 - Uncontrolled face (autoMemory resolution) — ✅ already an Environment Knowledge work product
   (`environment/claude-code-app.md`, v2); no separate card.
 - **Monitor (OE):** if the index-integrity check ever trips in practice, revisit the lean stance (new
