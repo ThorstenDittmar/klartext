@@ -13,6 +13,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "scripts"))
 
+import check_test_coverage  # whole module — needed to monkeypatch main()'s check calls
 from check_test_coverage import (
     check_router_health_tests,
     check_supabase_integration_markers,
@@ -174,3 +175,67 @@ class TestCheckSupabaseIntegrationMarkers:
         test_file.write_text("@pytest.mark.integration\nasync def test_find(): pass\n")
         missing = check_supabase_integration_markers(root=api_tree)
         assert missing == []
+
+
+class TestMain:
+    """Pins the exit-code contract of the QA gate (main() in qa.yml).
+
+    main() aggregates the three checks and must exit 1 if any reports errors,
+    and exit cleanly (no SystemExit) when all pass. The check functions are
+    monkeypatched so these tests pin main()'s aggregation + exit behaviour
+    independently of the real repository state.
+    """
+
+    def _patch_checks(
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+        *,
+        files: list[str],
+        health: list[str],
+        integration: list[str],
+    ) -> None:
+        """Replaces the three check functions with constant-returning stubs."""
+        monkeypatch.setattr(check_test_coverage, "check_test_files_exist", lambda: files)
+        monkeypatch.setattr(check_test_coverage, "check_router_health_tests", lambda: health)
+        monkeypatch.setattr(
+            check_test_coverage, "check_supabase_integration_markers", lambda: integration
+        )
+
+    def test_exits_1_when_a_check_reports_errors(
+        self, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        """Expects SystemExit(1) and an ERROR report when any single check fails."""
+        self._patch_checks(monkeypatch, files=["  api/models/widget.py"], health=[], integration=[])
+        with pytest.raises(SystemExit) as exc_info:
+            check_test_coverage.main()
+        assert exc_info.value.code == 1
+        out = capsys.readouterr().out
+        assert "ERROR" in out
+        assert "widget.py" in out
+
+    def test_no_exit_and_ok_when_all_checks_clean(
+        self, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        """Expects no SystemExit and an OK line when every check passes."""
+        self._patch_checks(monkeypatch, files=[], health=[], integration=[])
+        check_test_coverage.main()  # must not raise
+        out = capsys.readouterr().out
+        assert "OK" in out
+
+    def test_aggregates_all_failing_checks(
+        self, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        """Expects every failing check's section in the report, not just the first."""
+        self._patch_checks(
+            monkeypatch,
+            files=["  src_file"],
+            health=["  router_file"],
+            integration=["  repo_test"],
+        )
+        with pytest.raises(SystemExit) as exc_info:
+            check_test_coverage.main()
+        assert exc_info.value.code == 1
+        out = capsys.readouterr().out
+        assert "Source files without test files" in out
+        assert "Router test files without health test" in out
+        assert "Supabase repository tests without @pytest.mark.integration" in out
