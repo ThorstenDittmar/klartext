@@ -419,3 +419,103 @@ def test_hook_stays_exit_zero_when_substrate_finding_present(tmp_path: Path) -> 
     payload = json.loads(result.stdout)
     assert payload["hookSpecificOutput"]["hookEventName"] == "SessionStart"
     assert "autoMemoryDirectory" in payload["hookSpecificOutput"]["additionalContext"]
+
+
+# --- Memory-substrate C2: durable substrate (the team memory exists and is writable) ---
+
+
+def test_check_durable_passes_when_memory_dir_exists_and_writable(tmp_path: Path) -> None:
+    """Expects no C2 finding when the team-memory dir exists and is writable."""
+    m = _load_module()
+    d = _make_klartext_dir(tmp_path)
+    mem = tmp_path / "team-memory"
+    mem.mkdir()
+    assert m.check_durable(d, memory_dir=mem) is None
+
+
+def test_check_durable_warns_when_memory_dir_missing(tmp_path: Path) -> None:
+    """Expects a C2 finding when the team-memory dir does not exist (False-Persistence class)."""
+    m = _load_module()
+    d = _make_klartext_dir(tmp_path)
+    warning = m.check_durable(d, memory_dir=tmp_path / "absent")
+    assert warning is not None and "C2" in warning
+
+
+def test_check_durable_warns_when_memory_dir_not_writable(tmp_path: Path) -> None:
+    """Expects a C2 finding when the team-memory dir exists but is read-only.
+
+    Durability means writable: a read-only substrate cannot persist knowledge meant to
+    outlive the session. chmod 0o500 removes write; restored in finally so tmp cleanup works.
+    """
+    m = _load_module()
+    d = _make_klartext_dir(tmp_path)
+    mem = tmp_path / "ro"
+    mem.mkdir()
+    mem.chmod(0o500)
+    try:
+        warning = m.check_durable(d, memory_dir=mem)
+    finally:
+        mem.chmod(0o700)
+    assert warning is not None and "C2" in warning
+
+
+def test_check_durable_noops_outside_agent_worktree(tmp_path: Path) -> None:
+    """Expects no C2 finding for a bare directory (no .claude/) — the check is worktree-gated."""
+    m = _load_module()
+    assert m.check_durable(tmp_path, memory_dir=tmp_path / "absent") is None
+
+
+# --- Memory-substrate C4: MEMORY.md index integrity (every entry -> a real file, no duplicates) ---
+
+
+def test_check_index_integrity_passes_for_consistent_index(tmp_path: Path) -> None:
+    """Expects no C4 finding when every MEMORY.md entry points at an existing file."""
+    m = _load_module()
+    d = _make_klartext_dir(tmp_path)
+    mem = tmp_path / "team-memory"
+    mem.mkdir()
+    (mem / "foo.md").write_text("x")
+    (mem / "MEMORY.md").write_text("# Memory Index\n\n- [Foo](foo.md) — a hook\n")
+    assert m.check_index_integrity(d, memory_dir=mem) is None
+
+
+def test_check_index_integrity_warns_on_missing_target(tmp_path: Path) -> None:
+    """Expects a C4 finding naming the missing file when an entry points at a non-existent file."""
+    m = _load_module()
+    d = _make_klartext_dir(tmp_path)
+    mem = tmp_path / "team-memory"
+    mem.mkdir()
+    (mem / "MEMORY.md").write_text("- [Ghost](ghost.md) — gone\n")
+    warning = m.check_index_integrity(d, memory_dir=mem)
+    assert warning is not None and "ghost.md" in warning and "C4" in warning
+
+
+def test_check_index_integrity_warns_on_duplicate_entry(tmp_path: Path) -> None:
+    """Expects a C4 finding when the same target appears twice in the index (clobber signal)."""
+    m = _load_module()
+    d = _make_klartext_dir(tmp_path)
+    mem = tmp_path / "team-memory"
+    mem.mkdir()
+    (mem / "a.md").write_text("x")
+    (mem / "MEMORY.md").write_text("- [A](a.md) — one\n- [A again](a.md) — two\n")
+    warning = m.check_index_integrity(d, memory_dir=mem)
+    assert warning is not None and "duplicate" in warning.lower()
+
+
+def test_check_index_integrity_noops_when_no_index(tmp_path: Path) -> None:
+    """Expects no C4 finding when MEMORY.md does not exist yet (nothing to verify)."""
+    m = _load_module()
+    d = _make_klartext_dir(tmp_path)
+    mem = tmp_path / "team-memory"
+    mem.mkdir()
+    assert m.check_index_integrity(d, memory_dir=mem) is None
+
+
+def test_check_index_integrity_ignores_external_http_links(tmp_path: Path) -> None:
+    """Expects http(s) links in the index to be ignored — they are not local memory files."""
+    m = _load_module()
+    d = _make_klartext_dir(tmp_path)
+    mem = tmp_path / "team-memory"
+    mem.mkdir()
+    (mem / "MEMORY.md").write_text("- [A PR](https://github.com/x/y/pull/1) — external\n")
+    assert m.check_index_integrity(d, memory_dir=mem) is None

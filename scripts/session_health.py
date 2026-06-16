@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import subprocess
 import sys
 from abc import ABC, abstractmethod
@@ -127,15 +128,65 @@ def check_inbox(project_dir: Path) -> str | None:
     return None
 
 
+def check_durable(project_dir: Path, memory_dir: Path | None = None) -> str | None:
+    """Memory-substrate C2: the shared team memory is durable — it exists and is writable.
+
+    Applies only to an agent worktree. A missing or read-only substrate is the False-Persistence
+    class: knowledge meant to outlive a session cannot be written.
+    """
+    if not (project_dir / ".claude").is_dir():
+        return None
+    mem = memory_dir or _team_memory_dir()
+    if not mem.is_dir():
+        return f"⚠ team memory dir ({mem}) does not exist — durable substrate missing (C2)."
+    if not os.access(mem, os.W_OK):
+        return f"⚠ team memory dir ({mem}) is not writable — substrate not durable this session (C2)."
+    return None
+
+
+def check_index_integrity(
+    project_dir: Path, memory_dir: Path | None = None
+) -> str | None:
+    """Memory-substrate C4: every MEMORY.md entry points at a real file; no duplicate targets.
+
+    The index is the only shared hot file; concurrent appends could clobber it. This is the
+    falsifiable signal (every entry -> a real file, no duplicates) — a warning, never a block.
+    Absent index = nothing to verify (not a finding). Http links are external, not local files.
+    """
+    if not (project_dir / ".claude").is_dir():
+        return None
+    mem = memory_dir or _team_memory_dir()
+    index = mem / "MEMORY.md"
+    if not index.is_file():
+        return None
+    targets = re.findall(r"\]\(([^)]+)\)", index.read_text(encoding="utf-8"))
+    local = [t for t in targets if not t.startswith(("http://", "https://"))]
+    missing = sorted({t for t in local if not (mem / t).is_file()})
+    duplicates = sorted({t for t in local if local.count(t) > 1})
+    problems = []
+    if missing:
+        problems.append(
+            f"MEMORY.md points at missing files: {', '.join(missing)} (C4)."
+        )
+    if duplicates:
+        problems.append(
+            f"MEMORY.md has duplicate entries: {', '.join(duplicates)} (C4)."
+        )
+    return " ".join(problems) if problems else None
+
+
 def build_warnings(project_dir: Path) -> str | None:
     """Collects all session-health warnings for project_dir, or None if everything is healthy.
 
-    Drift (ADR-0012) + the memory-substrate contract: C1 (pin resolves) and C3 (inbox reachable).
+    Drift (ADR-0012) + the memory-substrate contract: C1 (pin resolves), C2 (durable substrate),
+    C3 (inbox reachable), C4 (index integrity). C5 (provenance) is deferred — see the contract.
     """
     checks = (
         assess_drift(project_dir),
         check_pin(project_dir),
+        check_durable(project_dir),
         check_inbox(project_dir),
+        check_index_integrity(project_dir),
     )
     parts = [w for w in checks if w]
     return "\n".join(parts) if parts else None
