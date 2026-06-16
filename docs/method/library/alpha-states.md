@@ -1,5 +1,7 @@
 # Essence Kernel — Alpha States & Checklists
 
+> ⚠️ This is currently a vendored copy of the IJI Alpha State Cards (CC BY 4.0, SEMAT Inc.). F0.2 will replace it with a Kernel/Language **Resource card** (referenced, never vendored). Do not resolve here.
+
 > **Scope.** Reference: the **seven Essence kernel Alphas** with their full state lifecycles and per-state
 > checklists — the operational heart of the Kernel ("done" as a checkable state, not a feeling).
 > **Out of scope.** What an Alpha *is* and how the Kernel works (`semat-definition.md`); our current state

@@ -17,7 +17,7 @@ it came from, and under what terms — RC1-compliant (no artifact without a home
 
 | Filename | Source / URL | License / Terms | Acquired | Notes |
 |---|---|---|---|---|
-| `alpha_state_cards_ecards.pdf` | IJI Practice Library — https://www.ivarjacobson.com/practicelibrary | Free form-gated download (IJI); content reflects the OMG Essence standard | 2026-06-10 | Essence Alpha State Cards (96 pp.) — 7 kernel Alphas with state checklists; source for `docs/superpowers/improvement/alpha-states.md` |
+| `alpha_state_cards_ecards.pdf` | IJI Practice Library — https://www.ivarjacobson.com/practicelibrary | Free form-gated download (IJI); content reflects the OMG Essence standard | 2026-06-10 | Essence Alpha State Cards (96 pp.) — 7 kernel Alphas with state checklists; source for `docs/method/library/alpha-states.md` |
 | `agile_essentials_practice_cards.pdf` | IJI Practice Library — https://www.ivarjacobson.com/practicelibrary | Free form-gated download (IJI) | 2026-06-10 | Agile Essentials practice pack (7 practices incl. Agile Retrospective Essentials) — source material for our retro practice card |
 | `atdd-tdd_card_pack_-_ecards.pdf` | IJI Practice Library — https://www.ivarjacobson.com/practicelibrary | Free form-gated download (IJI) | 2026-06-10 | BDD/ATDD + TDD practice cards — candidate material for RC6 contract surfacing + TDD practice card |
 
