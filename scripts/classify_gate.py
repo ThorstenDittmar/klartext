@@ -11,9 +11,10 @@ two-mode-consistency question explicitly:
 The gate is default-free: it never infers the classification. PRs that touch no WoW surface
 pass unconditionally, so ordinary code/test PRs are unaffected.
 
-The trigger-path list is OE's literal list plus agents/**/claude.md. Broadening it (e.g.
-docs/superpowers/improvement/** or .github/workflows/**) is a one-line change here — see the
-design spec docs/superpowers/specs/2026-06-15-classification-gate-design.md.
+The trigger-path list is OE's literal list plus agents/**/claude.md and docs/method/** (the
+migrated method library/enactment surface — added in F0.3 to close the gap where method changes
+escaped the gate; see ADR-0013). Further broadening (e.g. .github/workflows/**) is a one-line
+change here — see the design spec docs/superpowers/specs/2026-06-15-classification-gate-design.md.
 
 Used by .github/workflows/classify-gate.yml, which collects the changed paths and the PR's
 labels and forwards this module's exit code (0 = pass, 1 = fail).
@@ -32,6 +33,7 @@ from dataclasses import dataclass
 #   "<exact>"         -> that exact path
 TRIGGER_PATTERNS: list[str] = [
     "CLAUDE.md",
+    "docs/method/**",
     "docs/superpowers/skills/**",
     "agents/**/claude.md",
     ".claude/settings.json",
