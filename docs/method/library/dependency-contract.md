@@ -1,13 +1,14 @@
 # Dependency Contract
 
-> **Essence type:** Work Product (element)
+> **Essence type:** Work Product
 > **Advances Alpha:** Way of Working (Non-negotiable practices & tools identified · Gaps between available and needed way of working understood)  ·  **Work Products:** the contract itself (a set of invariant clauses)
-> **Activity / Activity Space:** Prepare to do the Work / Plan the Work → identify and bind the invariants a central dependency must uphold
+> **Activity / Activity Space:** Prepare to do the Work → identify and bind the invariants a central dependency must uphold
 > **External dependencies (referenced Resources):** none — this is our own element definition
 > **Enforcement:** convention (each clause names its own check; the check's enforcement level is per-clause: mechanical · ritual · convention)
 > **NN:** —
 > **Status:** living  ·  **Owner:** OE (form + element definition)
 > **Enacted as:** one card per contract under `docs/method/enactment/contracts/` (L2 instances)
+> *(Element kind: this card defines the Dependency-Contract Work-Product type; the actual contracts are its L2 instances. The "(element)" clarifier is kept out of the Essence-type value so the half-(ii) CI core check sees a clean enum token.)*
 
 ## Purpose
 
