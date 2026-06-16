@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
-"""F2 substrate restore + tested-valid verification (out-of-band rollback for the refactoring).
+"""F2 substrate restore + tested-valid verification (Frozen Plan §6.3, OE-ratified 2026-06-16).
 
-Restores a backup produced by `substrate_backup.py` and verifies a restore is **tested-valid** per
-OE's ratified criterion (2026-06-16): a restore counts only when
+Restores a four-group backup (`substrate_backup.py`) and verifies it is **tested-valid**. A restore
+counts only when every group's integrity holds against the backup + manifest:
 
-  * **(a) C4 index-integrity** — every MEMORY.md entry points at a real file, no duplicates (reused
-    from `session_health.check_index_integrity`, #133 — the one contract check, no second C4);
-  * **(b) byte-identity** — the whole restored tree is byte-for-byte the source (the real guarantee;
-    catches a dropped non-`.md` marker, a truncated file, a missing inbox message);
-  * **(c) inbox completeness per slug** — the per-slug message counts (incl. `.read/` archive) match
-    (kept explicit as a regression net over the highest-churn part, even though (b) subsumes it).
+  * **G1 team-memory/** — (a) C4 index-integrity (reused from `session_health`, #133 — no second C4)
+    ∧ (b) byte-identity vs the backup ∧ (c) inbox completeness per slug incl. `.read/`.
+  * **G2 claude-user-state/** — (b) byte-identity vs the backup.
+  * **G3 secrets/** — (b) byte-identity vs the backup, **confidential-safe**: a mismatch names the
+    path only, never the secret bytes.
+  * **G4 wip/<worktree>/** — each manifest stash is recoverable: the bundle exists and lists the
+    recorded stash commit.
+  * **manifest** — present, and the recomputed SHA256 of each tree matches what was recorded.
 
 `Backup → restore-to-sandbox → verify_restore == []` is the hard precondition before F3 may touch the
 live substrate. Fail-loud: restoring a missing backup raises.
@@ -17,7 +19,9 @@ live substrate. Fail-loud: restoring a missing backup raises.
 
 from __future__ import annotations
 
+import json
 import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -25,6 +29,7 @@ _REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(_REPO_ROOT / "scripts"))
 
 from session_health import check_index_integrity  # noqa: E402
+from substrate_backup import tree_sha256  # noqa: E402
 
 
 def restore_substrate(backup: Path, target: Path) -> None:
@@ -35,31 +40,37 @@ def restore_substrate(backup: Path, target: Path) -> None:
 
 
 def _relative_files(root: Path) -> set[str]:
-    """Returns every file path under `root`, relative and POSIX-formatted."""
+    """Returns every file path under `root`, relative and POSIX-formatted ('' set if absent)."""
+    if not root.is_dir():
+        return set()
     return {p.relative_to(root).as_posix() for p in root.rglob("*") if p.is_file()}
 
 
-def _byte_identity_violations(source: Path, restored: Path) -> list[str]:
-    """(b) Returns a violation per file that is missing, extra, or byte-different in the restore."""
+def _byte_identity_violations(
+    backup: Path, restored: Path, group: str, *, confidential: bool = False
+) -> list[str]:
+    """(b) Returns violations for files missing/extra/byte-different between backup and restore.
+
+    With confidential=True the messages name the path only — never the differing bytes (G3 secrets).
+    """
     violations: list[str] = []
-    source_files = _relative_files(source)
-    restored_files = _relative_files(restored)
-    for rel in sorted(source_files - restored_files):
-        violations.append(f"(b) byte-identity: {rel} missing from the restore")
-    for rel in sorted(restored_files - source_files):
-        violations.append(
-            f"(b) byte-identity: {rel} is in the restore but not the source"
-        )
-    for rel in sorted(source_files & restored_files):
-        if (source / rel).read_bytes() != (restored / rel).read_bytes():
-            violations.append(f"(b) byte-identity: {rel} differs from the source")
+    a, b = backup / group, restored / group
+    backup_files, restored_files = _relative_files(a), _relative_files(b)
+    for rel in sorted(backup_files - restored_files):
+        violations.append(f"(b) {group}: {rel} missing from the restore")
+    for rel in sorted(restored_files - backup_files):
+        violations.append(f"(b) {group}: {rel} is in the restore but not the backup")
+    for rel in sorted(backup_files & restored_files):
+        if (a / rel).read_bytes() != (b / rel).read_bytes():
+            detail = "" if confidential else " (content differs)"
+            violations.append(f"(b) {group}: {rel} differs from the backup{detail}")
     return violations
 
 
-def _inbox_counts(root: Path) -> dict[str, tuple[int, int]]:
-    """Returns {slug: (unread_count, read_archive_count)} for every inbox slug under `root`."""
+def _inbox_counts(team_memory: Path) -> dict[str, tuple[int, int]]:
+    """Returns {slug: (unread, read_archive)} for every inbox slug under a team-memory tree."""
     counts: dict[str, tuple[int, int]] = {}
-    inbox = root / "inbox"
+    inbox = team_memory / "inbox"
     if not inbox.is_dir():
         return counts
     for slug in sorted(p for p in inbox.iterdir() if p.is_dir()):
@@ -71,32 +82,80 @@ def _inbox_counts(root: Path) -> dict[str, tuple[int, int]]:
     return counts
 
 
-def _inbox_completeness_violations(source: Path, restored: Path) -> list[str]:
+def _inbox_completeness_violations(backup: Path, restored: Path) -> list[str]:
     """(c) Returns a violation per inbox slug whose unread/read-archive counts drifted in the restore."""
     violations: list[str] = []
-    source_counts = _inbox_counts(source)
-    restored_counts = _inbox_counts(restored)
-    for slug in sorted(set(source_counts) | set(restored_counts)):
-        if source_counts.get(slug, (0, 0)) != restored_counts.get(slug, (0, 0)):
+    src = _inbox_counts(backup / "team-memory")
+    dst = _inbox_counts(restored / "team-memory")
+    for slug in sorted(set(src) | set(dst)):
+        if src.get(slug, (0, 0)) != dst.get(slug, (0, 0)):
             violations.append(
                 f"(c) inbox completeness: slug '{slug}' counts differ "
-                f"(source {source_counts.get(slug, (0, 0))}, restore {restored_counts.get(slug, (0, 0))})"
+                f"(backup {src.get(slug, (0, 0))}, restore {dst.get(slug, (0, 0))})"
             )
     return violations
 
 
-def verify_restore(source: Path, restored: Path) -> list[str]:
-    """Returns all tested-valid violations (a)∧(b)∧(c) for a restore; empty list = tested-valid.
-
-    (a) reuses session_health's C4 on the restored tree; (b) byte-identity over the whole tree;
-    (c) per-slug inbox completeness. The repo root supplies C4's project gate.
-    """
+def _manifest_sha_violations(restored: Path, manifest: dict) -> list[str]:
+    """Returns a violation per tree whose recomputed SHA256 no longer matches the manifest."""
     violations: list[str] = []
-    c4 = check_index_integrity(_REPO_ROOT, restored)
+    for group, recorded in manifest.get("sha256", {}).items():
+        actual = tree_sha256(restored / group)
+        if actual != recorded:
+            violations.append(
+                f"manifest: SHA256 of {group}/ does not match the recorded backup"
+            )
+    return violations
+
+
+def _wip_violations(restored: Path, manifest: dict) -> list[str]:
+    """(G4) Returns a violation per recorded stash whose bundle is missing or omits the stash commit."""
+    violations: list[str] = []
+    for entry in manifest.get("wip", []):
+        stash = entry.get("stash")
+        if not stash:
+            continue  # a clean worktree had no WIP to bundle
+        bundle = restored / "wip" / str(entry["worktree"]) / "wip.bundle"
+        if not bundle.is_file():
+            violations.append(
+                f"(G4) wip: bundle missing for worktree '{entry['worktree']}'"
+            )
+            continue
+        heads = subprocess.run(
+            ["git", "bundle", "list-heads", str(bundle)],
+            cwd=_REPO_ROOT,
+            capture_output=True,
+            text=True,
+        ).stdout
+        if stash not in heads:
+            violations.append(
+                f"(G4) wip: bundle for '{entry['worktree']}' does not record the stash commit"
+            )
+    return violations
+
+
+def verify_restore(backup: Path, restored: Path) -> list[str]:
+    """Returns all tested-valid violations across the four groups + manifest; empty list = valid."""
+    violations: list[str] = []
+    manifest_path = backup / "manifest.json"
+    if not manifest_path.is_file():
+        return ["manifest.json missing from the backup"]
+    manifest = json.loads(manifest_path.read_text())
+
+    # G1 — (a) C4 on the restored team-memory, (b) byte-identity, (c) inbox completeness.
+    c4 = check_index_integrity(_REPO_ROOT, restored / "team-memory")
     if c4:
         violations.append(f"(a) {c4}")
-    violations.extend(_byte_identity_violations(source, restored))
-    violations.extend(_inbox_completeness_violations(source, restored))
+    violations.extend(_byte_identity_violations(backup, restored, "team-memory"))
+    violations.extend(_inbox_completeness_violations(backup, restored))
+    # G2 / G3 — byte-identity (secrets confidential-safe).
+    violations.extend(_byte_identity_violations(backup, restored, "claude-user-state"))
+    violations.extend(
+        _byte_identity_violations(backup, restored, "secrets", confidential=True)
+    )
+    # G4 + manifest integrity.
+    violations.extend(_wip_violations(restored, manifest))
+    violations.extend(_manifest_sha_violations(restored, manifest))
     return violations
 
 
