@@ -1732,7 +1732,7 @@ check).</p>
 <td><strong>C2</strong></td>
 <td>The substrate is <strong>durable across sessions and session-types</strong> (terminal <em>and</em> app).</td>
 <td>Knowledge meant to outlive a session is lost on restart/clear → False-Persistence class.</td>
-<td>Health-check asserts the dir exists + is writable from this session type.</td>
+<td><code>check_durable</code> asserts the dir exists + is writable — <strong>live in the session-health hook (#133)</strong>.</td>
 <td>✅</td>
 </tr>
 <tr>
@@ -1746,15 +1746,15 @@ check).</p>
 <td><strong>C4</strong></td>
 <td><strong>Concurrent writes</strong> (e.g. parallel memory consolidation) corrupt neither the <code>MEMORY.md</code> index nor any inbox message.</td>
 <td>Lost/garbled memories or index under simultaneous agent activity.</td>
-<td>Index-integrity assertion (every <code>MEMORY.md</code> entry → a real file; no duplicate entries) in the health-check.</td>
-<td>✅ <strong>Decided (lean), 2026-06-14 — see below</strong></td>
+<td><code>check_index_integrity</code> (every <code>MEMORY.md</code> entry → a real file; no duplicate entries) — <strong>live in the session-health hook (#133)</strong>.</td>
+<td>✅ <strong>Decided (lean), 2026-06-14 — live #133</strong></td>
 </tr>
 <tr>
 <td><strong>C5</strong></td>
 <td><strong>Every memory edit is attributable</strong> — who last changed a memory file is recoverable.</td>
 <td>Unattributable shared state: 11 agents + the user write the same memory under one OS/git identity → "who wrote this?" is unanswerable (surfaced 2026-06-15).</td>
-<td>Health-check warns on a memory file whose <code>mtime</code> advanced without a matching <code>last-edited-by</code>/<code>last-edited-at</code> stamp.</td>
-<td>⚠️→✅ <strong>Decided (lean self-stamp), 2026-06-15 — see below</strong></td>
+<td><strong>Detection DEFERRED</strong> — the <code>mtime</code>-based check is unreliable (mtime advances on non-content ops → false positives); needs a content/git-based design. The <strong>self-stamp ritual stands</strong>.</td>
+<td>⚠️ <strong>Ritual decided 2026-06-15; mechanical detection deferred (own strand)</strong></td>
 </tr>
 </tbody>
 </table>
@@ -1789,10 +1789,15 @@ editor</strong> — exactly the question that arose. <strong>Rejected as disprop
 the whole memory dir — heavier, and the shared git identity means it still would not attribute to an agent
 without the stamp anyway. <strong>Enforcement is honest about its limit:</strong> memory is not in CI and the
 memory-<em>writing</em> behaviour is driven by the system prompt (not an OE-editable surface), so the stamp is a
-<strong>ritual</strong> (Enforcement Hierarchy level 2); the health-check above is the mechanical <em>detection</em> half
-(warn on an unstamped change), the stamp is the human action. The convention is surfaced to all agents via
+<strong>ritual</strong> (Enforcement Hierarchy level 2). The convention is surfaced to all agents via
 <code>knowledge-routing.md</code> (loaded at every anchor). Ties to the open shared-blackboard ownership question
 (<code>continuous-improvement.md</code>, the cwd-shared-auto-memory row).</p>
+<p><strong>Mechanical detection DEFERRED (2026-06-16, own strand).</strong> The originally-named check ("warn on a memory
+file whose <code>mtime</code> advanced without a matching stamp") is <strong>unreliable</strong>: in practice <code>mtime</code> advances on
+<strong>non-content operations</strong> (converge/checkout/sync/backup-restore) → false positives (DevOps, Essence-audit
+finding). The detection therefore needs a <strong>content/git-based design</strong> (e.g. <em>content changed without a stamp
+update</em>), not <code>mtime</code>. <strong>The self-stamp ritual is unaffected and stands.</strong> This is an OE-owned design strand
+(OE substrate + DevOps mechanic), non-blocking.</p>
 <h2 id="why-a-contract-the-lever-the-seam-gives-us">Why a contract (the lever the seam gives us)<a class="headerlink" href="#why-a-contract-the-lever-the-seam-gives-us" title="Permanent link">&para;</a></h2>
 <p>Because we <strong>own</strong> the inner face, the contract reveals <strong>design levers</strong>, not just risk to watch: with the
 Claude app or GitHub we can only observe + Canary; here we can <em>build</em> the substrate to satisfy the contract
@@ -1811,9 +1816,9 @@ of invariants.</p>
 <h2 id="status-open">Status &amp; open<a class="headerlink" href="#status-open" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>C1, C3</strong> — ✅ live in the session-health hook (#117).</li>
-<li><strong>C2</strong> (durability) — holds; its explicit hook assertion is still pending (DevOps, fold into the hook).</li>
-<li><strong>C4</strong> — ✅ <strong>decided lean (2026-06-14)</strong>; its check = the <strong>index-integrity assertion</strong> (every entry → a real
-  file, no duplicates), to be added to the hook (DevOps).</li>
+<li><strong>C2</strong> (durability) — ✅ <code>check_durable</code> <strong>live in the session-health hook (#133)</strong>.</li>
+<li><strong>C4</strong> (index-integrity) — ✅ <code>check_index_integrity</code> <strong>live in the session-health hook (#133)</strong> (decided lean 2026-06-14). Double-benefit: this is also the <strong>restore-integrity criterion</strong> for the Frozen-Plan §6.3 backup gate.</li>
+<li><strong>C5</strong> (provenance) — self-stamp <strong>ritual</strong> stands; <strong>mechanical detection deferred</strong> (mtime unreliable → own content/git-based design strand, OE-owned).</li>
 <li>Uncontrolled face (autoMemory resolution) — ✅ already an Environment Knowledge work product
   (<code>environment/claude-code-app.md</code>, v2); no separate card.</li>
 <li><strong>Monitor (OE):</strong> if the index-integrity check ever trips in practice, revisit the lean stance (new
