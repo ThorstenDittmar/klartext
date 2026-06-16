@@ -47,6 +47,7 @@ Verwahr-Depot der Retro-Inputs: Hannibal-Memory `project_h01422_retro_inputs.md`
 | DevOps | ADR-0014 Agent-Provenance: commit-msg-Hook + CI-Check für Trailer `Agent: <slug>` (spawn-aware) bauen — Briefing liegt in DevOps' Inbox, unblocked seit #129 auf main | System Architect | 2026-06-16 |
 | SA → DevOps | S3-Vendoring-Lint (`.semgrep/rules/arch/`): Regel, die fehlschlägt, wenn eine Wrapper-Karte Upstream-Resource-Inhalt nacherzählt statt zu deklarieren (RC4-Schutz) — neben den ADR-0014-Hook in die SA→DevOps-Pipeline | System Architect (F0.2-#148-Ratifikation) | 2026-06-16 |
 | UX (+ QA-Kriterien) | `verify`-Skill-Drift nachziehen (`docs/superpowers/skills/verify.md`) + L2-Karte synchronisieren: (a) 5-Screen-URLs veraltet ggü. App.tsx (`/reading` nicht gemountet; `/causal-model`+`/narrative` brauchen IDs; `NarrativeEditor`→`NarrativeDetail`); (b) Browser-MCP-Reihenfolge — Claude_Preview primär, Claude_in_Chrome Fallback (localhost-Sperre) | OE (F0.2-P-D, UX-geflaggt #150) | 2026-06-16 |
+| DevOps | Stale Agent-Spawn-Worktrees aufräumen: nach den F0.1/F0.2-Spawns liegen ~7 Worktrees unter `~/klartext/.claude/worktrees/agent-*` (Branches bereits gemerged+gelöscht auf origin) — `git worktree prune` / `remove` | OE (F0.2-Anchor 2026-06-16) | 2026-06-16 |
 
 ---
 
