@@ -6,7 +6,7 @@
 > **External dependencies (referenced Resources):** **superpowers (Resource)** — wraps `superpowers:systematic-debugging`
 > **Enforcement:** ritual (the skill is invoked on any bug/unexpected behavior; the `qa-retro` tail is non-optional when the answer is "yes")  ·  **NN:** ✓
 > **Status:** living  ·  **Owner:** QA (this is QA-owned discipline — the `qa-retro` tail composes on it)
-> **Enacted as:** the `systematic-debugging` skill (`docs/superpowers/skills/systematic-debugging/SKILL.md`) — a thin loader that invokes the upstream skill, then appends the `qa-retro` step
+> **Enacted as:** the `systematic-debugging` skill (`docs/method/enactment/skills/systematic-debugging/SKILL.md`) — a thin loader that invokes the upstream skill, then appends the `qa-retro` step
 
 > **QA-RATIFIED (2026-06-16, review on PR #148).** This card is QA-owned; drafted by an OE-spawned
 > sub-agent and **ratified by real QA** against the pinned superpowers 5.1.0 install (the Iron Law +

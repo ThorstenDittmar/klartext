@@ -9,7 +9,7 @@ Definiert Regeln — DevOps setzt sie technisch durch.
 ```
 CLAUDE.md                         Coding Standards (shared mit DevOps)
 docs/adr/                         Architecture Decision Records
-docs/superpowers/skills/          Projekt-Skills (außer agent-onboarding.md — OE)
+docs/method/enactment/skills/          Projekt-Skills (außer agent-onboarding.md — OE)
 .semgrep/rules/arch/              Architektur-Semgrep-Rules
 ```
 

@@ -6,7 +6,7 @@
 > **External dependencies (referenced Resources):** none — this is a klartext-own QA practice (not a superpowers wrapper)
 > **Enforcement:** ritual (invoked at the close of every implementation session; `tdd` calls it as Step 3)  ·  **NN:** ✓
 > **Status:** living  ·  **Owner:** QA
-> **Enacted as:** the `qa-review` skill (`docs/superpowers/skills/qa-review/`)
+> **Enacted as:** the `qa-review` skill (`docs/method/enactment/skills/qa-review/`)
 
 > **Seeded by an OE-spawned sub-agent (F0.2-P-C, BARRIER mode); awaits ratification by real QA on wake (Guardrail 2).**
 

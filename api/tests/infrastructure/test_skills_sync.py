@@ -23,7 +23,7 @@ from api.cli import (
 )
 
 _REPO_ROOT = Path(__file__).parents[3]
-_SKILLS_DIR = _REPO_ROOT / "docs" / "superpowers" / "skills"
+_SKILLS_DIR = _REPO_ROOT / "docs" / "method" / "enactment" / "skills"
 
 # The skills that F0 must be able to classify — previously un-versioned (user-global only).
 _F0_REQUIRED_SKILLS = ("tdd", "systematic-debugging")
@@ -38,7 +38,7 @@ def test_tdd_and_systematic_debugging_are_tracked_in_repo() -> None:
 
 
 def test_skills_sync_source_points_at_repo_skills_dir() -> None:
-    """Expects the sync command to read from the repo's docs/superpowers/skills/ directory."""
+    """Expects the sync command to read from the repo's docs/method/enactment/skills/ directory."""
     assert _SKILLS_SOURCE == _SKILLS_DIR
 
 

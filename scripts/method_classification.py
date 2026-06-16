@@ -48,8 +48,12 @@ CARD_DIRS: tuple[str, ...] = (
 # Named element cards that live at a stem root rather than in a card directory.
 NAMED_CARD_FILES: tuple[str, ...] = ("docs/method/library/dependency-contract.md",)
 
-# Legacy method trees that F0 emptied and that must stay empty (expands at F3: skills/, qa-learnings/).
-LEGACY_EMPTY_DIRS: tuple[str, ...] = ("docs/superpowers/improvement",)
+# Legacy method trees that F0/F3 emptied and that must stay empty. `improvement/` migrated in F0.1/F0.2;
+# `skills/` migrated in F3 #3b (executables → docs/method/enactment/skills/; generic defs stay in L3 cards).
+LEGACY_EMPTY_DIRS: tuple[str, ...] = (
+    "docs/superpowers/improvement",
+    "docs/superpowers/skills",
+)
 
 _TYPE_MARKER = "**Essence type:**"
 _L3DEF_MARKER = "**L3 definition:**"

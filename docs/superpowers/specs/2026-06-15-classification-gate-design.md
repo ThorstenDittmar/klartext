@@ -40,7 +40,7 @@ A PR is **in scope** for the gate if any changed file matches:
 
 ```
 CLAUDE.md
-docs/superpowers/skills/**
+docs/method/**
 agents/**/claude.md
 .claude/settings.json
 scripts/**
@@ -49,7 +49,7 @@ api/cli.py
 
 Rationale per entry:
 - `CLAUDE.md` — the coding standards / shared method baseline.
-- `docs/superpowers/skills/**` — the team's ritual skills (the executable how-tos).
+- `docs/method/**` — the method library + enactment (incl. the ritual skills at `enactment/skills/`).
 - `agents/**/claude.md` — agent Hoheitswissen IS the way of working (OE).
 - `.claude/settings.json` — baseline permissions and hooks for all agents.
 - `scripts/**` — hook scripts and tooling (session_health, converge, inbox, …).

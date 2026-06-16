@@ -2,7 +2,7 @@
 
 > **Dieses Dokument beschreibt das WAS und WANN — nicht das WIE.**
 > Das technische Wie (Stack, Query-Hierarchie, `renderWithProviders`, `vi.mock`)
-> steht in `docs/superpowers/skills/frontend.md`.
+> steht in `docs/method/enactment/skills/frontend.md`.
 
 ---
 

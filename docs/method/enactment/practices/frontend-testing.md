@@ -6,7 +6,7 @@
 > **External dependencies (referenced Resources):** none
 > **Enforcement:** ritual (QA-review checklist) — partly mechanical (the structure-check `find` over `__tests__` directories)  ·  **NN:** ✓ (Pages and Hooks: no Page/Hook ships without a test)
 > **Status:** living  ·  **Owner:** QA (owns the completeness criteria)
-> **Enacted as:** the `frontend-testing` skill (`docs/superpowers/skills/frontend-testing.md`), applied within the `tdd` and `qa-review` flows for React/TypeScript work
+> **Enacted as:** the `frontend-testing` skill (`docs/method/enactment/skills/frontend-testing.md`), applied within the `tdd` and `qa-review` flows for React/TypeScript work
 >
 > **Scope.** This is a **wholly-L2** card: it has **no generic L3 sibling**. The criteria hardcode the
 > klartext frontend's three test layers and the specific obligatory scenarios — including the named
@@ -96,7 +96,7 @@ pure layout wrapper is QA-review judgment.
 - The standards and the technical *how*: [[frontend]] (UX/UI-owned, the skill source).
 - The generic test discipline this composes with: [[tdd]].
 - The orthogonal live-browser layer: [[verify]].
-- The skill source: `docs/superpowers/skills/frontend-testing.md` (F3 — not modified by this package).
+- The skill source: `docs/method/enactment/skills/frontend-testing.md` (F3 — not modified by this package).
 - Register row: there is no dedicated *Frontend Testing* row; this criteria set is referenced from the
   *Frontend Standards* / *Frontend Verification* rows and the `tdd` frontend tail. *(Flagged as an
   uncertainty for QA — see PR body.)*

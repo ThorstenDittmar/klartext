@@ -86,3 +86,29 @@ F0 is **not just "draw the path cut."** It is **"produce klartext's method as a 
 
 ## 9. Freeze
 This plan is **frozen** when: DevOps has verified §6/§7, OE and DevOps both sign off, and it is merged to `main`. **F0 starts only after the freeze.** Until then: planning only — no refactoring file is touched.
+
+## 10. F3 execution log (DevOps-led; inbox FROZEN — coordination via this PR + user out-of-band)
+
+> **F3 GO:** User (2026-06-16, relayed by OE — probe tested-valid, all worktrees clean, 0 WIP = ideal moment).
+> **Channel freeze:** in effect from F3 start. No `inbox.sh` coordination during F3. Progress, gate points
+> and verify evidence are recorded **here**; OE countersigns the F3-exit substrate checkpoint via the user.
+
+### F3 preconditions — DONE (§7 both axes armed)
+- **Substrate rollback net (retained):** `~/klartext-substrate-backups/2026-06-16T21-21-27Z/` (dir mode 700).
+  Four-group §6.3 backup; **`verify_restore == []` → tested-valid** (G1 a∧b∧c · G2/G3 byte-identity · G4 ·
+  manifest SHA256). 22 worktrees · 1 secret (`klartext/api/.env`, path only) · 22 wip entries (0 stash bundles —
+  all worktrees tracked-clean). **This backup stays as the rollback net; cleanup only after F3 success.**
+- **Code rollback anchor:** annotated tag **`pre-f3-2026-06-16T21-21-27Z`** → `main` `3e2a256`. Branch HEADs at
+  F3 start: `main` `3e2a256` · `agent/devops` `fb1ffc1` · `agent/hannibal` `30692c6` ·
+  `agent/system-architect` `f2e2942`. Rollback ordering: **substrate first, then code** (§7).
+
+### F3 steps (sequence) — status
+- [ ] **#3b** skill-distribution isolation *(substrate-touching; superpowers-contract S1–S4 / state-isolation
+  boundary impact → clear with OE via user before hardening — OE owns contract impact)*.
+- [ ] **#1b** filter-repo extraction along the L3 stems (`docs/method/library/`) — full history; squash snapshot
+  for the semAIt seed. Mechanical (F0 produced well-formed L3 objects); flag any path-classification surprise here.
+- [ ] **#2** ADR-0014 provenance hook (commit-msg hook + CI check for the `Agent: <slug>` trailer) → status Accepted.
+
+### F3 exit (OE-countersigned via user)
+Extraction verified · provenance live (#2) · **substrate restored-and-verified checkpoint (OE-owned)** · then
+delete the retained backup (secrets!) · semAIt seeds once from the post-cut state · agents wake + converge.

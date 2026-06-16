@@ -44,7 +44,7 @@ Diese Quellen sind sicher — sie liegen auf der Festplatte und werden bei jeder
 - Code, Kommentare, Docstrings im Repo
 - Commit-Messages in Git
 - GitHub Issues und TODOs im Code
-- Skill-Dateien unter `docs/superpowers/skills/` (projekt-spezifische Skills) und `~/.claude/skills/` (User-Skills)
+- Skill-Dateien unter `docs/method/enactment/skills/` (projekt-spezifische Skills) und `~/.claude/skills/` (User-Skills)
 
 **Was verloren gehen kann:** Alles, was nur im Gesprächsverlauf steht. Das ist der blinde Fleck —
 und `/clear` *verwirft* ihn ersatzlos, `/compact` *fasst ihn zusammen* (lückenhaft, False-Persistence-Risiko).
@@ -291,7 +291,7 @@ Nur fragen wenn in der Session etwas Relevantes passiert ist — kein Pflicht-Pr
    ```
 
 3. **Verify-Skills aktuell?**
-   Wurden neue Screens, Komponenten oder API-Endpoints hinzugefügt? Dann prüfen: sind `docs/superpowers/skills/verify.md` und `verify-backend.md` noch vollständig?
+   Wurden neue Screens, Komponenten oder API-Endpoints hinzugefügt? Dann prüfen: sind `docs/method/enactment/skills/verify.md` und `verify-backend.md` noch vollständig?
    → Skill-Datei direkt updaten wenn nötig
 
 4. **GitHub Issues vollständig?**

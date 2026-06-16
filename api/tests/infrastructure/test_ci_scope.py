@@ -37,7 +37,7 @@ _scope = _load()
 
 def test_pure_method_change_skips_all_app_checks() -> None:
     """Expects api=False and frontend=False when every path is method/environment only."""
-    result = _scope.decide(["docs/superpowers/skills/frontend.md", "agents/devops/claude.md"])
+    result = _scope.decide(["docs/method/enactment/skills/frontend.md", "agents/devops/claude.md"])
     assert result.api is False
     assert result.frontend is False
 
@@ -75,7 +75,7 @@ def test_api_and_frontend_change_runs_both() -> None:
 
 def test_method_change_mixed_with_api_runs_api_only() -> None:
     """Expects api=True, frontend=False when a method doc and a backend file changed together."""
-    result = _scope.decide(["docs/superpowers/skills/tdd.md", "api/cli.py"])
+    result = _scope.decide(["docs/method/enactment/skills/tdd.md", "api/cli.py"])
     assert result.api is True
     assert result.frontend is False
 
@@ -106,7 +106,7 @@ def test_empty_changed_paths_runs_all_conservatively() -> None:
 
 def test_shared_path_mixed_with_method_still_runs_all() -> None:
     """Expects a single shared path to force all checks even alongside method-only paths."""
-    result = _scope.decide(["docs/superpowers/skills/tdd.md", "pyproject.toml"])
+    result = _scope.decide(["docs/method/enactment/skills/tdd.md", "pyproject.toml"])
     assert result.api is True
     assert result.frontend is True
 
@@ -116,7 +116,7 @@ def test_shared_path_mixed_with_method_still_runs_all() -> None:
 
 def test_main_emits_lowercase_booleans_for_method_change(capsys) -> None:
     """Expects 'api=false' and 'frontend=false' on stdout for a method-only change."""
-    code = _scope.main(["--changed-paths", "docs/superpowers/skills/tdd.md"])
+    code = _scope.main(["--changed-paths", "docs/method/enactment/skills/tdd.md"])
     out = capsys.readouterr().out
     assert "api=false" in out
     assert "frontend=false" in out
@@ -222,7 +222,7 @@ def test_main_parses_comma_separated_paths(capsys) -> None:
     The api/ path is the SECOND segment on purpose: if comma-splitting were dropped the
     whole string would be one method-only-looking line and api would be wrongly skipped.
     """
-    _scope.main(["--changed-paths", "docs/superpowers/skills/tdd.md, api/cli.py"])
+    _scope.main(["--changed-paths", "docs/method/enactment/skills/tdd.md, api/cli.py"])
     out = capsys.readouterr().out
     assert "api=true" in out, "comma-separated api/ path must be detected after splitting"
     assert "frontend=false" in out

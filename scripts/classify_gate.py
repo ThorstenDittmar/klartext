@@ -34,7 +34,6 @@ from dataclasses import dataclass
 TRIGGER_PATTERNS: list[str] = [
     "CLAUDE.md",
     "docs/method/**",
-    "docs/superpowers/skills/**",
     "agents/**/claude.md",
     ".claude/settings.json",
     "scripts/**",

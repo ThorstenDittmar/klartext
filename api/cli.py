@@ -51,7 +51,7 @@ app.add_typer(skills_app, name="skills")
 
 _PROJECT_ROOT = Path(__file__).parent.parent
 _FRONTEND_DIR = _PROJECT_ROOT / "frontend"
-_SKILLS_SOURCE = _PROJECT_ROOT / "docs" / "superpowers" / "skills"
+_SKILLS_SOURCE = _PROJECT_ROOT / "docs" / "method" / "enactment" / "skills"
 _SKILLS_TARGET = Path.home() / ".claude" / "skills"
 _REPO_MANAGED_MARKER = ".repo-managed"
 
@@ -999,7 +999,7 @@ def _sync_skills(source_dir: Path, target_dir: Path) -> dict[str, SkillsSyncActi
 def skills_sync() -> None:
     """Mirror the repo's skills into ~/.claude/skills/ — idempotent, prune-safe, repo is the SoT.
 
-    Each skill under docs/superpowers/skills/ (flat `<name>.md` or `<name>/` directory) is installed
+    Each skill under docs/method/enactment/skills/ (flat `<name>.md` or `<name>/` dir) is installed
     as ~/.claude/skills/<name>/, marked `.repo-managed`. Re-running is safe; managed skills whose
     source was removed are pruned, foreign/plugin skills are left untouched.
     """

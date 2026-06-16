@@ -6,7 +6,7 @@
 > **External dependencies (referenced Resources):** none
 > **Enforcement:** ritual (the `frontend` skill loads the standards at the start of every UI task; the pre-commit Quality Checklist is the gate)  ·  **NN:** —
 > **Status:** living  ·  **Owner:** UX/UI
-> **Enacted as:** the `frontend` skill (`docs/superpowers/skills/frontend.md`)
+> **Enacted as:** the `frontend` skill (`docs/method/enactment/skills/frontend.md`)
 >
 > **Scope.** This is a **wholly-L2** card: it has **no generic L3 sibling**. klartext frontend
 > standards hardcode this app's stack (React 18 + TypeScript + Vite, **inline styles only**), this
@@ -87,5 +87,5 @@ token/i18n/`api.ts` lint gate (none enforced today — declared honestly).
 
 - Test completeness criteria: [[frontend-testing]] (QA-owned).
 - Browser verification of the rendered result: [[verify]].
-- The skill source: `docs/superpowers/skills/frontend.md` (F3 — not modified by this package).
+- The skill source: `docs/method/enactment/skills/frontend.md` (F3 — not modified by this package).
 - Register row: *Frontend Standards* in [`../method.md`](../method.md).

@@ -10,7 +10,7 @@
 >
 > **L3 definition:** [`../../library/practices/qa-retro.md`](../../library/practices/qa-retro.md)
 > **Status:** living (ritual) · **Owner:** QA · **Advances Alpha:** Way of Working + Software System · **NN:** ✓ (when triggered)
-> **Enacted as:** the `qa-retro` skill (`docs/superpowers/skills/qa-retro/SKILL.md`)
+> **Enacted as:** the `qa-retro` skill (`docs/method/enactment/skills/qa-retro/SKILL.md`)
 
 ## klartext bindings
 
@@ -32,7 +32,7 @@ consequence (file changed + Semgrep rule, or "not applicable"). Precedent on dis
 
 | Blind-spot type | Action — file |
 |---|---|
-| Unknown category | new category in `docs/superpowers/skills/qa-review/qa-categories.md` |
+| Unknown category | new category in `docs/method/enactment/skills/qa-review/qa-categories.md` |
 | Wrong trigger condition | fix trigger in `qa-categories.md` or `domain-composition-rules.md` |
 | Agent failure (3+ repeats) | sharpen the rule wording |
 | Statically checkable pattern | new rule in `.semgrep/rules/qa/` — `qa-<name>.yaml` |
@@ -60,4 +60,4 @@ learns, and a bug fixed without it can recur. Promotion beyond ritual is a QA / 
 - L3 definition: [`../../library/practices/qa-retro.md`](../../library/practices/qa-retro.md).
 - The triggers: [`systematic-debugging.md`](systematic-debugging.md) (the qa-retro tail) · [`tdd.md`](tdd.md) (bug-fix flow).
 - The periodic sibling: [`retrospective.md`](retrospective.md) · the review practice it sharpens: [`qa-review.md`](qa-review.md).
-- The skill source: `docs/superpowers/skills/qa-retro/SKILL.md` (F3 — not modified by this package).
+- The skill source: `docs/method/enactment/skills/qa-retro/SKILL.md` (F3 — not modified by this package).

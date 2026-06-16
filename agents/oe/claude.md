@@ -40,7 +40,7 @@ nicht Mitbauer. Drei Verpflichtungen:
 ```
 agents/                           Vollständig — start.sh, claude.md, neue Agent-Verzeichnisse
 CLAUDE.md § Agent Roles           Rollentabelle + Zusammenarbeitsregeln
-docs/superpowers/skills/agent-onboarding.md   Onboarding-Prozess
+docs/method/enactment/skills/agent-onboarding.md   Onboarding-Prozess
 ```
 
 OE ist alleinige Eigentümerin von `agents/`. Das schließt Start-Skripte ein —
@@ -171,7 +171,7 @@ läuft über den Inbox, so kann das Lesen des Inbox nie aktionsrelevante Arbeit 
 Inbox** — SAs ADR-0012-Hinweis ging (korrekt, für den Build) an DevOps, DevOps' „Ball bei OE" nur
 über den verbalen User-Relay; #110s Gate-Anfrage kam dagegen sehr wohl über den Inbox. Also fehlender/
 fehladressierter Inbox-Eintrag, kein „falscher Kanal" und kein Zustell-Bug. Korollar: beim Senden die
-Empfänger-Slug prüfen. Operative Regel: siehe `docs/superpowers/skills/knowledge-routing.md`.
+Empfänger-Slug prüfen. Operative Regel: siehe `docs/method/enactment/skills/knowledge-routing.md`.
 
 ### Was OE mit einem Wissens-Briefing macht
 1. Wenn es die **Struktur des Systems** betrifft (neue Abgrenzung, neues Kollaborationsmuster):

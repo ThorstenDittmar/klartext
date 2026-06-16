@@ -11,7 +11,7 @@
 > **L3 definition:** [`../../library/practices/tdd.md`](../../library/practices/tdd.md)
 > **Upstream Resource:** [`../../library/resources/superpowers.md`](../../library/resources/superpowers.md) (`superpowers:test-driven-development`)
 > **Status:** living (ritual) · **Owner:** QA (test standards) / OE (composition shape, L3) · **Advances Alpha:** Software System + Way of Working · **NN:** ✓
-> **Enacted as:** the `tdd` skill (`docs/superpowers/skills/tdd/SKILL.md`) + the structural coverage check (`scripts/check_test_coverage.py`)
+> **Enacted as:** the `tdd` skill (`docs/method/enactment/skills/tdd/SKILL.md`) + the structural coverage check (`scripts/check_test_coverage.py`)
 
 ## klartext bindings
 
@@ -77,4 +77,4 @@ step of the `tdd` skill.
 - L3 wrapper card: [`../../library/practices/tdd.md`](../../library/practices/tdd.md).
 - Upstream Resource: [`../../library/resources/superpowers.md`](../../library/resources/superpowers.md).
 - Dependency contract: [`../contracts/superpowers.md`](../contracts/superpowers.md) (S2 — the wrapped TDD discipline still carries its Iron Law).
-- The skill source: `docs/superpowers/skills/tdd/SKILL.md` (F3 — not modified by this package).
+- The skill source: `docs/method/enactment/skills/tdd/SKILL.md` (F3 — not modified by this package).

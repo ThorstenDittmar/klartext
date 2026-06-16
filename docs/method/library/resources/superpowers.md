@@ -30,7 +30,7 @@ truth) and is forbidden.
 - **Referenced** — our practice cards name `superpowers:<skill>` as an *External dependency*; they do
   not copy its text.
 - **Never vendored** — the plugin's skill files are not committed into the klartext repo. (Our
-  `docs/superpowers/skills/` holds *our own wrapper skills* — the thin `tdd` / `systematic-debugging`
+  `docs/method/enactment/skills/` holds *our own wrapper skills* — the thin `tdd` / `systematic-debugging`
   loaders that invoke the upstream skill — not the upstream skills themselves.)
 - **Never extracted into L3** — when the L3 Library is extracted (`filter-repo`) to travel to another
   endeavour, the **referenced material does not travel** (a consumer installs the plugin themselves,
