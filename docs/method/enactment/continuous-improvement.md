@@ -572,7 +572,7 @@ anything where oversight / real context matters.
 #### Known constraints & required operational mechanisms (growing list)
 
 **C1 — Agent refresh after a skill / `start.sh` change** *(user, 2026-06-09)*
-- **Constraint:** Changes to skills (`docs/superpowers/skills/`, `~/.claude/skills/`) or to start scripts
+- **Constraint:** Changes to skills (`docs/method/enactment/skills/`, `~/.claude/skills/`) or to start scripts
   (`agents/*/start.sh`) only take effect after a **restart of the affected agent session** — `claude.md`,
   permissions and skills are loaded at session start. A running session keeps working with the old state.
 - **Risk:** The refresh is forgotten after a change → an agent keeps working with stale permissions/knowledge

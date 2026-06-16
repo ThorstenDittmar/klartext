@@ -24,7 +24,7 @@ Patterns without automated enforcement are documentation, not standards.
 
 ## Frontend Development
 Use the `frontend` skill. It loads the project-level style guide and agent instructions from
-`docs/superpowers/skills/frontend.md`.
+`docs/method/enactment/skills/frontend.md`.
 
 ### API Contract Rule
 When modifying a Pydantic response schema (`api/schemas/`), update the corresponding
@@ -401,12 +401,12 @@ Project-level baseline permissions (all agents): `.claude/settings.json`
 
 | Agent | Domain |
 |---|---|
-| OE | Multi-Agent-Struktur, Onboarding, Zusammenarbeit (`agents/` vollständig, cross-agent Skills in `docs/superpowers/skills/`) |
+| OE | Multi-Agent-Struktur, Onboarding, Zusammenarbeit (`agents/` vollständig, cross-agent Skills in `docs/method/enactment/skills/`) |
 | Hannibal | Projektleitung, Planung, Koordination großer Arbeitspakete (`docs/superpowers/plans/`) |
 | DevOps | Infrastructure, CI/CD, Tooling — Gatekeeper |
 | System Architect | Architecture decisions, Coding Standards (`CLAUDE.md`, `docs/adr/`, `.semgrep/rules/arch/`) |
 | UX/UI | React components, frontend (`frontend/src/`) — führt `verify`-Skill aus (QA-owned) |
-| QA | Tests, coverage (`api/tests/`, `.semgrep/rules/qa/`), Frontend-Kriterien (`docs/superpowers/skills/verify.md`, `frontend-testing.md`) |
+| QA | Tests, coverage (`api/tests/`, `.semgrep/rules/qa/`), Frontend-Kriterien (`docs/method/enactment/skills/verify.md`, `frontend-testing.md`) |
 | Narrative Expert | Narrative domain backend (`api/*/narrative*`) |
 | Causal Model Expert | Wirkgefüge backend (`api/*/causal_model*`) |
 | Audit Expert | Verification procedures, claim extraction (`api/providers/`) |

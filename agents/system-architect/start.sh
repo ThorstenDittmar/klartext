@@ -6,7 +6,7 @@
 # Grants write access to:
 #   - CLAUDE.md                       (coding standards, shared mit DevOps)
 #   - docs/adr/                       (Architecture Decision Records)
-#   - docs/superpowers/skills/        (projekt-spezifische Skills)
+#   - docs/method/enactment/skills/        (projekt-spezifische Skills)
 #   - .semgrep/rules/arch/            (Architektur-Semgrep-Rules)
 #
 # Read/Analyse permissions are granted project-wide in .claude/settings.json.
