@@ -173,7 +173,7 @@ section "Auto-memory location"
 # pin redirects EVERY machine session — klartext or not — onto the team memory. This
 # setup step therefore (1) ensures the directory exists and (2) CLEANS any stale
 # user-global pin left by previous setup runs, so unrelated projects stop leaking.
-# Empirics behind this: docs/superpowers/improvement/environment/claude-code-app.md.
+# Empirics behind this: docs/method/enactment/environment/claude-code-app.md.
 MEMORY_DIR="$HOME/.claude/klartext-team-memory"
 USER_SETTINGS="$HOME/.claude/settings.json"
 

@@ -28,10 +28,11 @@ ordinary code/test PRs.
 ## Scope decision
 
 The trigger-path list is **OE's literal list** plus `agents/**/claude.md` (Hoheitswissen
-is WoW). The broader method docs under `docs/superpowers/improvement/**` are
-**deliberately excluded for now** (user decision 2026-06-15). A note has been sent to OE
-to re-evaluate broadening the scope after a few weeks of practice; the path list lives in
-one place (`scripts/classify_gate.py`), so broadening is a one-line + one-test change.
+is WoW). The broader method docs were **deliberately excluded at first** (user decision
+2026-06-15), then **included in F0.3** (2026-06-16): the method content migrated from
+`docs/superpowers/improvement/**` to **`docs/method/**`** (ADR-0013), which is now a trigger
+path. The path list lives in one place (`scripts/classify_gate.py`), so broadening is a
+one-line + one-test change.
 
 ## Trigger-path list
 
@@ -162,7 +163,8 @@ scripts/classify_gate.py :: evaluate(changed_paths, labels)
 | trigger path changed + both labels | FAIL |
 | each trigger pattern matches a representative path | matched |
 | near-miss `docs/adr/0012-...md` | NOT a trigger |
-| near-miss `docs/superpowers/improvement/practices/x.md` | NOT a trigger (scope decision) |
+| `docs/method/library/practices/x.md` | IS a trigger (method surface, added F0.3) |
+| legacy `docs/superpowers/improvement/practices/x.md` | NOT a trigger (emptied legacy tree) |
 
 `qa-review` is run before completion (DevOps DoD: QA frees infrastructure tests via the
 four-eyes principle).
@@ -172,9 +174,9 @@ four-eyes principle).
 - **Branch-protection "required" toggle.** The gate only *binds* once it is marked a
   required status check in branch protection — a repo-admin setting. Flagged to the
   user / OE; not silently changed.
-- **Broadening the trigger paths** beyond OE's list. Two candidates noticed during design,
-  both deferred to the post-practice review (note sent to OE 2026-06-15):
-  - `docs/superpowers/improvement/**` — the method docs proper (practices, kernel).
+- **Broadening the trigger paths** beyond OE's list. The method-docs candidate
+  (`docs/method/**`, formerly `docs/superpowers/improvement/**`) was **adopted in F0.3**
+  (2026-06-16). Still deferred:
   - `.github/workflows/**` — CI changes can themselves be breaking (e.g. removing a
     required check). Not in OE's list; left out for now to match the approved scope.
 

@@ -289,6 +289,7 @@ GitHub Actions workflows run on every push and pull request:
 | `lint.yml` | push to `main` / PR | `ruff check`, `ruff format --check`, `mypy` on API; `eslint`, `tsc` on frontend |
 | `test.yml` | push to `main` / PR | Unit tests (no Supabase required) |
 | `classify-gate.yml` | PR | Requires a `rolling`/`breaking` label on Way-of-Working PRs (see below) |
+| `method-classification.yml` | PR | Enforces the method path-classification + card well-formedness gate (F0.3, see below) |
 | `deploy-docs.yml` | push to `main` (docs/** changed) | Builds and deploys MkDocs to GitHub Pages |
 
 > CI triggers on `push` are restricted to `main`; PRs are validated via the `pull_request`
@@ -305,12 +306,29 @@ decision lives in `scripts/classify_gate.py`.
 | `rolling` | Additive / backward-compatible. Worktrees adopt it lazily via `klartext converge`. |
 | `breaking` | Changes the meaning of an existing rule, hook, path, or contract. Needs a coordinated rollout (all worktrees converge before it is relied upon). |
 
-**In-scope surfaces:** `CLAUDE.md`, `docs/superpowers/skills/**`, `agents/**/claude.md`,
-`.claude/settings.json`, `scripts/**`, `api/cli.py`.
+**In-scope surfaces:** `CLAUDE.md`, `docs/method/**`, `docs/superpowers/skills/**`,
+`agents/**/claude.md`, `.claude/settings.json`, `scripts/**`, `api/cli.py`.
 
 The gate is **default-free** — if unsure, choose `breaking`. PRs that touch no Way-of-Working
 surface need no label (the gate passes automatically). Adding the label re-runs the check
 without a new commit (it listens for `labeled`/`unlabeled` events).
+
+### Method classification gate (`method-classification.yml`)
+
+The mechanical half of the F0 acceptance criterion ([ADR-0013](adr/0013-separating-method-from-product.md)).
+`scripts/method_classification.py` scans the whole method tree and fails the PR if:
+
+- **path classification** — the migrated legacy tree `docs/superpowers/improvement/**` is no longer
+  empty, or a card is *half-split* (carries both an `Essence type:` self-definition and an
+  `L3 definition:` delegation pointer);
+- **well-formedness** — an element card under `docs/method/{library,enactment}/` is malformed: a
+  standalone card missing its `Essence type` (clean enum token) or `External dependencies` field, a
+  practice card missing `Advances Alpha` / `Work Products` / `Activity / Activity Space`, or an L2
+  practice card that neither delegates (`L3 definition:` pointer) nor carries the fields inline
+  (delegate-XOR-standalone).
+
+The card form is defined in `docs/method/library/_card-template.md` (SA-ratified). Semantic correctness
+(e.g. klartext evidence leaking into an L3 card) is **not** mechanically checkable and stays SA's review.
 
 ---
 

@@ -1,0 +1,33 @@
+name: Method Classification
+
+# F0.3 / ADR-0013: the mechanical half of the F0 acceptance criterion. Method content must live in
+# the L3/L2 stems (docs/method/{library,enactment}/), the emptied legacy tree
+# docs/superpowers/improvement/** must stay empty, and every Essence element card must be
+# type-conditionally well-formed (Essence type + External dependencies; practices also need the §3
+# fields; L2 practices are delegate-XOR-standalone). The decision lives in
+# scripts/method_classification.py (unit-tested in api/tests/infrastructure/test_method_classification.py);
+# this workflow only runs it over the checked-out tree and forwards the exit code.
+#
+# Intentionally NOT path-filtered: the job always runs and always reports a status, so it can be a
+# required check without the "skipped required check blocks merge forever" footgun. The script scans
+# the whole method tree (not just the PR diff) — the acceptance gate is a property of the library, not
+# of one diff. Semantic bleed stays SA's well-formedness review; this gate is the mechanical half.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  classify-method:
+    name: Method path-classification + well-formedness
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Run method classification gate
+        run: python3 scripts/method_classification.py

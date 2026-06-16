@@ -49,10 +49,26 @@ def test_near_miss_adr_path_is_not_a_trigger() -> None:
     assert result.passed is True
 
 
-def test_near_miss_improvement_docs_are_not_a_trigger() -> None:
-    """Expects docs/superpowers/improvement/.. to be out of scope (deliberate scope decision)."""
+def test_near_miss_legacy_improvement_docs_are_not_a_trigger() -> None:
+    """Expects docs/superpowers/improvement/.. to NOT be a trigger — it is the emptied legacy tree.
+
+    The method content moved to docs/method/ in F0.1/F0.2; the live WoW surface is docs/method/**
+    (see test below). A stray path under the old, now-empty tree is not a WoW trigger.
+    """
     result = _gate.evaluate(["docs/superpowers/improvement/practices/improvement-step.md"], set())
     assert result.passed is True
+
+
+def test_method_docs_are_a_trigger() -> None:
+    """Expects docs/method/** (the migrated WoW method surface) to be a classification trigger.
+
+    Method changes previously escaped the rolling|breaking gate; F0.3 added docs/method/** to close
+    that scope gap. A method-doc PR without a label must now FAIL until classified.
+    """
+    assert _gate.is_trigger_path("docs/method/library/practices/tdd.md") is True
+    assert _gate.is_trigger_path("docs/method/enactment/method.md") is True
+    result = _gate.evaluate(["docs/method/library/practices/tdd.md"], set())
+    assert result.passed is False
 
 
 # --- each trigger pattern matches a representative path ------------------------------------
@@ -63,6 +79,7 @@ def test_each_trigger_pattern_matches_a_representative_path() -> None:
     representatives = [
         "CLAUDE.md",
         "docs/superpowers/skills/tdd.md",
+        "docs/method/library/practices/tdd.md",
         "agents/devops/claude.md",
         ".claude/settings.json",
         "scripts/session_health.py",
