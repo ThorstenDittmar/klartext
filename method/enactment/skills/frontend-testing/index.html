@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/method/enactment/practices/tdd/">
+        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/method/enactment/skills/frontend-testing/">
       
       
       
@@ -23,7 +23,7 @@
     
     
       
-        <title>Test-Driven Development — klartext enactment - klartext.jetzt – Spezifikation</title>
+        <title>Frontend Testing — Vollständigkeitskriterien - klartext.jetzt – Spezifikation</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#test-driven-development-klartext-enactment" class="md-skip">
+        <a href="#frontend-testing-vollstandigkeitskriterien" class="md-skip">
           Zum Inhalt
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Test-Driven Development — klartext enactment
+              Frontend Testing — Vollständigkeitskriterien
             
           </span>
         </div>
@@ -1650,7 +1650,7 @@
 
 
   
-    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/method/enactment/practices/tdd.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/method/enactment/skills/frontend-testing.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1658,94 +1658,665 @@
   
 
 
-<h1 id="test-driven-development-klartext-enactment">Test-Driven Development — klartext enactment<a class="headerlink" href="#test-driven-development-klartext-enactment" title="Permanent link">&para;</a></h1>
+<h1 id="frontend-testing-vollstandigkeitskriterien">Frontend Testing — Vollständigkeitskriterien<a class="headerlink" href="#frontend-testing-vollstandigkeitskriterien" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Scope.</strong> klartext's enactment of the <strong>tdd</strong> wrapper practice: the concrete test bindings that
-extend the upstream discipline — the inside-out test levels, fakes-not-mocks, the Supabase
-integration-test rule, the <code>/health</code> endpoint rule, and the <code>qa-review</code> close-out step.
-<strong>Out of scope.</strong> The generic TDD discipline (red-green-refactor, the Iron Law) — that is
-<code>superpowers:test-driven-development</code>, <strong>referenced, not restated</strong> here. The composition shape — see
-the L3 wrapper card.
-<strong>Language.</strong> English — documentation-language rule.</p>
-<p><strong>L3 definition:</strong> <a href="../../../library/practices/tdd/"><code>../../library/practices/tdd.md</code></a>
-<strong>Upstream Resource:</strong> <a href="../../../library/resources/superpowers/"><code>../../library/resources/superpowers.md</code></a> (<code>superpowers:test-driven-development</code>)
-<strong>Status:</strong> living (ritual) · <strong>Owner:</strong> QA (test standards) / OE (composition shape, L3) · <strong>Advances Alpha:</strong> Software System + Way of Working · <strong>NN:</strong> ✓
-<strong>Enacted as:</strong> the <code>tdd</code> skill (<code>docs/method/enactment/skills/tdd/SKILL.md</code>) + the structural coverage check (<code>scripts/check_test_coverage.py</code>)</p>
+<p><strong>Dieses Dokument beschreibt das WAS und WANN — nicht das WIE.</strong>
+Das technische Wie (Stack, Query-Hierarchie, <code>renderWithProviders</code>, <code>vi.mock</code>)
+steht in <code>docs/method/enactment/skills/frontend.md</code>.</p>
 </blockquote>
-<h2 id="klartext-bindings">klartext bindings<a class="headerlink" href="#klartext-bindings" title="Permanent link">&para;</a></h2>
-<h3 id="test-levels-inside-out">Test levels — inside out<a class="headerlink" href="#test-levels-inside-out" title="Permanent link">&para;</a></h3>
-<p>Test in this order; each level has a distinct tool and isolation boundary:</p>
+<hr />
+<h2 id="schichten-aquivalente">Schichten-Äquivalente<a class="headerlink" href="#schichten-aquivalente" title="Permanent link">&para;</a></h2>
+<p>Das Backend hat vier Testschichten (Domain / Service / Repository / Router).
+Das Frontend hat drei:</p>
 <table>
 <thead>
 <tr>
-<th>Level</th>
-<th>What is tested</th>
-<th>Isolation</th>
+<th>Frontend</th>
+<th>Backend-Äquivalent</th>
+<th>Was wird getestet</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Domain</strong></td>
-<td>pure unit tests — invariants, factory methods, state changes</td>
-<td>no mocks, no external systems</td>
+<td>Hook</td>
+<td>Domain + Service</td>
+<td>Reine Logik: Zustandsübergänge, Return-Werte, Fehler-State</td>
 </tr>
 <tr>
-<td><strong>Service</strong></td>
-<td>business logic, orchestration</td>
-<td><strong>fake repositories</strong> (in-memory), no Supabase</td>
+<td>Component</td>
+<td>Service</td>
+<td>Darstellungslogik: Render-Varianten, Interaktionen, i18n</td>
 </tr>
 <tr>
-<td><strong>Repository</strong></td>
-<td>SQL / PostgREST queries</td>
-<td><code>@pytest.mark.integration</code> against the real test DB</td>
-</tr>
-<tr>
-<td><strong>Router</strong></td>
-<td>the HTTP contract (status, body, wiring)</td>
-<td><code>AsyncClient</code> + <code>ASGITransport</code></td>
+<td>Page</td>
+<td>Router</td>
+<td>Vollintegration: Datenladen, alle States, User-Flows — API gemockt</td>
 </tr>
 </tbody>
 </table>
-<h3 id="fakes-not-mocks">Fakes, not mocks<a class="headerlink" href="#fakes-not-mocks" title="Permanent link">&para;</a></h3>
-<p>Service tests use <strong>real in-memory fake repositories</strong> (classes), never mock objects. A fake must honor
-the full interface contract — <strong>no silent constants</strong> (<code>claim_count=0</code> is forbidden; use a
-test-controllable <code>set_claim_count()</code> helper) and <strong>behavioral parity</strong> (a fake raises the same
-exception on the same condition the real repo does — asymmetry in the fake is a red flag). See the QA
-fake-contract rules.</p>
-<h3 id="supabase-integration-test-rule">Supabase integration-test rule<a class="headerlink" href="#supabase-integration-test-rule" title="Permanent link">&para;</a></h3>
-<p>Every new <code>SupabaseXRepository</code> method gets an <code>@pytest.mark.integration</code> test <strong>in the same commit</strong> as
-the implementation — unit tests with the fake are <em>not sufficient</em> (the fake cannot verify SQL /
-embedded PostgREST counts / FK relationships). Required signals: JOINs, embedded counts
-(<code>table(count)</code>), multi-table queries.</p>
-<h3 id="health-endpoint-rule">Health-endpoint rule<a class="headerlink" href="#health-endpoint-rule" title="Permanent link">&para;</a></h3>
-<p>Every service router gets <code>GET /&lt;resource&gt;/health</code> (HTTP 200, <code>{"status": "ok"}</code>, no auth) <strong>added
-first</strong>, before any other endpoint — and a router test asserting it. Enforced by test, not by review.</p>
-<h3 id="qa-review-close-out-tdd-step-3">qa-review close-out (TDD Step 3)<a class="headerlink" href="#qa-review-close-out-tdd-step-3" title="Permanent link">&para;</a></h3>
-<p>Before "done", invoke <code>qa-review</code> — the QA sub-agent reviews the diff with fresh eyes (coverage, edge
-cases, infrastructure tests, fake-contract completeness, domain composition). All-green is necessary,
-not sufficient. <strong>Bug fixes:</strong> after the fix is green, invoke <code>qa-retro</code> if the bug should have been
-caught originally.</p>
-<h3 id="structural-invariants-mechanical">Structural invariants (mechanical)<a class="headerlink" href="#structural-invariants-mechanical" title="Permanent link">&para;</a></h3>
-<p><code>scripts/check_test_coverage.py</code> enforces three invariants — no manual review substitutes:</p>
-<ol>
-<li>every source file in <code>models/</code> <code>services/</code> <code>repositories/</code> <code>routers/</code> has a <code>test_&lt;stem&gt;*.py</code>;</li>
-<li>every <code>test_*_router.py</code> has a <code>health</code>-named function;</li>
-<li>every <code>supabase_*.py</code> repository has at least one <code>@pytest.mark.integration</code> test.</li>
-</ol>
-<h3 id="frontend">Frontend<a class="headerlink" href="#frontend" title="Permanent link">&para;</a></h3>
-<p>For React/TypeScript work, additionally apply the <code>frontend-testing</code> skill (QA-defined completeness
-criteria extending these standards).</p>
-<h2 id="enforcement-klartext">Enforcement (klartext)<a class="headerlink" href="#enforcement-klartext" title="Permanent link">&para;</a></h2>
-<p>Ritual at invocation (the skill runs at the start of every feature/bugfix); <strong>mechanical</strong> for the three
-structural invariants (<code>check_test_coverage.py</code>). The <code>qa-review</code> close-out is a non-optional ritual
-step of the <code>tdd</code> skill.</p>
-<h2 id="related">Related<a class="headerlink" href="#related" title="Permanent link">&para;</a></h2>
+<p><strong>E2E (Playwright) ist kein Teil dieser Ebenen</strong> — es testet echte Browser + Backend.
+Kriterien dafür stehen nicht in diesem Dokument.</p>
+<hr />
+<h2 id="vollstandigkeitskriterien">Vollständigkeitskriterien<a class="headerlink" href="#vollstandigkeitskriterien" title="Permanent link">&para;</a></h2>
+<h3 id="page">Page<a class="headerlink" href="#page" title="Permanent link">&para;</a></h3>
+<p>Eine Page ist ausreichend getestet wenn folgende Szenarien abgedeckt sind:</p>
+<p><strong>Obligatorisch:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Szenario</th>
+<th>Warum obligatorisch</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Loading state sichtbar</td>
+<td>Spinner/Skeleton verhindert Blank-Screen-Bugs</td>
+</tr>
+<tr>
+<td>Success state — Daten rendern</td>
+<td>Kernfunktion der Page</td>
+</tr>
+<tr>
+<td>API-Fehler → Fehlermeldung sichtbar</td>
+<td>Kein stiller Fehler, kein Infinite Spinner</td>
+</tr>
+<tr>
+<td>404 / Ressource nicht gefunden</td>
+<td>Wenn die Page eine spezifische Ressource lädt</td>
+</tr>
+<tr>
+<td>User-Interaktion Happy Path</td>
+<td>Jede Aktion die persistiert werden soll (mindestens 1)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Optional (empfohlen, kein Review-Blocker):</strong></p>
 <ul>
-<li>L3 wrapper card: <a href="../../../library/practices/tdd/"><code>../../library/practices/tdd.md</code></a>.</li>
-<li>Upstream Resource: <a href="../../../library/resources/superpowers/"><code>../../library/resources/superpowers.md</code></a>.</li>
-<li>Dependency contract: <a href="../../contracts/superpowers/"><code>../contracts/superpowers.md</code></a> (S2 — the wrapped TDD discipline still carries its Iron Law).</li>
-<li>The skill source: <code>docs/method/enactment/skills/tdd/SKILL.md</code> (F3 — not modified by this package).</li>
+<li>Empty state (Liste ist leer nach erfolgreichem Load)</li>
+<li>Mehrere gleichzeitige Fehler-Zustände</li>
+<li>Optimistic UI / Race conditions</li>
 </ul>
+<p><strong>Trigger: wann braucht eine neue Page einen Test?</strong>
+Immer — keine Page shipped ohne Testdatei.</p>
+<hr />
+<h3 id="component">Component<a class="headerlink" href="#component" title="Permanent link">&para;</a></h3>
+<p>Ein Component ist ausreichend getestet wenn:</p>
+<p><strong>Obligatorisch:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Szenario</th>
+<th>Warum obligatorisch</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Default-Render mit minimal required Props</td>
+<td>Verhindert Crash bei der häufigsten Verwendung</td>
+</tr>
+<tr>
+<td>Jede visuelle Variante</td>
+<td>z.B. <code>active/inactive</code>, <code>error/success</code>, <code>loading/loaded</code></td>
+</tr>
+<tr>
+<td>User-Interaktion → Callback aufgerufen</td>
+<td>Sichert dass <code>onClick</code>, <code>onChange</code> etc. verdrahtet sind</td>
+</tr>
+<tr>
+<td>i18n — mindestens ein übersetzter String vorhanden</td>
+<td>Verhindert fehlende/falsche Keys in Production</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Optional:</strong></p>
+<ul>
+<li>Edge cases mit extremen Props (sehr langer Text, leere Array, <code>null</code>)</li>
+<li>Keyboard-Navigation und Fokus-Verhalten (wichtig für Accessibility, aber kein QA-Blocker)</li>
+</ul>
+<p><strong>Trigger: wann braucht ein neues Component einen Test?</strong>
+Wenn es eigene Logik hat (Interaktion, Conditional Rendering, Datenformatierung).
+Reine Layout-Wrapper ohne Logik können übersprungen werden — Urteil liegt beim QA-Review.</p>
+<hr />
+<h3 id="hook">Hook<a class="headerlink" href="#hook" title="Permanent link">&para;</a></h3>
+<p>Ein Hook ist ausreichend getestet wenn:</p>
+<p><strong>Obligatorisch:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Szenario</th>
+<th>Warum obligatorisch</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Initial State</td>
+<td>Was liefert der Hook beim ersten Render?</td>
+</tr>
+<tr>
+<td>Success Path — State nach API-Call</td>
+<td><code>data</code> korrekt, <code>isLoading</code> false, <code>error</code> null</td>
+</tr>
+<tr>
+<td>Error Path — State nach API-Fehler</td>
+<td><code>error</code> gesetzt, <code>isLoading</code> false, <code>data</code> leer/null</td>
+</tr>
+<tr>
+<td><code>isLoading</code> während des Calls</td>
+<td>Verhindert Zustand wo UI auf nie-kommende Daten wartet</td>
+</tr>
+<tr>
+<td>Callback-Aufruf triggert State-Update</td>
+<td>Sichert dass die zurückgegebenen Funktionen funktionieren</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Optional:</strong></p>
+<ul>
+<li>Debouncing / Throttling-Verhalten</li>
+<li>Refetch-Logik nach State-Änderungen</li>
+<li>Cache-Invalidierung</li>
+</ul>
+<p><strong>Trigger: wann braucht ein neuer Hook einen Test?</strong>
+Immer — kein Hook shipped ohne Test. Hooks sind die einzige Schicht wo
+API-Logik und State zusammenkommen, Bugs hier propagieren in alle Pages.</p>
+<hr />
+<h2 id="obligatorische-fehlerpfade">Obligatorische Fehlerpfade<a class="headerlink" href="#obligatorische-fehlerpfade" title="Permanent link">&para;</a></h2>
+<p>Diese Fehlerpfade müssen immer getestet sein — kein optionaler Ermessensspielraum:</p>
+<table>
+<thead>
+<tr>
+<th>Wo</th>
+<th>Fehlerpfad</th>
+<th>Erwartung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Jede Page mit API-Call</td>
+<td>Netzwerkfehler / 500</td>
+<td>Fehlermeldung sichtbar, kein Infinite Spinner</td>
+</tr>
+<tr>
+<td>Jede Page die Ressource per ID lädt</td>
+<td>404 Not Found</td>
+<td>Sinnvolle Meldung, kein Crash</td>
+</tr>
+<tr>
+<td>Jeder Hook mit <code>async</code></td>
+<td><code>rejected</code> Promise</td>
+<td><code>error</code>-State gesetzt, <code>isLoading</code> false</td>
+</tr>
+<tr>
+<td>Jedes Component mit <code>error</code>-Prop</td>
+<td>Error-Zustand gerendert</td>
+<td>Error-Variante sichtbar im DOM</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Nicht obligatorisch (kann aber reviewt werden):</strong></p>
+<ul>
+<li>401 / 403 — nur wenn die Page explizit Auth-Logik hat</li>
+<li>Timeout-Szenarien</li>
+<li>Mehrfach-Klick / Double-Submit</li>
+</ul>
+<hr />
+<h2 id="abgrenzung-zu-e2e">Abgrenzung zu E2E<a class="headerlink" href="#abgrenzung-zu-e2e" title="Permanent link">&para;</a></h2>
+<p>Frontend-Unit-Tests decken ab:
+- Alle States innerhalb einer Page/Component/Hook
+- API-Responses (gemockt — kein echter Server)
+- Routing nur über <code>MemoryRouter</code> (kein echter Browser)</p>
+<p>E2E-Tests (Playwright) decken ab:
+- Echter Browser + echter Backend-Request
+- Auth-Flows end-to-end
+- Navigation über mehrere Pages
+- Formulare, die echte Datenbankänderungen verursachen</p>
+<p><strong>QA reviewt keine E2E-Vollständigkeit im normalen Review-Flow.</strong>
+E2E-Kriterien kommen in ein separates Dokument wenn dieser Bereich etabliert wird.</p>
+<hr />
+<h2 id="qa-review-checkliste">QA Review — Checkliste<a class="headerlink" href="#qa-review-checkliste" title="Permanent link">&para;</a></h2>
+<p>Wenn QA nach einer Frontend-Implementierung reviewt:</p>
+<h3 id="struktur-check-maschinell-prufbar">Struktur-Check (maschinell prüfbar)<a class="headerlink" href="#struktur-check-maschinell-prufbar" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Gibt es Testdateien für neue Pages?</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>find<span class="w"> </span>frontend/src/pages/__tests__<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;*.test.tsx&quot;</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># Gibt es Testdateien für neue Components mit Logik?</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>find<span class="w"> </span>frontend/src/components/__tests__<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;*.test.tsx&quot;</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1"># Gibt es Testdateien für neue Hooks?</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>find<span class="w"> </span>frontend/src/hooks/__tests__<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;*.test.tsx&quot;</span>
+</code></pre></div>
+<h3 id="inhalt-check-manuell-pro-testdatei">Inhalt-Check (manuell, pro Testdatei)<a class="headerlink" href="#inhalt-check-manuell-pro-testdatei" title="Permanent link">&para;</a></h3>
+<p><strong>Für jede neue Page:</strong>
+- [ ] Loading state getestet (<code>waitFor</code> + Spinner/Skeleton)
+- [ ] Success state getestet (Daten im DOM)
+- [ ] API-Fehler getestet (Fehlermeldung im DOM)
+- [ ] 404-Fall getestet (wenn Page eine Ressource per ID lädt)
+- [ ] Happy Path für Haupt-Interaktion getestet (wenn Buttons/Formulare vorhanden)</p>
+<p><strong>Für jede neue Component mit Logik:</strong>
+- [ ] Default-Render getestet
+- [ ] Alle visuellen Varianten getestet
+- [ ] User-Interaktion → Callback aufgerufen getestet
+- [ ] Mindestens ein i18n-String verifiziert</p>
+<p><strong>Für jeden neuen Hook:</strong>
+- [ ] Initial State verifiziert
+- [ ] Success Path verifiziert
+- [ ] Error Path verifiziert
+- [ ] <code>isLoading</code> während des Calls verifiziert</p>
+<h3 id="qualitats-check-uberall">Qualitäts-Check (Überall)<a class="headerlink" href="#qualitats-check-uberall" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] Kein <code>setTimeout</code> in Tests — nur <code>waitFor</code></li>
+<li>[ ] Kein echter API-Aufruf — alle Calls mit <code>vi.mock</code> gemockt</li>
+<li>[ ] <code>renderWithProviders()</code> verwendet wo i18n oder Router nötig</li>
+<li>[ ] Queries folgen der Hierarchie: <code>getByRole</code> &gt; <code>getByLabelText</code> &gt; <code>getByText</code> &gt; <code>getByTestId</code></li>
+</ul>
+<hr />
+<h2 id="bezug-zur-quality-checklist-in-frontendmd">Bezug zur Quality Checklist in frontend.md<a class="headerlink" href="#bezug-zur-quality-checklist-in-frontendmd" title="Permanent link">&para;</a></h2>
+<p>Die Tests-Sektion der Quality Checklist in <code>frontend.md</code> beschreibt die Mindestanforderungen
+die UX/UI beim Commit prüft. Die Kriterien hier sind feiner granuliert und dienen QA beim Review.</p>
+<p>Wenn QA einen Testtyp vermisst der nicht in der frontend.md-Checkliste steht:
+→ Briefing an UX/UI formulieren mit Vorschlag für Ergänzung der Checkliste.</p>
+<hr />
+<h2 id="shared-components-kritische-props-kombinationen">Shared Components — Kritische Props-Kombinationen<a class="headerlink" href="#shared-components-kritische-props-kombinationen" title="Permanent link">&para;</a></h2>
+<p>Diese Sektion ergänzt die allgemeinen Component-Kriterien um komponentenspezifische
+Kombinationen wo Bugs erfahrungsgemäß versteckt sind.</p>
+<h3 id="button">Button<a class="headerlink" href="#button" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Kombination</th>
+<th>Was getestet werden muss</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>isLoading=true</code></td>
+<td><code>disabled</code> gesetzt UND <code>aria-busy="true"</code> — beide, nicht nur einer</td>
+</tr>
+<tr>
+<td><code>disabled=true</code></td>
+<td><code>onClick</code> wird NICHT aufgerufen</td>
+</tr>
+<tr>
+<td><code>variant="nav-item"</code> + <code>isActive=true</code></td>
+<td>Active-Styling sichtbar im DOM</td>
+</tr>
+<tr>
+<td><code>variant="nav-item"</code> + <code>isActive=false</code></td>
+<td>Kein Active-Styling</td>
+</tr>
+</tbody>
+</table>
+<p>Tückisch: <code>isLoading</code> muss beides gleichzeitig setzen. Wenn nur <code>disabled</code> oder nur <code>aria-busy</code>
+gesetzt wird, ist entweder Accessibility oder Interaktion kaputt.</p>
+<h3 id="badge">Badge<a class="headerlink" href="#badge" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Jede <code>colorKey</code>-Variante (<code>green</code>, <code>amber</code>, <code>red</code>, <code>blue</code>, <code>teal</code>, <code>default</code>) rendert ohne Crash</li>
+<li>Kein onClick, kein Interaktions-Test nötig</li>
+</ul>
+<h3 id="countbadge">CountBadge<a class="headerlink" href="#countbadge" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Kombination</th>
+<th>Was getestet werden muss</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>count=0</code> (default: <code>hideWhenZero=true</code>)</td>
+<td>Rendert <code>null</code> — nicht leer, nicht <code>0</code></td>
+</tr>
+<tr>
+<td><code>count=0</code> + <code>hideWhenZero=false</code></td>
+<td>Rendert sichtbare <code>0</code></td>
+</tr>
+<tr>
+<td><code>count &gt; max</code> (default max=99)</td>
+<td>Zeigt <code>"99+"</code>, nicht die echte Zahl</td>
+</tr>
+<tr>
+<td><code>variant="dot"</code></td>
+<td>Keine Zahl im DOM</td>
+</tr>
+</tbody>
+</table>
+<p>Tückisch: <code>hideWhenZero=true</code> ist der Default. Ein Test mit <code>count=0</code> der keinen null-Check macht
+besteht auch wenn die Komponente fälschlicherweise <code>0</code> anzeigt.</p>
+<h3 id="inlinecodebadge">InlineCodeBadge<a class="headerlink" href="#inlinecodebadge" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>copyable=true</code> → Copy-Button im DOM vorhanden</li>
+<li>Copy-Button-Klick → Clipboard-Interaktion ausgelöst (mit <code>navigator.clipboard</code> mock)</li>
+<li><code>&lt;code&gt;</code>-Element gerendert (semantisches HTML)</li>
+</ul>
+<h3 id="avatar">Avatar<a class="headerlink" href="#avatar" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Szenario</th>
+<th>Was getestet werden muss</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>src</code> vorhanden, Bild lädt</td>
+<td>Img-Element gerendert</td>
+</tr>
+<tr>
+<td><code>src</code> vorhanden, Bild lädt NICHT (onError)</td>
+<td>Fällt auf Initialen zurück</td>
+</tr>
+<tr>
+<td>Kein <code>src</code>, <code>name</code> vorhanden</td>
+<td>Initialen-Fallback direkt</td>
+</tr>
+<tr>
+<td>Kein <code>src</code>, kein <code>name</code></td>
+<td>Placeholder-Fallback</td>
+</tr>
+<tr>
+<td>Gleicher <code>name</code> zweimal</td>
+<td>Selbe Initialen-Farbe (deterministischer Hash)</td>
+</tr>
+</tbody>
+</table>
+<p>Tückisch: Der img-onError-Fallback ist async. Test muss das Bild-Load-Failure simulieren,
+nicht nur <code>src</code> weglassen.</p>
+<p>⚠️ <strong>Bekannte Lücke:</strong> Der Fallback-Test (<code>src</code> lädt nicht → Initialen) fehlt aktuell.
+Nur der Happy Path (Bild vorhanden) ist getestet. Wird nachgezogen.</p>
+<h3 id="emptystate">EmptyState<a class="headerlink" href="#emptystate" title="Permanent link">&para;</a></h3>
+<p>Props sind per Discriminated Union erzwungen — TypeScript erlaubt nur zwei gültige Kombinationen:</p>
+<table>
+<thead>
+<tr>
+<th>Kombination</th>
+<th>Was getestet werden muss</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Beide Props (<code>actionLabel</code> + <code>onAction</code>)</td>
+<td>Button sichtbar, Klick ruft <code>onAction</code> auf</td>
+</tr>
+<tr>
+<td>Keine Props</td>
+<td>Kein Button im DOM</td>
+</tr>
+</tbody>
+</table>
+<p>Die ungültige Kombination (<code>actionLabel</code> ohne <code>onAction</code>) ist ein Compile-Fehler — kein Test nötig.
+- <code>title</code> rendert immer (Pflicht-Prop)
+- <code>subtitle</code> optional → Test mit und ohne</p>
+<h3 id="searchinput">SearchInput<a class="headerlink" href="#searchinput" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Kombination</th>
+<th>Was getestet werden muss</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>value=""</code></td>
+<td>Clear-Button NICHT im DOM</td>
+</tr>
+<tr>
+<td><code>value="x"</code></td>
+<td>Clear-Button im DOM</td>
+</tr>
+<tr>
+<td>Clear-Button-Klick</td>
+<td><code>onChange("")</code> aufgerufen — nicht internal state</td>
+</tr>
+</tbody>
+</table>
+<p>Tückisch: Komponente ist controlled. Clear-Button muss <code>onChange</code> aufrufen, nicht selbst state
+setzen. Wenn er state setzt, löscht er visuell aber der Parent weiß nichts davon.</p>
+<h3 id="textinput">TextInput<a class="headerlink" href="#textinput" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Kombination</th>
+<th>Was getestet werden muss</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>errorMessage</code> gesetzt</td>
+<td><code>aria-invalid="true"</code> am <code>&lt;input&gt;</code>, <code>role="alert"</code> an Fehlermeldung</td>
+</tr>
+<tr>
+<td><code>helperText</code> + <code>errorMessage</code> gleichzeitig</td>
+<td>Nur <code>errorMessage</code> sichtbar</td>
+</tr>
+<tr>
+<td><code>readOnly=true</code></td>
+<td>Input hat <code>readOnly</code>-Attribut</td>
+</tr>
+<tr>
+<td><code>disabled=true</code></td>
+<td>Input hat <code>disabled</code>-Attribut</td>
+</tr>
+<tr>
+<td>Label immer</td>
+<td><code>&lt;label&gt;</code> mit <code>htmlFor</code> verknüpft mit Input-<code>id</code></td>
+</tr>
+</tbody>
+</table>
+<p>Tückisch: <code>aria-invalid</code> muss am <code>&lt;input&gt;</code> hängen, nicht am Wrapper. Und <code>role="alert"</code>
+muss an der Fehlermeldung selbst sein, damit Screen Reader sie vorlesen.</p>
+<h3 id="textarea">TextArea<a class="headerlink" href="#textarea" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Wie TextInput, plus:</li>
+<li><code>showCharCount=true</code> + <code>maxLength=N</code> → zeigt <code>"0 / N"</code> initial</li>
+<li>Zähler aktualisiert sich wenn <code>value</code> sich ändert</li>
+<li><code>autoResize=true</code> → Element hat kein <code>overflow: hidden</code> (nicht deaktiviert)</li>
+</ul>
+<p>Hinweis: <code>autoResize</code> ist schwer unit-zu-testen (scrollHeight im jsdom ist immer 0).
+Wenn der Test nicht aussagekräftig ist, lieber weglassen und in verify.md notieren.</p>
+<h3 id="sectionheader">SectionHeader<a class="headerlink" href="#sectionheader" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Kombination</th>
+<th>Was getestet werden muss</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>isCollapsible=true</code> (default)</td>
+<td>Toggle-Button im DOM, <code>aria-expanded</code> vorhanden</td>
+</tr>
+<tr>
+<td>Klick auf Toggle</td>
+<td><code>aria-expanded</code> wechselt zwischen true/false</td>
+</tr>
+<tr>
+<td><code>isCollapsible=false</code></td>
+<td>Kein Toggle-Button im DOM</td>
+</tr>
+<tr>
+<td><code>count</code> prop</td>
+<td>CountBadge im DOM (wenn count &gt; 0)</td>
+</tr>
+<tr>
+<td><code>onAdd</code> + Klick</td>
+<td><code>onAdd</code>-Callback aufgerufen</td>
+</tr>
+<tr>
+<td><code>onAdd</code> + Klick</td>
+<td>Collapse-State ändert sich NICHT (Propagation gestoppt)</td>
+</tr>
+</tbody>
+</table>
+<p>Tückisch: Der letzte Punkt ist der kritischste. Wenn <code>onAdd</code>-Klick durch Event-Propagation
+auch den Toggle auslöst, klappt der Header bei jedem „+" -Klick zusammen.
+Test: SectionHeader mit <code>isCollapsible=true</code> + <code>onAdd</code>. Klick auf „+<code>.</code>aria-expanded`
+muss identisch bleiben.</p>
+<hr />
+<h2 id="manuskriptansicht-kritische-props-kombinationen">Manuskriptansicht — Kritische Props-Kombinationen<a class="headerlink" href="#manuskriptansicht-kritische-props-kombinationen" title="Permanent link">&para;</a></h2>
+<p>Komponenten aus der Manuskriptansicht (Phase 1). Gleiche Kategorisierung wie Shared Components.</p>
+<h3 id="wordcountlabel">WordCountLabel<a class="headerlink" href="#wordcountlabel" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Kombination</th>
+<th>Was getestet werden muss</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>count=1240</code> (kein suffix)</td>
+<td>Rendert <code>"1.240 Wörter"</code> — deutsches Tausend-Trennzeichen</td>
+</tr>
+<tr>
+<td><code>count=0</code></td>
+<td>Rendert <code>"0 Wörter"</code> — KEINE Unterdrückung (keine <code>hideWhenZero</code>-Logik)</td>
+</tr>
+<tr>
+<td><code>suffix="Zeichen"</code></td>
+<td>Rendert mit alternativem Suffix</td>
+</tr>
+<tr>
+<td><code>size="sm"</code></td>
+<td>Element vorhanden und rendert ohne Crash</td>
+</tr>
+<tr>
+<td><code>size="md"</code></td>
+<td>Element vorhanden und rendert ohne Crash</td>
+</tr>
+</tbody>
+</table>
+<p>Tückisch: <code>count.toLocaleString("de-DE")</code> — im jsdom-Default-Locale kann das variieren.
+Test muss das Locale explizit steuern oder den Output <code>"1.240"</code> exakt assertieren.</p>
+<p>⚠️ <strong>Bekannte Lücke:</strong> <code>size</code>-Varianten sind nicht differenziert getestet (SM vs. MD).
+Schwer unit-testbar (CSS Custom Property, kein DOM-Attribut). Statt Lücke schließen:
+in verify.md prüfen.</p>
+<h3 id="autosaveindicator">AutosaveIndicator<a class="headerlink" href="#autosaveindicator" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Kombination</th>
+<th>Was getestet werden muss</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>status="saved"</code></td>
+<td>Gespeichert-Label sichtbar</td>
+</tr>
+<tr>
+<td><code>status="saving"</code></td>
+<td>Speichern-Label sichtbar</td>
+</tr>
+<tr>
+<td><code>status="unsaved"</code></td>
+<td>Ungespeichert-Label sichtbar</td>
+</tr>
+<tr>
+<td>Custom label-Props</td>
+<td>Eigenes Label überschreibt Default</td>
+</tr>
+<tr>
+<td><code>aria-live="polite"</code></td>
+<td>Attribut am span vorhanden — kein optionaler Check</td>
+</tr>
+</tbody>
+</table>
+<p>Alle 3 Status-Varianten sind obligatorisch. <code>aria-live</code> ist Accessibility-Pflicht.</p>
+<h3 id="breadcrumb">Breadcrumb<a class="headerlink" href="#breadcrumb" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Kombination</th>
+<th>Was getestet werden muss</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Letztes Segment</td>
+<td><code>aria-current="page"</code> gesetzt, KEIN onClick</td>
+</tr>
+<tr>
+<td>Nicht-letztes Segment</td>
+<td><code>&lt;button&gt;</code>-Element, Klick ruft <code>onClick</code> auf</td>
+</tr>
+<tr>
+<td><code>separator="chevron"</code> (default)</td>
+<td><code>"›"</code> zwischen Segmenten</td>
+</tr>
+<tr>
+<td><code>separator="slash"</code></td>
+<td><code>"/"</code> zwischen Segmenten</td>
+</tr>
+<tr>
+<td>Einzelnes Segment</td>
+<td>Kein Separator im DOM</td>
+</tr>
+<tr>
+<td><code>&lt;nav aria-label="Breadcrumb"&gt;</code></td>
+<td>Semantische Navigation-Rolle</td>
+</tr>
+</tbody>
+</table>
+<p>Tückisch: Separator-Variante wird leicht vergessen. Beide Separator-Werte müssen
+getestet sein — ein Test für <code>separator="chevron"</code> (default) ist kein Beweis dass
+<code>"slash"</code> korrekt rendert.</p>
+<p>⚠️ <strong>Bekannte Lücke (PR #41):</strong> <code>separator="slash"</code> nicht getestet. Muss vor Phase 2 ergänzt werden.</p>
+<h3 id="scenebreak">SceneBreak<a class="headerlink" href="#scenebreak" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Kombination</th>
+<th>Was getestet werden muss</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>title</code> vorhanden</td>
+<td>Text im DOM sichtbar</td>
+</tr>
+<tr>
+<td>Dekorative Elemente</td>
+<td>Exakt 2 Elemente mit <code>aria-hidden="true"</code></td>
+</tr>
+</tbody>
+</table>
+<p>Keine Interaktion, keine Varianten. Rein strukturell.</p>
+<h3 id="bottombar">BottomBar<a class="headerlink" href="#bottombar" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Kombination</th>
+<th>Was getestet werden muss</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>wordCount</code> prop</td>
+<td>Wird als formatierter Text delegiert (via WordCountLabel)</td>
+</tr>
+<tr>
+<td><code>saveStatus="saved"</code></td>
+<td>Autosave-Label "Gespeichert" sichtbar</td>
+</tr>
+<tr>
+<td><code>saveStatus="saving"</code></td>
+<td>Autosave-Label "Wird gespeichert…" sichtbar</td>
+</tr>
+<tr>
+<td><code>saveStatus="unsaved"</code></td>
+<td>Autosave-Label "Ungespeichert" sichtbar</td>
+</tr>
+<tr>
+<td><code>&lt;footer&gt;</code> Element</td>
+<td>Semantisches HTML — kein <code>&lt;div&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<p>Alle 3 SaveStatus-Varianten obligatorisch — delegiert zwar an AutosaveIndicator,
+aber der Kompositions-Wiring muss getestet sein.
+<code>position: fixed</code> ist nicht unit-testbar — nur in verify.md.</p>
 
 
 

@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/method/enactment/practices/tdd/">
+        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/method/enactment/skills/task-readiness/">
       
       
       
@@ -23,7 +23,7 @@
     
     
       
-        <title>Test-Driven Development — klartext enactment - klartext.jetzt – Spezifikation</title>
+        <title>Task Readiness — Bereitschafts-Protokoll - klartext.jetzt – Spezifikation</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#test-driven-development-klartext-enactment" class="md-skip">
+        <a href="#task-readiness-bereitschafts-protokoll" class="md-skip">
           Zum Inhalt
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Test-Driven Development — klartext enactment
+              Task Readiness — Bereitschafts-Protokoll
             
           </span>
         </div>
@@ -1650,7 +1650,7 @@
 
 
   
-    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/method/enactment/practices/tdd.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/method/enactment/skills/task-readiness.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1658,94 +1658,65 @@
   
 
 
-<h1 id="test-driven-development-klartext-enactment">Test-Driven Development — klartext enactment<a class="headerlink" href="#test-driven-development-klartext-enactment" title="Permanent link">&para;</a></h1>
-<blockquote>
-<p><strong>Scope.</strong> klartext's enactment of the <strong>tdd</strong> wrapper practice: the concrete test bindings that
-extend the upstream discipline — the inside-out test levels, fakes-not-mocks, the Supabase
-integration-test rule, the <code>/health</code> endpoint rule, and the <code>qa-review</code> close-out step.
-<strong>Out of scope.</strong> The generic TDD discipline (red-green-refactor, the Iron Law) — that is
-<code>superpowers:test-driven-development</code>, <strong>referenced, not restated</strong> here. The composition shape — see
-the L3 wrapper card.
-<strong>Language.</strong> English — documentation-language rule.</p>
-<p><strong>L3 definition:</strong> <a href="../../../library/practices/tdd/"><code>../../library/practices/tdd.md</code></a>
-<strong>Upstream Resource:</strong> <a href="../../../library/resources/superpowers/"><code>../../library/resources/superpowers.md</code></a> (<code>superpowers:test-driven-development</code>)
-<strong>Status:</strong> living (ritual) · <strong>Owner:</strong> QA (test standards) / OE (composition shape, L3) · <strong>Advances Alpha:</strong> Software System + Way of Working · <strong>NN:</strong> ✓
-<strong>Enacted as:</strong> the <code>tdd</code> skill (<code>docs/method/enactment/skills/tdd/SKILL.md</code>) + the structural coverage check (<code>scripts/check_test_coverage.py</code>)</p>
-</blockquote>
-<h2 id="klartext-bindings">klartext bindings<a class="headerlink" href="#klartext-bindings" title="Permanent link">&para;</a></h2>
-<h3 id="test-levels-inside-out">Test levels — inside out<a class="headerlink" href="#test-levels-inside-out" title="Permanent link">&para;</a></h3>
-<p>Test in this order; each level has a distinct tool and isolation boundary:</p>
-<table>
-<thead>
-<tr>
-<th>Level</th>
-<th>What is tested</th>
-<th>Isolation</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Domain</strong></td>
-<td>pure unit tests — invariants, factory methods, state changes</td>
-<td>no mocks, no external systems</td>
-</tr>
-<tr>
-<td><strong>Service</strong></td>
-<td>business logic, orchestration</td>
-<td><strong>fake repositories</strong> (in-memory), no Supabase</td>
-</tr>
-<tr>
-<td><strong>Repository</strong></td>
-<td>SQL / PostgREST queries</td>
-<td><code>@pytest.mark.integration</code> against the real test DB</td>
-</tr>
-<tr>
-<td><strong>Router</strong></td>
-<td>the HTTP contract (status, body, wiring)</td>
-<td><code>AsyncClient</code> + <code>ASGITransport</code></td>
-</tr>
-</tbody>
-</table>
-<h3 id="fakes-not-mocks">Fakes, not mocks<a class="headerlink" href="#fakes-not-mocks" title="Permanent link">&para;</a></h3>
-<p>Service tests use <strong>real in-memory fake repositories</strong> (classes), never mock objects. A fake must honor
-the full interface contract — <strong>no silent constants</strong> (<code>claim_count=0</code> is forbidden; use a
-test-controllable <code>set_claim_count()</code> helper) and <strong>behavioral parity</strong> (a fake raises the same
-exception on the same condition the real repo does — asymmetry in the fake is a red flag). See the QA
-fake-contract rules.</p>
-<h3 id="supabase-integration-test-rule">Supabase integration-test rule<a class="headerlink" href="#supabase-integration-test-rule" title="Permanent link">&para;</a></h3>
-<p>Every new <code>SupabaseXRepository</code> method gets an <code>@pytest.mark.integration</code> test <strong>in the same commit</strong> as
-the implementation — unit tests with the fake are <em>not sufficient</em> (the fake cannot verify SQL /
-embedded PostgREST counts / FK relationships). Required signals: JOINs, embedded counts
-(<code>table(count)</code>), multi-table queries.</p>
-<h3 id="health-endpoint-rule">Health-endpoint rule<a class="headerlink" href="#health-endpoint-rule" title="Permanent link">&para;</a></h3>
-<p>Every service router gets <code>GET /&lt;resource&gt;/health</code> (HTTP 200, <code>{"status": "ok"}</code>, no auth) <strong>added
-first</strong>, before any other endpoint — and a router test asserting it. Enforced by test, not by review.</p>
-<h3 id="qa-review-close-out-tdd-step-3">qa-review close-out (TDD Step 3)<a class="headerlink" href="#qa-review-close-out-tdd-step-3" title="Permanent link">&para;</a></h3>
-<p>Before "done", invoke <code>qa-review</code> — the QA sub-agent reviews the diff with fresh eyes (coverage, edge
-cases, infrastructure tests, fake-contract completeness, domain composition). All-green is necessary,
-not sufficient. <strong>Bug fixes:</strong> after the fix is green, invoke <code>qa-retro</code> if the bug should have been
-caught originally.</p>
-<h3 id="structural-invariants-mechanical">Structural invariants (mechanical)<a class="headerlink" href="#structural-invariants-mechanical" title="Permanent link">&para;</a></h3>
-<p><code>scripts/check_test_coverage.py</code> enforces three invariants — no manual review substitutes:</p>
-<ol>
-<li>every source file in <code>models/</code> <code>services/</code> <code>repositories/</code> <code>routers/</code> has a <code>test_&lt;stem&gt;*.py</code>;</li>
-<li>every <code>test_*_router.py</code> has a <code>health</code>-named function;</li>
-<li>every <code>supabase_*.py</code> repository has at least one <code>@pytest.mark.integration</code> test.</li>
-</ol>
-<h3 id="frontend">Frontend<a class="headerlink" href="#frontend" title="Permanent link">&para;</a></h3>
-<p>For React/TypeScript work, additionally apply the <code>frontend-testing</code> skill (QA-defined completeness
-criteria extending these standards).</p>
-<h2 id="enforcement-klartext">Enforcement (klartext)<a class="headerlink" href="#enforcement-klartext" title="Permanent link">&para;</a></h2>
-<p>Ritual at invocation (the skill runs at the start of every feature/bugfix); <strong>mechanical</strong> for the three
-structural invariants (<code>check_test_coverage.py</code>). The <code>qa-review</code> close-out is a non-optional ritual
-step of the <code>tdd</code> skill.</p>
-<h2 id="related">Related<a class="headerlink" href="#related" title="Permanent link">&para;</a></h2>
+<h1 id="task-readiness-bereitschafts-protokoll">Task Readiness — Bereitschafts-Protokoll<a class="headerlink" href="#task-readiness-bereitschafts-protokoll" title="Permanent link">&para;</a></h1>
+<p>Diesen Skill aufrufen wenn du von Hannibal einen Task dispatcht bekommst,
+bevor du mit der Umsetzung beginnst.</p>
+<p>Ziel: sicherstellen dass alle Voraussetzungen erfüllt sind bevor Code geschrieben wird.
+Lieber 5 Minuten früher klären als nachher zurückrudern.</p>
+<hr />
+<h2 id="schritt-1-infos-vollstandig">Schritt 1 — Infos vollständig?<a class="headerlink" href="#schritt-1-infos-vollstandig" title="Permanent link">&para;</a></h2>
+<p>Lies den Task-Beschrieb im Umsetzungsplan sorgfältig:</p>
 <ul>
-<li>L3 wrapper card: <a href="../../../library/practices/tdd/"><code>../../library/practices/tdd.md</code></a>.</li>
-<li>Upstream Resource: <a href="../../../library/resources/superpowers/"><code>../../library/resources/superpowers.md</code></a>.</li>
-<li>Dependency contract: <a href="../../contracts/superpowers/"><code>../contracts/superpowers.md</code></a> (S2 — the wrapped TDD discipline still carries its Iron Law).</li>
-<li>The skill source: <code>docs/method/enactment/skills/tdd/SKILL.md</code> (F3 — not modified by this package).</li>
+<li>[ ] Ist der Scope klar — was gehört dazu, was nicht?</li>
+<li>[ ] Sind alle Dateipfade die ich bearbeiten soll benannt?</li>
+<li>[ ] Gibt es ein konkretes Check-Kommando als DOD?</li>
+<li>[ ] Sind Abhängigkeiten zu anderen Tasks geklärt (Dependency-Kette)?</li>
 </ul>
+<p><strong>Wenn nein:</strong> Hannibal fragen bevor du beginnst.</p>
+<hr />
+<h2 id="schritt-2-qa-checkpoint">Schritt 2 — QA-Checkpoint<a class="headerlink" href="#schritt-2-qa-checkpoint" title="Permanent link">&para;</a></h2>
+<p>Bevor du eine einzige Zeile schreibst:</p>
+<ul>
+<li>[ ] Sind die DODs prüfbar? ("Tests grün" ist keine DOD — <code>klartext test</code> läuft grün ist eine.)</li>
+<li>[ ] Ist das Fake-Contract für meine Abhängigkeiten aktuell?
+  (Wenn du ein Repository-Interface änderst: QA-Briefing vor dem Start)</li>
+<li>[ ] Welche Testschichten erwartet QA für neue Source-Dateien?
+  (Domain / Service / Repository / Router — QA hat das in der Koordinationsrunde festgelegt)</li>
+</ul>
+<p><strong>Wenn Fake-Contract veraltet oder unklar:</strong> QA briefen, warten bis Fake aktuell ist.</p>
+<hr />
+<h2 id="schritt-3-koordinationsbedarf">Schritt 3 — Koordinationsbedarf?<a class="headerlink" href="#schritt-3-koordinationsbedarf" title="Permanent link">&para;</a></h2>
+<ul>
+<li>[ ] Brauche ich Input von einem anderen Agent um zu beginnen?</li>
+<li>[ ] Ändere ich etwas das einen anderen Agent betrifft? (Briefing formulieren)</li>
+<li>[ ] Gibt es Dateipfad-Überlappungen mit einem parallel laufenden Task?</li>
+</ul>
+<p><strong>Wenn Überlappung erkannt:</strong> Hannibal informieren. Nicht einfach beginnen.</p>
+<hr />
+<h2 id="schritt-4-sa-eskalation-notig">Schritt 4 — SA-Eskalation nötig?<a class="headerlink" href="#schritt-4-sa-eskalation-notig" title="Permanent link">&para;</a></h2>
+<ul>
+<li>[ ] Entsteht durch meinen Task ein neues Layer-Crossing?</li>
+<li>[ ] Muss ich eine Domain-Grenze überqueren?</li>
+<li>[ ] Entsteht eine Schnittstelle zu einem anderen Domain?</li>
+</ul>
+<p><strong>Wenn ja:</strong> SA eskalieren via Hannibal — nicht selbst entscheiden.
+Die Modell-Grenz-Regel gilt: keine cross-domain Schnittstelle ohne SA-Zustimmung.</p>
+<hr />
+<h2 id="schritt-5-los">Schritt 5 — Los<a class="headerlink" href="#schritt-5-los" title="Permanent link">&para;</a></h2>
+<p>Alle Checks grün? Dann:</p>
+<ol>
+<li><strong>Tests zuerst</strong> — <code>tdd</code> Skill aufrufen</li>
+<li><strong>Branch anlegen</strong> — Schema: <code>task/&lt;H-id&gt;/&lt;slug&gt;</code></li>
+<li>Umsetzung</li>
+<li>PR öffnen (kein direkter Push auf <code>main</code>)</li>
+<li>Nach fremden Merges auf <code>main</code> rebasieren</li>
+</ol>
+<p>Wenn ein anderer Task auf <code>main</code> gemergt wurde während du arbeitest:
+<code>git rebase main</code> — nicht warten bis zum eigenen PR.</p>
+<hr />
+<h2 id="roundup-melden">Roundup melden<a class="headerlink" href="#roundup-melden" title="Permanent link">&para;</a></h2>
+<p>Wenn dein PR gemergt ist: Hannibal informieren.
+Hannibal koordiniert den QA-Gate — du bist fertig wenn QA grünes Licht gibt.</p>
 
 
 

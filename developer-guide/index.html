@@ -2167,13 +2167,13 @@
 </tr>
 <tr>
 <td><code>klartext skills sync</code></td>
-<td>Install klartext's own skills from <code>docs/superpowers/skills/</code> into <code>~/.claude/skills/</code> (where Claude Code loads them). The repo is the single source of truth; idempotent and prune-safe (marks managed dirs <code>.repo-managed</code>, removes managed skills whose source was deleted, never touches foreign/plugin skills). Run by <code>setup.sh</code>.</td>
+<td>Install klartext's own skills from <code>docs/method/enactment/skills/</code> into <code>~/.claude/skills/</code> (where Claude Code loads them). The repo is the single source of truth; idempotent and prune-safe (marks managed dirs <code>.repo-managed</code>, removes managed skills whose source was deleted, never touches foreign/plugin skills). Run by <code>setup.sh</code>.</td>
 </tr>
 </tbody>
 </table>
 <h3 id="skill-distribution">Skill distribution<a class="headerlink" href="#skill-distribution" title="Permanent link">&para;</a></h3>
 <p>klartext's cross-agent and ritual skills (<code>tdd</code>, <code>systematic-debugging</code>, <code>anchor</code>, <code>qa-review</code>, …) are
-versioned under <code>docs/superpowers/skills/</code> — the <strong>single source of truth</strong>. <code>~/.claude/skills/</code> is a
+versioned under <code>docs/method/enactment/skills/</code> — the <strong>single source of truth</strong>. <code>~/.claude/skills/</code> is a
 <em>derived</em> install, populated by <code>klartext skills sync</code> (run automatically by <code>setup.sh</code>). Each skill is
 either a flat <code>&lt;name&gt;.md</code> file or a <code>&lt;name&gt;/</code> directory (multi-file skills like <code>qa-review</code> keep their
 companion docs); both install as <code>~/.claude/skills/&lt;name&gt;/SKILL.md</code>. Add or edit a skill in the repo, then
@@ -2418,7 +2418,7 @@ decision lives in <code>scripts/classify_gate.py</code>.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>In-scope surfaces:</strong> <code>CLAUDE.md</code>, <code>docs/method/**</code>, <code>docs/superpowers/skills/**</code>,
+<p><strong>In-scope surfaces:</strong> <code>CLAUDE.md</code>, <code>docs/method/**</code>, <code>docs/method/enactment/skills/**</code>,
 <code>agents/**/claude.md</code>, <code>.claude/settings.json</code>, <code>scripts/**</code>, <code>api/cli.py</code>.</p>
 <p>The gate is <strong>default-free</strong> — if unsure, choose <code>breaking</code>. PRs that touch no Way-of-Working
 surface need no label (the gate passes automatically). Adding the label re-runs the check

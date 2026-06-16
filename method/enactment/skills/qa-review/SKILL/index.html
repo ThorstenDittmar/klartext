@@ -6,11 +6,11 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Narrative Epistemik – Eine Autorenumgebung für transparente, kausal konsistente und narrativ vermittelbare Wirkmodelle">
+        <meta name="description" content="Use after every implementation session, before marking work complete. Dispatches a QA sub-agent that checks test coverage, edge cases, infrastructure tests, fake contract completeness, and domain composition tests. The tdd skill calls this automatically as Step 3.">
       
       
       
-        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/method/enactment/practices/tdd/">
+        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/method/enactment/skills/qa-review/SKILL/">
       
       
       
@@ -18,19 +18,19 @@
         
       
       
-      <link rel="icon" href="../../../../assets/images/favicon.png">
+      <link rel="icon" href="../../../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
-        <title>Test-Driven Development — klartext enactment - klartext.jetzt – Spezifikation</title>
+        <title>QA Review - klartext.jetzt – Spezifikation</title>
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -49,7 +49,7 @@
       
     
     
-    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#test-driven-development-klartext-enactment" class="md-skip">
+        <a href="#qa-review" class="md-skip">
           Zum Inhalt
         </a>
       
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Kopfzeile">
-    <a href="../../../.." title="klartext.jetzt – Spezifikation" class="md-header__button md-logo" aria-label="klartext.jetzt – Spezifikation" data-md-component="logo">
+    <a href="../../../../.." title="klartext.jetzt – Spezifikation" class="md-header__button md-logo" aria-label="klartext.jetzt – Spezifikation" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Test-Driven Development — klartext enactment
+              QA Review
             
           </span>
         </div>
@@ -217,7 +217,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../.." class="md-tabs__link">
+      <a href="../../../../.." class="md-tabs__link">
         
   
   
@@ -236,7 +236,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../../pruefbericht-klartext.html" class="md-tabs__link">
+      <a href="../../../../../pruefbericht-klartext.html" class="md-tabs__link">
         
   
   
@@ -257,7 +257,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../../kap-01-executive-summary/" class="md-tabs__link">
+        <a href="../../../../../kap-01-executive-summary/" class="md-tabs__link">
           
   
   
@@ -277,7 +277,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../../kap-06-systemarchitektur/" class="md-tabs__link">
+        <a href="../../../../../kap-06-systemarchitektur/" class="md-tabs__link">
           
   
   
@@ -297,7 +297,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../../kap-11-leser/" class="md-tabs__link">
+        <a href="../../../../../kap-11-leser/" class="md-tabs__link">
           
   
   
@@ -317,7 +317,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../../kap-19-umsetzung/" class="md-tabs__link">
+        <a href="../../../../../kap-19-umsetzung/" class="md-tabs__link">
           
   
   
@@ -335,7 +335,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../../developer-guide/" class="md-tabs__link">
+      <a href="../../../../../developer-guide/" class="md-tabs__link">
         
   
   
@@ -356,7 +356,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../../appendix-a/" class="md-tabs__link">
+        <a href="../../../../../appendix-a/" class="md-tabs__link">
           
   
   
@@ -398,7 +398,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../.." title="klartext.jetzt – Spezifikation" class="md-nav__button md-logo" aria-label="klartext.jetzt – Spezifikation" data-md-component="logo">
+    <a href="../../../../.." title="klartext.jetzt – Spezifikation" class="md-nav__button md-logo" aria-label="klartext.jetzt – Spezifikation" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -428,7 +428,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../.." class="md-nav__link">
+      <a href="../../../../.." class="md-nav__link">
         
   
   
@@ -455,7 +455,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../pruefbericht-klartext.html" class="md-nav__link">
+      <a href="../../../../../pruefbericht-klartext.html" class="md-nav__link">
         
   
   
@@ -536,7 +536,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-01-executive-summary/" class="md-nav__link">
+      <a href="../../../../../kap-01-executive-summary/" class="md-nav__link">
         
   
   
@@ -564,7 +564,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-02-problemdefinition/" class="md-nav__link">
+      <a href="../../../../../kap-02-problemdefinition/" class="md-nav__link">
         
   
   
@@ -592,7 +592,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-03-kognition/" class="md-nav__link">
+      <a href="../../../../../kap-03-kognition/" class="md-nav__link">
         
   
   
@@ -620,7 +620,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-04-vision/" class="md-nav__link">
+      <a href="../../../../../kap-04-vision/" class="md-nav__link">
         
   
   
@@ -648,7 +648,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-05-autorenumgebung/" class="md-nav__link">
+      <a href="../../../../../kap-05-autorenumgebung/" class="md-nav__link">
         
   
   
@@ -737,7 +737,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-06-systemarchitektur/" class="md-nav__link">
+      <a href="../../../../../kap-06-systemarchitektur/" class="md-nav__link">
         
   
   
@@ -765,7 +765,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-07-wirkmodelle/" class="md-nav__link">
+      <a href="../../../../../kap-07-wirkmodelle/" class="md-nav__link">
         
   
   
@@ -793,7 +793,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-08-verbindung/" class="md-nav__link">
+      <a href="../../../../../kap-08-verbindung/" class="md-nav__link">
         
   
   
@@ -821,7 +821,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-09-transparenzbericht/" class="md-nav__link">
+      <a href="../../../../../kap-09-transparenzbericht/" class="md-nav__link">
         
   
   
@@ -849,7 +849,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-10-perspektivpluralismus/" class="md-nav__link">
+      <a href="../../../../../kap-10-perspektivpluralismus/" class="md-nav__link">
         
   
   
@@ -938,7 +938,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-11-leser/" class="md-nav__link">
+      <a href="../../../../../kap-11-leser/" class="md-nav__link">
         
   
   
@@ -966,7 +966,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-12-distribution/" class="md-nav__link">
+      <a href="../../../../../kap-12-distribution/" class="md-nav__link">
         
   
   
@@ -994,7 +994,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-13-folgeprojekte/" class="md-nav__link">
+      <a href="../../../../../kap-13-folgeprojekte/" class="md-nav__link">
         
   
   
@@ -1022,7 +1022,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-14-technologie/" class="md-nav__link">
+      <a href="../../../../../kap-14-technologie/" class="md-nav__link">
         
   
   
@@ -1050,7 +1050,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-15-roadmap/" class="md-nav__link">
+      <a href="../../../../../kap-15-roadmap/" class="md-nav__link">
         
   
   
@@ -1078,7 +1078,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-16-relevanz/" class="md-nav__link">
+      <a href="../../../../../kap-16-relevanz/" class="md-nav__link">
         
   
   
@@ -1106,7 +1106,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-17-schluss/" class="md-nav__link">
+      <a href="../../../../../kap-17-schluss/" class="md-nav__link">
         
   
   
@@ -1134,7 +1134,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-18-wissenschaft/" class="md-nav__link">
+      <a href="../../../../../kap-18-wissenschaft/" class="md-nav__link">
         
   
   
@@ -1223,7 +1223,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-19-umsetzung/" class="md-nav__link">
+      <a href="../../../../../kap-19-umsetzung/" class="md-nav__link">
         
   
   
@@ -1251,7 +1251,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-20-literaten-workflow/" class="md-nav__link">
+      <a href="../../../../../kap-20-literaten-workflow/" class="md-nav__link">
         
   
   
@@ -1279,7 +1279,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-21-wirkmodell-workflow/" class="md-nav__link">
+      <a href="../../../../../kap-21-wirkmodell-workflow/" class="md-nav__link">
         
   
   
@@ -1307,7 +1307,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-22-leser-workflow/" class="md-nav__link">
+      <a href="../../../../../kap-22-leser-workflow/" class="md-nav__link">
         
   
   
@@ -1335,7 +1335,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-23-community/" class="md-nav__link">
+      <a href="../../../../../kap-23-community/" class="md-nav__link">
         
   
   
@@ -1363,7 +1363,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-24-datenmodell/" class="md-nav__link">
+      <a href="../../../../../kap-24-datenmodell/" class="md-nav__link">
         
   
   
@@ -1398,7 +1398,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../developer-guide/" class="md-nav__link">
+      <a href="../../../../../developer-guide/" class="md-nav__link">
         
   
   
@@ -1479,7 +1479,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../appendix-a/" class="md-nav__link">
+      <a href="../../../../../appendix-a/" class="md-nav__link">
         
   
   
@@ -1561,7 +1561,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../adr/0001-detector-quality-testing/" class="md-nav__link">
+      <a href="../../../../../adr/0001-detector-quality-testing/" class="md-nav__link">
         
   
   
@@ -1589,7 +1589,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../adr/0002-test-data-object-mother/" class="md-nav__link">
+      <a href="../../../../../adr/0002-test-data-object-mother/" class="md-nav__link">
         
   
   
@@ -1650,7 +1650,7 @@
 
 
   
-    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/method/enactment/practices/tdd.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/method/enactment/skills/qa-review/SKILL.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1658,100 +1658,150 @@
   
 
 
-<h1 id="test-driven-development-klartext-enactment">Test-Driven Development — klartext enactment<a class="headerlink" href="#test-driven-development-klartext-enactment" title="Permanent link">&para;</a></h1>
-<blockquote>
-<p><strong>Scope.</strong> klartext's enactment of the <strong>tdd</strong> wrapper practice: the concrete test bindings that
-extend the upstream discipline — the inside-out test levels, fakes-not-mocks, the Supabase
-integration-test rule, the <code>/health</code> endpoint rule, and the <code>qa-review</code> close-out step.
-<strong>Out of scope.</strong> The generic TDD discipline (red-green-refactor, the Iron Law) — that is
-<code>superpowers:test-driven-development</code>, <strong>referenced, not restated</strong> here. The composition shape — see
-the L3 wrapper card.
-<strong>Language.</strong> English — documentation-language rule.</p>
-<p><strong>L3 definition:</strong> <a href="../../../library/practices/tdd/"><code>../../library/practices/tdd.md</code></a>
-<strong>Upstream Resource:</strong> <a href="../../../library/resources/superpowers/"><code>../../library/resources/superpowers.md</code></a> (<code>superpowers:test-driven-development</code>)
-<strong>Status:</strong> living (ritual) · <strong>Owner:</strong> QA (test standards) / OE (composition shape, L3) · <strong>Advances Alpha:</strong> Software System + Way of Working · <strong>NN:</strong> ✓
-<strong>Enacted as:</strong> the <code>tdd</code> skill (<code>docs/method/enactment/skills/tdd/SKILL.md</code>) + the structural coverage check (<code>scripts/check_test_coverage.py</code>)</p>
-</blockquote>
-<h2 id="klartext-bindings">klartext bindings<a class="headerlink" href="#klartext-bindings" title="Permanent link">&para;</a></h2>
-<h3 id="test-levels-inside-out">Test levels — inside out<a class="headerlink" href="#test-levels-inside-out" title="Permanent link">&para;</a></h3>
-<p>Test in this order; each level has a distinct tool and isolation boundary:</p>
-<table>
-<thead>
-<tr>
-<th>Level</th>
-<th>What is tested</th>
-<th>Isolation</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Domain</strong></td>
-<td>pure unit tests — invariants, factory methods, state changes</td>
-<td>no mocks, no external systems</td>
-</tr>
-<tr>
-<td><strong>Service</strong></td>
-<td>business logic, orchestration</td>
-<td><strong>fake repositories</strong> (in-memory), no Supabase</td>
-</tr>
-<tr>
-<td><strong>Repository</strong></td>
-<td>SQL / PostgREST queries</td>
-<td><code>@pytest.mark.integration</code> against the real test DB</td>
-</tr>
-<tr>
-<td><strong>Router</strong></td>
-<td>the HTTP contract (status, body, wiring)</td>
-<td><code>AsyncClient</code> + <code>ASGITransport</code></td>
-</tr>
-</tbody>
-</table>
-<h3 id="fakes-not-mocks">Fakes, not mocks<a class="headerlink" href="#fakes-not-mocks" title="Permanent link">&para;</a></h3>
-<p>Service tests use <strong>real in-memory fake repositories</strong> (classes), never mock objects. A fake must honor
-the full interface contract — <strong>no silent constants</strong> (<code>claim_count=0</code> is forbidden; use a
-test-controllable <code>set_claim_count()</code> helper) and <strong>behavioral parity</strong> (a fake raises the same
-exception on the same condition the real repo does — asymmetry in the fake is a red flag). See the QA
-fake-contract rules.</p>
-<h3 id="supabase-integration-test-rule">Supabase integration-test rule<a class="headerlink" href="#supabase-integration-test-rule" title="Permanent link">&para;</a></h3>
-<p>Every new <code>SupabaseXRepository</code> method gets an <code>@pytest.mark.integration</code> test <strong>in the same commit</strong> as
-the implementation — unit tests with the fake are <em>not sufficient</em> (the fake cannot verify SQL /
-embedded PostgREST counts / FK relationships). Required signals: JOINs, embedded counts
-(<code>table(count)</code>), multi-table queries.</p>
-<h3 id="health-endpoint-rule">Health-endpoint rule<a class="headerlink" href="#health-endpoint-rule" title="Permanent link">&para;</a></h3>
-<p>Every service router gets <code>GET /&lt;resource&gt;/health</code> (HTTP 200, <code>{"status": "ok"}</code>, no auth) <strong>added
-first</strong>, before any other endpoint — and a router test asserting it. Enforced by test, not by review.</p>
-<h3 id="qa-review-close-out-tdd-step-3">qa-review close-out (TDD Step 3)<a class="headerlink" href="#qa-review-close-out-tdd-step-3" title="Permanent link">&para;</a></h3>
-<p>Before "done", invoke <code>qa-review</code> — the QA sub-agent reviews the diff with fresh eyes (coverage, edge
-cases, infrastructure tests, fake-contract completeness, domain composition). All-green is necessary,
-not sufficient. <strong>Bug fixes:</strong> after the fix is green, invoke <code>qa-retro</code> if the bug should have been
-caught originally.</p>
-<h3 id="structural-invariants-mechanical">Structural invariants (mechanical)<a class="headerlink" href="#structural-invariants-mechanical" title="Permanent link">&para;</a></h3>
-<p><code>scripts/check_test_coverage.py</code> enforces three invariants — no manual review substitutes:</p>
-<ol>
-<li>every source file in <code>models/</code> <code>services/</code> <code>repositories/</code> <code>routers/</code> has a <code>test_&lt;stem&gt;*.py</code>;</li>
-<li>every <code>test_*_router.py</code> has a <code>health</code>-named function;</li>
-<li>every <code>supabase_*.py</code> repository has at least one <code>@pytest.mark.integration</code> test.</li>
-</ol>
-<h3 id="frontend">Frontend<a class="headerlink" href="#frontend" title="Permanent link">&para;</a></h3>
-<p>For React/TypeScript work, additionally apply the <code>frontend-testing</code> skill (QA-defined completeness
-criteria extending these standards).</p>
-<h2 id="enforcement-klartext">Enforcement (klartext)<a class="headerlink" href="#enforcement-klartext" title="Permanent link">&para;</a></h2>
-<p>Ritual at invocation (the skill runs at the start of every feature/bugfix); <strong>mechanical</strong> for the three
-structural invariants (<code>check_test_coverage.py</code>). The <code>qa-review</code> close-out is a non-optional ritual
-step of the <code>tdd</code> skill.</p>
-<h2 id="related">Related<a class="headerlink" href="#related" title="Permanent link">&para;</a></h2>
+<h1 id="qa-review">QA Review<a class="headerlink" href="#qa-review" title="Permanent link">&para;</a></h1>
+<p>After every implementation, dispatch a fresh QA sub-agent to review the diff with clean eyes.
+The sub-agent has no context from the implementation session — this is intentional.</p>
+<h2 id="when-to-use">When to Use<a class="headerlink" href="#when-to-use" title="Permanent link">&para;</a></h2>
+<p>Mandatory after every implementation session:
+- After completing a feature via the <code>tdd</code> skill (called automatically as Step 3)
+- After any bug fix
+- Before declaring work done and switching context</p>
+<h2 id="step-1-collect-the-diff">Step 1: Collect the diff<a class="headerlink" href="#step-1-collect-the-diff" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>git<span class="w"> </span>diff<span class="w"> </span>HEAD
+</code></pre></div>
+<p>If changes are staged but not committed yet:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>git<span class="w"> </span>diff<span class="w"> </span>--staged
+</code></pre></div></p>
+<h2 id="step-2-read-the-support-files">Step 2: Read the support files<a class="headerlink" href="#step-2-read-the-support-files" title="Permanent link">&para;</a></h2>
+<p>Read these files to understand your review criteria:
+- <code>~/.claude/skills/qa-review/qa-categories.md</code> — the 5 check categories
+- <code>~/.claude/skills/qa-review/domain-composition-rules.md</code> — applies when Wirkgefüge objects are in the diff
+- <code>~/.claude/skills/qa-review/report-format.md</code> — required output format</p>
+<h2 id="step-3-dispatch-the-qa-sub-agent">Step 3: Dispatch the QA sub-agent<a class="headerlink" href="#step-3-dispatch-the-qa-sub-agent" title="Permanent link">&para;</a></h2>
+<p>Use the Agent tool to dispatch a fresh sub-agent with this prompt (fill in the diff):</p>
+<hr />
+<p>You are a QA reviewer for the klartext project. Your only job is to find missing tests
+in the diff below and write them.</p>
+<p>You have no context about how this code was written. Review it fresh.</p>
+<p><strong>Project:</strong> FastAPI + Supabase, Python 3.12<br />
+<strong>Test layers:</strong>
+1. Domain — pure unit tests, no mocks, no external systems
+2. Service — unit tests with FakeRepository (no Supabase)
+3. Repository — <code>@pytest.mark.integration</code> against real database
+4. Router — via <code>TestClient</code> or <code>AsyncClient</code></p>
+<p><strong>Your task:</strong>
+1. Read the diff
+2. Check all 5 categories from the QA categories doc (provided below)
+3. If Wirkgefüge objects are in the diff: apply domain composition rules (provided below)
+4. Write missing tests as RED (failing) tests directly into the test files
+5. Produce a report in the required format (provided below)</p>
+<p><strong>Key rules:</strong>
+- Never mark a test as [WRITTEN] without actually writing the code
+- Tests must fail when run — confirm RED before reporting
+- If a test file does not exist yet, create it with correct imports
+- Fake repositories: <code>FakeUserRepository</code> pattern, in <code>api/tests/fakes/</code>
+- Router tests: use <code>AsyncClient(transport=ASGITransport(app=app), base_url="http://test")</code>
+- Integration tests: mark with <code>@pytest.mark.integration</code> and <code>@pytest.mark.asyncio</code></p>
+<p>[QA CATEGORIES]
+<paste contents of qa-categories.md here></p>
+<p>[DOMAIN COMPOSITION RULES]
+<paste contents of domain-composition-rules.md here — only if relevant></p>
+<p>[REPORT FORMAT]
+<paste contents of report-format.md here></p>
+<p>[DIFF]
+<paste git diff output here></p>
+<hr />
+<h2 id="step-4-act-on-the-report">Step 4: Act on the report<a class="headerlink" href="#step-4-act-on-the-report" title="Permanent link">&para;</a></h2>
 <ul>
-<li>L3 wrapper card: <a href="../../../library/practices/tdd/"><code>../../library/practices/tdd.md</code></a>.</li>
-<li>Upstream Resource: <a href="../../../library/resources/superpowers/"><code>../../library/resources/superpowers.md</code></a>.</li>
-<li>Dependency contract: <a href="../../contracts/superpowers/"><code>../contracts/superpowers.md</code></a> (S2 — the wrapped TDD discipline still carries its Iron Law).</li>
-<li>The skill source: <code>docs/method/enactment/skills/tdd/SKILL.md</code> (F3 — not modified by this package).</li>
+<li>If RED tests were written: run <code>pytest api/tests/ -m "not integration" -v</code> to confirm they fail</li>
+<li>Make all RED tests GREEN before declaring work done</li>
+<li>If [NEEDS MANUAL ACTION] items remain: resolve them or document why they are deferred</li>
 </ul>
+<h2 id="what-good-looks-like">What good looks like<a class="headerlink" href="#what-good-looks-like" title="Permanent link">&para;</a></h2>
+<p>Every implementation session ends with:
+- All 5 categories checked
+- No unresolved [NEEDS MANUAL ACTION] items (or documented reason for deferral)
+- All tests GREEN</p>
+<hr />
+<h2 id="infrastructure-test-review">Infrastructure Test Review<a class="headerlink" href="#infrastructure-test-review" title="Permanent link">&para;</a></h2>
+<p>When DevOps requests a QA review of infrastructure tests (as required by the DevOps
+Definition of Done), apply these checks against <code>api/tests/infrastructure/</code>:</p>
+<h3 id="what-to-check">What to check<a class="headerlink" href="#what-to-check" title="Permanent link">&para;</a></h3>
+<p><strong>1. Does a test exist for this change?</strong>
+Every infrastructure change that can break in production must have a test.
+Examples:
+- New migration → test that the schema shape is correct after <code>db reset</code>
+- New FK relationship → test that PostgREST resolves the embedded count
+- New dependency → health check covers it</p>
+<p><strong>2. Does the test catch the actual failure mode?</strong>
+A test that passes even when the thing breaks is worse than no test.
+Ask: <em>what exact error would occur in production if this breaks?</em>
+The test must reproduce that error, not just test the happy path.</p>
+<p><strong>3. Is the test marked correctly?</strong>
+Infrastructure tests that require a real database or external system:
+<code>@pytest.mark.integration</code> + <code>@pytest.mark.asyncio</code></p>
+<p><strong>4. Is the failure message informative?</strong>
+<code>assert response.data is not None, "claims.narrative_id column does not exist"</code>
+A bare <code>assert x</code> with no message makes debugging harder.</p>
+<h3 id="what-qa-does-not-need-to-assess">What QA does NOT need to assess<a class="headerlink" href="#what-qa-does-not-need-to-assess" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Whether the PostgREST query syntax is correct — that is DevOps domain knowledge</li>
+<li>Whether the migration SQL is valid — DevOps owns that</li>
+<li>Whether the CI pipeline config is correct — DevOps owns that</li>
+</ul>
+<p>QA's role here: <em>Is there a test? Does it cover the failure mode? Is the assertion meaningful?</em></p>
+<h3 id="shared-ownership-note">Shared ownership note<a class="headerlink" href="#shared-ownership-note" title="Permanent link">&para;</a></h3>
+<p><code>api/tests/infrastructure/</code> is written by DevOps, reviewed and improvable by QA.
+If QA identifies a gap, they may add assertions directly — no DevOps Briefing needed for test additions in this directory.</p>
+<hr />
+<h2 id="qa-domain-boundaries">QA Domain Boundaries<a class="headerlink" href="#qa-domain-boundaries" title="Permanent link">&para;</a></h2>
+<h3 id="what-qa-owns-write-access">What QA owns (write access)<a class="headerlink" href="#what-qa-owns-write-access" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>api/tests/</code> — all test files, fakes, fixtures</li>
+<li><code>api/tests/fakes/</code> — shared fake repository implementations</li>
+<li><code>.semgrep/rules/qa/</code> — QA Semgrep rules (<code>qa-*.yaml</code>)</li>
+<li><code>scripts/check_test_coverage.py</code> — structural coverage checker</li>
+<li><code>docs/superpowers/qa-learnings/</code> — retrospective learning entries</li>
+<li><code>~/.claude/skills/qa-*/</code> — QA skill files (this file and its siblings)</li>
+</ul>
+<h3 id="what-qa-reads-but-does-not-change">What QA reads but does not change<a class="headerlink" href="#what-qa-reads-but-does-not-change" title="Permanent link">&para;</a></h3>
+<p>All source files in <code>api/models/</code>, <code>api/services/</code>, <code>api/repositories/</code>, <code>api/routers/</code>,
+<code>api/schemas/</code>, <code>api/exceptions/</code>, <code>api/providers/</code> — QA reads these to write tests.
+Domain experts own them.</p>
+<h3 id="infrastructure-changes-devops-briefing-required">Infrastructure changes → DevOps Briefing required<a class="headerlink" href="#infrastructure-changes-devops-briefing-required" title="Permanent link">&para;</a></h3>
+<p>QA must <strong>never</strong> directly change files in the Infrastructure Perimeter:</p>
+<div class="highlight"><pre><span></span><code>.github/workflows/      CI/CD Pipelines (including qa.yml)
+api/pyproject.toml      Python dependencies + tool config
+.pre-commit-config.yaml Git hooks
+tach.toml               Layer boundary enforcement
+setup.sh                Bootstrap script
+frontend/package.json   JS dependencies
+</code></pre></div>
+<p>If QA needs an infrastructure change (e.g. a new test dependency, a new CI step),
+send a DevOps Briefing instead of making the change directly:</p>
+<div class="highlight"><pre><span></span><code>DevOps Briefing
+Need:      [What is needed — concrete and actionable]
+Why:       [Technical or functional reason]
+Domain:    [Dependencies / CI/CD / Config / Other]
+Approach:  [Optional — what QA thinks might work]
+Impact:    [Which agents or environments are affected]
+</code></pre></div>
+<h3 id="architectural-semgrep-rules-brief-system-architect">Architectural Semgrep rules → brief System Architect<a class="headerlink" href="#architectural-semgrep-rules-brief-system-architect" title="Permanent link">&para;</a></h3>
+<p>If a statically checkable pattern is an <strong>architectural rule</strong> (layer boundaries,
+error handling, naming conventions), it belongs in <code>.semgrep/rules/arch/</code> and is
+owned by System Architect + DevOps. QA does not write arch rules.</p>
+<p>Heuristic:
+- "This fake returns a silent constant" → QA rule → <code>.semgrep/rules/qa/</code>
+- "This router has a try/except" → arch rule → brief System Architect</p>
 
 
 
 
 
 
+
+  
+  
 
 
 
@@ -1801,10 +1851,10 @@ step of the <code>tdd</code> skill.</p>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.path", "navigation.top", "toc.integrate", "search.highlight", "search.suggest", "content.code.copy", "content.action.edit"], "search": "../../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "In Zwischenablage kopiert", "clipboard.copy": "In Zwischenablage kopieren", "search.result.more.one": "1 weiteres Suchergebnis auf dieser Seite", "search.result.more.other": "# weitere Suchergebnisse auf dieser Seite", "search.result.none": "Keine Suchergebnisse", "search.result.one": "1 Suchergebnis", "search.result.other": "# Suchergebnisse", "search.result.placeholder": "Suchbegriff eingeben", "search.result.term.missing": "Es fehlt", "select.version": "Version ausw\u00e4hlen"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.path", "navigation.top", "toc.integrate", "search.highlight", "search.suggest", "content.code.copy", "content.action.edit"], "search": "../../../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "In Zwischenablage kopiert", "clipboard.copy": "In Zwischenablage kopieren", "search.result.more.one": "1 weiteres Suchergebnis auf dieser Seite", "search.result.more.other": "# weitere Suchergebnisse auf dieser Seite", "search.result.none": "Keine Suchergebnisse", "search.result.one": "1 Suchergebnis", "search.result.other": "# Suchergebnisse", "search.result.placeholder": "Suchbegriff eingeben", "search.result.term.missing": "Es fehlt", "select.version": "Version ausw\u00e4hlen"}, "version": null}</script>
     
     
-      <script src="../../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../../../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>

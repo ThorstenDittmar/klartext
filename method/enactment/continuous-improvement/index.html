@@ -2239,7 +2239,7 @@ anything where oversight / real context matters.</p>
 </ul>
 <h4 id="known-constraints-required-operational-mechanisms-growing-list">Known constraints &amp; required operational mechanisms (growing list)<a class="headerlink" href="#known-constraints-required-operational-mechanisms-growing-list" title="Permanent link">&para;</a></h4>
 <p><strong>C1 — Agent refresh after a skill / <code>start.sh</code> change</strong> <em>(user, 2026-06-09)</em>
-- <strong>Constraint:</strong> Changes to skills (<code>docs/superpowers/skills/</code>, <code>~/.claude/skills/</code>) or to start scripts
+- <strong>Constraint:</strong> Changes to skills (<code>docs/method/enactment/skills/</code>, <code>~/.claude/skills/</code>) or to start scripts
   (<code>agents/*/start.sh</code>) only take effect after a <strong>restart of the affected agent session</strong> — <code>claude.md</code>,
   permissions and skills are loaded at session start. A running session keeps working with the old state.
 - <strong>Risk:</strong> The refresh is forgotten after a change → an agent keeps working with stale permissions/knowledge

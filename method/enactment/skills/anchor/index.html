@@ -6,11 +6,12 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Narrative Epistemik – Eine Autorenumgebung für transparente, kausal konsistente und narrativ vermittelbare Wirkmodelle">
+        <meta name="description" content="Anchor the session — secure everything that only lives in the chat to durable storage BEFORE context is lost (via /clear, /compact, or session end). Use whenever the user says "anchor", "session sichern", "nichts vergessen", "alles sichern", "vor clear", "vor neustart", "vor compact", or anything suggesting they want to checkpoint the session before context is reset. On a RESTART (generation change: next step is /clear and a successor session takes over) it also seeds the successor. Supersedes the former `pre-compact` skill — renamed because the ritual is no longer tied to /compact (the loss-free path is /clear; /compact only summarizes and is False-Persistence-prone).
+">
       
       
       
-        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/method/enactment/practices/tdd/">
+        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/method/enactment/skills/anchor/">
       
       
       
@@ -23,7 +24,7 @@
     
     
       
-        <title>Test-Driven Development — klartext enactment - klartext.jetzt – Spezifikation</title>
+        <title>Anchor — Session Safeguard - klartext.jetzt – Spezifikation</title>
       
     
     
@@ -74,7 +75,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#test-driven-development-klartext-enactment" class="md-skip">
+        <a href="#anchor-session-safeguard" class="md-skip">
           Zum Inhalt
         </a>
       
@@ -110,7 +111,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Test-Driven Development — klartext enactment
+              Anchor — Session Safeguard
             
           </span>
         </div>
@@ -1650,7 +1651,7 @@
 
 
   
-    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/method/enactment/practices/tdd.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/method/enactment/skills/anchor.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1658,100 +1659,292 @@
   
 
 
-<h1 id="test-driven-development-klartext-enactment">Test-Driven Development — klartext enactment<a class="headerlink" href="#test-driven-development-klartext-enactment" title="Permanent link">&para;</a></h1>
+<h1 id="anchor-session-safeguard">Anchor — Session Safeguard<a class="headerlink" href="#anchor-session-safeguard" title="Permanent link">&para;</a></h1>
+<p>Deine Aufgabe: die aktuelle Session systematisch durchgehen, <strong>bevor der Kontext verloren geht</strong> —
+durch <code>/clear</code> (Generationswechsel, verwirft), <code>/compact</code> (fasst zusammen) oder Session-Ende. Ziel:
+nichts Wichtiges verlieren — Entscheidungen, Begründungen, mündliche Anweisungen, offene TODOs, der
+aktuelle Arbeitsstand. Der Name <strong>anchor</strong>: das flüchtige Chat-Wissen am festen Grund (Platte)
+verankern; bei einem Restart zusätzlich einen Anker werfen, an dem die Nachfolge-Session wieder anlegt.</p>
+<h2 id="modus-bestimmen-zuerst">Modus bestimmen (zuerst)<a class="headerlink" href="#modus-bestimmen-zuerst" title="Permanent link">&para;</a></h2>
+<p>Kläre — fragen, wenn unklar: ist das ein <strong>Restart</strong> oder ein <strong>Checkpoint</strong>?</p>
+<ul>
+<li><strong>Restart</strong> (Generationswechsel): als Nächstes kommt <code>/clear</code>, eine Nachfolge-Session übernimmt.
+  → alle Schritte <strong>inklusive Successor-Seed</strong> (Schritt 4.6).</li>
+<li><strong>Checkpoint</strong> (mid-session): du sicherst nur zwischendurch und arbeitest danach weiter.
+  → Successor-Seed <strong>überspringen</strong> (sonst landen veraltete Handoff-Notizen im Postfach).</li>
+</ul>
+<h2 id="was-einen-kontext-reset-uberlebt">Was einen Kontext-Reset überlebt<a class="headerlink" href="#was-einen-kontext-reset-uberlebt" title="Permanent link">&para;</a></h2>
+<p>Diese Quellen sind sicher — sie liegen auf der Festplatte und werden bei jeder Session neu geladen:
+- <code>CLAUDE.md</code> im Projekt-Root
+- <strong>Das Method-Dokumentenset</strong>, seit der L2/L3-Trennung über zwei Stems verteilt:
+  - <strong>L2 (Enactment)</strong> unter <code>docs/method/enactment/</code>: <code>continuous-improvement.md</code>
+    (Entscheidungen + Begründungen + Improvement-Register §3), <code>method.md</code> (Element-Register),
+    <code>learnings/</code> (Way-of-Working-Learnings), <code>environment/</code>
+  - <strong>L3 (Library)</strong> generisch/Kernel unter <code>docs/method/library/</code>: <code>semat-definition.md</code> /
+    <code>semat-glossary.md</code>, <code>alpha-states.md</code>, <code>practices/</code> (generische Practice-Karten; die
+    klartext-Enactments liegen unter <code>docs/method/enactment/practices/</code>)
+- <code>docs/superpowers/plans/PENDING.md</code> (Delegations-Tracking)
+- <code>assets-local/README.md</code> (Provenienz-Register externer Referenzen)
+- Memory-Dateien unter <code>~/.claude/</code>
+- Code, Kommentare, Docstrings im Repo
+- Commit-Messages in Git
+- GitHub Issues und TODOs im Code
+- Skill-Dateien unter <code>docs/method/enactment/skills/</code> (projekt-spezifische Skills) und <code>~/.claude/skills/</code> (User-Skills)</p>
+<p><strong>Was verloren gehen kann:</strong> Alles, was nur im Gesprächsverlauf steht. Das ist der blinde Fleck —
+und <code>/clear</code> <em>verwirft</em> ihn ersatzlos, <code>/compact</code> <em>fasst ihn zusammen</em> (lückenhaft, False-Persistence-Risiko).</p>
+<h2 id="schritt-1-konversation-scannen">Schritt 1 — Konversation scannen<a class="headerlink" href="#schritt-1-konversation-scannen" title="Permanent link">&para;</a></h2>
+<p>Lies die gesamte bisherige Konversation durch. Sammle Kandidaten für jede dieser Kategorien:</p>
+<ol>
+<li><strong>Architektur-Entscheidungen</strong> — Strukturelle oder technische Entscheidungen die in dieser Session getroffen wurden</li>
+<li><strong>Regeländerungen</strong> — Neue Regeln oder Anpassungen an bestehenden Regeln, die noch nicht in CLAUDE.md oder Memory-Dateien stehen</li>
+<li><strong>Begründungen (Warum)</strong> — Erklärungen warum etwas so und nicht anders gemacht wurde</li>
+<li><strong>Mündliche Anweisungen</strong> — Anweisungen die der User im Chat gegeben hat, die aber nirgends schriftlich festgehalten sind</li>
+<li><strong>Offene TODOs</strong> — Angefangenes das nicht fertig ist, nächste Schritte, bekannte Probleme die vertagt wurden</li>
+<li><strong>Arbeitsstand</strong> — Was wurde in dieser Session abgeschlossen? Was ist in Arbeit? Was ist blockiert?</li>
+<li><strong>Geparkte Befunde / Retro-Inputs</strong> — Befunde die bewusst vertagt wurden (für eine Retro, einen
+   Entscheid, ein anderes Arbeitspaket) und noch kein dauerhaftes Zuhause haben</li>
+</ol>
+<p>Sei großzügig beim Sammeln. Lieber einen Punkt zu viel aufnehmen als einen zu übersehen.</p>
+<h2 id="schritt-15-delegations-befund-check">Schritt 1.5 — Delegations-/Befund-Check<a class="headerlink" href="#schritt-15-delegations-befund-check" title="Permanent link">&para;</a></h2>
+<p><strong>Trigger:</strong> Nur ausführen, wenn es in dieser Session echt offene Delegationen oder ausgehende Befunde
+gibt — sonst explizit überspringen ("Schritt 1.5: keine offenen Delegationen").</p>
+<p>Für <strong>Koordinations-Agents</strong> (OE, Hannibal): Konversation nach <strong>ausgehenden Delegationen</strong> durchsuchen.
+Für <strong>Domain-Agents</strong> ist das Muster stattdessen: <strong>empfangene Tasks</strong> (sind sie abgeschlossen oder
+rückgemeldet?) und <strong>ausgehende Befunde</strong> (Dinge die ein anderer Agent wissen/entscheiden muss).
+- Wissens-Briefings die an andere Agents formuliert wurden
+- Aufgaben die an einen anderen Agent delegiert wurden
+- Bitten an den User mit der Erwartung dass ein anderer Agent tätig wird
+- Befunde aus der eigenen Arbeit, die an einen Owner außerhalb der eigenen Domain gehören</p>
+<p>Für jede Delegation prüfen ob sie erledigt wurde:
+1. Zieldatei lesen — ist die Änderung drin?
+2. Gibt es eine explizite Bestätigung in der Konversation?</p>
+<p><strong>Erledigt</strong> → Reset ist sicher, kein Handlungsbedarf.</p>
+<p><strong>Nicht erledigt</strong> → Sub-Agent dispatchen der den Pending-Eintrag direkt schreibt:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Sub-Agent Auftrag:
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>Lies agents/&lt;ziel-agent&gt;/claude.md als Kontext.
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>Trage folgende offene Delegation in docs/superpowers/plans/PENDING.md ein,
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>Abschnitt &quot;## Offene Delegationen&quot;, als neue Tabellenzeile:
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>| &lt;Ziel-Agent&gt; | &lt;Aufgabe kurz&gt; | &lt;Dieser Agent&gt; | &lt;Datum heute&gt; |
+</code></pre></div>
+<p><strong>Wichtig:</strong> Sub-Agenten erben die Permissions des aufrufenden Agents.
+Daher muss jeder Agent Write-Access auf <code>docs/superpowers/plans/PENDING.md</code> in seiner <code>start.sh</code> haben.</p>
+<p><strong>Ausnahme:</strong> Pending-Einträge werden <strong>direkt geschrieben</strong> — kein Briefing an den User nötig.
+Das ist die einzige Ausnahme vom "User als Kanal"-Prinzip: hier geht es um Tracking, nicht um Domain-Wissen.</p>
+<hr />
+<h2 id="schritt-2-persistenzcheck">Schritt 2 — Persistenzcheck<a class="headerlink" href="#schritt-2-persistenzcheck" title="Permanent link">&para;</a></h2>
+<p>Für jeden gefundenen Punkt prüfen: Ist er bereits sicher gespeichert?
+- In <code>CLAUDE.md</code>?
+- Im Method-Set (<code>continuous-improvement.md</code> inkl. Improvement-Register, <code>method.md</code>, Glossar/Definition,
+  <code>alpha-states.md</code>, einer Practice-Karte, <code>learnings/</code>)?
+- In <code>PENDING.md</code> oder <code>assets-local/README.md</code>?
+- In einer Memory-Datei?
+- In einem Code-Kommentar oder Docstring?
+- In einer Commit-Message?
+- In einem GitHub Issue oder TODO-Kommentar im Code?</p>
+<p>Jeden Punkt als <strong>bereits gesichert</strong> oder <strong>noch nicht gesichert</strong> markieren.</p>
+<h2 id="schritt-25-wissens-routing">Schritt 2.5 — Wissens-Routing<a class="headerlink" href="#schritt-25-wissens-routing" title="Permanent link">&para;</a></h2>
+<p>Für jeden noch nicht gesicherten Punkt aus Schritt 2 klassifizieren.</p>
+<p>Zwei Fragen stellen — beide zählen:</p>
 <blockquote>
-<p><strong>Scope.</strong> klartext's enactment of the <strong>tdd</strong> wrapper practice: the concrete test bindings that
-extend the upstream discipline — the inside-out test levels, fakes-not-mocks, the Supabase
-integration-test rule, the <code>/health</code> endpoint rule, and the <code>qa-review</code> close-out step.
-<strong>Out of scope.</strong> The generic TDD discipline (red-green-refactor, the Iron Law) — that is
-<code>superpowers:test-driven-development</code>, <strong>referenced, not restated</strong> here. The composition shape — see
-the L3 wrapper card.
-<strong>Language.</strong> English — documentation-language rule.</p>
-<p><strong>L3 definition:</strong> <a href="../../../library/practices/tdd/"><code>../../library/practices/tdd.md</code></a>
-<strong>Upstream Resource:</strong> <a href="../../../library/resources/superpowers/"><code>../../library/resources/superpowers.md</code></a> (<code>superpowers:test-driven-development</code>)
-<strong>Status:</strong> living (ritual) · <strong>Owner:</strong> QA (test standards) / OE (composition shape, L3) · <strong>Advances Alpha:</strong> Software System + Way of Working · <strong>NN:</strong> ✓
-<strong>Enacted as:</strong> the <code>tdd</code> skill (<code>docs/method/enactment/skills/tdd/SKILL.md</code>) + the structural coverage check (<code>scripts/check_test_coverage.py</code>)</p>
+<p><strong>1. Woher kommt das Wissen?</strong> Liegt es in meinem Domain?
+<strong>2. Wer hat fachliche Autorität darüber?</strong> Wer entscheidet was hier "richtig" ist?</p>
 </blockquote>
-<h2 id="klartext-bindings">klartext bindings<a class="headerlink" href="#klartext-bindings" title="Permanent link">&para;</a></h2>
-<h3 id="test-levels-inside-out">Test levels — inside out<a class="headerlink" href="#test-levels-inside-out" title="Permanent link">&para;</a></h3>
-<p>Test in this order; each level has a distinct tool and isolation boundary:</p>
+<p>Frage 2 bezieht sich auf <strong>Expertise und Autorität</strong>, nicht auf Datei-Eigentümerschaft.
+Beispiel: UX/UI entdeckt eine Lücke in den Verifikationskriterien → fachliche Autorität liegt bei QA
+(auch wenn das Thema "Frontend" klingt und die Datei <code>verify.md</code> heißt).</p>
+<p>Wenn Frage 2 einen anderen Agent nennt: mindestens Grenzwissen.</p>
 <table>
 <thead>
 <tr>
-<th>Level</th>
-<th>What is tested</th>
-<th>Isolation</th>
+<th>Typ</th>
+<th>Beschreibung</th>
+<th>Konsequenz</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Domain</strong></td>
-<td>pure unit tests — invariants, factory methods, state changes</td>
-<td>no mocks, no external systems</td>
+<td><strong>Eigenwissen</strong></td>
+<td>Gehört in meinen Domain</td>
+<td>→ Schritt 3: normal speichern</td>
 </tr>
 <tr>
-<td><strong>Service</strong></td>
-<td>business logic, orchestration</td>
-<td><strong>fake repositories</strong> (in-memory), no Supabase</td>
+<td><strong>Fremdwissen</strong></td>
+<td>Gehört vollständig zu einem anderen Agent</td>
+<td>→ Wissens-Briefing formulieren</td>
 </tr>
 <tr>
-<td><strong>Repository</strong></td>
-<td>SQL / PostgREST queries</td>
-<td><code>@pytest.mark.integration</code> against the real test DB</td>
+<td><strong>Grenzwissen</strong></td>
+<td>Betrifft zwei Agents gleichzeitig</td>
+<td>→ je ein Wissens-Briefing pro Agent</td>
 </tr>
 <tr>
-<td><strong>Router</strong></td>
-<td>the HTTP contract (status, body, wiring)</td>
-<td><code>AsyncClient</code> + <code>ASGITransport</code></td>
+<td><strong>Organisationswissen</strong></td>
+<td>Betrifft Struktur oder Zusammenarbeit</td>
+<td>→ Wissens-Briefing an OE</td>
 </tr>
 </tbody>
 </table>
-<h3 id="fakes-not-mocks">Fakes, not mocks<a class="headerlink" href="#fakes-not-mocks" title="Permanent link">&para;</a></h3>
-<p>Service tests use <strong>real in-memory fake repositories</strong> (classes), never mock objects. A fake must honor
-the full interface contract — <strong>no silent constants</strong> (<code>claim_count=0</code> is forbidden; use a
-test-controllable <code>set_claim_count()</code> helper) and <strong>behavioral parity</strong> (a fake raises the same
-exception on the same condition the real repo does — asymmetry in the fake is a red flag). See the QA
-fake-contract rules.</p>
-<h3 id="supabase-integration-test-rule">Supabase integration-test rule<a class="headerlink" href="#supabase-integration-test-rule" title="Permanent link">&para;</a></h3>
-<p>Every new <code>SupabaseXRepository</code> method gets an <code>@pytest.mark.integration</code> test <strong>in the same commit</strong> as
-the implementation — unit tests with the fake are <em>not sufficient</em> (the fake cannot verify SQL /
-embedded PostgREST counts / FK relationships). Required signals: JOINs, embedded counts
-(<code>table(count)</code>), multi-table queries.</p>
-<h3 id="health-endpoint-rule">Health-endpoint rule<a class="headerlink" href="#health-endpoint-rule" title="Permanent link">&para;</a></h3>
-<p>Every service router gets <code>GET /&lt;resource&gt;/health</code> (HTTP 200, <code>{"status": "ok"}</code>, no auth) <strong>added
-first</strong>, before any other endpoint — and a router test asserting it. Enforced by test, not by review.</p>
-<h3 id="qa-review-close-out-tdd-step-3">qa-review close-out (TDD Step 3)<a class="headerlink" href="#qa-review-close-out-tdd-step-3" title="Permanent link">&para;</a></h3>
-<p>Before "done", invoke <code>qa-review</code> — the QA sub-agent reviews the diff with fresh eyes (coverage, edge
-cases, infrastructure tests, fake-contract completeness, domain composition). All-green is necessary,
-not sufficient. <strong>Bug fixes:</strong> after the fix is green, invoke <code>qa-retro</code> if the bug should have been
-caught originally.</p>
-<h3 id="structural-invariants-mechanical">Structural invariants (mechanical)<a class="headerlink" href="#structural-invariants-mechanical" title="Permanent link">&para;</a></h3>
-<p><code>scripts/check_test_coverage.py</code> enforces three invariants — no manual review substitutes:</p>
+<p>Wissens-Briefing Format:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Wissens-Briefing an &lt;Agent&gt;
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>Typ:      [Fremdwissen / Grenzwissen / Organisationswissen]
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>Inhalt:   [Das konkrete Wissen — Entscheidung, Regel, Muster]
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>Kontext:  [Warum ist es entstanden? Aus welchem Problem?]
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>Ziel:     [In agents/&lt;name&gt;/claude.md eintragen, Abschnitt: ...]
+</code></pre></div></p>
+<p>Der User ist immer der Kanal — kein Agent schreibt direkt in die Dateien eines anderen Agents.</p>
+<hr />
+<h2 id="schritt-3-mit-dem-user-durchgehen">Schritt 3 — Mit dem User durchgehen<a class="headerlink" href="#schritt-3-mit-dem-user-durchgehen" title="Permanent link">&para;</a></h2>
+<p>Befunde klar und strukturiert präsentieren — auf Deutsch. Zuerst kurz bestätigen was bereits gesichert ist und wo.</p>
+<p>Dann in zwei Blöcken:</p>
+<p><strong>Block A — Eigenwissen</strong> (gehört in meinen Domain):
+Für jeden Punkt fragen:
+- Muss das gesichert werden?
+- Wenn ja: wo? Home nach Inhaltstyp wählen:
+  - <strong>Domain-Agents zuerst hier:</strong> eigenes Hoheitswissen (Muster, Regeln, Heuristiken der eigenen Domain)
+    → <code>agents/&lt;name&gt;/claude.md</code> · Domain-Learnings → das Learnings-Home der eigenen Domain
+    (z.B. QA: <code>docs/superpowers/qa-learnings/</code>)
+  - Entscheidung + Begründung zur Arbeitsweise → <code>continuous-improvement.md</code> <em>(via OE, wenn ohne Write-Access:
+    Briefing formulieren)</em>
+  - Prozess-Learning → <code>learnings/</code>
+  - Neues/geändertes Methoden-Element → Practice-Karte + <code>method.md</code> (im selben Schritt; <strong>nur OE</strong> — andere
+    Agents: Briefing an OE)
+  - Begriff → Glossar: generischer Methoden-Begriff → <code>docs/method/library/semat-glossary.md</code> (L3);
+    klartext-spezifischer Begriff → <code>docs/method/enactment/semat-glossary-klartext.md</code> (L2)
+  - Verbesserungs-Kandidat → Improvement-Register (<code>continuous-improvement.md</code> §3; ohne Write-Access:
+    Briefing an OE)
+  - Geparkter Befund (Kategorie 7) → benanntes Verwahr-Depot mit Freigabe-/Löschbedingung (Memory-Park-Pattern)
+  - Sonst: CLAUDE.md, Memory-Datei, Code-Kommentar, Commit-Message, neues Issue
+- <strong>Schreibrechte vorher prüfen:</strong> Nur Homes wählen, auf die diese Session laut ihrer <code>start.sh</code> schreiben
+  darf — sonst Briefing an den Owner formulieren statt still zu scheitern.
+- Den konkreten Eintrag formulieren und dem User zeigen — <strong>erst dann speichern wenn er explizit zustimmt</strong></p>
+<p><strong>Block B — Wissens-Briefings</strong> (gehört zu anderen Agents):
+Alle formulierten Briefings präsentieren und fragen:
+- Weiterleiten? Formulierung anpassen? Überspringen?
+- <strong>Niemals ohne Bestätigung weiterleiten</strong></p>
+<p>Niemals auto-speichern. Immer auf Bestätigung warten.</p>
+<p><strong>Wichtig:</strong> Der User hat explizit gesagt, dass er es vorzieht zu viele Fragen gestellt zu bekommen als dass etwas übersehen wird. Im Zweifel fragen.</p>
+<h2 id="schritt-4-bestatigte-punkte-speichern-artefakt-verifikation">Schritt 4 — Bestätigte Punkte speichern + Artefakt-Verifikation<a class="headerlink" href="#schritt-4-bestatigte-punkte-speichern-artefakt-verifikation" title="Permanent link">&para;</a></h2>
+<p>Nach Bestätigung durch den User: Eintrag an der vereinbarten Stelle speichern. Passende Tools verwenden (Edit/Write für Dateien, Bash für git commits).</p>
+<p>Wenn ein Eintrag in CLAUDE.md geht: Bestehenden Abschnitt aufrufen und passend einfügen — nie überschreiben, nie duplizieren.</p>
+<p><strong>Pflicht-Abschluss — Artefakt-Verifikation (False-Persistence-Schutz):</strong> Nach ALLEN Speicherungen
+<code>git status</code> / <code>git diff --stat</code> (bzw. <code>ls -la</code> für Dateien außerhalb des Repos) ausführen und die
+tatsächlich geänderten Dateien gegen die Liste der beabsichtigten Speicherungen abgleichen. <strong>Der eigenen
+Erinnerung oder einer Session-Summary wird nicht geglaubt — nur dem Artefakt.</strong> (Beleg: 2× behaupteten
+kompaktierte Summaries Schreibvorgänge, die nie stattfanden — RC4-Variante "False Persistence", 2026-06-10.)</p>
+<h2 id="schritt-46-successor-seed-nur-im-restart-modus">Schritt 4.6 — Successor-Seed (NUR im Restart-Modus)<a class="headerlink" href="#schritt-46-successor-seed-nur-im-restart-modus" title="Permanent link">&para;</a></h2>
+<p><strong>Überspringen, wenn Checkpoint.</strong> Im Restart-Modus: eine Handoff-Notiz ins <strong>eigene</strong> Postfach legen,
+damit die Nachfolge-Session ohne Lücke weitermacht (claude.md lädt die Identität, der Seed liefert den
+<em>Stand</em>):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>bash scripts/inbox.sh send &lt;self&gt; &lt;self&gt; &quot;Successor-Seed: &lt;kurzer Betreff&gt;&quot;
+</code></pre></div>
+<p>Inhalt der Notiz:
+- <strong>Stand:</strong> was ist erledigt / in Arbeit / blockiert (mit PR-/Branch-/Commit-Bezügen)
+- <strong>Offene Fäden:</strong> was als Nächstes ansteht, geparkte Befunde, wartende Briefings
+- <strong>Wake-Prompt:</strong> eine konkrete erste Anweisung — eine frische Session handelt nicht von selbst,
+  bevor der User die erste Nachricht gibt (Pilot-Lehre 2026-06-11)</p>
+<p><strong>Artefakt-Verifikation auch hier:</strong> prüfen, dass die Inbox-Datei tatsächlich existiert und nicht leer ist
+(<code>inbox.sh unread &lt;self&gt;</code> / <code>wc -l</code> auf die Datei) — der Seed ist die Verlust-Versicherung, er darf nicht
+selbst dem False-Persistence-Bug zum Opfer fallen.</p>
+<h2 id="schritt-47-worktree-aktuell-nur-im-restart-modus-hinweis">Schritt 4.7 — Worktree aktuell? (NUR im Restart-Modus, Hinweis)<a class="headerlink" href="#schritt-47-worktree-aktuell-nur-im-restart-modus-hinweis" title="Permanent link">&para;</a></h2>
+<p><strong>Überspringen, wenn Checkpoint.</strong> Im Restart-Modus ist der Worktree nach Schritt 4 sauber (alles
+committet) — ein sicherer Moment, ihn mit <code>main</code> zu synchronisieren, damit die Nachfolge-Session auf
+aktuellem <code>main</code> startet (die App rebaset beim Start <strong>nicht</strong> automatisch — Drift-Lücke, siehe
+Improvement-Register „App has no auto-rebase at session start").</p>
+<p>Dieser Skill <strong>rebaset nicht selbst</strong> — er <em>verweist</em> nur auf das mechanische Tooling:
+- <code>git rebase origin/main</code> (wenn der Worktree sauber ist und auf seiner <code>agent/&lt;slug&gt;</code>-Home-Branch sitzt), <strong>oder</strong>
+- <code>klartext converge</code> (geguardeter Sync, sobald DevOps ihn ausliefert — die Aktions-Hälfte der Drift-Warnung).</p>
+<p><strong>Nicht</strong> auf einem Feature-Branch mit offenem PR zwangs-rebasen — der bekommt <code>main</code> beim PR-Merge.
+Kosmetisch/optional: blockiert den <code>/clear</code> nie.</p>
+<h2 id="schritt-5-kurze-zusammenfassung">Schritt 5 — Kurze Zusammenfassung<a class="headerlink" href="#schritt-5-kurze-zusammenfassung" title="Permanent link">&para;</a></h2>
+<p>Kurze Zusammenfassung geben:
+- Wie viele Punkte wurden gefunden
+- Was war bereits gesichert
+- Was wurde neu gesichert
+- Was wurde bewusst übersprungen
+- (Restart) ob der Successor-Seed liegt und verifiziert ist</p>
+<h2 id="schritt-6-prozess-verbesserungen">Schritt 6 — Prozess-Verbesserungen<a class="headerlink" href="#schritt-6-prozess-verbesserungen" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>Anbindung an die Methode:</strong> Dieser Schritt ist ein <em>Capture</em>-Schritt, keine Retro — die eigentliche
+Bewertung gehört in die <strong>Retrospective-Practice</strong> (<code>docs/method/library/practices/retrospective.md</code>,
+generische Definition; klartext-Enactment: <code>docs/method/enactment/practices/retrospective.md</code>). Jeder hier gefundene
+Verbesserungs-Kandidat wird als <strong>Improvement-Instanz ins Register</strong> eingetragen
+(<code>continuous-improvement.md</code> §3, Zustand <em>Identified</em>) — nicht nur als loses TODO. Die nächste Retro
+priorisiert und bewertet.</p>
+</blockquote>
+<h3 id="teil-a-neue-skill-kandidaten">Teil A — Neue Skill-Kandidaten<a class="headerlink" href="#teil-a-neue-skill-kandidaten" title="Permanent link">&para;</a></h3>
+<p>Kurz fragen:</p>
+<blockquote>
+<p><em>"Gab es in dieser Session etwas das sich wiederholt hat — eine Abfolge von Schritten, ein Muster, eine Aufgabe die du dir als wiederverwendbaren Skill vorstellen könntest?"</em></p>
+</blockquote>
+<p>Wenn ja: Kurz beschreiben was der Skill tun würde und festhalten. Der User entscheidet ob er den Skill jetzt oder später bauen will — kein Druck.</p>
+<p>Wenn nein oder der User überspringen möchte: kein Problem.</p>
+<h3 id="teil-b-bestehende-prozess-artefakte-prufen">Teil B — Bestehende Prozess-Artefakte prüfen<a class="headerlink" href="#teil-b-bestehende-prozess-artefakte-prufen" title="Permanent link">&para;</a></h3>
+<p>Nur fragen wenn in der Session etwas Relevantes passiert ist — kein Pflicht-Protokoll:</p>
 <ol>
-<li>every source file in <code>models/</code> <code>services/</code> <code>repositories/</code> <code>routers/</code> has a <code>test_&lt;stem&gt;*.py</code>;</li>
-<li>every <code>test_*_router.py</code> has a <code>health</code>-named function;</li>
-<li>every <code>supabase_*.py</code> repository has at least one <code>@pytest.mark.integration</code> test.</li>
+<li><strong>Bestehende Skills veraltet?</strong>
+   Hat ein Skill (<code>tdd</code>, <code>frontend</code>, <code>verify</code>, <code>anchor</code>) in dieser Session nicht geholfen, etwas Falsches vorgegeben oder war unvollständig? Wenn ja: was konkret ändern?
+   → Sofort fixen oder als Improvement-Instanz ins Register (<code>continuous-improvement.md</code> §3)</li>
 </ol>
-<h3 id="frontend">Frontend<a class="headerlink" href="#frontend" title="Permanent link">&para;</a></h3>
-<p>For React/TypeScript work, additionally apply the <code>frontend-testing</code> skill (QA-defined completeness
-criteria extending these standards).</p>
-<h2 id="enforcement-klartext">Enforcement (klartext)<a class="headerlink" href="#enforcement-klartext" title="Permanent link">&para;</a></h2>
-<p>Ritual at invocation (the skill runs at the start of every feature/bugfix); <strong>mechanical</strong> for the three
-structural invariants (<code>check_test_coverage.py</code>). The <code>qa-review</code> close-out is a non-optional ritual
-step of the <code>tdd</code> skill.</p>
-<h2 id="related">Related<a class="headerlink" href="#related" title="Permanent link">&para;</a></h2>
+<p>1b. <strong>Practice-Karten aktuell?</strong>
+   Hat sich in dieser Session geändert, <em>wie</em> wir arbeiten? Dann prüfen: stimmen die betroffenen
+   Practice-Karten (L3-Definition unter <code>docs/method/library/practices/</code>, klartext-Enactment unter
+   <code>docs/method/enactment/practices/</code>) und das Element-Register (<code>docs/method/enactment/method.md</code>) noch?
+   → <strong>Nur OE:</strong> Karte(n) + <code>method.md</code> im selben Schritt aktualisieren (Maintenance-Ritual).
+   → <strong>Domain-Agents</strong> (kein Write-Access auf <code>practices/</code>): Befund als Briefing an OE formulieren
+   und dem User zeigen — Frage 1b damit erledigt, nicht überspringen.</p>
+<ol>
+<li>
+<p><strong>Tool-Config-Auffälligkeiten?</strong>
+   Gab es Linter-, Typecheck- oder Tach-Ausgaben die ignoriert oder umgangen wurden? Fehlt eine Konfigurationsregel die mehrfach hilfreich gewesen wäre?
+   → Sofort in <code>ruff.toml</code>, <code>mypy.ini</code>, <code>tsconfig.json</code>, <code>tach.toml</code> etc. fixen oder als TODO
+   → <strong>⚠️ Infrastructure Perimeter:</strong> <code>api/pyproject.toml</code> (ruff/mypy), <code>tach.toml</code>, <code>.pre-commit-config.yaml</code>, <code>.github/workflows/</code> und <code>frontend/</code>-Configs gehören zum Infrastructure Perimeter und dürfen nur vom DevOps-Agent direkt geändert werden. Wenn dieser Agent nicht DevOps ist: kein direkter Fix — stattdessen ein DevOps Briefing formulieren und dem User zeigen:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>DevOps Briefing
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>Need:    [Was konkret geändert werden soll]
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>Why:     [Technischer Grund]
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>Domain:  [Dependencies / CI/CD / Config / Other]
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>Impact:  [Welche Agents/Environments betroffen]
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Verify-Skills aktuell?</strong>
+   Wurden neue Screens, Komponenten oder API-Endpoints hinzugefügt? Dann prüfen: sind <code>docs/method/enactment/skills/verify.md</code> und <code>verify-backend.md</code> noch vollständig?
+   → Skill-Datei direkt updaten wenn nötig</p>
+</li>
+<li>
+<p><strong>GitHub Issues vollständig?</strong>
+   Wurden <code>TODO</code>-Kommentare im Code hinzugefügt ohne entsprechendes Issue? Wurden Issues in dieser Session implizit gelöst aber nicht geschlossen?
+   → Issue anlegen oder schließen</p>
+</li>
+<li>
+<p><strong>ADR nötig?</strong>
+   Wurde eine Architekturentscheidung getroffen die in <code>docs/adr/</code> festgehalten werden sollte? Format: <code>docs/adr/NNNN-kurztitel.md</code>, Status: <code>Proposed</code>.
+   → ADR-Datei anlegen wenn der User zustimmt</p>
+</li>
+</ol>
+<hr />
+<p><strong>Abschluss:</strong> Erst nach allen Schritten sagen, dass alles gesichert <strong>und verifiziert</strong> ist. Dann den
+nächsten Schritt nennen — je nach Modus:</p>
 <ul>
-<li>L3 wrapper card: <a href="../../../library/practices/tdd/"><code>../../library/practices/tdd.md</code></a>.</li>
-<li>Upstream Resource: <a href="../../../library/resources/superpowers/"><code>../../library/resources/superpowers.md</code></a>.</li>
-<li>Dependency contract: <a href="../../contracts/superpowers/"><code>../contracts/superpowers.md</code></a> (S2 — the wrapped TDD discipline still carries its Iron Law).</li>
-<li>The skill source: <code>docs/method/enactment/skills/tdd/SKILL.md</code> (F3 — not modified by this package).</li>
+<li><strong>Restart:</strong> <em>"Alles gesichert und verifiziert, Successor-Seed liegt. Du kannst jetzt <code>/clear</code> ausführen —
+  verlustfreier Generationswechsel: <code>/clear</code> verwirft sauber, die Nachfolge bootet aus <code>claude.md</code> +
+  liest den Seed."</em></li>
+<li><strong>Checkpoint:</strong> <em>"Alles gesichert und verifiziert. Du kannst weiterarbeiten."</em></li>
 </ul>
+<p><strong><code>/clear</code> und <code>/compact</code> NIE selbst ausführen</strong> — warten bis der User es explizit auslöst.</p>
+<p><strong><code>/clear</code> ist <code>/compact</code> vorzuziehen:</strong> <code>/clear</code> <em>verwirft</em> (zwingt dazu, dass vorher wirklich alles
+persistiert wurde — genau dieses Ritual), <code>/compact</code> <em>fasst zusammen</em> (lückenhaft, False-Persistence-Risiko).
+Der Skript hieß früher <code>pre-compact</code>; umbenannt zu <strong>anchor</strong>, weil der Name an einen Befehl gebunden war,
+der nicht mehr der bevorzugte Weg ist — <code>anchor</code> benennt das Wesen (Wissen verankern), nicht den Befehl.</p>
 
 
 
 
 
 
+
+  
+  
 
 
 

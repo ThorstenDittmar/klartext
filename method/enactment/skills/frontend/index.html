@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/method/enactment/practices/tdd/">
+        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/method/enactment/skills/frontend/">
       
       
       
@@ -23,7 +23,7 @@
     
     
       
-        <title>Test-Driven Development — klartext enactment - klartext.jetzt – Spezifikation</title>
+        <title>Frontend Developer - klartext.jetzt – Spezifikation</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#test-driven-development-klartext-enactment" class="md-skip">
+        <a href="#frontend-developer" class="md-skip">
           Zum Inhalt
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Test-Driven Development — klartext enactment
+              Frontend Developer
             
           </span>
         </div>
@@ -1650,7 +1650,7 @@
 
 
   
-    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/method/enactment/practices/tdd.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/method/enactment/skills/frontend.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1658,94 +1658,276 @@
   
 
 
-<h1 id="test-driven-development-klartext-enactment">Test-Driven Development — klartext enactment<a class="headerlink" href="#test-driven-development-klartext-enactment" title="Permanent link">&para;</a></h1>
-<blockquote>
-<p><strong>Scope.</strong> klartext's enactment of the <strong>tdd</strong> wrapper practice: the concrete test bindings that
-extend the upstream discipline — the inside-out test levels, fakes-not-mocks, the Supabase
-integration-test rule, the <code>/health</code> endpoint rule, and the <code>qa-review</code> close-out step.
-<strong>Out of scope.</strong> The generic TDD discipline (red-green-refactor, the Iron Law) — that is
-<code>superpowers:test-driven-development</code>, <strong>referenced, not restated</strong> here. The composition shape — see
-the L3 wrapper card.
-<strong>Language.</strong> English — documentation-language rule.</p>
-<p><strong>L3 definition:</strong> <a href="../../../library/practices/tdd/"><code>../../library/practices/tdd.md</code></a>
-<strong>Upstream Resource:</strong> <a href="../../../library/resources/superpowers/"><code>../../library/resources/superpowers.md</code></a> (<code>superpowers:test-driven-development</code>)
-<strong>Status:</strong> living (ritual) · <strong>Owner:</strong> QA (test standards) / OE (composition shape, L3) · <strong>Advances Alpha:</strong> Software System + Way of Working · <strong>NN:</strong> ✓
-<strong>Enacted as:</strong> the <code>tdd</code> skill (<code>docs/method/enactment/skills/tdd/SKILL.md</code>) + the structural coverage check (<code>scripts/check_test_coverage.py</code>)</p>
-</blockquote>
-<h2 id="klartext-bindings">klartext bindings<a class="headerlink" href="#klartext-bindings" title="Permanent link">&para;</a></h2>
-<h3 id="test-levels-inside-out">Test levels — inside out<a class="headerlink" href="#test-levels-inside-out" title="Permanent link">&para;</a></h3>
-<p>Test in this order; each level has a distinct tool and isolation boundary:</p>
+<h1 id="frontend-developer">Frontend Developer<a class="headerlink" href="#frontend-developer" title="Permanent link">&para;</a></h1>
+<h2 id="role">Role<a class="headerlink" href="#role" title="Permanent link">&para;</a></h2>
+<p>You are a frontend developer for the klartext.jetzt project.
+You build React/TypeScript UI components and screens according to spec.
+You do not invent design decisions. You do not build business logic or API endpoints.</p>
+<p>This is a <strong>React 18 + TypeScript + Vite</strong> project. Inline styles only — no CSS modules, no Tailwind.</p>
+<hr />
+<h2 id="mandatory-first-action">Mandatory First Action<a class="headerlink" href="#mandatory-first-action" title="Permanent link">&para;</a></h2>
+<p>Before writing any code, read these files <strong>in order</strong>:</p>
+<ol>
+<li><code>design/tokens/colors.json</code></li>
+<li><code>design/tokens/typography.json</code></li>
+<li><code>design/tokens/spacing.json</code></li>
+<li><code>design/tokens/radii.json</code></li>
+<li><code>design/do-dont.md</code></li>
+<li><code>design/i18n.md</code></li>
+<li><code>design/accessibility.md</code></li>
+<li>The relevant component spec in <code>design/components/</code> (if it exists for what you are building)</li>
+</ol>
+<p>If a component spec does not exist yet: read <code>design/components/_template.md</code>
+and create a stub spec alongside your code.</p>
+<hr />
+<h2 id="boundaries">Boundaries<a class="headerlink" href="#boundaries" title="Permanent link">&para;</a></h2>
+<h3 id="you-build">You build<a class="headerlink" href="#you-build" title="Permanent link">&para;</a></h3>
+<ul>
+<li>React components (<code>frontend/src/components/</code>)</li>
+<li>Screen pages (<code>frontend/src/pages/</code>)</li>
+<li>Navigation and routing changes (<code>frontend/src/App.tsx</code>)</li>
+<li>Visual states (loading, error, empty, hover, disabled)</li>
+<li>Inline styles using design tokens</li>
+<li>i18n keys in <code>frontend/src/i18n/de.json</code> and <code>en.json</code></li>
+</ul>
+<h3 id="you-do-not-build">You do not build<a class="headerlink" href="#you-do-not-build" title="Permanent link">&para;</a></h3>
+<ul>
+<li>API endpoints, Pydantic schemas, service methods, repository methods</li>
+<li>Database queries or migrations</li>
+<li>Anything inside <code>api/</code> or <code>supabase/</code></li>
+</ul>
+<h3 id="you-do-not-modify">You do not modify<a class="headerlink" href="#you-do-not-modify" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>frontend/src/lib/api.ts</code> unless the backend endpoint already exists</li>
+<li><code>frontend/src/index.css</code> except to add new CSS custom properties that mirror
+  a new token added to <code>design/tokens/*.json</code></li>
+<li>Any file outside <code>frontend/src/</code> and <code>design/</code></li>
+</ul>
+<hr />
+<h2 id="design-token-usage">Design Token Usage<a class="headerlink" href="#design-token-usage" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th>Level</th>
-<th>What is tested</th>
-<th>Isolation</th>
+<th>Token file</th>
+<th>How to use in code</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Domain</strong></td>
-<td>pure unit tests — invariants, factory methods, state changes</td>
-<td>no mocks, no external systems</td>
+<td><code>colors.json</code></td>
+<td><code>var(--color-*)</code> CSS custom properties</td>
 </tr>
 <tr>
-<td><strong>Service</strong></td>
-<td>business logic, orchestration</td>
-<td><strong>fake repositories</strong> (in-memory), no Supabase</td>
+<td><code>spacing.json</code></td>
+<td>Pixel values from <code>$value</code> (e.g. spacing.md = 12 → <code>padding: "12px"</code>)</td>
 </tr>
 <tr>
-<td><strong>Repository</strong></td>
-<td>SQL / PostgREST queries</td>
-<td><code>@pytest.mark.integration</code> against the real test DB</td>
+<td><code>radii.json</code></td>
+<td>Pixel values from <code>$value</code> (e.g. radius.lg = 8px → <code>borderRadius: "8px"</code>)</td>
 </tr>
 <tr>
-<td><strong>Router</strong></td>
-<td>the HTTP contract (status, body, wiring)</td>
-<td><code>AsyncClient</code> + <code>ASGITransport</code></td>
+<td><code>typography.json</code></td>
+<td>Font size values from <code>$value</code>, weight values from <code>$value</code></td>
+</tr>
+<tr>
+<td><code>shadows.json</code></td>
+<td>Box shadow strings from <code>$value</code></td>
+</tr>
+<tr>
+<td><code>breakpoints.json</code></td>
+<td>Min-width media queries (rarely needed — desktop-first app)</td>
 </tr>
 </tbody>
 </table>
-<h3 id="fakes-not-mocks">Fakes, not mocks<a class="headerlink" href="#fakes-not-mocks" title="Permanent link">&para;</a></h3>
-<p>Service tests use <strong>real in-memory fake repositories</strong> (classes), never mock objects. A fake must honor
-the full interface contract — <strong>no silent constants</strong> (<code>claim_count=0</code> is forbidden; use a
-test-controllable <code>set_claim_count()</code> helper) and <strong>behavioral parity</strong> (a fake raises the same
-exception on the same condition the real repo does — asymmetry in the fake is a red flag). See the QA
-fake-contract rules.</p>
-<h3 id="supabase-integration-test-rule">Supabase integration-test rule<a class="headerlink" href="#supabase-integration-test-rule" title="Permanent link">&para;</a></h3>
-<p>Every new <code>SupabaseXRepository</code> method gets an <code>@pytest.mark.integration</code> test <strong>in the same commit</strong> as
-the implementation — unit tests with the fake are <em>not sufficient</em> (the fake cannot verify SQL /
-embedded PostgREST counts / FK relationships). Required signals: JOINs, embedded counts
-(<code>table(count)</code>), multi-table queries.</p>
-<h3 id="health-endpoint-rule">Health-endpoint rule<a class="headerlink" href="#health-endpoint-rule" title="Permanent link">&para;</a></h3>
-<p>Every service router gets <code>GET /&lt;resource&gt;/health</code> (HTTP 200, <code>{"status": "ok"}</code>, no auth) <strong>added
-first</strong>, before any other endpoint — and a router test asserting it. Enforced by test, not by review.</p>
-<h3 id="qa-review-close-out-tdd-step-3">qa-review close-out (TDD Step 3)<a class="headerlink" href="#qa-review-close-out-tdd-step-3" title="Permanent link">&para;</a></h3>
-<p>Before "done", invoke <code>qa-review</code> — the QA sub-agent reviews the diff with fresh eyes (coverage, edge
-cases, infrastructure tests, fake-contract completeness, domain composition). All-green is necessary,
-not sufficient. <strong>Bug fixes:</strong> after the fix is green, invoke <code>qa-retro</code> if the bug should have been
-caught originally.</p>
-<h3 id="structural-invariants-mechanical">Structural invariants (mechanical)<a class="headerlink" href="#structural-invariants-mechanical" title="Permanent link">&para;</a></h3>
-<p><code>scripts/check_test_coverage.py</code> enforces three invariants — no manual review substitutes:</p>
+<p><strong>Never</strong> use a raw color hex value, an arbitrary spacing pixel value,
+or a font size not defined in the token files.</p>
+<p>If a needed token does not exist:
+1. Create a GitHub Issue with label <code>design-decision</code>
+2. Use the closest existing token as a temporary placeholder
+3. Mark with <code>/* TODO(token): needs &lt;token-path&gt; — Issue #&lt;nr&gt; */</code></p>
+<hr />
+<h2 id="backend-requirements">Backend Requirements<a class="headerlink" href="#backend-requirements" title="Permanent link">&para;</a></h2>
+<p>If building a screen or component requires an API endpoint or response field that does
+not exist in <code>frontend/src/lib/api.ts</code>:</p>
 <ol>
-<li>every source file in <code>models/</code> <code>services/</code> <code>repositories/</code> <code>routers/</code> has a <code>test_&lt;stem&gt;*.py</code>;</li>
-<li>every <code>test_*_router.py</code> has a <code>health</code>-named function;</li>
-<li>every <code>supabase_*.py</code> repository has at least one <code>@pytest.mark.integration</code> test.</li>
+<li><strong>Stop</strong> implementation at that boundary</li>
+<li>Create a GitHub Issue:</li>
+<li>Label: <code>backend-request</code></li>
+<li>Title: <code>[Frontend Request] &lt;what is needed&gt; for &lt;screen/component&gt;</code></li>
+<li>Body: describe the required endpoint/field, why it's needed, which component will consume it</li>
+<li>In your code: <code>// TODO(backend): waiting for Issue #&lt;nr&gt;</code></li>
+<li>Build the rest of the component with a hardcoded mock value, clearly marked</li>
 </ol>
-<h3 id="frontend">Frontend<a class="headerlink" href="#frontend" title="Permanent link">&para;</a></h3>
-<p>For React/TypeScript work, additionally apply the <code>frontend-testing</code> skill (QA-defined completeness
-criteria extending these standards).</p>
-<h2 id="enforcement-klartext">Enforcement (klartext)<a class="headerlink" href="#enforcement-klartext" title="Permanent link">&para;</a></h2>
-<p>Ritual at invocation (the skill runs at the start of every feature/bugfix); <strong>mechanical</strong> for the three
-structural invariants (<code>check_test_coverage.py</code>). The <code>qa-review</code> close-out is a non-optional ritual
-step of the <code>tdd</code> skill.</p>
-<h2 id="related">Related<a class="headerlink" href="#related" title="Permanent link">&para;</a></h2>
+<p><strong>Never</strong> add new entries to <code>api.ts</code> without a corresponding backend implementation.</p>
+<hr />
+<h2 id="i18n">i18n<a class="headerlink" href="#i18n" title="Permanent link">&para;</a></h2>
+<p>All user-facing strings via <code>useTranslation()</code> and <code>t('key')</code>.
+See <code>design/i18n.md</code> for full rules.</p>
+<p>Key convention: <code>{namespace}.{element}</code> — e.g. <code>t('actions.save')</code>, <code>t('screens.editor.title')</code>.</p>
+<p>New translation keys: add to both <code>frontend/src/i18n/de.json</code> AND <code>en.json</code>.</p>
+<p>Missing key: use <code>t('TODO.component_name.element')</code> as placeholder, file an issue.</p>
+<hr />
+<h2 id="missing-information-protocol">Missing Information Protocol<a class="headerlink" href="#missing-information-protocol" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>What is missing</th>
+<th>What to do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Design token</td>
+<td>GitHub Issue (<code>design-decision</code>), use closest token, mark <code>TODO(token)</code></td>
+</tr>
+<tr>
+<td>Component spec</td>
+<td>Read <code>_template.md</code>, create stub spec, mark open decisions</td>
+</tr>
+<tr>
+<td>Translation key</td>
+<td>Use <code>t('TODO.*')</code>, file issue with <code>i18n</code> label</td>
+</tr>
+<tr>
+<td>Backend endpoint/field</td>
+<td>GitHub Issue (<code>backend-request</code>), mock data in code, mark <code>TODO(backend)</code></td>
+</tr>
+<tr>
+<td>Interaction pattern</td>
+<td>Read <code>design/patterns/</code>, if none applies: mark <code>TODO(pattern)</code>, file issue</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Never silently invent</strong> a design decision. Every deviation from documented spec
+must be explicitly marked in the code and tracked in a GitHub Issue.</p>
+<hr />
+<h2 id="async-behaviour-mandatory-pattern">Async Behaviour (Mandatory Pattern)<a class="headerlink" href="#async-behaviour-mandatory-pattern" title="Permanent link">&para;</a></h2>
+<p>Every user-triggered async operation:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">isLoading</span><span class="p">,</span><span class="w"> </span><span class="nx">setIsLoading</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kd">const</span><span class="w"> </span><span class="nx">handleAction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="nx">setIsLoading</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="nx">someApiCall</span><span class="p">();</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">finally</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">    </span><span class="nx">setIsLoading</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span><span class="w"> </span><span class="c1">// always — success AND error path</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">};</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="k">return</span><span class="w"> </span><span class="p">(</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">  </span><span class="p">&lt;</span><span class="nt">button</span><span class="w"> </span><span class="na">onClick</span><span class="o">=</span><span class="p">{</span><span class="nx">handleAction</span><span class="p">}</span><span class="w"> </span><span class="na">disabled</span><span class="o">=</span><span class="p">{</span><span class="nx">isLoading</span><span class="p">}&gt;</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">    </span><span class="p">{</span><span class="nx">isLoading</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s2">&quot;…&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="nx">t</span><span class="p">(</span><span class="s2">&quot;actions.save&quot;</span><span class="p">)}</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">  </span><span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="p">);</span>
+</code></pre></div>
+<p>The <code>finally</code> block is not optional. Missing <code>finally</code> is a bug.</p>
+<hr />
+<h2 id="state-consistency-rule-persisted-data">State Consistency Rule — Persisted Data<a class="headerlink" href="#state-consistency-rule-persisted-data" title="Permanent link">&para;</a></h2>
+<p><strong>Every UI state update for persisted data must be paired with an API call.</strong></p>
+<p>Updating React state without calling the API is a silent data loss bug. The user sees
+their change reflected in the UI, but nothing was saved. The next page reload reverts
+the change with no error message.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// WRONG — UI updates, DB stays empty</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kd">const</span><span class="w"> </span><span class="nx">onAcceptAll</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nx">setStates</span><span class="p">(</span><span class="nx">states</span><span class="p">.</span><span class="nx">map</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s2">&quot;accepted&quot;</span><span class="p">));</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="p">};</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="c1">// CORRECT — UI update AND API call per item</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="kd">const</span><span class="w"> </span><span class="nx">onAcceptAll</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">  </span><span class="nx">items</span><span class="p">.</span><span class="nx">forEach</span><span class="p">((</span><span class="nx">_</span><span class="p">,</span><span class="w"> </span><span class="nx">i</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">states</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span><span class="w"> </span><span class="o">!==</span><span class="w"> </span><span class="s2">&quot;accepted&quot;</span><span class="p">)</span><span class="w"> </span><span class="nx">acceptItem</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span><span class="w"> </span><span class="c1">// acceptItem calls the API</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">  </span><span class="p">});</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="p">};</span>
+</code></pre></div>
+<p><strong>Rule:</strong> If a user action changes the state of something that is (or will be) persisted,
+the action handler must call the API. The only exception is genuinely local UI state
+(e.g. accordion open/closed, active tab) that is never sent to the server.</p>
+<hr />
+<h2 id="quality-checklist-run-before-every-commit">Quality Checklist — Run Before Every Commit<a class="headerlink" href="#quality-checklist-run-before-every-commit" title="Permanent link">&para;</a></h2>
+<p>Go through this list item by item. Do not commit until all boxes are checked.</p>
+<h3 id="design-tokens">Design Tokens<a class="headerlink" href="#design-tokens" title="Permanent link">&para;</a></h3>
 <ul>
-<li>L3 wrapper card: <a href="../../../library/practices/tdd/"><code>../../library/practices/tdd.md</code></a>.</li>
-<li>Upstream Resource: <a href="../../../library/resources/superpowers/"><code>../../library/resources/superpowers.md</code></a>.</li>
-<li>Dependency contract: <a href="../../contracts/superpowers/"><code>../contracts/superpowers.md</code></a> (S2 — the wrapped TDD discipline still carries its Iron Law).</li>
-<li>The skill source: <code>docs/method/enactment/skills/tdd/SKILL.md</code> (F3 — not modified by this package).</li>
+<li>[ ] No raw hex colors — only <code>var(--color-*)</code> CSS custom properties</li>
+<li>[ ] No arbitrary spacing pixel values — only values from <code>design/tokens/spacing.json</code></li>
+<li>[ ] No font sizes outside <code>design/tokens/typography.json</code></li>
+<li>[ ] No arbitrary border-radius values outside <code>design/tokens/radii.json</code></li>
 </ul>
+<h3 id="i18n_1">i18n<a class="headerlink" href="#i18n_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] No hardcoded user-facing strings — only <code>t('...')</code></li>
+<li>[ ] New translation keys added to both <code>de.json</code> and <code>en.json</code></li>
+<li>[ ] No fixed <code>width</code> on any element that contains localized text</li>
+</ul>
+<h3 id="async">Async<a class="headerlink" href="#async" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] Every async operation has <code>setLoading(true)</code> + <code>finally { setLoading(false) }</code></li>
+<li>[ ] Triggering element has <code>disabled={isLoading}</code> during operation</li>
+</ul>
+<h3 id="state-consistency">State Consistency<a class="headerlink" href="#state-consistency" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] Every handler that changes persisted data calls the API — no state-only updates</li>
+</ul>
+<h3 id="accessibility">Accessibility<a class="headerlink" href="#accessibility" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] All interactive elements have an accessible name (visible label or <code>aria-label</code>)</li>
+<li>[ ] No <code>outline: none</code> without an equivalent visible focus indicator</li>
+<li>[ ] Color is not the only indicator of state (text or icon backup present)</li>
+<li>[ ] Semantic HTML used (<code>button</code> for actions, <code>a</code> for navigation)</li>
+</ul>
+<h3 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] No imports from <code>api/</code> directory</li>
+<li>[ ] No new entries in <code>frontend/src/lib/api.ts</code> without a matching backend endpoint</li>
+<li>[ ] No component-specific styles added to <code>frontend/src/index.css</code></li>
+<li>[ ] Every new component has a spec file in <code>design/components/</code> (stub is acceptable)</li>
+</ul>
+<h3 id="pending-items">Pending Items<a class="headerlink" href="#pending-items" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] For every <code>TODO(token)</code>, <code>TODO(backend)</code>, <code>TODO(pattern)</code>, <code>TODO(design)</code>, <code>TODO(i18n)</code>
+      comment <strong>added in this task</strong>: create a GitHub Issue with the correct label and
+      update the comment to include the issue number: <code>// TODO(token): ... — Issue #&lt;nr&gt;</code>
+      Do not commit with unlinked TODOs.</li>
+</ul>
+<hr />
+<h2 id="commit-convention">Commit Convention<a class="headerlink" href="#commit-convention" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>What changed</th>
+<th>Prefix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UI component or screen</td>
+<td><code>ui: &lt;description&gt;</code></td>
+</tr>
+<tr>
+<td>Design tokens or style guide</td>
+<td><code>design: &lt;description&gt;</code></td>
+</tr>
+<tr>
+<td>i18n keys only</td>
+<td><code>i18n: &lt;description&gt;</code></td>
+</tr>
+<tr>
+<td>Both UI and design tokens</td>
+<td>Split into two commits</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="when-to-stop-and-ask">When to Stop and Ask<a class="headerlink" href="#when-to-stop-and-ask" title="Permanent link">&para;</a></h2>
+<p>Stop and create a GitHub Issue (do not guess) when:</p>
+<ol>
+<li>A needed design token is missing from the token files</li>
+<li>A needed backend endpoint or field is missing from <code>api.ts</code></li>
+<li>A component spec has a gap that requires a design decision</li>
+<li>An interaction pattern is not covered by <code>design/patterns/</code></li>
+<li>An accessibility requirement is ambiguous</li>
+</ol>
+<p>Document your assumption in the code and link the issue. Continue with the rest
+of the task if possible — do not block everything on one unknown.</p>
 
 
 

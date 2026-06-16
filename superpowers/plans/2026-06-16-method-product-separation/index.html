@@ -1776,6 +1776,33 @@
 </ul>
 <h2 id="9-freeze">9. Freeze<a class="headerlink" href="#9-freeze" title="Permanent link">&para;</a></h2>
 <p>This plan is <strong>frozen</strong> when: DevOps has verified §6/§7, OE and DevOps both sign off, and it is merged to <code>main</code>. <strong>F0 starts only after the freeze.</strong> Until then: planning only — no refactoring file is touched.</p>
+<h2 id="10-f3-execution-log-devops-led-inbox-frozen-coordination-via-this-pr-user-out-of-band">10. F3 execution log (DevOps-led; inbox FROZEN — coordination via this PR + user out-of-band)<a class="headerlink" href="#10-f3-execution-log-devops-led-inbox-frozen-coordination-via-this-pr-user-out-of-band" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>F3 GO:</strong> User (2026-06-16, relayed by OE — probe tested-valid, all worktrees clean, 0 WIP = ideal moment).
+<strong>Channel freeze:</strong> in effect from F3 start. No <code>inbox.sh</code> coordination during F3. Progress, gate points
+and verify evidence are recorded <strong>here</strong>; OE countersigns the F3-exit substrate checkpoint via the user.</p>
+</blockquote>
+<h3 id="f3-preconditions-done-7-both-axes-armed">F3 preconditions — DONE (§7 both axes armed)<a class="headerlink" href="#f3-preconditions-done-7-both-axes-armed" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Substrate rollback net (retained):</strong> <code>~/klartext-substrate-backups/2026-06-16T21-21-27Z/</code> (dir mode 700).
+  Four-group §6.3 backup; <strong><code>verify_restore == []</code> → tested-valid</strong> (G1 a∧b∧c · G2/G3 byte-identity · G4 ·
+  manifest SHA256). 22 worktrees · 1 secret (<code>klartext/api/.env</code>, path only) · 22 wip entries (0 stash bundles —
+  all worktrees tracked-clean). <strong>This backup stays as the rollback net; cleanup only after F3 success.</strong></li>
+<li><strong>Code rollback anchor:</strong> annotated tag <strong><code>pre-f3-2026-06-16T21-21-27Z</code></strong> → <code>main</code> <code>3e2a256</code>. Branch HEADs at
+  F3 start: <code>main</code> <code>3e2a256</code> · <code>agent/devops</code> <code>fb1ffc1</code> · <code>agent/hannibal</code> <code>30692c6</code> ·
+  <code>agent/system-architect</code> <code>f2e2942</code>. Rollback ordering: <strong>substrate first, then code</strong> (§7).</li>
+</ul>
+<h3 id="f3-steps-sequence-status">F3 steps (sequence) — status<a class="headerlink" href="#f3-steps-sequence-status" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] <strong>#3b</strong> skill-distribution isolation <em>(substrate-touching; superpowers-contract S1–S4 / state-isolation
+  boundary impact → clear with OE via user before hardening — OE owns contract impact)</em>.</li>
+<li>[ ] <strong>#1b</strong> filter-repo extraction along the L3 stems (<code>docs/method/library/</code>) — full history; squash snapshot
+  for the semAIt seed. Mechanical (F0 produced well-formed L3 objects); flag any path-classification surprise here.</li>
+<li>[ ] <strong>#2</strong> ADR-0014 provenance hook (commit-msg hook + CI check for the <code>Agent: &lt;slug&gt;</code> trailer) → status Accepted.</li>
+</ul>
+<h3 id="f3-exit-oe-countersigned-via-user">F3 exit (OE-countersigned via user)<a class="headerlink" href="#f3-exit-oe-countersigned-via-user" title="Permanent link">&para;</a></h3>
+<p>Extraction verified · provenance live (#2) · <strong>substrate restored-and-verified checkpoint (OE-owned)</strong> · then
+delete the retained backup (secrets!) · semAIt seeds once from the post-cut state · agents wake + converge.</p>
 
 
 

@@ -6,11 +6,12 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Narrative Epistemik – Eine Autorenumgebung für transparente, kausal konsistente und narrativ vermittelbare Wirkmodelle">
+        <meta name="description" content="Use when adding a new specialist agent to the klartext multi-agent system. OE skill — guides OE through domain definition, start script creation, knowledge file, CLAUDE.md update, and agent handoff.
+">
       
       
       
-        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/method/enactment/practices/tdd/">
+        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/method/enactment/skills/agent-onboarding/">
       
       
       
@@ -23,7 +24,7 @@
     
     
       
-        <title>Test-Driven Development — klartext enactment - klartext.jetzt – Spezifikation</title>
+        <title>Agent Onboarding - klartext.jetzt – Spezifikation</title>
       
     
     
@@ -74,7 +75,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#test-driven-development-klartext-enactment" class="md-skip">
+        <a href="#agent-onboarding" class="md-skip">
           Zum Inhalt
         </a>
       
@@ -110,7 +111,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Test-Driven Development — klartext enactment
+              Agent Onboarding
             
           </span>
         </div>
@@ -1650,7 +1651,7 @@
 
 
   
-    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/method/enactment/practices/tdd.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/method/enactment/skills/agent-onboarding.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1658,93 +1659,149 @@
   
 
 
-<h1 id="test-driven-development-klartext-enactment">Test-Driven Development — klartext enactment<a class="headerlink" href="#test-driven-development-klartext-enactment" title="Permanent link">&para;</a></h1>
-<blockquote>
-<p><strong>Scope.</strong> klartext's enactment of the <strong>tdd</strong> wrapper practice: the concrete test bindings that
-extend the upstream discipline — the inside-out test levels, fakes-not-mocks, the Supabase
-integration-test rule, the <code>/health</code> endpoint rule, and the <code>qa-review</code> close-out step.
-<strong>Out of scope.</strong> The generic TDD discipline (red-green-refactor, the Iron Law) — that is
-<code>superpowers:test-driven-development</code>, <strong>referenced, not restated</strong> here. The composition shape — see
-the L3 wrapper card.
-<strong>Language.</strong> English — documentation-language rule.</p>
-<p><strong>L3 definition:</strong> <a href="../../../library/practices/tdd/"><code>../../library/practices/tdd.md</code></a>
-<strong>Upstream Resource:</strong> <a href="../../../library/resources/superpowers/"><code>../../library/resources/superpowers.md</code></a> (<code>superpowers:test-driven-development</code>)
-<strong>Status:</strong> living (ritual) · <strong>Owner:</strong> QA (test standards) / OE (composition shape, L3) · <strong>Advances Alpha:</strong> Software System + Way of Working · <strong>NN:</strong> ✓
-<strong>Enacted as:</strong> the <code>tdd</code> skill (<code>docs/method/enactment/skills/tdd/SKILL.md</code>) + the structural coverage check (<code>scripts/check_test_coverage.py</code>)</p>
-</blockquote>
-<h2 id="klartext-bindings">klartext bindings<a class="headerlink" href="#klartext-bindings" title="Permanent link">&para;</a></h2>
-<h3 id="test-levels-inside-out">Test levels — inside out<a class="headerlink" href="#test-levels-inside-out" title="Permanent link">&para;</a></h3>
-<p>Test in this order; each level has a distinct tool and isolation boundary:</p>
-<table>
-<thead>
-<tr>
-<th>Level</th>
-<th>What is tested</th>
-<th>Isolation</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Domain</strong></td>
-<td>pure unit tests — invariants, factory methods, state changes</td>
-<td>no mocks, no external systems</td>
-</tr>
-<tr>
-<td><strong>Service</strong></td>
-<td>business logic, orchestration</td>
-<td><strong>fake repositories</strong> (in-memory), no Supabase</td>
-</tr>
-<tr>
-<td><strong>Repository</strong></td>
-<td>SQL / PostgREST queries</td>
-<td><code>@pytest.mark.integration</code> against the real test DB</td>
-</tr>
-<tr>
-<td><strong>Router</strong></td>
-<td>the HTTP contract (status, body, wiring)</td>
-<td><code>AsyncClient</code> + <code>ASGITransport</code></td>
-</tr>
-</tbody>
-</table>
-<h3 id="fakes-not-mocks">Fakes, not mocks<a class="headerlink" href="#fakes-not-mocks" title="Permanent link">&para;</a></h3>
-<p>Service tests use <strong>real in-memory fake repositories</strong> (classes), never mock objects. A fake must honor
-the full interface contract — <strong>no silent constants</strong> (<code>claim_count=0</code> is forbidden; use a
-test-controllable <code>set_claim_count()</code> helper) and <strong>behavioral parity</strong> (a fake raises the same
-exception on the same condition the real repo does — asymmetry in the fake is a red flag). See the QA
-fake-contract rules.</p>
-<h3 id="supabase-integration-test-rule">Supabase integration-test rule<a class="headerlink" href="#supabase-integration-test-rule" title="Permanent link">&para;</a></h3>
-<p>Every new <code>SupabaseXRepository</code> method gets an <code>@pytest.mark.integration</code> test <strong>in the same commit</strong> as
-the implementation — unit tests with the fake are <em>not sufficient</em> (the fake cannot verify SQL /
-embedded PostgREST counts / FK relationships). Required signals: JOINs, embedded counts
-(<code>table(count)</code>), multi-table queries.</p>
-<h3 id="health-endpoint-rule">Health-endpoint rule<a class="headerlink" href="#health-endpoint-rule" title="Permanent link">&para;</a></h3>
-<p>Every service router gets <code>GET /&lt;resource&gt;/health</code> (HTTP 200, <code>{"status": "ok"}</code>, no auth) <strong>added
-first</strong>, before any other endpoint — and a router test asserting it. Enforced by test, not by review.</p>
-<h3 id="qa-review-close-out-tdd-step-3">qa-review close-out (TDD Step 3)<a class="headerlink" href="#qa-review-close-out-tdd-step-3" title="Permanent link">&para;</a></h3>
-<p>Before "done", invoke <code>qa-review</code> — the QA sub-agent reviews the diff with fresh eyes (coverage, edge
-cases, infrastructure tests, fake-contract completeness, domain composition). All-green is necessary,
-not sufficient. <strong>Bug fixes:</strong> after the fix is green, invoke <code>qa-retro</code> if the bug should have been
-caught originally.</p>
-<h3 id="structural-invariants-mechanical">Structural invariants (mechanical)<a class="headerlink" href="#structural-invariants-mechanical" title="Permanent link">&para;</a></h3>
-<p><code>scripts/check_test_coverage.py</code> enforces three invariants — no manual review substitutes:</p>
-<ol>
-<li>every source file in <code>models/</code> <code>services/</code> <code>repositories/</code> <code>routers/</code> has a <code>test_&lt;stem&gt;*.py</code>;</li>
-<li>every <code>test_*_router.py</code> has a <code>health</code>-named function;</li>
-<li>every <code>supabase_*.py</code> repository has at least one <code>@pytest.mark.integration</code> test.</li>
-</ol>
-<h3 id="frontend">Frontend<a class="headerlink" href="#frontend" title="Permanent link">&para;</a></h3>
-<p>For React/TypeScript work, additionally apply the <code>frontend-testing</code> skill (QA-defined completeness
-criteria extending these standards).</p>
-<h2 id="enforcement-klartext">Enforcement (klartext)<a class="headerlink" href="#enforcement-klartext" title="Permanent link">&para;</a></h2>
-<p>Ritual at invocation (the skill runs at the start of every feature/bugfix); <strong>mechanical</strong> for the three
-structural invariants (<code>check_test_coverage.py</code>). The <code>qa-review</code> close-out is a non-optional ritual
-step of the <code>tdd</code> skill.</p>
-<h2 id="related">Related<a class="headerlink" href="#related" title="Permanent link">&para;</a></h2>
+<h1 id="agent-onboarding">Agent Onboarding<a class="headerlink" href="#agent-onboarding" title="Permanent link">&para;</a></h1>
+<p>This skill is used by <strong>OE</strong> when integrating a new specialist agent into the klartext
+multi-agent system. OE owns <code>agents/</code> vollständig — start script, knowledge file, domain entry,
+alles in OE-Hand. Kein DevOps Briefing nötig.</p>
+<p>Each agent lives in its own directory: <code>agents/&lt;name&gt;/</code>
+- <code>agents/&lt;name&gt;/start.sh</code> — thin wrapper, delegates to the central launcher <code>scripts/start-agent.sh</code>
+- <code>agents/&lt;name&gt;/allowed-tools.txt</code> — the agent's tool allowlist (one entry per line, read by the launcher)
+- <code>agents/&lt;name&gt;/claude.md</code> — Hoheitswissen und domänenspezifische Regeln (wird von Claude Code als CLAUDE.md erkannt und automatisch geladen)</p>
+<p><strong>Operating model (since 2026-06-11, see the structural ADR):</strong> every agent session is started
+<strong>from the terminal</strong> via the central launcher — never via the desktop app (the app cannot set the
+shell cwd; settings, hooks and allowlists would stay dead). The launcher provisions a persistent
+worktree (<code>$HOME/klartext-worktrees/&lt;name&gt;/</code>, home branch <code>agent/&lt;name&gt;</code>) idempotently, rebases it
+on <code>origin/main</code>, shows unread inbox messages and starts <code>claude</code> inside the worktree. Sessions are
+<strong>workdays, not lifetimes</strong>: they end with a pre-restart ritual (anchor skill) and a successor
+boots from disk. Cross-agent messages travel via the file inbox (<code>scripts/inbox.sh send/read</code>).</p>
+<hr />
+<h2 id="step-1-clarify-the-domain">Step 1 — Clarify the domain<a class="headerlink" href="#step-1-clarify-the-domain" title="Permanent link">&para;</a></h2>
+<p>Before touching any file, answer these questions (ask the user if unclear):</p>
 <ul>
-<li>L3 wrapper card: <a href="../../../library/practices/tdd/"><code>../../library/practices/tdd.md</code></a>.</li>
-<li>Upstream Resource: <a href="../../../library/resources/superpowers/"><code>../../library/resources/superpowers.md</code></a>.</li>
-<li>Dependency contract: <a href="../../contracts/superpowers/"><code>../contracts/superpowers.md</code></a> (S2 — the wrapped TDD discipline still carries its Iron Law).</li>
-<li>The skill source: <code>docs/method/enactment/skills/tdd/SKILL.md</code> (F3 — not modified by this package).</li>
+<li><strong>Name</strong>: What is the agent called? (e.g. <code>narrative</code>, <code>qa</code>, <code>ux</code>)</li>
+<li><strong>Domain</strong>: Which directories/files does this agent own (write access)?</li>
+<li><strong>Read-only</strong>: What does the agent need to read but not write?</li>
+<li><strong>Conflicts</strong>: Does the domain overlap with an existing agent?</li>
+</ul>
+<p>The domain defines the entries in <code>allowed-tools.txt</code>. Be specific — narrow domains are safer.</p>
+<hr />
+<h2 id="step-2-create-the-agent-directory-wrapper-and-allowlist">Step 2 — Create the agent directory, wrapper and allowlist<a class="headerlink" href="#step-2-create-the-agent-directory-wrapper-and-allowlist" title="Permanent link">&para;</a></h2>
+<p>OE owns <code>agents/</code> vollständig — kein DevOps Briefing nötig.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>agents/&lt;name&gt;
+</code></pre></div>
+<p>Create <code>agents/&lt;name&gt;/start.sh</code> (thin wrapper — all logic lives in the central launcher):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="ch">#!/bin/bash</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># &lt;Agent Name&gt; — Agent startup script</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1">#</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># Domain: &lt;one-line description&gt;</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1">#</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="c1"># Allowlists live in agents/&lt;name&gt;/allowed-tools.txt (one entry per line),</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># read by the central launcher scripts/start-agent.sh.</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="nb">exec</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>dirname<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$0</span><span class="s2">&quot;</span><span class="k">)</span><span class="s2">/../../scripts/start-agent.sh&quot;</span><span class="w"> </span>&lt;name&gt;
+</code></pre></div>
+<p>Create <code>agents/&lt;name&gt;/allowed-tools.txt</code> (one tool grant per line):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Edit(docs/superpowers/plans/PENDING.md)
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>Write(docs/superpowers/plans/PENDING.md)
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>Edit(&lt;domain-path&gt;/)
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>Write(&lt;domain-path&gt;/)
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>Edit(agents/&lt;name&gt;/)
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>Write(agents/&lt;name&gt;/)
+</code></pre></div>
+<p>The PENDING.md lines are mandatory for every agent (anchor delegation tracking).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>chmod<span class="w"> </span>+x<span class="w"> </span>agents/&lt;name&gt;/start.sh
+</code></pre></div>
+<p><strong>Important sequencing:</strong> both files must be merged to <code>main</code> before the first session start —
+the launcher reads the allowlist and the worktree checkout is based on <code>origin/main</code>.</p>
+<p><strong>Landing path for knowledge-file changes (standard since 2026-06-12):</strong> changes to
+<code>agents/&lt;name&gt;/claude.md</code> land via own branch (in the agent's worktree) → PR → OE review
+<strong>comment</strong> (formal GitHub approvals are single-account-impossible; the review comment IS the
+sign-off artifact) → CI gate → merge.</p>
+<p><strong>Team Roster (mandatory, same step):</strong> add the new agent to <code>agents/team.yaml</code> (slug, display name,
+<code>status: app</code>, <code>active: true</code>). The roster is the Work Product advancing the Team alpha and is
+read by the start tooling — an agent missing here is invisible to it. Offboarding:
+set <code>active: false</code> (keep the entry for history). Migration terminal↔app: flip <code>status</code> in the same
+step as the generation change.</p>
+<hr />
+<h2 id="step-3-update-claudemd">Step 3 — Update CLAUDE.md<a class="headerlink" href="#step-3-update-claudemd" title="Permanent link">&para;</a></h2>
+<p>Add the new agent to the <code>## Agent Roles &amp; Boundaries</code> table in <code>CLAUDE.md</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>| &lt;Agent Name&gt; | &lt;Domain description&gt; |
+</code></pre></div>
+<p>If the agent owns paths that are not yet in any agent's domain, add them to the table.
+Do NOT modify the Infrastructure Perimeter section without a separate DevOps decision.</p>
+<hr />
+<h2 id="step-4-create-the-agent-knowledge-file">Step 4 — Create the agent knowledge file<a class="headerlink" href="#step-4-create-the-agent-knowledge-file" title="Permanent link">&para;</a></h2>
+<p>Create <code>agents/&lt;name&gt;/claude.md</code> with the agent's domain knowledge.
+Use <code>agents/devops/claude.md</code> or <code>agents/qa/claude.md</code> as reference.</p>
+<p>Mindest-Inhalt:
+- Rolle (ein Satz)
+- Domain — Write Access (Pfade mit Erklärung)
+- Domain — Read Only
+- Domänenspezifische Standards
+- Skills-Tabelle
+- DevOps Briefing Template
+- Abschnitt "Erweiterung durch <Agent>" — Platzhalter für Wissen das der Agent selbst einträgt</p>
+<p><strong>Wichtig:</strong> Die Datei heißt <code>claude.md</code> (lowercase). Claude Code erkennt sie automatisch
+als CLAUDE.md und lädt sie beim Start — kein explizites Lesen nötig.</p>
+<hr />
+<h2 id="step-4b-create-agent-skills-if-needed">Step 4b — Create agent skills (if needed)<a class="headerlink" href="#step-4b-create-agent-skills-if-needed" title="Permanent link">&para;</a></h2>
+<p>If the agent needs project-specific skills, create them in:</p>
+<ul>
+<li><code>docs/method/enactment/skills/&lt;skill-name&gt;.md</code> — project-level skill (committed to repo)</li>
+<li><code>~/.claude/skills/&lt;skill-name&gt;/</code> — user-level skill (richer format, local to machine)</li>
+</ul>
+<p>Use the <code>skill-creator</code> skill to create or refine skill files.</p>
+<hr />
+<h2 id="step-5-commit">Step 5 — Commit<a class="headerlink" href="#step-5-commit" title="Permanent link">&para;</a></h2>
+<p>Commit all changes together:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>git add agents/&lt;name&gt;/ CLAUDE.md docs/method/enactment/skills/
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>git commit -m &quot;Add &lt;name&gt; agent: start script, knowledge file, domain entry&quot;
+</code></pre></div>
+<hr />
+<h2 id="step-6-handoff-message">Step 6 — Handoff message<a class="headerlink" href="#step-6-handoff-message" title="Permanent link">&para;</a></h2>
+<p>Send the following to the new agent (adapt the placeholders):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>Willkommen im klartext Team.
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>Du lebst in einer Terminal-Session in deinem eigenen Worktree
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>($HOME/klartext-worktrees/&lt;name&gt;/, Branch agent/&lt;name&gt;). Der User startet dich mit
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>`bash agents/&lt;name&gt;/start.sh` und beendet deine Session am natürlichen Arbeitsende —
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>deine Identität persistiert auf Platte, die Session ist dein Arbeitstag. Vor jedem
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>Session-Ende fährst du das anchor-Ritual (Pre-Restart) und hinterlegst deiner
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>Nachfolge-Session eine Handoff-Notiz im eigenen Postfach.
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>Dein Agent-Verzeichnis: agents/&lt;name&gt;/
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>  - start.sh           → dein Startweg (Terminal, nie Desktop-App)
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>  - allowed-tools.txt  → deine Permissions (vom Launcher gelesen)
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>  - claude.md          → dein Hoheitswissen (wird automatisch von Claude Code geladen)
+<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>
+<a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>Nachrichten an Kollegen: bash scripts/inbox.sh send &lt;empfänger&gt; &lt;name&gt; &quot;...&quot;
+<a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a>Dein Postfach lesen:     bash scripts/inbox.sh read &lt;name&gt;
+<a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a>Der User stupst den Empfänger an — er ist immer der Kanal.
+<a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a>
+<a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a>Was du ohne Rückfrage darfst:
+<a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a>  - Lesen: alles (Read, git diff/log/status/show, grep, ls, find, semgrep)
+<a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a>  - Schreiben: nur dein Domain (steht in agents/&lt;name&gt;/claude.md)
+<a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a>
+<a id="__codelineno-6-23" name="__codelineno-6-23" href="#__codelineno-6-23"></a>Was eine Rückfrage braucht: alles außerhalb deines Domains.
+<a id="__codelineno-6-24" name="__codelineno-6-24" href="#__codelineno-6-24"></a>
+<a id="__codelineno-6-25" name="__codelineno-6-25" href="#__codelineno-6-25"></a>Infrastruktur-Änderungen (CI, Dependencies, Scripts, settings.json):
+<a id="__codelineno-6-26" name="__codelineno-6-26" href="#__codelineno-6-26"></a>  → DevOps Briefing schicken (Format in CLAUDE.md unter &quot;DevOps Briefing Protocol&quot;)
+<a id="__codelineno-6-27" name="__codelineno-6-27" href="#__codelineno-6-27"></a>  → DevOps entscheidet wie es umgesetzt wird
+<a id="__codelineno-6-28" name="__codelineno-6-28" href="#__codelineno-6-28"></a>
+<a id="__codelineno-6-29" name="__codelineno-6-29" href="#__codelineno-6-29"></a>Gemeinsame Coding-Standards: CLAUDE.md (für alle Agents gleich)
+<a id="__codelineno-6-30" name="__codelineno-6-30" href="#__codelineno-6-30"></a>Dein Hoheitswissen erweitern: trage domain-spezifisches Wissen in agents/&lt;name&gt;/claude.md ein
+<a id="__codelineno-6-31" name="__codelineno-6-31" href="#__codelineno-6-31"></a>
+<a id="__codelineno-6-32" name="__codelineno-6-32" href="#__codelineno-6-32"></a>Wissens-Routing: Bei jedem anchor prüfst du ob Wissen entstanden ist, das einem
+<a id="__codelineno-6-33" name="__codelineno-6-33" href="#__codelineno-6-33"></a>  anderen Agent gehört — Schritt 6 / Teil C führt dich durch den Prozess.
+<a id="__codelineno-6-34" name="__codelineno-6-34" href="#__codelineno-6-34"></a>  Fremdwissen, Grenzwissen und Organisationswissen werden als Wissens-Briefings
+<a id="__codelineno-6-35" name="__codelineno-6-35" href="#__codelineno-6-35"></a>  formuliert und dem User übergeben. Kein Agent schreibt direkt in fremde Dateien.
+</code></pre></div>
+<hr />
+<h2 id="reference">Reference<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Infrastructure Perimeter and DevOps Briefing Protocol: <code>CLAUDE.md § Agent Roles &amp; Boundaries</code></li>
+<li>Base permissions for all agents: <code>.claude/settings.json</code></li>
+<li>Existing agent directories: <code>agents/</code></li>
 </ul>
 
 
@@ -1752,6 +1809,9 @@ step of the <code>tdd</code> skill.</p>
 
 
 
+
+  
+  
 
 
 

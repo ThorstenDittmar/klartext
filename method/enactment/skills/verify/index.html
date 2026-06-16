@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/method/enactment/practices/tdd/">
+        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/method/enactment/skills/verify/">
       
       
       
@@ -23,7 +23,7 @@
     
     
       
-        <title>Test-Driven Development — klartext enactment - klartext.jetzt – Spezifikation</title>
+        <title>Frontend Verifier - klartext.jetzt – Spezifikation</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#test-driven-development-klartext-enactment" class="md-skip">
+        <a href="#frontend-verifier" class="md-skip">
           Zum Inhalt
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Test-Driven Development — klartext enactment
+              Frontend Verifier
             
           </span>
         </div>
@@ -1650,7 +1650,7 @@
 
 
   
-    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/method/enactment/practices/tdd.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/method/enactment/skills/verify.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1658,93 +1658,117 @@
   
 
 
-<h1 id="test-driven-development-klartext-enactment">Test-Driven Development — klartext enactment<a class="headerlink" href="#test-driven-development-klartext-enactment" title="Permanent link">&para;</a></h1>
-<blockquote>
-<p><strong>Scope.</strong> klartext's enactment of the <strong>tdd</strong> wrapper practice: the concrete test bindings that
-extend the upstream discipline — the inside-out test levels, fakes-not-mocks, the Supabase
-integration-test rule, the <code>/health</code> endpoint rule, and the <code>qa-review</code> close-out step.
-<strong>Out of scope.</strong> The generic TDD discipline (red-green-refactor, the Iron Law) — that is
-<code>superpowers:test-driven-development</code>, <strong>referenced, not restated</strong> here. The composition shape — see
-the L3 wrapper card.
-<strong>Language.</strong> English — documentation-language rule.</p>
-<p><strong>L3 definition:</strong> <a href="../../../library/practices/tdd/"><code>../../library/practices/tdd.md</code></a>
-<strong>Upstream Resource:</strong> <a href="../../../library/resources/superpowers/"><code>../../library/resources/superpowers.md</code></a> (<code>superpowers:test-driven-development</code>)
-<strong>Status:</strong> living (ritual) · <strong>Owner:</strong> QA (test standards) / OE (composition shape, L3) · <strong>Advances Alpha:</strong> Software System + Way of Working · <strong>NN:</strong> ✓
-<strong>Enacted as:</strong> the <code>tdd</code> skill (<code>docs/method/enactment/skills/tdd/SKILL.md</code>) + the structural coverage check (<code>scripts/check_test_coverage.py</code>)</p>
-</blockquote>
-<h2 id="klartext-bindings">klartext bindings<a class="headerlink" href="#klartext-bindings" title="Permanent link">&para;</a></h2>
-<h3 id="test-levels-inside-out">Test levels — inside out<a class="headerlink" href="#test-levels-inside-out" title="Permanent link">&para;</a></h3>
-<p>Test in this order; each level has a distinct tool and isolation boundary:</p>
+<h1 id="frontend-verifier">Frontend Verifier<a class="headerlink" href="#frontend-verifier" title="Permanent link">&para;</a></h1>
+<h2 id="setup">Setup<a class="headerlink" href="#setup" title="Permanent link">&para;</a></h2>
+<h3 id="1-check-servers">1. Check servers<a class="headerlink" href="#1-check-servers" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>lsof<span class="w"> </span>-i<span class="w"> </span>:8000<span class="w"> </span>-i<span class="w"> </span>:5173<span class="w"> </span>-sTCP:LISTEN<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $1, $2, $9}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-v<span class="w"> </span>COMMAND
+</code></pre></div>
+<ul>
+<li>Port <code>5173</code> — Vite (frontend)</li>
+<li>Port <code>8000</code> — FastAPI (backend)</li>
+</ul>
+<p><strong>If Vite is not running:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nb">cd</span><span class="w"> </span>/Users/thormar/klartext/frontend<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>npm<span class="w"> </span>run<span class="w"> </span>dev<span class="w"> </span>--<span class="w"> </span>--host<span class="w"> </span><span class="m">127</span>.0.0.1<span class="w"> </span><span class="p">&amp;</span>
+</code></pre></div></p>
+<p><strong>If API is not running:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">source</span><span class="w"> </span>/Users/thormar/klartext/api/.venv/bin/activate<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>klartext<span class="w"> </span>start<span class="w"> </span><span class="p">&amp;</span>
+</code></pre></div></p>
+<p>Wait 3 seconds after starting, then proceed.</p>
+<h3 id="2-seed-test-data-if-needed">2. Seed test data (if needed)<a class="headerlink" href="#2-seed-test-data-if-needed" title="Permanent link">&para;</a></h3>
+<p>If the change requires real data (slots, causal models, narrative with claims):
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nb">source</span><span class="w"> </span>/Users/thormar/klartext/api/.venv/bin/activate<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>klartext<span class="w"> </span>testdata
+</code></pre></div></p>
+<h3 id="3-open-browser">3. Open browser<a class="headerlink" href="#3-open-browser" title="Permanent link">&para;</a></h3>
+<p>Use <code>mcp__Claude_in_Chrome__tabs_context_mcp</code> with <code>createIfEmpty: true</code> to get a tab ID.</p>
+<hr />
+<h2 id="screens-to-verify">Screens to verify<a class="headerlink" href="#screens-to-verify" title="Permanent link">&para;</a></h2>
+<p>Navigate to each screen relevant to the change. For a full regression, visit all five:</p>
 <table>
 <thead>
 <tr>
-<th>Level</th>
-<th>What is tested</th>
-<th>Isolation</th>
+<th>Screen</th>
+<th>URL</th>
+<th>What to check</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Domain</strong></td>
-<td>pure unit tests — invariants, factory methods, state changes</td>
-<td>no mocks, no external systems</td>
+<td>NarrativeEditor</td>
+<td><code>http://127.0.0.1:5173/narrative</code></td>
+<td>Primary buttons dark/white, sidebar selection highlight, Analysieren button</td>
 </tr>
 <tr>
-<td><strong>Service</strong></td>
-<td>business logic, orchestration</td>
-<td><strong>fake repositories</strong> (in-memory), no Supabase</td>
+<td>NarrativeAnalyse</td>
+<td>Navigate via Analysieren button</td>
+<td>COLOR_MAP badges (green/amber/red/teal), ConfirmButtons, Wirkgefüge button</td>
 </tr>
 <tr>
-<td><strong>Repository</strong></td>
-<td>SQL / PostgREST queries</td>
-<td><code>@pytest.mark.integration</code> against the real test DB</td>
+<td>WirkgefuegeVorschlag</td>
+<td>Navigate from NarrativeAnalyse</td>
+<td>Slot/Relation cards, primary save button</td>
 </tr>
 <tr>
-<td><strong>Router</strong></td>
-<td>the HTTP contract (status, body, wiring)</td>
-<td><code>AsyncClient</code> + <code>ASGITransport</code></td>
+<td>CausalModelEditor</td>
+<td><code>http://127.0.0.1:5173/causal-model</code></td>
+<td>Section headers, EpistemicBadge (amber/green pill), disabled button states</td>
+</tr>
+<tr>
+<td>ReadingView</td>
+<td><code>http://127.0.0.1:5173/reading</code></td>
+<td>Text color, scene number color, claim highlight (blue)</td>
 </tr>
 </tbody>
 </table>
-<h3 id="fakes-not-mocks">Fakes, not mocks<a class="headerlink" href="#fakes-not-mocks" title="Permanent link">&para;</a></h3>
-<p>Service tests use <strong>real in-memory fake repositories</strong> (classes), never mock objects. A fake must honor
-the full interface contract — <strong>no silent constants</strong> (<code>claim_count=0</code> is forbidden; use a
-test-controllable <code>set_claim_count()</code> helper) and <strong>behavioral parity</strong> (a fake raises the same
-exception on the same condition the real repo does — asymmetry in the fake is a red flag). See the QA
-fake-contract rules.</p>
-<h3 id="supabase-integration-test-rule">Supabase integration-test rule<a class="headerlink" href="#supabase-integration-test-rule" title="Permanent link">&para;</a></h3>
-<p>Every new <code>SupabaseXRepository</code> method gets an <code>@pytest.mark.integration</code> test <strong>in the same commit</strong> as
-the implementation — unit tests with the fake are <em>not sufficient</em> (the fake cannot verify SQL /
-embedded PostgREST counts / FK relationships). Required signals: JOINs, embedded counts
-(<code>table(count)</code>), multi-table queries.</p>
-<h3 id="health-endpoint-rule">Health-endpoint rule<a class="headerlink" href="#health-endpoint-rule" title="Permanent link">&para;</a></h3>
-<p>Every service router gets <code>GET /&lt;resource&gt;/health</code> (HTTP 200, <code>{"status": "ok"}</code>, no auth) <strong>added
-first</strong>, before any other endpoint — and a router test asserting it. Enforced by test, not by review.</p>
-<h3 id="qa-review-close-out-tdd-step-3">qa-review close-out (TDD Step 3)<a class="headerlink" href="#qa-review-close-out-tdd-step-3" title="Permanent link">&para;</a></h3>
-<p>Before "done", invoke <code>qa-review</code> — the QA sub-agent reviews the diff with fresh eyes (coverage, edge
-cases, infrastructure tests, fake-contract completeness, domain composition). All-green is necessary,
-not sufficient. <strong>Bug fixes:</strong> after the fix is green, invoke <code>qa-retro</code> if the bug should have been
-caught originally.</p>
-<h3 id="structural-invariants-mechanical">Structural invariants (mechanical)<a class="headerlink" href="#structural-invariants-mechanical" title="Permanent link">&para;</a></h3>
-<p><code>scripts/check_test_coverage.py</code> enforces three invariants — no manual review substitutes:</p>
-<ol>
-<li>every source file in <code>models/</code> <code>services/</code> <code>repositories/</code> <code>routers/</code> has a <code>test_&lt;stem&gt;*.py</code>;</li>
-<li>every <code>test_*_router.py</code> has a <code>health</code>-named function;</li>
-<li>every <code>supabase_*.py</code> repository has at least one <code>@pytest.mark.integration</code> test.</li>
-</ol>
-<h3 id="frontend">Frontend<a class="headerlink" href="#frontend" title="Permanent link">&para;</a></h3>
-<p>For React/TypeScript work, additionally apply the <code>frontend-testing</code> skill (QA-defined completeness
-criteria extending these standards).</p>
-<h2 id="enforcement-klartext">Enforcement (klartext)<a class="headerlink" href="#enforcement-klartext" title="Permanent link">&para;</a></h2>
-<p>Ritual at invocation (the skill runs at the start of every feature/bugfix); <strong>mechanical</strong> for the three
-structural invariants (<code>check_test_coverage.py</code>). The <code>qa-review</code> close-out is a non-optional ritual
-step of the <code>tdd</code> skill.</p>
-<h2 id="related">Related<a class="headerlink" href="#related" title="Permanent link">&para;</a></h2>
+<hr />
+<h2 id="what-to-look-for">What to look for<a class="headerlink" href="#what-to-look-for" title="Permanent link">&para;</a></h2>
+<h3 id="token-compliance">Token compliance<a class="headerlink" href="#token-compliance" title="Permanent link">&para;</a></h3>
 <ul>
-<li>L3 wrapper card: <a href="../../../library/practices/tdd/"><code>../../library/practices/tdd.md</code></a>.</li>
-<li>Upstream Resource: <a href="../../../library/resources/superpowers/"><code>../../library/resources/superpowers.md</code></a>.</li>
-<li>Dependency contract: <a href="../../contracts/superpowers/"><code>../contracts/superpowers.md</code></a> (S2 — the wrapped TDD discipline still carries its Iron Law).</li>
-<li>The skill source: <code>docs/method/enactment/skills/tdd/SKILL.md</code> (F3 — not modified by this package).</li>
+<li>Primary buttons: dark background (<code>--color-text-primary</code> = <code>#1A1A1A</code>), white text (<code>--color-text-inverse</code> = <code>#FFFFFF</code>)</li>
+<li>Disabled buttons: <code>--color-bg-subtle</code> background, <code>--color-text-tertiary</code> text</li>
+<li>Section labels / placeholder text: <code>--color-text-tertiary</code> (light gray, not <code>#888</code>)</li>
+<li>Error text: <code>--color-red-text</code></li>
+<li>No raw hex values visible (you cannot see hex in the browser, but wrong colors are detectable by shade)</li>
+</ul>
+<h3 id="epistemicbadge">EpistemicBadge<a class="headerlink" href="#epistemicbadge" title="Permanent link">&para;</a></h3>
+<p>Visible in CausalModelEditor when a model has slots. Requires testdata or a full analysis run.
+- <code>incomplete</code> → amber pill (<code>--color-amber-bg</code> / <code>--color-amber-text</code>)
+- <code>axiomatic</code> → green pill (<code>--color-green-bg</code> / <code>--color-green-text</code>)
+- Shape: fully rounded (pill, not rectangle)</p>
+<h3 id="colormap-badges-narrativeanalyse">ColorMap badges (NarrativeAnalyse)<a class="headerlink" href="#colormap-badges-narrativeanalyse" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Confirmed actor/claim: green left border</li>
+<li>Rejected: gray/struck through</li>
+<li>Confidence ≥80%: green badge</li>
+<li>Confidence 60–79%: amber badge</li>
+<li>Confidence &lt;60%: red badge</li>
+</ul>
+<hr />
+<h2 id="console-check">Console check<a class="headerlink" href="#console-check" title="Permanent link">&para;</a></h2>
+<p>After navigating to each screen:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>mcp__Claude_in_Chrome__read_console_messages — onlyErrors: true, pattern: &quot;.&quot;
+</code></pre></div></p>
+<p>Any error is a finding. Log it with the URL where it appeared.</p>
+<hr />
+<h2 id="report-format">Report format<a class="headerlink" href="#report-format" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>## Verification: &lt;what changed&gt;
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>**Verdict:** PASS | FAIL | BLOCKED
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>### Steps
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>1. ✅/❌/⚠️/🔍 &lt;screen&gt; — &lt;what was checked&gt; → &lt;what was observed&gt;
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>   [screenshot if relevant]
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>### Findings
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>- ⚠️ &lt;anything worth flagging&gt;
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>- 🔍 &lt;probes taken&gt;
+</code></pre></div>
+<hr />
+<h2 id="known-limitations">Known limitations<a class="headerlink" href="#known-limitations" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>EpistemicBadge</strong> requires a model with slots — only visible after running the full
+  Analyse → WirkgefügeVorschlag → Save flow. <code>tsc</code> passing is the fallback verification.</li>
+<li><strong>NarrativeAnalyse / WirkgefuegeVorschlag</strong> require an Anthropic API call to reach —
+  cannot be verified in every run. Verify after intentional changes to those screens.</li>
 </ul>
 
 

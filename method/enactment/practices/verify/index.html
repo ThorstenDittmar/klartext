@@ -1666,7 +1666,7 @@
 <strong>External dependencies (referenced Resources):</strong> the browser-driving MCP (<code>Claude_in_Chrome</code>, fallback <code>Claude_Preview</code>) — load-bearing: the observe step drives a real browser through it. The app's own runtime (Vite on <code>:5173</code>, FastAPI on <code>:8000</code>, Supabase, optionally the Anthropic API for analysis screens) is the <em>system under test</em>, not a referenced method Resource.
 <strong>Enforcement:</strong> ritual (run for UI changes before done; four-eyes — QA owns the criteria, UX/UI executes)  ·  <strong>NN:</strong> ✓ (for UI changes)
 <strong>Status:</strong> living  ·  <strong>Owner:</strong> UX/UI (executes) — QA owns the verification <em>criteria</em>
-<strong>Enacted as:</strong> the <code>verify</code> skill (<code>docs/superpowers/skills/verify.md</code>)</p>
+<strong>Enacted as:</strong> the <code>verify</code> skill (<code>docs/method/enactment/skills/verify.md</code>)</p>
 <p><strong>Scope.</strong> This is a <strong>wholly-L2</strong> card: it has <strong>no generic L3 sibling</strong>. The flow hardcodes the
 klartext app — the concrete ports (<code>5173</code>/<code>8000</code>), the <code>klartext start</code> / <code>klartext testdata</code> commands,
 the five named screens and their URLs, and the exact token/badge expectations to eyeball. There is no
@@ -1759,7 +1759,7 @@ eyeballs rendered shades); the structural fallback when the live path is blocked
 <ul>
 <li>The standards being verified: [[frontend]].</li>
 <li>The orthogonal unit-test completeness layer (mocked, no browser): [[frontend-testing]] (QA-owned).</li>
-<li>The skill source: <code>docs/superpowers/skills/verify.md</code> (F3 — not modified by this package).</li>
+<li>The skill source: <code>docs/method/enactment/skills/verify.md</code> (F3 — not modified by this package).</li>
 <li>Register row: <em>Frontend Verification</em> in <a href="../../method/"><code>../method.md</code></a>.</li>
 </ul>
 
