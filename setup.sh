@@ -204,6 +204,18 @@ info "First open of each worktree: accept the trust dialog (same gate as the hoo
 info "Untrusted worktrees silently fall back to a per-cwd default — not the team blackboard."
 
 # ---------------------------------------------------------------------------
+# Skill distribution (repo → ~/.claude/skills/)
+# ---------------------------------------------------------------------------
+#
+# The repo is the single source of truth for klartext's own skills (no second
+# truth-centre). This installs them into ~/.claude/skills/ where Claude Code loads
+# them, marks each managed dir `.repo-managed`, and is idempotent + prune-safe —
+# foreign/plugin skills are never touched.
+section "Installing klartext skills"
+
+api/.venv/bin/klartext skills sync
+
+# ---------------------------------------------------------------------------
 # External reference assets
 # ---------------------------------------------------------------------------
 
