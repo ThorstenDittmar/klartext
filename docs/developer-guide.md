@@ -87,6 +87,16 @@ source api/.venv/bin/activate
 | `klartext db status` | Show status of the local Supabase instance |
 | `klartext converge` | Rebase the current worktree onto `origin/main` under the [ADR-0012](adr/0012-worktree-convergence-model.md) guards (clean `agent/<slug>` home branch only; never touches WIP or feature branches) |
 | `klartext converge --all` | Same, across every worktree of the repo — the one-liner that propagates a committed settings/hook/pin change to all home-branch worktrees |
+| `klartext skills sync` | Install klartext's own skills from `docs/superpowers/skills/` into `~/.claude/skills/` (where Claude Code loads them). The repo is the single source of truth; idempotent and prune-safe (marks managed dirs `.repo-managed`, removes managed skills whose source was deleted, never touches foreign/plugin skills). Run by `setup.sh`. |
+
+### Skill distribution
+
+klartext's cross-agent and ritual skills (`tdd`, `systematic-debugging`, `anchor`, `qa-review`, …) are
+versioned under `docs/superpowers/skills/` — the **single source of truth**. `~/.claude/skills/` is a
+*derived* install, populated by `klartext skills sync` (run automatically by `setup.sh`). Each skill is
+either a flat `<name>.md` file or a `<name>/` directory (multi-file skills like `qa-review` keep their
+companion docs); both install as `~/.claude/skills/<name>/SKILL.md`. Add or edit a skill in the repo, then
+re-run `klartext skills sync` — never hand-edit `~/.claude/skills/` (it is overwritten on the next sync).
 
 ---
 

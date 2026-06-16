@@ -15,12 +15,14 @@ import typer
 
 from api.cli import (
     ConvergeAction,
+    SkillsSyncAction,
     _converge_decision,
     _evaluate_checks,
     _evaluate_preconditions,
     _is_home_branch,
     _is_worktree_clean,
     _parse_worktree_list,
+    _sync_skills,
     _validate_merge_method,
 )
 
@@ -366,3 +368,154 @@ def test_parse_worktree_list_extracts_paths() -> None:
 def test_parse_worktree_list_empty_is_empty() -> None:
     """Expects empty porcelain output to yield no worktrees."""
     assert _parse_worktree_list("") == []
+
+
+# ---------------------------------------------------------------------------
+# `klartext skills sync` — mirror repo skills into ~/.claude/skills/
+#
+# The repo is the single source of truth (no second truth-centre). Each skill in
+# the source is either a flat `<name>.md` file or a `<name>/` directory (multi-file,
+# e.g. qa-review with companion docs). Both map to `<target>/<name>/SKILL.md`. Sync
+# is idempotent, marks every managed dir with `.repo-managed`, prunes managed dirs
+# whose source disappeared (handles renames like pre-compact→anchor), and never
+# touches unmarked foreign/plugin skills. The pure mirror logic is gated here against
+# real temp dirs; the command only wires source=repo, target=~/.claude/skills/.
+# ---------------------------------------------------------------------------
+
+
+def test_sync_skills_installs_flat_md_as_skill_dir(tmp_path: Path) -> None:
+    """Expects a flat `<name>.md` source to install as `<target>/<name>/SKILL.md` with a marker."""
+    source = tmp_path / "src"
+    target = tmp_path / "dst"
+    source.mkdir()
+    (source / "tdd.md").write_text("tdd body")
+
+    result = _sync_skills(source, target)
+
+    assert result["tdd"] == SkillsSyncAction.INSTALLED
+    assert (target / "tdd" / "SKILL.md").read_text() == "tdd body"
+    assert (target / "tdd" / ".repo-managed").exists()
+
+
+def test_sync_skills_installs_directory_skill_with_companions(tmp_path: Path) -> None:
+    """Expects a `<name>/` source directory to copy SKILL.md plus its companion files."""
+    source = tmp_path / "src"
+    target = tmp_path / "dst"
+    (source / "qa-review").mkdir(parents=True)
+    (source / "qa-review" / "SKILL.md").write_text("qa main")
+    (source / "qa-review" / "report-format.md").write_text("report fmt")
+
+    result = _sync_skills(source, target)
+
+    assert result["qa-review"] == SkillsSyncAction.INSTALLED
+    assert (target / "qa-review" / "SKILL.md").read_text() == "qa main"
+    assert (target / "qa-review" / "report-format.md").read_text() == "report fmt"
+    assert (target / "qa-review" / ".repo-managed").exists()
+
+
+def test_sync_skills_is_idempotent(tmp_path: Path) -> None:
+    """Expects a second sync of unchanged sources to report UNCHANGED and keep content intact."""
+    source = tmp_path / "src"
+    target = tmp_path / "dst"
+    source.mkdir()
+    (source / "tdd.md").write_text("tdd body")
+
+    _sync_skills(source, target)
+    result = _sync_skills(source, target)
+
+    assert result["tdd"] == SkillsSyncAction.UNCHANGED
+    assert (target / "tdd" / "SKILL.md").read_text() == "tdd body"
+
+
+def test_sync_skills_updates_changed_content(tmp_path: Path) -> None:
+    """Expects a changed source to overwrite the installed skill and report UPDATED."""
+    source = tmp_path / "src"
+    target = tmp_path / "dst"
+    source.mkdir()
+    skill = source / "tdd.md"
+    skill.write_text("old body")
+    _sync_skills(source, target)
+
+    skill.write_text("new body")
+    result = _sync_skills(source, target)
+
+    assert result["tdd"] == SkillsSyncAction.UPDATED
+    assert (target / "tdd" / "SKILL.md").read_text() == "new body"
+
+
+def test_sync_skills_prunes_managed_skill_whose_source_disappeared(tmp_path: Path) -> None:
+    """Expects a managed target dir with no matching source to be pruned (e.g. a rename)."""
+    source = tmp_path / "src"
+    target = tmp_path / "dst"
+    source.mkdir()
+    (source / "anchor.md").write_text("anchor body")
+    # An earlier sync left `pre-compact` managed; it is gone from the source now.
+    stale = target / "pre-compact"
+    stale.mkdir(parents=True)
+    (stale / "SKILL.md").write_text("old skill")
+    (stale / ".repo-managed").write_text("")
+
+    result = _sync_skills(source, target)
+
+    assert result["pre-compact"] == SkillsSyncAction.PRUNED
+    assert not stale.exists()
+    assert (target / "anchor" / "SKILL.md").read_text() == "anchor body"
+
+
+def test_sync_skills_empty_source_does_not_prune_managed_targets(tmp_path: Path) -> None:
+    """Expects an empty (but existing) source to prune nothing — same wipe guard as a missing one.
+
+    An empty source yields zero skills; that must not be read as 'every skill deleted'. The prune
+    step only follows a non-empty source, so already-installed managed skills survive untouched.
+    """
+    source = tmp_path / "src"
+    target = tmp_path / "dst"
+    source.mkdir()  # exists but holds no skills
+    managed = target / "tdd"
+    managed.mkdir(parents=True)
+    (managed / "SKILL.md").write_text("tdd body")
+    (managed / ".repo-managed").write_text("")
+
+    result = _sync_skills(source, target)
+
+    assert "tdd" not in result
+    assert managed.exists()
+    assert (managed / "SKILL.md").read_text() == "tdd body"
+
+
+def test_sync_skills_leaves_foreign_skill_untouched(tmp_path: Path) -> None:
+    """Expects an unmarked (plugin/foreign) target dir to be left untouched — never pruned."""
+    source = tmp_path / "src"
+    target = tmp_path / "dst"
+    source.mkdir()
+    (source / "tdd.md").write_text("tdd body")
+    # A foreign skill (no `.repo-managed` marker) must survive a sync untouched.
+    foreign = target / "superpowers-skill"
+    foreign.mkdir(parents=True)
+    (foreign / "SKILL.md").write_text("plugin skill")
+
+    result = _sync_skills(source, target)
+
+    assert "superpowers-skill" not in result
+    assert (foreign / "SKILL.md").read_text() == "plugin skill"
+
+
+def test_sync_skills_nonexistent_source_does_not_prune_managed_targets(tmp_path: Path) -> None:
+    """Expects a missing source dir to be treated as 'no sources', NOT as 'every skill deleted'.
+
+    A vanished/mis-wired source path must not be read as an instruction to wipe every
+    repo-managed skill out of ~/.claude/skills/. This guards against a path typo nuking
+    the install. If the code prunes here, that is a destructive bug.
+    """
+    source = tmp_path / "does-not-exist"
+    target = tmp_path / "dst"
+    managed = target / "tdd"
+    managed.mkdir(parents=True)
+    (managed / "SKILL.md").write_text("tdd body")
+    (managed / ".repo-managed").write_text("")
+
+    result = _sync_skills(source, target)
+
+    assert "tdd" not in result
+    assert managed.exists(), "a missing source must not prune already-installed managed skills"
+    assert (managed / "SKILL.md").read_text() == "tdd body"
