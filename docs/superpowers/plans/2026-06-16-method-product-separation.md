@@ -35,18 +35,28 @@ This refactoring is a **breaking way-of-working change** → **barrier mode** of
 - **Asleep (product-domain experts):** Narrative, Causal Model, Audit, Community, UX. (Layer-2/product — woken only if their domain is touched, and then **converge-first** before working.)
 - **Leads:** **OE F0–F1**, **DevOps F2–F3**, anchor-handoff between. SA on-call for ADR follow-ups (ADR-0014). QA on-call for the coverage-audit gate + qa-reviews (spawned per the lead-and-spawn model; real QA ratifies).
 
-## 4. The cut (F0) — the gating design deliverable (OE-led)
+## 4. F0 — produce the method as well-formed Essence objects, path-classified (OE-led, gating)
+
+F0 is **not just "draw the path cut."** It is **"produce klartext's method as a coherent set of well-formed Essence objects, laid down in the L3/L2 path stems."** That subsumes two kinds of work: **(b1) split** existing cards into generic-definition (L3) + klartext-evidence (L2), **and (b2) build** the Essence objects that do not yet exist as well-formed elements. *(Rationale: the card-wise split assumes a well-formed generic definition to extract — but `method.md` itself flags that many of our practices are lived-as-skills with **no card**, several patterns are prose, and there is no explicit Method-composition object. A path-classified pile with holes is not a real Essence Library for semAIt to seed from.)*
 
 - **Path convention** (ADR-0013): **L3 stems** = `scripts/`, the converge part of `api/cli.py`, method-related `.github/workflows/`, hooks, and **`docs/method/library/`** (generic definitions + the Essence summary + generic skills). **L2 stems** = **`docs/method/enactment/`** (klartext runs/evidence/friction/register/learnings/environment) + klartext-specific skills. `docs/superpowers/skills/` classified per file (OE-confirmed table in ADR-0013).
 - **Semantic criterion:** L3 = holds for ANY endeavour using the practice; L2 = specific to klartext's runs/decisions/evidence/product. **OE/SA classify once; a CI check (DevOps) enforces forever.**
-- **F0 acceptance criterion (the gate):** the cut is **DONE only when every method object is automatically classifiable** by the path rule — the CI check rejects (i) method content outside the L3/L2 stems and (ii) any still-"mixed" card. The per-card split of `practices/` and `contracts/` (line-by-line generic-definition vs klartext-evidence) is the bulk of F0's work, under SA review.
-- **Consequence:** because classification = path, the F3 extraction (`git filter-repo --path` on L3 stems) runs **mechanically**, so DevOps can lead it without per-object judgment.
+
+### 4.1 Essence objects to build/complete (lean — load-bearing only; source = `method.md` "Known gaps")
+- **Practice cards** for the ~10 un-carded lived practices (TDD, QA Review, QA Retro, Task Readiness, Knowledge Routing, Anchor, Frontend Verification, Systematic Debugging, Frontend Standards, Agent Onboarding) — each referencing the Alpha it advances, the Work Products it produces, and the Activity/Activity-Space it fills.
+- **Pattern cards** for the prose patterns (Memory Park / Custody, Blocker Protocol, …).
+- **The explicit Method-composition object** (L2) — klartext's method = *these* Library practices, composed, with their lived Alpha states. The L2 counterpart to the L3 Library.
+- **Element cards for the elements we forged**: the **Dependency Contract** element and the **Agent-Provenance** Pattern.
+- **Partial/iterative (do not over-engineer — Gall's Law):** Activity-Space mapping and Competencies beyond *Method Literacy* may stay partial and grow later; they are not a freeze blocker.
+
+- **F0 acceptance criterion (the gate) — sharpened:** the cut is **DONE only when (i) every method object is automatically path-classifiable** (CI rejects method content outside the L3/L2 stems and any still-"mixed" card) **AND (ii) every L3 object is a well-formed Essence element** (a card exists; it names the Alpha it advances + its Work Products + its Activity). Both halves, under SA review. The per-card split of `practices/`+`contracts/` and the building of the missing cards are the bulk of F0's work.
+- **Consequence:** because classification = path, the F3 extraction (`git filter-repo --path` on L3 stems) runs **mechanically**, so DevOps can lead it without per-object judgment — *provided F0 produced well-formed L3 objects in the first place.*
 
 ## 5. Sequence F0 → F3
 
 | Phase | Lead | Work | Gate to next |
 |---|---|---|---|
-| **F0** | OE | Draw the 2↔3 cut → machine-checkable path classification (CI check exists; every object classifiable). | **F0 acceptance criterion green** (no mixed cards, no out-of-stem method files). |
+| **F0** | OE | Produce the method as well-formed Essence objects, path-classified (§4): **split** existing cards + **build** the missing ones (un-carded practices, prose patterns, the Method-composition object, the new-element cards) + the CI classification check. | **F0 acceptance criterion green** (both halves: every object path-classifiable — no mixed cards, no out-of-stem method files — **and** every L3 object a well-formed Essence element). |
 | **F1** | OE (DevOps spawns mechanic bits) | **#3a** urgent isolation (per-project memory pin, settings, MCP — semAIt is spinning up *now*) · **#1a** coarse CI directory-scoping (footgun-safe, classify-gate pattern — *DevOps already started, TDD + qa-review-gated*) · first inventory. Cut-independent → may run in parallel with F0. | #3a isolation verified; #1a landed (qa-review-gated). |
 | **F2** | DevOps | **Three HARD gates** (see §6): coverage audit · first-pass contract audit · tested out-of-band backup/restore. | **All three gates pass.** |
 | **F3** | DevOps | **#3b** skill-distribution isolation · **#1b** card-wise extraction (`filter-repo` on L3 stems, full history; squash-snapshot for the semAIt seed) · **#2** provenance trailer (ADR-0014). Under lead-and-spawn barrier. | Extraction verified; provenance live; substrate restored-and-verified. |
