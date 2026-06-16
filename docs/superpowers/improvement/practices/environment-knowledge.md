@@ -57,7 +57,7 @@ anchored to the *actual* environment, not a remembered one.
 
 - One **environment Work Product** per Resource (or coherent fact-cluster), carrying: the fact(s), their
   **status tags**, the **version-binding**, the **Canary** checklist, and the **dependency chain**.
-  Home: `docs/superpowers/improvement/environment/`.
+  Home: `docs/method/enactment/environment/`.
 - A registered row / entry in `method.md`.
 
 ## Completion Checklist (Done)

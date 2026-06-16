@@ -17,7 +17,7 @@ stale ones so existing machines stop leaking.
 
 The desktop runtime cannot be scripted; the *runtime* honoring was verified empirically (the lab
 above) and is re-checked after app updates by the Canary in
-``docs/superpowers/improvement/environment/claude-code-app.md``. This file gates the two scriptable
+``docs/method/enactment/environment/claude-code-app.md``. This file gates the two scriptable
 halves: the committed settings carry the pin, and setup.sh no longer pins it user-global.
 """
 

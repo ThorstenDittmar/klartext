@@ -685,7 +685,7 @@ This process does not end with Phase 4. The improvement itself becomes a recurri
 
 ## 4. Open points about this document itself
 
-- **Final home / mkdocs navigation:** This file lives under `docs/superpowers/improvement/`. Whether it is
+- **Final home / mkdocs navigation:** This file lives under `docs/method/enactment/`. Whether it is
   included in the published docs site (mkdocs nav) touches the Infrastructure Perimeter (DevOps) and the docs
   structure question (SA) — both still open from the H01 post-mortem. Until then the file is versioned in git and
   thus secured against loss; the *official* inclusion follows.

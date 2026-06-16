@@ -4,7 +4,7 @@
 **Decided by:** User (2026-06-13), direction set; conditions authored by System Architect
 **Author / Sign-off:** System Architect
 **Supersedes:** ADR-0010 §1 "Terminal start via central launcher" and the rejected alternative "Desktop app start". ADR-0010 §2 (worktree isolation), §3 (generational sessions) and §4 (shared layer pinned) remain in force and are carried forward unchanged.
-**Evidence:** `docs/superpowers/improvement/environment/claude-code-app.md` — Environment Work Product, **frozen v1**, DevOps-verified 2026-06-13, version-bound to Claude.app **v1.12603.1** (Build 3df4fd).
+**Evidence:** `docs/method/enactment/environment/claude-code-app.md` — Environment Work Product, **frozen v1**, DevOps-verified 2026-06-13, version-bound to Claude.app **v1.12603.1** (Build 3df4fd).
 
 ## Context
 

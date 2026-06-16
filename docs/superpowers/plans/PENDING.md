@@ -7,7 +7,7 @@ Plans that are next in line. Tests may already be written (RED).
 ## H01-422 Walking Skeleton — Status (2026-06-10, Hannibal)
 
 **Work-Alpha: CLOSED** (Retro 2, 2026-06-10). Record:
-`docs/superpowers/improvement/learnings/2026-06-10-h01-422-retrospective.md`.
+`docs/method/enactment/learnings/2026-06-10-h01-422-retrospective.md`.
 *Foundation Established* danach 5/6 — letzte Box („non-negotiables per practice") bei OE.
 
 Erster realer Lauf der Methode am H01-422-Wund („+ Absatz hinzufügen" → 422 → kein Tippen möglich).

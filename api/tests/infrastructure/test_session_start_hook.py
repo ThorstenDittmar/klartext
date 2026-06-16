@@ -6,7 +6,7 @@ session context on startup (and on ``/clear``, which the desktop app reports as
 drift — because the app has no ``start-agent.sh`` to load identity.
 
 The desktop app cannot be scripted, so the *runtime* injection is verified by the manual Canary
-in ``docs/superpowers/improvement/environment/claude-code-app.md``. This file gates the two
+in ``docs/method/enactment/environment/claude-code-app.md``. This file gates the two
 **scriptable** halves, which is where the mechanism silently drifts otherwise:
 
   1. the hook is wired in ``.claude/settings.json`` with a matcher that includes ``startup``;

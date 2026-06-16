@@ -132,7 +132,7 @@ Literacy ≥ 1); until then OE + user run the involvement check manually against
 ## Work Products
 
 - **Improvement Register** — `continuous-improvement.md` §3 (Improvement instances with alpha state).
-- **Learning entries** — `docs/superpowers/improvement/learnings/` (one file per learning).
+- **Learning entries** — `docs/method/enactment/learnings/` (one file per learning).
 - Updates to practice cards / `method.md`.
 
 ## Completion Checklist (Done)

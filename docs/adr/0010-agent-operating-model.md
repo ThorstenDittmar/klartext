@@ -4,7 +4,7 @@
 **Decided by:** User (2026-06-11)  
 **Author / Sign-off:** System Architect  
 **Technical source:** DevOps specification — Improvement Register §3 "Structural change: git worktree per context + session-cwd repair"  
-**External evidence:** `docs/superpowers/improvement/2026-06-10-external-review-brief.md` + `2026-06-10-external-review-response.md`
+**External evidence:** `docs/method/enactment/2026-06-10-external-review-brief.md` + `2026-06-10-external-review-response.md`
 
 ## Context
 
