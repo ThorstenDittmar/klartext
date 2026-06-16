@@ -2299,7 +2299,7 @@ agent's Hoheitswissen at session start — and on <code>/clear</code>, which the
 <li><strong>Matcher:</strong> <code>startup|clear|compact</code> — covers session open, <code>/clear</code>, and re-injection after a compaction.</li>
 <li><strong>Verification:</strong> <code>api/tests/infrastructure/test_session_start_hook.py</code> gates the wiring and the
   loader behaviour. The runtime injection (the desktop app cannot be scripted) is checked by the
-  manual Canary in <a href="../superpowers/improvement/environment/claude-code-app/"><code>environment/claude-code-app.md</code></a>.</li>
+  manual Canary in <a href="../method/enactment/environment/claude-code-app/"><code>environment/claude-code-app.md</code></a>.</li>
 </ul>
 <p>Rationale and the return-to-app gate: <a href="../adr/0011-return-to-desktop-app-session-start/">ADR-0011</a> (condition G1).</p>
 <h3 id="session-health-drift-warning-sessionstart-hook">Session health / drift warning (SessionStart hook)<a class="headerlink" href="#session-health-drift-warning-sessionstart-hook" title="Permanent link">&para;</a></h3>
@@ -2340,7 +2340,7 @@ to the same directory.</p>
 <li><strong>Verification:</strong> <code>api/tests/infrastructure/test_automemory_settings.py</code> gates the committed pin
   and the setup cleanup. The runtime honoring (the desktop app cannot be scripted) was verified
   empirically and is re-checked after app updates by the Canary in
-  <a href="../superpowers/improvement/environment/claude-code-app/"><code>environment/claude-code-app.md</code></a>.</li>
+  <a href="../method/enactment/environment/claude-code-app/"><code>environment/claude-code-app.md</code></a>.</li>
 </ul>
 <hr />
 <h2 id="cicd">CI/CD<a class="headerlink" href="#cicd" title="Permanent link">&para;</a></h2>
