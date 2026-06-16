@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/superpowers/improvement/semat-definition/">
+        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/method/library/alpha-states/">
       
       
       
@@ -23,7 +23,7 @@
     
     
       
-        <title>SEMAT / Essence — Reference Definition (our meta-language) - klartext.jetzt – Spezifikation</title>
+        <title>Essence Kernel — Alpha States & Checklists - klartext.jetzt – Spezifikation</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#semat-essence-reference-definition-our-meta-language" class="md-skip">
+        <a href="#essence-kernel-alpha-states-checklists" class="md-skip">
           Zum Inhalt
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              SEMAT / Essence — Reference Definition (our meta-language)
+              Essence Kernel — Alpha States &amp; Checklists
             
           </span>
         </div>
@@ -1650,7 +1650,7 @@
 
 
   
-    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/superpowers/improvement/semat-definition.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/method/library/alpha-states.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1658,163 +1658,135 @@
   
 
 
-<h1 id="semat-essence-reference-definition-our-meta-language">SEMAT / Essence — Reference Definition (our meta-language)<a class="headerlink" href="#semat-essence-reference-definition-our-meta-language" title="Permanent link">&para;</a></h1>
+<h1 id="essence-kernel-alpha-states-checklists">Essence Kernel — Alpha States &amp; Checklists<a class="headerlink" href="#essence-kernel-alpha-states-checklists" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Scope.</strong> Self-contained reference description of <strong>SEMAT</strong> and the <strong>Essence</strong> standard — the
-meta-language we use to forge and describe our way of working. After reading this, an agent understands
-the vocabulary well enough to communicate with OE using the right terms.
-<strong>Out of scope.</strong> <em>Our own</em> process decisions and practices (those live in <code>continuous-improvement.md</code>
-and <code>practices/</code>); the running term list (<code>semat-glossary.md</code>). This document describes the <strong>standard</strong>,
-not our application of it — except the short "How we use it" section at the end.
-<strong>Anti-pattern guarded.</strong> Dependence on the external SEMAT website / an external dependency drifting out
-of our control (see <code>continuous-improvement.md</code> RC4); and Eigensaft-by-misunderstanding (§0).
+<p>⚠️ This is currently a vendored copy of the IJI Alpha State Cards (CC BY 4.0, SEMAT Inc.). F0.2 will replace it with a Kernel/Language <strong>Resource card</strong> (referenced, never vendored). Do not resolve here.</p>
+<p><strong>Scope.</strong> Reference: the <strong>seven Essence kernel Alphas</strong> with their full state lifecycles and per-state
+checklists — the operational heart of the Kernel ("done" as a checkable state, not a feeling).
+<strong>Out of scope.</strong> What an Alpha <em>is</em> and how the Kernel works (<code>semat-definition.md</code>); our current state
+assessments (those live in <code>continuous-improvement.md</code> — this file is the measuring stick, not the
+measurement).
+<strong>Anti-pattern guarded.</strong> Dependence on external, form-gated material for day-to-day method work (RC4);
+"done by feeling" instead of checkable state (the H01 mistake).
 <strong>Language.</strong> English — documentation-language rule.</p>
+<p><strong>Source &amp; license:</strong> IJI "Alpha State Cards" deck (2018.09), <code>assets-local/alpha_state_cards_ecards.pdf</code>.
+The alpha state checkpoint names and content are provided by <strong>SEMAT Inc. under CC BY 4.0</strong>; Essence
+standard © OMG (https://www.omg.org/spec/Essence/). Attribution: Ivar Jacobson International / SEMAT Inc.</p>
 </blockquote>
 <hr />
-<h2 id="1-what-it-is">1. What it is<a class="headerlink" href="#1-what-it-is" title="Permanent link">&para;</a></h2>
-<p><strong>SEMAT</strong> (<em>Software Engineering Method and Theory</em>) is an initiative founded in 2009 by Ivar Jacobson,
-Bertrand Meyer and Richard Soley to put software engineering methods on a more solid, theory-based,
-practice-oriented footing. Its central product is <strong>Essence</strong>.</p>
-<p><strong>Essence</strong> is an OMG standard: <em>"Essence — Kernel and Language for Software Engineering Methods."</em>
-It has two parts:</p>
+<h2 id="customer-area">Customer area<a class="headerlink" href="#customer-area" title="Permanent link">&para;</a></h2>
+<h3 id="opportunity">Opportunity<a class="headerlink" href="#opportunity" title="Permanent link">&para;</a></h3>
+<p><em>The set of circumstances that makes it appropriate to develop or change a software system.</em></p>
 <ol>
-<li>A <strong>Kernel</strong> — the small, fixed common ground that <em>every</em> software engineering endeavour shares,
-   regardless of method. It captures the things you always work with and the things you always do.</li>
-<li>A <strong>Language</strong> — a notation for describing <strong>Practices</strong> and composing them into <strong>Methods</strong>, all on top
-   of the Kernel.</li>
+<li><strong>Identified</strong> — Idea behind opportunity identified · At least one investing stakeholder interested ·
+   Other stakeholders identified</li>
+<li><strong>Solution Needed</strong> — Solution identified · Stakeholders' needs established · Problems and root causes
+   identified · Need for a solution confirmed · At least one solution proposed</li>
+<li><strong>Value Established</strong> — Opportunity value quantified · Solution impact understood · System value
+   understood · Success criteria clear · Outcomes clear and quantified</li>
+<li><strong>Viable</strong> — Solution outlined · Solution possible within constraints · Risks acceptable &amp; manageable ·
+   Solution profitable · Reasons to develop solution understood · Pursuit viable</li>
+<li><strong>Addressed</strong> — Opportunity addressed · Solution worth deploying · Stakeholders satisfied</li>
+<li><strong>Benefit Accrued</strong> — Solution accrues benefits · ROI acceptable</li>
 </ol>
-<p>The core idea: you do <strong>not</strong> adopt a heavyweight method wholesale. You take the thin Kernel as given and
-<strong>compose your own method from small, reusable Practices</strong> — exactly Alistair Cockburn's <em>methodology per
-project</em>, made operational.</p>
-<hr />
-<h2 id="2-the-kernel">2. The Kernel<a class="headerlink" href="#2-the-kernel" title="Permanent link">&para;</a></h2>
-<h3 id="21-three-areas-of-concern">2.1 Three areas of concern<a class="headerlink" href="#21-three-areas-of-concern" title="Permanent link">&para;</a></h3>
-<p>The Kernel groups everything into three areas:</p>
-<table>
-<thead>
-<tr>
-<th>Area of concern</th>
-<th>About</th>
-<th>Plain question</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Customer</strong></td>
-<td>The users and the value</td>
-<td><em>Who is this for, and why?</em></td>
-</tr>
-<tr>
-<td><strong>Solution</strong></td>
-<td>The thing being built</td>
-<td><em>What are we building?</em></td>
-</tr>
-<tr>
-<td><strong>Endeavour</strong></td>
-<td>The team and its work</td>
-<td><em>How is the team doing the work?</em></td>
-</tr>
-</tbody>
-</table>
-<h3 id="22-the-seven-alphas">2.2 The seven Alphas<a class="headerlink" href="#22-the-seven-alphas" title="Permanent link">&para;</a></h3>
-<p>An <strong>Alpha</strong> (<em>Abstract-Level Progress Health Attribute</em>) is an <strong>essential thing whose state you progress
-and track</strong>. The Kernel defines exactly seven, each with a lifecycle of <strong>states</strong>. Each state has a
-<strong>checklist</strong> to decide whether it has been reached — the full per-state checklists live in
-<strong><code>alpha-states.md</code></strong> (extracted from the IJI Alpha State Cards, CC BY 4.0 SEMAT Inc.). <em>(This "thing with a tracked state lifecycle" is the
-single most valuable idea we import — see <code>continuous-improvement.md</code> RC4.)</em></p>
-<p><strong>Customer area</strong>
-- <strong>Opportunity</strong> — the reason to build. States: <em>Identified → Solution Needed → Value Established →
-  Viable → Addressed → Benefit Accrued.</em>
-- <strong>Stakeholders</strong> — the people with a stake. States: <em>Recognized → Represented → Involved → In Agreement →
-  Satisfied for Deployment → Satisfied in Use.</em></p>
-<p><strong>Solution area</strong>
-- <strong>Requirements</strong> — what the system must do. States: <em>Conceived → Bounded → Coherent → Acceptable →
-  Addressed → Fulfilled.</em>
-- <strong>Software System</strong> — the system itself. States: <em>Architecture Selected → Demonstrable → Usable → Ready →
-  Operational → Retired.</em></p>
-<p><strong>Endeavour area</strong>
-- <strong>Work</strong> — the effort itself. States: <em>Initiated → Prepared → Started → Under Control → Concluded → Closed.</em>
-- <strong>Team</strong> — the people doing the work. States: <em>Seeded → Formed → Collaborating → Performing → Adjourned.</em>
-- <strong>Way of Working</strong> — how the team works. States: <em>Principles Established → Foundation Established →
-  In Use → In Place → Working Well → Retired.</em></p>
-<blockquote>
-<p><strong>The Way-of-Working Alpha is our anchor.</strong> Our continuous improvement <em>is</em> the engine that drives this
-Alpha through its states. Our <strong>Improvement Step</strong> practice advances it.</p>
-</blockquote>
-<h3 id="23-activity-spaces">2.3 Activity Spaces<a class="headerlink" href="#23-activity-spaces" title="Permanent link">&para;</a></h3>
-<p>An <strong>Activity Space</strong> is a <em>placeholder for the things you do</em> — a "what needs doing" without prescribing
-"how." A Practice fills activity spaces with concrete <strong>Activities</strong>. The Kernel defines fifteen:</p>
-<ul>
-<li><strong>Customer:</strong> Explore Possibilities · Understand Stakeholder Needs · Ensure Stakeholder Satisfaction ·
-  Use the System</li>
-<li><strong>Solution:</strong> Understand the Requirements · Shape the System · Implement the System · Test the System ·
-  Deploy the System · Operate the System</li>
-<li><strong>Endeavour:</strong> Prepare to do the Work · Coordinate Activity · Support the Team · Track Progress ·
-  Stop the Work</li>
-</ul>
-<h3 id="24-competencies">2.4 Competencies<a class="headerlink" href="#24-competencies" title="Permanent link">&para;</a></h3>
-<p>A <strong>Competency</strong> is an ability the endeavour needs. The Kernel names six, each rated on five levels
-(<em>1 Assists · 2 Applies · 3 Masters · 4 Adapts · 5 Innovates</em>):</p>
-<p>Stakeholder Representation · Analysis · Development · Testing · Leadership · Management.</p>
-<hr />
-<h2 id="3-the-language-how-you-extend-the-kernel">3. The Language — how you extend the Kernel<a class="headerlink" href="#3-the-language-how-you-extend-the-kernel" title="Permanent link">&para;</a></h2>
-<p>The Kernel is <strong>fixed but extensible</strong>: you never modify it, you build on it. The Essence Language gives you
-the elements to describe your own additions:</p>
-<ul>
-<li><strong>Alpha / Alpha State</strong> — a tracked thing and its lifecycle (you may add <em>sub-alphas</em> under a kernel Alpha).</li>
-<li><strong>Work Product</strong> — a tangible artifact (document, code, test) produced while progressing an Alpha. Work
-  products have <em>levels of detail</em>.</li>
-<li><strong>Activity</strong> — concrete work that fills an Activity Space.</li>
-<li><strong>Pattern</strong> — any other named structure (e.g. a role, a check).</li>
-<li><strong>Resource</strong> — external supporting material a Practice <em>references</em> but the endeavour does not <em>produce</em>
-  (standards documents, card decks, guides). Distinct from a Work Product (which we produce). <em>(Backfilled
-  2026-06-10 — gap found while classifying external reference assets.)</em></li>
-<li><strong>Practice</strong> — a <strong>separately-describable, composable</strong> unit: "a repeatable way of doing something with a
-  clear purpose." A Practice references the Alphas it advances, the Work Products it produces, and the
-  Activities it performs.</li>
-<li><strong>Method</strong> — the <strong>composition of a Kernel and a set of Practices</strong> to fulfill a specific purpose — together
-  forming a complete way of working.</li>
-<li><strong>Library</strong> — a container/catalog of element groups, notably Practices: a <em>Practice Library</em> holds the
-  <strong>stock</strong> of described practices; a Method is the <strong>composition actually in use</strong>. <em>(Backfilled 2026-06-09 —
-  the gap was found during a check against the standard and closed in the same step.)</em></li>
-</ul>
-<p>Essence is <strong>card-based</strong>: every element (Alpha, state, Activity, Practice…) is summarised on a concise card
-with its checklist. Cards make the method tangible and checkable rather than a thick manual.</p>
-<hr />
-<h2 id="4-why-it-fits-an-ai-multi-agent-team">4. Why it fits an AI multi-agent team<a class="headerlink" href="#4-why-it-fits-an-ai-multi-agent-team" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>Composition over adoption.</strong> We assemble a fitting method from bricks instead of importing a heavyweight
-  process — directly against the <em>Eigensaft</em> and "too heavy" risks.</li>
-<li><strong>Explicit states.</strong> Alphas give artifacts and dependencies a lifecycle, so "active vs. recorded" drift
-  becomes detectable (RC4).</li>
-<li><strong>Checklists, not vibes.</strong> "Done" is a checklist-detectable state, matching our DoD discipline.</li>
-<li><strong>Practices are skill-shaped.</strong> A Practice card maps cleanly onto a Claude Code Skill — the card is the
-  description, the skill is the executable enactment.</li>
-</ul>
-<hr />
-<h2 id="5-how-we-use-it-our-conventions">5. How we use it (our conventions)<a class="headerlink" href="#5-how-we-use-it-our-conventions" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>As-is, extend-not-modify.</strong> We treat the Kernel and Language as given. We add our own Practices and
-  tracked things on top; we never change the standard. What we change <em>with</em> Essence is our process.</li>
-<li><strong>Working hypothesis.</strong> Essence is our chosen meta-language. If it actively fights us in use, we revisit
-  it <strong>openly</strong> rather than quietly bending it for convenience.</li>
-<li><strong>No jargon dumping.</strong> We do not force Essence terms into daily speech. Shared meaning comes from our
-  small authoritative <code>semat-glossary.md</code> (DDD Ubiquitous Language), which imports from Essence only what
-  earns its keep.</li>
-<li><strong>KB-first lookup.</strong> For SEMAT/method questions, consult this file + the glossary <strong>first</strong> (and say so);
-  go to the web only on a miss or for existence questions (this summary is lossy — absence here does not prove
-  absence in the standard). Every confirmed gap is <strong>backfilled here in the same step</strong>.</li>
-<li><strong>Where things live:</strong> this file = the <em>standard</em>; <code>semat-glossary.md</code> = our <em>terms</em>; <code>practices/</code> = our
-  <em>Practices</em>; <code>continuous-improvement.md</code> = our <em>decisions, rationale and plan</em>.</li>
-</ul>
-<blockquote>
-<p><strong>For an agent:</strong> read this file plus <code>semat-glossary.md</code>, and you can talk to OE about the way of working
-in the right vocabulary — Alphas, states, Practices, Methods — and propose changes that slot into the
-Kernel instead of reinventing it.</p>
-</blockquote>
-<hr />
-<p><em>Source: our self-contained summary of the OMG Essence specification (Essence — Kernel and Language for
-Software Engineering Methods). Kept self-contained on purpose, so we stay independent of the external site.</em></p>
+<h3 id="stakeholders">Stakeholders<a class="headerlink" href="#stakeholders" title="Permanent link">&para;</a></h3>
+<p><em>The people, groups, or organizations who affect or are affected by a software system.</em></p>
+<ol>
+<li><strong>Recognized</strong> — Stakeholder groups identified · Key stakeholder groups represented · Responsibilities
+   defined</li>
+<li><strong>Represented</strong> — Responsibilities agreed · Representatives authorized · Collaboration approach agreed ·
+   Way of working supported &amp; respected</li>
+<li><strong>Involved</strong> — Representatives assist the team · Timely feedback and decisions provided · Changes promptly
+   communicated</li>
+<li><strong>In Agreement</strong> — Minimal expectations agreed · Rep's happy with their involvement · Rep's input valued ·
+   Team's input valued · Priorities clear &amp; perspectives balanced</li>
+<li><strong>Satisfied for Deployment</strong> — Stakeholder feedback provided · System ready for deployment</li>
+<li><strong>Satisfied in Use</strong> — Feedback on system use available · System meets expectations</li>
+</ol>
+<h2 id="solution-area">Solution area<a class="headerlink" href="#solution-area" title="Permanent link">&para;</a></h2>
+<h3 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">&para;</a></h3>
+<p><em>What the software system must do to address the opportunity and satisfy the stakeholders.</em></p>
+<ol>
+<li><strong>Conceived</strong> — Stakeholders agree system is to be produced · Users identified · Funding stakeholders
+   identified · Opportunity clear</li>
+<li><strong>Bounded</strong> — Development stakeholders identified · System purpose agreed · System success clear · Shared
+   solution understanding exists · Requirement's format agreed · Requirements management in place ·
+   Prioritization scheme clear · Constraints identified &amp; considered · Assumptions clear</li>
+<li><strong>Coherent</strong> — Requirements shared · Requirements' origin clear · Rationale clear · Conflicts addressed ·
+   Essential characteristics clear · Key usage scenarios explained · Priorities clear · Impact understood ·
+   Team knows &amp; agrees on what to deliver</li>
+<li><strong>Acceptable</strong> — Acceptable solution described · Change under control · Value to be realized clear · Clear
+   how opportunity addressed · Testable</li>
+<li><strong>Addressed</strong> — Enough addressed to be acceptable · Requirements and system match · Value realized clear ·
+   System worth making operational</li>
+<li><strong>Fulfilled</strong> — Stakeholders accept requirements · No hindering requirements · Requirements fully satisfied</li>
+</ol>
+<h3 id="software-system">Software System<a class="headerlink" href="#software-system" title="Permanent link">&para;</a></h3>
+<p><em>A system made up of software, hardware, and data that provides its primary value by the execution of the
+software.</em></p>
+<ol>
+<li><strong>Architecture Selected</strong> — Architecture selection criteria agreed · HW platforms identified · Technologies
+   selected · System boundary known · Decisions on system organization made · Buy, build, reuse decisions
+   made · Key technical risks agreed to</li>
+<li><strong>Demonstrable</strong> — Key architectural characteristics demonstrated · System exercised &amp; performance
+   measured · Critical HW configurations demonstrated · Critical interfaces demonstrated · Integration with
+   environment demonstrated · Architecture accepted as fit-for-purpose</li>
+<li><strong>Usable</strong> — System can be operated · System functionality tested · System performance acceptable · Defect
+   levels acceptable · System fully documented · Release content known · Added value clear</li>
+<li><strong>Ready</strong> — User documentation available · System accepted as fit-for-purpose · Stakeholders want the
+   system · Operational support in place</li>
+<li><strong>Operational</strong> — System available for use · System live · Agreed service levels supported</li>
+<li><strong>Retired</strong> — Replaced or discontinued · No longer supported · No authorized users · Updates stopped</li>
+</ol>
+<h2 id="endeavour-area">Endeavour area<a class="headerlink" href="#endeavour-area" title="Permanent link">&para;</a></h2>
+<h3 id="work">Work<a class="headerlink" href="#work" title="Permanent link">&para;</a></h3>
+<p><em>Activity involving mental or physical effort done in order to achieve a result.</em></p>
+<ol>
+<li><strong>Initiated</strong> — Required result clear · Constraints clear · Funding stakeholders known · Initiator
+   identified · Accepting stakeholders known · Source of funding clear · Priority clear</li>
+<li><strong>Prepared</strong> — Commitment made · Cost and effort estimated · Resource availability understood · Risk
+   exposure understood · Acceptance criteria established · Sufficiently broken down to start · Tasks
+   identified and prioritized · Credible plan in place · Funding in place · At least one team member ready ·
+   Integration points defined</li>
+<li><strong>Started</strong> — Development started · Progress monitored · Definition of done in place · Tasks being
+   progressed</li>
+<li><strong>Under Control</strong> — Tasks being completed · Unplanned work under control · Risks under control · Estimates
+   revised to reflect performance · Progress measured · Re-work under control · Commitments consistently met</li>
+<li><strong>Concluded</strong> — Only admin tasks left · Results achieved · Resulting system accepted</li>
+<li><strong>Closed</strong> — Lessons learned · Metrics available · Everything archived · Budget reconciled &amp; closed · Team
+   released · No outstanding, uncompleted tasks</li>
+</ol>
+<h3 id="team">Team<a class="headerlink" href="#team" title="Permanent link">&para;</a></h3>
+<p><em>A group of people actively engaged in the development, maintenance, delivery or support of a specific
+software system.</em></p>
+<ol>
+<li><strong>Seeded</strong> — Mission defined · Constraints known and defined · Growth mechanisms in place · Composition
+   defined · Responsibilities outlined · Required commitment level clear · Required competencies identified ·
+   Size determined · Governance rules defined · Leadership model selected</li>
+<li><strong>Formed</strong> — Enough members recruited · Roles understood · How to work understood · Members introduced ·
+   Individual responsibilities accepted and aligned to competencies · Members accepting work · External
+   collaborators identified · Communication mechanisms defined · Members commit to team</li>
+<li><strong>Collaborating</strong> — Works as one unit · Communication open and honest · Focused on mission · Members know
+   each other</li>
+<li><strong>Performing</strong> — Consistently meeting commitments · Continuously adapting to change · Addresses problems ·
+   Rework and backtracking minimized · Waste continuously eliminated</li>
+<li><strong>Adjourned</strong> — Responsibilities fulfilled · Members available to other teams · Mission concluded</li>
+</ol>
+<h3 id="way-of-working">Way of Working<a class="headerlink" href="#way-of-working" title="Permanent link">&para;</a></h3>
+<p><em>The tailored set of practices and tools used by a team to guide and support their work.</em></p>
+<ol>
+<li><strong>Principles Established</strong> — Team actively support principles · Stakeholders agree with principles · Tool
+   needs agreed · Approach recommended · Operational context understood · Practice &amp; tool constraints known</li>
+<li><strong>Foundation Established</strong> — Key practices &amp; tools selected · Practices needed to start work agreed ·
+   Non-negotiable practices &amp; tools identified · Gaps between available and needed way of working understood ·
+   Gaps in capability understood · Integrated way of working available</li>
+<li><strong>In Use</strong> — Practices &amp; tools in use · Regularly inspected · Adapted to context · Supported by team ·
+   Feedback mechanisms in place · Practices &amp; tools support collaboration</li>
+<li><strong>In Place</strong> — Used by whole team · Accessible to whole team · Inspected and adapted by whole team</li>
+<li><strong>Working Well</strong> — Predictable progress being made · Practices naturally applied · Tools naturally support
+   way-of-working · Continually tuned</li>
+<li><strong>Retired</strong> — No longer in use · Lessons learned shared</li>
+</ol>
 
 
 
