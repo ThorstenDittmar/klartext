@@ -2,7 +2,7 @@
 
 > **Essence type:** Practice
 > **Advances Alpha:** Team (also advances Way of Working)  ·  **Work Products:** a classification of each unsaved insight by ownership · one knowledge briefing per not-own item (or an explicit "none") · self-stamped provenance on any shared-memory edit
-> **Activity / Activity Space:** provisional — no kernel Activity Space (Team-collaboration-meta); Activity-Space extension deferred per Plan §4.1 → deliver knowledge that emerged in one member's session to its rightful owner
+> **Activity / Activity Space:** Support the Team → deliver knowledge that emerged in one member's session to its rightful owner
 > **External dependencies (referenced Resources):** none
 > **Enforcement:** ritual  ·  **NN:** ✓ (runs within every anchor)
 > **Status:** living  ·  **Owner:** OE

@@ -2,7 +2,7 @@
 
 > **Essence type:** Practice
 > **Advances Alpha:** Team  ·  **Work Products:** the new agent's directory (start wrapper + tool allowlist + knowledge file) · a roster entry · a roles-table entry · a handoff message
-> **Activity / Activity Space:** provisional — no kernel Activity Space (Team-formation-meta); Activity-Space extension deferred per Plan §4.1 → integrate a new specialist member into the multi-agent team with a defined domain
+> **Activity / Activity Space:** Support the Team → integrate a new specialist member into the multi-agent team with a defined domain
 > **External dependencies (referenced Resources):** none
 > **Enforcement:** ritual  ·  **NN:** ✓ (when adding an agent)
 > **Status:** living  ·  **Owner:** OE
