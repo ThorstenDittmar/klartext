@@ -39,6 +39,13 @@ Products it produces, and the Activities/Activity Spaces it fills.**
 > not a §3 requirement — the CI check must not demand them. Build the check type-aware, or it checks the
 > wrong set.
 
+> **Siblingless-L2 practice cards (SA ratification, PR #150).** Well-formedness is type-driven, not
+> stem-driven. A practice card's §3 fields (Advances Alpha / Work Products / Activity Space) must appear on
+> exactly one card: on the **L3 sibling** for a split practice (the L2 card delegates via its
+> `L3 definition:` pointer), or **inline** for a wholly-L2 practice that has no L3 sibling. The half-(ii)
+> check accepts an L2 practice card iff it either delegates (carries an `L3 definition:` pointer) or carries
+> the §3 fields inline.
+
 ## The wrapper rule (composition over an external Resource)
 
 If the element **wraps** an external Resource (the L3 generic definition lives *upstream*, not with
