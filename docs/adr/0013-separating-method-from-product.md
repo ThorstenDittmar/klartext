@@ -34,7 +34,7 @@ The 2↔3 cut runs **through** each practice card (definition + klartext evidenc
 **Stems (ratified):**
 - **L3** = `scripts/`, the converge-part of `api/cli.py`, method-related `.github/workflows/`, hooks; **`docs/method/library/`** (generic definitions, the Essence summary/grounding, generic skills).
 - **L2** = **`docs/method/enactment/`** (klartext runs/evidence/friction/`continuous-improvement`/register/learnings/environment); klartext-specific skills.
-- `docs/method/enactment/skills/` is classified per file (table below).
+- The per-file skill classification (table below) applies to the skill executables, relocated from `docs/superpowers/skills/` to `docs/method/enactment/skills/` in F3-#3b — executable-placement ruling: all 12 executables are **L2**, their generic definitions live in the L3 practice cards.
 - The current `docs/superpowers/improvement/` tree migrates onto `docs/method/{library,enactment}/`.
 
 **Naming rationale:** a top-level `docs/method/` boundary, **not** re-stemming under `docs/superpowers/` (that is the distribution-plugin name); this avoids conflating the method layer with the upstream framework and gives an unambiguous `filter-repo` root.
