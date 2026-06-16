@@ -1714,6 +1714,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#method-classification-gate-method-classificationyml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Method classification gate (method-classification.yml)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2370,6 +2381,11 @@ to the same directory.</p>
 <td>Requires a <code>rolling</code>/<code>breaking</code> label on Way-of-Working PRs (see below)</td>
 </tr>
 <tr>
+<td><code>method-classification.yml</code></td>
+<td>PR</td>
+<td>Enforces the method path-classification + card well-formedness gate (F0.3, see below)</td>
+</tr>
+<tr>
 <td><code>deploy-docs.yml</code></td>
 <td>push to <code>main</code> (docs/** changed)</td>
 <td>Builds and deploys MkDocs to GitHub Pages</td>
@@ -2402,11 +2418,26 @@ decision lives in <code>scripts/classify_gate.py</code>.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>In-scope surfaces:</strong> <code>CLAUDE.md</code>, <code>docs/superpowers/skills/**</code>, <code>agents/**/claude.md</code>,
-<code>.claude/settings.json</code>, <code>scripts/**</code>, <code>api/cli.py</code>.</p>
+<p><strong>In-scope surfaces:</strong> <code>CLAUDE.md</code>, <code>docs/method/**</code>, <code>docs/superpowers/skills/**</code>,
+<code>agents/**/claude.md</code>, <code>.claude/settings.json</code>, <code>scripts/**</code>, <code>api/cli.py</code>.</p>
 <p>The gate is <strong>default-free</strong> — if unsure, choose <code>breaking</code>. PRs that touch no Way-of-Working
 surface need no label (the gate passes automatically). Adding the label re-runs the check
 without a new commit (it listens for <code>labeled</code>/<code>unlabeled</code> events).</p>
+<h3 id="method-classification-gate-method-classificationyml">Method classification gate (<code>method-classification.yml</code>)<a class="headerlink" href="#method-classification-gate-method-classificationyml" title="Permanent link">&para;</a></h3>
+<p>The mechanical half of the F0 acceptance criterion (<a href="../adr/0013-separating-method-from-product/">ADR-0013</a>).
+<code>scripts/method_classification.py</code> scans the whole method tree and fails the PR if:</p>
+<ul>
+<li><strong>path classification</strong> — the migrated legacy tree <code>docs/superpowers/improvement/**</code> is no longer
+  empty, or a card is <em>half-split</em> (carries both an <code>Essence type:</code> self-definition and an
+  <code>L3 definition:</code> delegation pointer);</li>
+<li><strong>well-formedness</strong> — an element card under <code>docs/method/{library,enactment}/</code> is malformed: a
+  standalone card missing its <code>Essence type</code> (clean enum token) or <code>External dependencies</code> field, a
+  practice card missing <code>Advances Alpha</code> / <code>Work Products</code> / <code>Activity / Activity Space</code>, or an L2
+  practice card that neither delegates (<code>L3 definition:</code> pointer) nor carries the fields inline
+  (delegate-XOR-standalone).</li>
+</ul>
+<p>The card form is defined in <code>docs/method/library/_card-template.md</code> (SA-ratified). Semantic correctness
+(e.g. klartext evidence leaking into an L3 card) is <strong>not</strong> mechanically checkable and stays SA's review.</p>
 <hr />
 <h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>klartext/

@@ -1682,10 +1682,11 @@ toward <code>breaking</code> (documented in the PR template).</p>
 ordinary code/test PRs.</p>
 <h2 id="scope-decision">Scope decision<a class="headerlink" href="#scope-decision" title="Permanent link">&para;</a></h2>
 <p>The trigger-path list is <strong>OE's literal list</strong> plus <code>agents/**/claude.md</code> (Hoheitswissen
-is WoW). The broader method docs under <code>docs/superpowers/improvement/**</code> are
-<strong>deliberately excluded for now</strong> (user decision 2026-06-15). A note has been sent to OE
-to re-evaluate broadening the scope after a few weeks of practice; the path list lives in
-one place (<code>scripts/classify_gate.py</code>), so broadening is a one-line + one-test change.</p>
+is WoW). The broader method docs were <strong>deliberately excluded at first</strong> (user decision
+2026-06-15), then <strong>included in F0.3</strong> (2026-06-16): the method content migrated from
+<code>docs/superpowers/improvement/**</code> to <strong><code>docs/method/**</code></strong> (ADR-0013), which is now a trigger
+path. The path list lives in one place (<code>scripts/classify_gate.py</code>), so broadening is a
+one-line + one-test change.</p>
 <h2 id="trigger-path-list">Trigger-path list<a class="headerlink" href="#trigger-path-list" title="Permanent link">&para;</a></h2>
 <p>A PR is <strong>in scope</strong> for the gate if any changed file matches:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>CLAUDE.md
@@ -1823,8 +1824,12 @@ run <code>python3 scripts/classify_gate.py</code>, and let its exit code pass/fa
 <td>NOT a trigger</td>
 </tr>
 <tr>
-<td>near-miss <code>docs/superpowers/improvement/practices/x.md</code></td>
-<td>NOT a trigger (scope decision)</td>
+<td><code>docs/method/library/practices/x.md</code></td>
+<td>IS a trigger (method surface, added F0.3)</td>
+</tr>
+<tr>
+<td>legacy <code>docs/superpowers/improvement/practices/x.md</code></td>
+<td>NOT a trigger (emptied legacy tree)</td>
 </tr>
 </tbody>
 </table>
@@ -1835,9 +1840,9 @@ four-eyes principle).</p>
 <li><strong>Branch-protection "required" toggle.</strong> The gate only <em>binds</em> once it is marked a
   required status check in branch protection — a repo-admin setting. Flagged to the
   user / OE; not silently changed.</li>
-<li><strong>Broadening the trigger paths</strong> beyond OE's list. Two candidates noticed during design,
-  both deferred to the post-practice review (note sent to OE 2026-06-15):</li>
-<li><code>docs/superpowers/improvement/**</code> — the method docs proper (practices, kernel).</li>
+<li><strong>Broadening the trigger paths</strong> beyond OE's list. The method-docs candidate
+  (<code>docs/method/**</code>, formerly <code>docs/superpowers/improvement/**</code>) was <strong>adopted in F0.3</strong>
+  (2026-06-16). Still deferred:</li>
 <li><code>.github/workflows/**</code> — CI changes can themselves be breaking (e.g. removing a
     required check). Not in OE's list; left out for now to match the approved scope.</li>
 </ul>
