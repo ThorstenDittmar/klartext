@@ -9,7 +9,9 @@ here would make agents silently unreachable, so its contract is gated by CI.
 from __future__ import annotations
 
 import os
+import re
 import subprocess
+import time
 from pathlib import Path
 
 SCRIPT = Path(__file__).parents[3] / "scripts" / "inbox.sh"
@@ -172,3 +174,92 @@ def test_read_empty_inbox_is_graceful(tmp_path: Path) -> None:
     result = _run(["read", "narrative"], tmp_path)
     assert result.returncode == 0, result.stderr
     assert "no unread" in result.stdout.lower()
+
+
+# --- filename schema: it carries the read-ordering (timestamp) and provenance (from-slug) ---
+# The body tests above are thorough; these pin the FILENAME, which the protocol depends on:
+# the timestamp prefix drives chronological `read` order and the from-slug records who sent it.
+
+
+def test_send_filename_follows_timestamp_from_subject_schema(tmp_path: Path) -> None:
+    """Expects the delivered filename to be <UTC-ts>__from-<slug>__<subject-slug>.md.
+
+    The timestamp prefix is what makes `read` chronological; the from-slug is the
+    sender's provenance. A change to this schema silently breaks ordering or attribution.
+    """
+    _run(["send", "oe", "DevOps", "Hello World"], tmp_path, stdin="body")
+    files = list((tmp_path / "oe").glob("*.md"))
+    assert len(files) == 1, f"expected one delivered file, got {files}"
+    name = files[0].name
+    assert re.match(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}__from-devops__", name), (
+        f"filename does not follow <UTC-ts>__from-<slug>__ schema: {name!r}"
+    )
+    assert "hello-world" in name, f"subject not slugified into filename: {name!r}"
+
+
+def test_send_truncates_long_subject_slug(tmp_path: Path) -> None:
+    """Expects the subject-slug portion of the filename to be capped at 80 chars.
+
+    Without the cap a long subject produces an unbounded filename (filesystem-name-length
+    failures). The real artifacts show truncation (e.g. '…rollba'); this pins it.
+    """
+    long_subject = "word " * 60  # ~300 chars pre-slug
+    _run(["send", "oe", "devops", long_subject], tmp_path, stdin="body")
+    name = list((tmp_path / "oe").glob("*.md"))[0].name
+    slug = name.split("__from-devops__", 1)[1][: -len(".md")]
+    assert len(slug) <= 80, f"subject slug not capped at 80 chars, got {len(slug)}: {slug!r}"
+
+
+def test_send_subject_slug_strips_path_separators_and_specials(tmp_path: Path) -> None:
+    """Expects slugify to drop '/', parens, em-dashes etc. so a subject cannot alter the path.
+
+    Safety contract: a subject like 'Backup/Restore' must NOT create an oe/<...>/ subdir —
+    the '/' must be stripped, the message lands directly in oe/. Real artifact:
+    'Backup/Restore' -> 'backuprestore'.
+    """
+    _run(["send", "oe", "devops", "Backup/Restore (v2) — done"], tmp_path, stdin="body")
+    # Exactly one file directly in oe/, no nested subdirectory created by the '/'.
+    direct_files = list((tmp_path / "oe").glob("*.md"))
+    assert len(direct_files) == 1, (
+        f"a '/' in the subject created a subdir or lost the file: {direct_files}"
+    )
+    subject_part = direct_files[0].name.split("__from-devops__", 1)[1]
+    for forbidden in ("/", "(", ")", "—", " "):
+        assert forbidden not in subject_part, (
+            f"slugify leaked {forbidden!r} into filename: {subject_part!r}"
+        )
+    assert "backuprestore" in subject_part, f"expected concatenated slug, got {subject_part!r}"
+
+
+# --- message header: the from/to provenance line agents read to know who sent what ---
+
+
+def test_message_records_from_and_to_provenance_header(tmp_path: Path) -> None:
+    """Expects the written message to carry a '> from: <from> · to: <to>' header.
+
+    Agents rely on this line to attribute a message. The body tests do not cover it;
+    a regression here would deliver bodies with no recoverable sender.
+    """
+    _run(["send", "oe", "DevOps", "Subject here"], tmp_path, stdin="the body")
+    content = list((tmp_path / "oe").glob("*.md"))[0].read_text()
+    assert "from: DevOps" in content, f"sender provenance missing from message:\n{content}"
+    assert "to: oe" in content, f"recipient missing from message:\n{content}"
+
+
+# --- read ordering: multiple unread messages come out oldest-first (chronological) ---
+
+
+def test_read_returns_multiple_messages_oldest_first(tmp_path: Path) -> None:
+    """Expects read to emit multiple unread messages in chronological (oldest-first) order.
+
+    The script sorts by the timestamp-prefixed filename. With distinct timestamps the
+    oldest message must print first — the order agents rely on when catching up.
+    """
+    _run(["send", "devops", "oe", "first"], tmp_path, stdin="BODY-FIRST")
+    time.sleep(1.1)  # second-resolution timestamps; ensure a distinct, later prefix
+    _run(["send", "devops", "oe", "second"], tmp_path, stdin="BODY-SECOND")
+    read = _run(["read", "devops"], tmp_path)
+    assert read.returncode == 0, read.stderr
+    assert read.stdout.index("BODY-FIRST") < read.stdout.index("BODY-SECOND"), (
+        f"messages were not printed oldest-first:\n{read.stdout}"
+    )
