@@ -231,7 +231,7 @@ agent's Hoheitswissen at session start — and on `/clear`, which the desktop ap
 - **Matcher:** `startup|clear|compact` — covers session open, `/clear`, and re-injection after a compaction.
 - **Verification:** `api/tests/infrastructure/test_session_start_hook.py` gates the wiring and the
   loader behaviour. The runtime injection (the desktop app cannot be scripted) is checked by the
-  manual Canary in [`environment/claude-code-app.md`](superpowers/improvement/environment/claude-code-app.md).
+  manual Canary in [`environment/claude-code-app.md`](method/enactment/environment/claude-code-app.md).
 
 Rationale and the return-to-app gate: [ADR-0011](adr/0011-return-to-desktop-app-session-start.md) (condition G1).
 
@@ -276,7 +276,7 @@ to the same directory.
 - **Verification:** `api/tests/infrastructure/test_automemory_settings.py` gates the committed pin
   and the setup cleanup. The runtime honoring (the desktop app cannot be scripted) was verified
   empirically and is re-checked after app updates by the Canary in
-  [`environment/claude-code-app.md`](superpowers/improvement/environment/claude-code-app.md).
+  [`environment/claude-code-app.md`](method/enactment/environment/claude-code-app.md).
 
 ---
 

@@ -1,5 +1,7 @@
 # The klartext Method
 
+This is klartext's **Method-composition object** (L2). F0.2 completes it (composed Library practices + lived Alpha states).
+
 > **Scope.** The **composition of our way of working**: the authoritative register of the elements — Practices,
 > Patterns, Work Products, gates, roles — that make up the klartext method, each with its Essence type, the
 > Alpha it advances, enforcement level and card status. This is our instance of the Essence **Method** element
@@ -102,7 +104,7 @@ non-derivable facts (status app|terminal, active flag, display name) — existen
 derivable from `agents/*/` and `git worktree list` (RC4 guard: no second truth); consumers: launcher/start
 tooling (DevOps mechanics).
 
-**Environment Work Products** (`docs/superpowers/improvement/environment/`) — our **version-bound, falsifiable**
+**Environment Work Products** (`docs/method/enactment/environment/`) — our **version-bound, falsifiable**
 knowledge about the tools we *use* (Claude Code app/CLI, git, Supabase, macOS); produced by the **Environment
 Knowledge** practice. Each carries version-binding + a manual **Canary** + a **dependency chain** + status tags
 (tested / observed-untested / inferred / superseded). First instance: `claude-code-app.md` (v1.12603.1). Owner

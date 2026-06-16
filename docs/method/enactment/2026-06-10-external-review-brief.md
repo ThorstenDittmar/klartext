@@ -82,7 +82,7 @@ ist nur zulässig, wenn dessen Wissen vorher nachweislich auf Platte gesichert w
 Wir arbeiten explizit methodengeführt auf Basis von **Essence/SEMAT** (Kernel-Alphas,
 Practices, Zustandsmodelle). Der Method Keeper (OE) hält ein versioniertes Dokumentenset:
 
-- `docs/superpowers/improvement/continuous-improvement.md` — Entscheidungen mit Begründung
+- `docs/method/enactment/continuous-improvement.md` — Entscheidungen mit Begründung
   + **Improvement-Register** (§3 dort): jede Verbesserung als Instanz mit Lebenszyklus
   *Identified → Prioritized → Action Agreed → Trialed → Results Evaluated → In Use*.
   Aktuell ~30 Instanzen, vom Erstfund bis zur geschlossenen Maßnahme.

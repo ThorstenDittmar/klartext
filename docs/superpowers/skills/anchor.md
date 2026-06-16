@@ -31,10 +31,12 @@ Kläre — fragen, wenn unklar: ist das ein **Restart** oder ein **Checkpoint**?
 
 Diese Quellen sind sicher — sie liegen auf der Festplatte und werden bei jeder Session neu geladen:
 - `CLAUDE.md` im Projekt-Root
-- **Das Method-Dokumentenset** unter `docs/superpowers/improvement/`: `continuous-improvement.md`
-  (Entscheidungen + Begründungen + Improvement-Register §3), `method.md` (Element-Register),
-  `semat-definition.md` / `semat-glossary.md`, `alpha-states.md`, `practices/` (Practice-Karten),
-  `learnings/` (Way-of-Working-Learnings)
+- **Das Method-Dokumentenset**, seit der L2/L3-Trennung über zwei Stems verteilt:
+  - **L2 (Enactment)** unter `docs/method/enactment/`: `continuous-improvement.md`
+    (Entscheidungen + Begründungen + Improvement-Register §3), `method.md` (Element-Register),
+    `learnings/` (Way-of-Working-Learnings), `environment/`
+  - generisch/Kernel unter `docs/superpowers/improvement/`: `semat-definition.md` /
+    `semat-glossary.md`, `alpha-states.md`, `practices/` (Practice-Karten)
 - `docs/superpowers/plans/PENDING.md` (Delegations-Tracking)
 - `assets-local/README.md` (Provenienz-Register externer Referenzen)
 - Memory-Dateien unter `~/.claude/`
