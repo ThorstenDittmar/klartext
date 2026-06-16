@@ -1680,8 +1680,9 @@ verankern; bei einem Restart zusätzlich einen Anker werfen, an dem die Nachfolg
   - <strong>L2 (Enactment)</strong> unter <code>docs/method/enactment/</code>: <code>continuous-improvement.md</code>
     (Entscheidungen + Begründungen + Improvement-Register §3), <code>method.md</code> (Element-Register),
     <code>learnings/</code> (Way-of-Working-Learnings), <code>environment/</code>
-  - generisch/Kernel unter <code>docs/superpowers/improvement/</code>: <code>semat-definition.md</code> /
-    <code>semat-glossary.md</code>, <code>alpha-states.md</code>, <code>practices/</code> (Practice-Karten)
+  - <strong>L3 (Library)</strong> generisch/Kernel unter <code>docs/method/library/</code>: <code>semat-definition.md</code> /
+    <code>semat-glossary.md</code>, <code>alpha-states.md</code>, <code>practices/</code> (generische Practice-Karten; die
+    klartext-Enactments liegen unter <code>docs/method/enactment/practices/</code>)
 - <code>docs/superpowers/plans/PENDING.md</code> (Delegations-Tracking)
 - <code>assets-local/README.md</code> (Provenienz-Register externer Referenzen)
 - Memory-Dateien unter <code>~/.claude/</code>
@@ -1808,7 +1809,8 @@ Für jeden Punkt fragen:
   - Prozess-Learning → <code>learnings/</code>
   - Neues/geändertes Methoden-Element → Practice-Karte + <code>method.md</code> (im selben Schritt; <strong>nur OE</strong> — andere
     Agents: Briefing an OE)
-  - Begriff → <code>semat-glossary.md</code>
+  - Begriff → Glossar: generischer Methoden-Begriff → <code>docs/method/library/semat-glossary.md</code> (L3);
+    klartext-spezifischer Begriff → <code>docs/method/enactment/semat-glossary-klartext.md</code> (L2)
   - Verbesserungs-Kandidat → Improvement-Register (<code>continuous-improvement.md</code> §3; ohne Write-Access:
     Briefing an OE)
   - Geparkter Befund (Kategorie 7) → benanntes Verwahr-Depot mit Freigabe-/Löschbedingung (Memory-Park-Pattern)
@@ -1864,7 +1866,8 @@ Kosmetisch/optional: blockiert den <code>/clear</code> nie.</p>
 <h2 id="schritt-6-prozess-verbesserungen">Schritt 6 — Prozess-Verbesserungen<a class="headerlink" href="#schritt-6-prozess-verbesserungen" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p><strong>Anbindung an die Methode:</strong> Dieser Schritt ist ein <em>Capture</em>-Schritt, keine Retro — die eigentliche
-Bewertung gehört in die <strong>Retrospective-Practice</strong> (<code>practices/retrospective.md</code>). Jeder hier gefundene
+Bewertung gehört in die <strong>Retrospective-Practice</strong> (<code>docs/method/library/practices/retrospective.md</code>,
+generische Definition; klartext-Enactment: <code>docs/method/enactment/practices/retrospective.md</code>). Jeder hier gefundene
 Verbesserungs-Kandidat wird als <strong>Improvement-Instanz ins Register</strong> eingetragen
 (<code>continuous-improvement.md</code> §3, Zustand <em>Identified</em>) — nicht nur als loses TODO. Die nächste Retro
 priorisiert und bewertet.</p>
@@ -1885,8 +1888,9 @@ priorisiert und bewertet.</p>
 </ol>
 <p>1b. <strong>Practice-Karten aktuell?</strong>
    Hat sich in dieser Session geändert, <em>wie</em> wir arbeiten? Dann prüfen: stimmen die betroffenen
-   Practice-Karten (<code>docs/superpowers/improvement/practices/</code>) und <code>method.md</code> noch?
-   → <strong>Nur OE:</strong> Karte + <code>method.md</code> im selben Schritt aktualisieren (Maintenance-Ritual).
+   Practice-Karten (L3-Definition unter <code>docs/method/library/practices/</code>, klartext-Enactment unter
+   <code>docs/method/enactment/practices/</code>) und das Element-Register (<code>docs/method/enactment/method.md</code>) noch?
+   → <strong>Nur OE:</strong> Karte(n) + <code>method.md</code> im selben Schritt aktualisieren (Maintenance-Ritual).
    → <strong>Domain-Agents</strong> (kein Write-Access auf <code>practices/</code>): Befund als Briefing an OE formulieren
    und dem User zeigen — Frage 1b damit erledigt, nicht überspringen.</p>
 <ol>

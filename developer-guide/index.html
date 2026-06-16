@@ -2314,7 +2314,7 @@ practice and the detection half of <a href="../adr/0012-worktree-convergence-mod
 <li><strong>Detection behind a port:</strong> <code>DriftSignal</code> with the L1 <code>CommitCountDrift</code> adapter; a later L2
   (shared-layer-weighted) is an adapter swap (OE's Drift-Awareness practice).</li>
 <li><strong>Memory-substrate checks:</strong> the same hook also warns on a broken memory substrate (the
-  <a href="superpowers/improvement/contracts/memory-substrate.md">contract</a>) — <strong>C1</strong> the committed
+  <a href="../method/enactment/contracts/memory-substrate/">contract</a>) — <strong>C1</strong> the committed
   <code>autoMemoryDirectory</code> resolves to the shared team path, <strong>C3</strong> the cross-agent inbox transport
   (<code>scripts/inbox.sh</code>) is reachable. Both apply only to an agent worktree (a <code>.claude/</code> dir present).</li>
 <li><strong>Verification:</strong> <code>api/tests/infrastructure/test_session_health.py</code> (pure signal, real-git
