@@ -2,7 +2,7 @@
 
 > **Essence type:** Practice
 > **Advances Alpha:** Way of Working (defines and tracks the **Improvement** sub-alpha)  ·  **Work Products:** the Improvement Register (Improvement instances with state); learning entries (one per learning); updates to affected practice cards / the method register
-> **Activity / Activity Space:** Way of Working → Stop the Work / Improve the Way of Working (periodic, evidence-based inspect-and-adapt of the method)
+> **Activity / Activity Space:** Stop the Work → periodic, evidence-based inspect-and-adapt of the method
 > **External dependencies (referenced Resources):** IJI *Agile Retrospective Essentials* (card content, CC BY 4.0 — the practice is composed from it, not vendored); Essence Kernel/Language (the Alpha State Cards used as the inspection grid)
 > **Enforcement:** ritual  ·  **NN:** ✓ (Work cannot reach *Closed* without it)
 > **Status:** living  ·  **Owner:** OE (Method Keeper hosts)

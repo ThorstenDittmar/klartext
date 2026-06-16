@@ -2,7 +2,7 @@
 
 > **Essence type:** Practice
 > **Advances Alpha:** Way of Working  ·  **Work Products:** the per-change breaking-classification answer (rolling|breaking); the rollout record (for a barrier: stabilise → update → resync-and-verify)
-> **Activity / Activity Space:** Way of Working → Support the Team (land a way-of-working change across isolated workspaces without breaking a drifted member)
+> **Activity / Activity Space:** Support the Team → land a way-of-working change across isolated workspaces without breaking a drifted member
 > **External dependencies (referenced Resources):** Parallel Change / expand–contract pattern (Martin Fowler) — referenced as an adopted pattern, not vendored
 > **Enforcement:** ritual (classification gate + drift/verify = mechanical promotions)  ·  **NN:** ✓ (every way-of-working change)
 > **Status:** living  ·  **Owner:** OE

@@ -2,7 +2,7 @@
 
 > **Essence type:** Practice
 > **Advances Alpha:** Way of Working  ·  **Work Products:** decision + rationale at a durable home · updated method-vocabulary entries · routed knowledge briefings (or "none affected") · a "next step" pointer
-> **Activity / Activity Space:** Way of Working → Improve the Way of Working (evolve the team's method one decision at a time)
+> **Activity / Activity Space:** provisional — no kernel Activity Space (Way-of-Working-meta); Activity-Space extension deferred per Plan §4.1 → evolve the team's method one decision at a time
 > **External dependencies (referenced Resources):** none
 > **Enforcement:** ritual  ·  **NN:** ✓
 > **Status:** living  ·  **Owner:** OE

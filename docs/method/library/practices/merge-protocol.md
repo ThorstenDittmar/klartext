@@ -2,7 +2,7 @@
 
 > **Essence type:** Practice
 > **Advances Alpha:** Work  ·  **Work Products:** a named merge owner + a declared merge order; the verified integration on the mainline
-> **Activity / Activity Space:** Work → Conclude (land parallel-dispatched work on the mainline in a deliberate, verified order)
+> **Activity / Activity Space:** Coordinate Activity → land parallel-dispatched work on the mainline in a deliberate, verified order
 > **External dependencies (referenced Resources):** none
 > **Enforcement:** ritual  ·  **NN:** ✓ (for every work package with ≥ 2 parallel dispatches)
 > **Status:** living  ·  **Owner:** the work-package coordinator (card support: OE)

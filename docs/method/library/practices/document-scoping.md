@@ -2,7 +2,7 @@
 
 > **Essence type:** Practice
 > **Advances Alpha:** Way of Working  ·  **Work Products:** a scope header at the top of every document
-> **Activity / Activity Space:** Way of Working → Support the Team (keep content in the right home so the method's documents stay navigable)
+> **Activity / Activity Space:** Support the Team → keep content in the right home so the method's documents stay navigable
 > **External dependencies (referenced Resources):** none
 > **Enforcement:** ritual  ·  **NN:** —
 > **Status:** living  ·  **Owner:** OE

@@ -2,7 +2,7 @@
 
 > **Essence type:** Practice
 > **Advances Alpha:** Way of Working  ·  **Work Products:** one environment Work Product per Resource (fact(s) + status tags + version-binding + Canary + dependency chain); a registered entry in the method register
-> **Activity / Activity Space:** Way of Working → Support the Team (keep the team's operating model anchored to the actual environment)
+> **Activity / Activity Space:** Support the Team → keep the team's operating model anchored to the actual environment
 > **External dependencies (referenced Resources):** none
 > **Enforcement:** ritual  ·  **NN:** ✓
 > **Status:** living  ·  **Owner:** OE
