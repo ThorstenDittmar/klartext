@@ -1533,6 +1533,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="CLI commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#skill-distribution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Skill distribution
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2137,8 +2154,19 @@
 <td><code>klartext converge --all</code></td>
 <td>Same, across every worktree of the repo — the one-liner that propagates a committed settings/hook/pin change to all home-branch worktrees</td>
 </tr>
+<tr>
+<td><code>klartext skills sync</code></td>
+<td>Install klartext's own skills from <code>docs/superpowers/skills/</code> into <code>~/.claude/skills/</code> (where Claude Code loads them). The repo is the single source of truth; idempotent and prune-safe (marks managed dirs <code>.repo-managed</code>, removes managed skills whose source was deleted, never touches foreign/plugin skills). Run by <code>setup.sh</code>.</td>
+</tr>
 </tbody>
 </table>
+<h3 id="skill-distribution">Skill distribution<a class="headerlink" href="#skill-distribution" title="Permanent link">&para;</a></h3>
+<p>klartext's cross-agent and ritual skills (<code>tdd</code>, <code>systematic-debugging</code>, <code>anchor</code>, <code>qa-review</code>, …) are
+versioned under <code>docs/superpowers/skills/</code> — the <strong>single source of truth</strong>. <code>~/.claude/skills/</code> is a
+<em>derived</em> install, populated by <code>klartext skills sync</code> (run automatically by <code>setup.sh</code>). Each skill is
+either a flat <code>&lt;name&gt;.md</code> file or a <code>&lt;name&gt;/</code> directory (multi-file skills like <code>qa-review</code> keep their
+companion docs); both install as <code>~/.claude/skills/&lt;name&gt;/SKILL.md</code>. Add or edit a skill in the repo, then
+re-run <code>klartext skills sync</code> — never hand-edit <code>~/.claude/skills/</code> (it is overwritten on the next sync).</p>
 <hr />
 <h2 id="api-endpoints">API endpoints<a class="headerlink" href="#api-endpoints" title="Permanent link">&para;</a></h2>
 <p>The interactive API docs are available at <code>http://localhost:8000/docs</code> when the server is running.</p>
