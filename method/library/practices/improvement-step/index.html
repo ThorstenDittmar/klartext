@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/superpowers/improvement/practices/controlled-method-rollout/">
+        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/method/library/practices/improvement-step/">
       
       
       
@@ -23,7 +23,7 @@
     
     
       
-        <title>Practice: Controlled Method Rollout - klartext.jetzt – Spezifikation</title>
+        <title>Improvement Step - klartext.jetzt – Spezifikation</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#practice-controlled-method-rollout" class="md-skip">
+        <a href="#improvement-step" class="md-skip">
           Zum Inhalt
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Practice: Controlled Method Rollout
+              Improvement Step
             
           </span>
         </div>
@@ -1650,7 +1650,7 @@
 
 
   
-    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/superpowers/improvement/practices/controlled-method-rollout.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/method/library/practices/improvement-step.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1658,115 +1658,48 @@
   
 
 
-<h1 id="practice-controlled-method-rollout">Practice: Controlled Method Rollout<a class="headerlink" href="#practice-controlled-method-rollout" title="Permanent link">&para;</a></h1>
+<h1 id="improvement-step">Improvement Step<a class="headerlink" href="#improvement-step" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Scope.</strong> This document defines <strong>Controlled Method Rollout</strong> — how a change to the <strong>agents' way of
-working</strong> (skills, rituals, shared <code>settings.json</code>/hooks/allowlists, commands and the paths/commands they
-reference) is rolled out across the isolated worktrees <strong>safely</strong>, choosing the lightest safe mode.
-<strong>Out of scope.</strong> Product changes (code, ADRs, domain docs — those advance the Software System alpha, not
-the Way of Working). The convergence <em>mechanism</em> (<code>klartext converge</code>, ADR-0012 — DevOps). Drift <em>detection</em>
-(the <strong>Drift Awareness</strong> practice, register #106).
-<strong>Anti-pattern guarded.</strong> <em>"Merge and keep running"</em> for method changes: a <strong>breaking</strong> way-of-working change
-lands on <code>main</code> while worktrees still drift → the anchored commands/paths a drifted agent runs no longer
-match. <strong>Live instance (2026-06-14):</strong> a way-of-working change on <code>main</code> broke the <code>anchor</code> ritual for agents
-whose worktree was on an older state — the incident that forged this card.
-<strong>Language.</strong> English — documentation-language rule.</p>
-<p><strong>Status:</strong> active (ritual) · <strong>Owner:</strong> OE · <strong>Advances Alpha:</strong> Way of Working
-<strong>Source check:</strong> composition, no Kernel change. The two-mode rule is a <strong>condition on ADR-0012's
-Consistency axis</strong> (eventual by default; strong/barrier when breaking), recorded as an <strong>ADR-0012 addendum</strong>.
-The backward-compatible-first lever is the well-known <strong>Parallel Change / expand–contract</strong> pattern (Fowler) —
-adopted, not invented.</p>
+<p><strong>Essence type:</strong> Practice
+<strong>Advances Alpha:</strong> Way of Working  ·  <strong>Work Products:</strong> decision + rationale at a durable home · updated method-vocabulary entries · routed knowledge briefings (or "none affected") · a "next step" pointer
+<strong>Activity / Activity Space:</strong> provisional — no kernel Activity Space (Way-of-Working-meta); Activity-Space extension deferred per Plan §4.1 → evolve the team's method one decision at a time
+<strong>External dependencies (referenced Resources):</strong> none
+<strong>Enforcement:</strong> ritual  ·  <strong>NN:</strong> ✓
+<strong>Status:</strong> living  ·  <strong>Owner:</strong> OE
+<strong>Enacted as:</strong> — (ritual; skill promotion deferred until a first run validates the shape — "instantiate through use")</p>
 </blockquote>
-<h2 id="goal">Goal<a class="headerlink" href="#goal" title="Permanent link">&para;</a></h2>
-<p>Ensure a way-of-working change reaches <strong>every</strong> isolated worktree without breaking a <strong>drifted</strong> agent — at
-the <strong>lowest</strong> coordination cost the change allows. Closes the gap that pure ADR-0012 <em>eventual</em> convergence
-leaves open: eventual consistency is unsafe for breaking changes, because a drifted agent runs a now-broken
-ritual before it ever converges.</p>
-<h2 id="advances-alpha">Advances Alpha<a class="headerlink" href="#advances-alpha" title="Permanent link">&para;</a></h2>
-<p><strong>Way of Working</strong> — every method change lands through a mode that keeps the team's operating model coherent
-across the worktrees instead of silently fracturing it.</p>
-<h2 id="the-two-modes-decision-recorded-in-the-adr-0012-addendum">The two modes (decision — recorded in the ADR-0012 addendum)<a class="headerlink" href="#the-two-modes-decision-recorded-in-the-adr-0012-addendum" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th>Mode</th>
-<th>When</th>
-<th>What happens</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Rolling</strong> <em>(default)</em></td>
-<td><strong>Backward-compatible</strong> change — a drifted agent keeps running correctly and picks the change up later</td>
-<td>No global halt. Each agent converges on its own initiative at the next session (ADR-0012 guarded voluntary convergence).</td>
-</tr>
-<tr>
-<td><strong>Barrier</strong> <em>(stop-the-world)</em></td>
-<td><strong>Breaking</strong> change — the old state breaks (anchored command/path/skill no longer matches)</td>
-<td>All agents stabilized + paused, the change lands, all resync <strong>and verify current</strong> before resuming.</td>
-</tr>
-</tbody>
-</table>
-<h2 id="the-trigger-classify-every-way-of-working-change">The trigger — classify every way-of-working change<a class="headerlink" href="#the-trigger-classify-every-way-of-working-change" title="Permanent link">&para;</a></h2>
-<p>Every way-of-working PR answers, <strong>explicitly</strong>, one question: <strong>"Is this breaking for a <em>drifted</em> agent?"</strong></p>
-<ul>
-<li><strong>No silent default.</strong> The answer is recorded (PR label / checklist), never assumed.</li>
-<li><strong>Uncertainty → breaking wins</strong> (fail-safe: cheaper to halt once too often than to break a drifted agent).</li>
-<li><strong>Expand–contract first.</strong> Before classifying a change <em>breaking</em>, ask: <em>can we make it backward-compatible?</em>
-  (e.g. keep the old command/path as an <strong>alias</strong> during a transition window, then remove it). A change built
-  this way is <strong>Rolling</strong>, not Barrier — this is the main lever to <strong>need the barrier less often</strong>.</li>
-</ul>
-<h2 id="steps-barrier-mode-stop-the-world">Steps — Barrier mode (stop-the-world)<a class="headerlink" href="#steps-barrier-mode-stop-the-world" title="Permanent link">&para;</a></h2>
+<h2 id="purpose">Purpose<a class="headerlink" href="#purpose" title="Permanent link">&para;</a></h2>
+<p>Evolve a team's way of working <strong>one decision at a time</strong>, such that <strong>no insight is ever lost</strong> — without
+anyone having to remember to capture it. This is the load-bearing brick of a continuous-improvement loop:
+each run advances the Way-of-Working Alpha toward <em>In Use</em> → <em>Working Well</em>.</p>
+<h2 id="definition-delta">Definition / delta<a class="headerlink" href="#definition-delta" title="Permanent link">&para;</a></h2>
+<p>A single Improvement Step proceeds in six steps:</p>
 <ol>
-<li><strong>Stabilize &amp; Halt.</strong> Each agent secures what lives only in chat (<strong>= the <code>anchor</code> ritual</strong>), reaches a
-   stable state, and pauses. <em>Nothing that exists only in a session is lost before we touch shared state.</em></li>
-<li><strong>Update.</strong> The change lands on <code>main</code>, <strong>including tooling bootstrap</strong> — pull the main checkout
-   (<code>~/klartext</code>) so the shared venv carries the new commands, and run any skill-sync.</li>
-<li><strong>Resync &amp; Verify.</strong> Every agent converges (<code>klartext converge</code>) <strong>and verifies it is current</strong> (the
-   SessionStart drift / G2 check is green) <strong>before</strong> resuming work.</li>
+<li><strong>Pick up</strong> — name exactly <strong>one</strong> topic/decision (not several at once).</li>
+<li><strong>Classify</strong> — locate the topic in the method's meta-language <strong>before</strong> discussing solutions: which
+   element type is it (Alpha / Practice / Pattern / Work Product / Activity / Competency)? Which Alpha does
+   it advance? Does the standard already predefine it (<strong>KB-first lookup</strong>: consult the team's own
+   method-language reference first, the external standard only on a miss)? This step keeps the team
+   <em>thinking</em> in the meta-language instead of inventing parallel concepts.</li>
+<li><strong>Clarify &amp; decide</strong> — present options + a recommendation; the <strong>decision-owner decides</strong>.</li>
+<li><strong>Record</strong> — store the decision at its agreed durable home, <strong>including the rationale (the "why")</strong>.
+   This is the capture-first pillar — a decision that lives only in conversation is not recorded.</li>
+<li><strong>Route</strong> — inform affected parties of the decision. This is what earns the Way-of-Working state
+   <em>In Use</em> (the team actually uses the practice).</li>
+<li><strong>Set next step</strong> — leave a pointer to the next open topic, so the loop never stalls and a
+   context-reset cannot sever it.</li>
 </ol>
-<p><em>Rolling mode is just step 2 (land it); agents converge on their own at the next session — no halt, no
-coordinated verify.</em></p>
-<h2 id="mechanization">Mechanization<a class="headerlink" href="#mechanization" title="Permanent link">&para;</a></h2>
+<p><strong>Completion (Done):</strong> exactly one topic addressed · located in meta-language terms + checked against the
+standard (KB-first) <strong>before</strong> deciding · a decision was made by the decision-owner · decision <strong>and
+rationale</strong> recorded at a durable home (not only in conversation) · affected parties identified and briefed
+(or explicitly "none affected") · a next-step pointer exists.</p>
+<p><strong>Enforcement note (generic).</strong> A ritual by nature; it becomes mechanizable only in parts (e.g. a lint that
+a "next step" pointer is present). Promotion to a skill/tool should <strong>derive from this card and stay in
+sync</strong> — two diverging representations are a second-source-of-truth defect; this card stays the SSOT.</p>
+<h2 id="related">Related<a class="headerlink" href="#related" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Classification gate</strong> — the "breaking?" answer as a PR label/step that triggers (or skips) the barrier. <em>(DevOps)</em></li>
-<li><strong>"Verify current before resume"</strong> — exactly the SessionStart drift / G2 check (DevOps, the detection half of
-  Drift Awareness #106): a resynced agent starts green, a drifted one is warned. <em>(DevOps)</em></li>
-<li><strong>Converge</strong> — <code>klartext converge</code>, the action half (ADR-0012). <em>(DevOps)</em></li>
-</ul>
-<h2 id="work-products">Work Products<a class="headerlink" href="#work-products" title="Permanent link">&para;</a></h2>
-<ul>
-<li>This card.</li>
-<li>The <strong>ADR-0012 addendum</strong> carrying the two-mode decision (authored by SA, OE gates).</li>
-<li>The per-PR <strong>breaking-classification</strong> label/answer.</li>
-</ul>
-<h2 id="completion-checklist-done">Completion Checklist (Done)<a class="headerlink" href="#completion-checklist-done" title="Permanent link">&para;</a></h2>
-<ul>
-<li>[ ] The change is <strong>classified</strong> (breaking for a drifted agent? yes/no), explicitly, on the PR.</li>
-<li>[ ] Expand–contract was considered — could it be made backward-compatible (alias/transition window)?</li>
-<li>[ ] <strong>Rolling:</strong> landed; agents converge at next session (no halt).</li>
-<li>[ ] <strong>Barrier:</strong> Stabilize &amp; Halt → Update (+bootstrap) → Resync &amp; <strong>Verify current</strong> completed before resume.</li>
-</ul>
-<h2 id="enforcement">Enforcement<a class="headerlink" href="#enforcement" title="Permanent link">&para;</a></h2>
-<p><strong>Partly mechanical (2026-06-15).</strong> The two mechanical promotions are owned by DevOps:
-- <strong>Classification gate</strong> at PR time — <strong>LIVE + ENFORCED</strong> (PR #125; <code>Classification (rolling|breaking)</code>
-  is a required status check on <code>main</code>, strict, since 2026-06-15). A WoW-PR without a <code>rolling</code>/<code>breaking</code>
-  label is now blocked at merge. <em>(Scope still narrow — method docs under <code>docs/superpowers/improvement/**</code>
-  not yet triggered; revisit after a practice window — see register.)</em>
-- <strong>Drift / G2 verify-before-resume</strong> check — still pending (DevOps). Until it lands, the <em>resync-and-verify</em>
-  step of a barrier is run by hand (as on 2026-06-14).</p>
-<h2 id="notes">Notes<a class="headerlink" href="#notes" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>First enactment = the 2026-06-14 anchor incident.</strong> A breaking way-of-working change on <code>main</code> broke the
-  <code>anchor</code> ritual for drifted agents; the user + DevOps ran a manual stop-the-world (a sync script: secure →
-  update → resync) on all agents. This card lifts that handled-by-hand procedure into the method — mirroring
-  how the Improvement Step and Environment Knowledge cards were validated by self-application.</li>
-<li><strong>Why two modes and not always stop-the-world:</strong> the full brake is expensive; most changes can be built
-  backward-compatible and ride the cheap ADR-0012 rolling path. The discipline is at <em>land time</em>: ask the
-  breaking question, and prefer expand–contract so the answer is usually "no".</li>
-<li>Companion: the <strong>Memory-Substrate Dependency Contract</strong> (<code>contracts/memory-substrate.md</code>) tells you <em>what the
-  storage substrate guarantees</em>; the breaking-classification here is informed by it (a change that violates a
-  contract clause for a drifted agent is breaking).</li>
+<li>klartext enactment: <a href="../../../enactment/practices/improvement-step/"><code>../../enactment/practices/improvement-step.md</code></a></li>
+<li><a href="../../_card-template/"><code>_card-template.md</code></a> · the method register row in <code>enactment/method.md</code>.</li>
 </ul>
 
 

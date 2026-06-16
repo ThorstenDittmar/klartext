@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/superpowers/improvement/contracts/memory-substrate/">
+        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/method/library/practices/document-scoping/">
       
       
       
@@ -23,7 +23,7 @@
     
     
       
-        <title>Dependency Contract: Memory Substrate - klartext.jetzt – Spezifikation</title>
+        <title>Document Scoping - klartext.jetzt – Spezifikation</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#dependency-contract-memory-substrate" class="md-skip">
+        <a href="#document-scoping" class="md-skip">
           Zum Inhalt
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Dependency Contract: Memory Substrate
+              Document Scoping
             
           </span>
         </div>
@@ -1650,7 +1650,7 @@
 
 
   
-    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/superpowers/improvement/contracts/memory-substrate.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/method/library/practices/document-scoping.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1658,171 +1658,45 @@
   
 
 
-<h1 id="dependency-contract-memory-substrate">Dependency Contract: Memory Substrate<a class="headerlink" href="#dependency-contract-memory-substrate" title="Permanent link">&para;</a></h1>
+<h1 id="document-scoping">Document Scoping<a class="headerlink" href="#document-scoping" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>What this is.</strong> A <strong>Dependency Contract</strong> — the <strong>invariants our way of working requires from</strong> the
-storage substrate it runs on. It is the <em>upstream</em> counterpart to Environment Knowledge's <strong>dependency
-chain</strong>: the dependency chain lists <em>what of ours breaks</em> if a fact changes (downstream blast radius); a
-Dependency Contract lists <em>what we require to hold</em> (the invariants). Complementary, not duplicate — each
-clause names its blast radius.
-<strong>The substrate.</strong> The durable team memory (<code>~/.claude/klartext-team-memory/</code>), the file inbox
-(<code>scripts/inbox.sh</code>), the <code>MEMORY.md</code> index, and the <code>autoMemoryDirectory</code> pin that makes the app resolve
-the shared path. Not "external" (we build <code>inbox.sh</code>, the layout, the convention) and not purely ours (the
-app's auto-memory resolution, <code>~/.claude</code> semantics, the filesystem) — a <strong>seam</strong>.
-<strong>Language.</strong> English — documentation-language rule.</p>
-<p><strong>Status:</strong> draft v1 (2026-06-14) · <strong>Owner:</strong> OE (contract form + clauses) · DevOps (mechanization +
-empirical content) · <strong>Advances Alpha:</strong> Way of Working
-<strong>Source check:</strong> new lean element <strong>Dependency Contract</strong>, KB-confirmed distinct from the existing
-<em>dependency chain</em> (Environment Knowledge). No Kernel change — an artifact type alongside Work Products.</p>
+<p><strong>Essence type:</strong> Practice
+<strong>Advances Alpha:</strong> Way of Working  ·  <strong>Work Products:</strong> a scope header at the top of every document
+<strong>Activity / Activity Space:</strong> Support the Team → keep content in the right home so the method's documents stay navigable
+<strong>External dependencies (referenced Resources):</strong> none
+<strong>Enforcement:</strong> ritual  ·  <strong>NN:</strong> —
+<strong>Status:</strong> living  ·  <strong>Owner:</strong> OE
+<strong>Enacted as:</strong> — (ritual; candidate for promotion to a mechanical lint/CI check)</p>
 </blockquote>
-<h2 id="the-seam-three-parts">The seam — three parts<a class="headerlink" href="#the-seam-three-parts" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th>Face</th>
-<th>What</th>
-<th>Modeled as</th>
-<th>Owner</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Uncontrolled</strong> (external-like)</td>
-<td>app <code>autoMemory</code> resolution (pin honored? per-cwd default? trust), <code>~/.claude</code> semantics, filesystem</td>
-<td><strong>Environment Knowledge</strong> work product (version-bound + <strong>Canary</strong>) — <strong>already in the repo</strong>: the autoMemory resolution lives in <code>environment/claude-code-app.md</code> (v2, #99/#103); same Resource = the app, so no separate card</td>
-<td>DevOps (empirical, four-eyes)</td>
-</tr>
-<tr>
-<td><strong>Controlled</strong> (our artifact)</td>
-<td><code>inbox.sh</code>, directory layout, <code>MEMORY.md</code> convention, committed pin</td>
-<td>our <strong>IaC + health-check</strong> (we change it deliberately — no Canary needed)</td>
-<td>DevOps (mechanism) + OE (conventions)</td>
-</tr>
-<tr>
-<td><strong>The seam</strong></td>
-<td>the invariants below — <em>whichever</em> side provides them</td>
-<td><strong>this Dependency Contract</strong></td>
-<td>OE</td>
-</tr>
-</tbody>
-</table>
-<h2 id="the-contract-invariants">The contract — invariants<a class="headerlink" href="#the-contract-invariants" title="Permanent link">&para;</a></h2>
-<p>Each clause states what must hold, its <strong>blast radius</strong> if violated, and its <strong>check</strong> (the mechanization
-that makes it falsifiable — a substrate health-check, DevOps, co-located with the ADR-0011 <strong>G2</strong> local-mode
-check).</p>
-<table>
-<thead>
-<tr>
-<th>#</th>
-<th>Invariant</th>
-<th>Blast radius if violated</th>
-<th>Check</th>
-<th>Holds today?</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>C1</strong></td>
-<td>The team memory resolves to the <strong>same shared path for every agent</strong>, independent of worktree/cwd (committed <code>autoMemoryDirectory</code>).</td>
-<td>Agents read/write <em>different</em> memories → divergent truth (the autoMemory cutover pain).</td>
-<td>Health-check asserts the resolved memory path == the committed shared path — <strong>live in the session-health hook (#117)</strong>.</td>
-<td>✅ (after the pin rollout)</td>
-</tr>
-<tr>
-<td><strong>C2</strong></td>
-<td>The substrate is <strong>durable across sessions and session-types</strong> (terminal <em>and</em> app).</td>
-<td>Knowledge meant to outlive a session is lost on restart/clear → False-Persistence class.</td>
-<td><code>check_durable</code> asserts the dir exists + is writable — <strong>live in the session-health hook (#133)</strong>.</td>
-<td>✅</td>
-</tr>
-<tr>
-<td><strong>C3</strong></td>
-<td>The inbox is <strong>readable/writable by every session at a git-worktree-independent path</strong>.</td>
-<td>Cross-agent messages land where the recipient cannot see them (the #108 / mis-address class).</td>
-<td>Health-check asserts <code>inbox.sh</code> base resolves outside the worktree and is reachable — <strong>live in the session-health hook (#117)</strong>.</td>
-<td>✅</td>
-</tr>
-<tr>
-<td><strong>C4</strong></td>
-<td><strong>Concurrent writes</strong> (e.g. parallel memory consolidation) corrupt neither the <code>MEMORY.md</code> index nor any inbox message.</td>
-<td>Lost/garbled memories or index under simultaneous agent activity.</td>
-<td><code>check_index_integrity</code> (every <code>MEMORY.md</code> entry → a real file; no duplicate entries) — <strong>live in the session-health hook (#133)</strong>.</td>
-<td>✅ <strong>Decided (lean), 2026-06-14 — live #133</strong></td>
-</tr>
-<tr>
-<td><strong>C5</strong></td>
-<td><strong>Every memory edit is attributable</strong> — who last changed a memory file is recoverable.</td>
-<td>Unattributable shared state: 11 agents + the user write the same memory under one OS/git identity → "who wrote this?" is unanswerable (surfaced 2026-06-15).</td>
-<td><strong>Detection DEFERRED</strong> — the <code>mtime</code>-based check is unreliable (mtime advances on non-content ops → false positives); needs a content/git-based design. The <strong>self-stamp ritual stands</strong>.</td>
-<td>⚠️ <strong>Ritual decided 2026-06-15; mechanical detection deferred (own strand)</strong></td>
-</tr>
-</tbody>
-</table>
-<p><strong>C4 — Decided (lean: eventual + reconcile), 2026-06-14 (user, by practice).</strong> The exposure is <strong>narrow</strong>:
-per-fact files are <strong>single-owner</strong> (distinct files → no collision) and inbox messages are <strong>one file each
-with a unique timestamp+slug name</strong> (no collision). The <em>only</em> shared hot file is <strong><code>MEMORY.md</code></strong> (the index).
-Guarantee: <em>no lost or garbled memory under normal concurrent operation</em> — held by a <strong>convention + reconciler</strong>,
-not a lock:</p>
+<h2 id="purpose">Purpose<a class="headerlink" href="#purpose" title="Permanent link">&para;</a></h2>
+<p>Every document declares, at its very top, <strong>what belongs in it and what does not</strong> — so content lands in the
+right home, and any reader (human or agent) immediately knows the document's boundaries. Guards the
+wrong-home / content-drift failure mode: the right content put in the wrong document.</p>
+<h2 id="definition-delta">Definition / delta<a class="headerlink" href="#definition-delta" title="Permanent link">&para;</a></h2>
+<p>Place a four-line scope header directly under the document title, <strong>in the document's own language</strong>:</p>
+<blockquote>
+<p><strong>Scope.</strong> This document holds &lt;X&gt;.
+<strong>Out of scope.</strong> &lt;Y&gt; belongs in &lt;link&gt;, not here.
+<strong>Anti-pattern guarded.</strong> &lt;named anti-pattern&gt; — see &lt;reference&gt;.
+<strong>Language.</strong> &lt;language&gt; — documentation-language rule.</p>
+</blockquote>
 <ul>
-<li><strong>Fact files stay single-owner</strong> — never concurrently co-edited; a cross-owner change is routed via OE
-  (<code>knowledge-routing</code>), not edited in place.</li>
-<li><strong><code>MEMORY.md</code></strong> — each agent <strong>appends its own one-line entry</strong>; OE's <strong><code>consolidate-memory</code></strong> pass is the
-  reconciler/structural writer, and the <strong>index-integrity check</strong> (every entry → a real file, no duplicates —
-  exactly the check OE ran on 2026-06-14) catches and surfaces any rare clobber for repair.</li>
+<li><strong>Scope</strong> — one sentence: what content this document is the home for.</li>
+<li><strong>Out of scope</strong> — what is easily confused with it but belongs elsewhere, <strong>with a link to where</strong>
+  (mark <code>TBD</code> if that home does not exist yet).</li>
+<li><strong>Anti-pattern guarded</strong> — the named failure mode this boundary prevents, referencing the team's
+  anti-pattern catalog.</li>
+<li><strong>Language</strong> — the document's language, per the documentation-language rule.</li>
 </ul>
-<p>A hard guard (lock / single-writer index) was <strong>considered and rejected</strong> as disproportionate for a
-rarely-written index whose only observed concurrency (parallel consolidation, 2026-06-14) produced no
-corruption. If the index-integrity check ever <em>does</em> trip in practice, that is the falsifiable signal to
-revisit (a new Improvement Step) — the lean stance is itself monitored.</p>
-<p><strong>C5 — Decided (lean self-stamp), 2026-06-15 (user, by practice).</strong> Trigger: an edit to
-<code>project_automemory_migration_status.md</code> could not be attributed — OE wrongly guessed "the user". Root
-cause is structural: the team memory is <strong>not version-controlled</strong> (no author, only <code>mtime</code>) <strong>and</strong> all 11
-agents + the user commit/write under one shared identity (<code>ThorstenDittmar</code>), so neither the filesystem nor
-git can say <em>who</em>. Decision: a <strong>self-stamp convention</strong> — every agent that writes a memory file stamps its
-own slug in the frontmatter <code>metadata</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">metadata</span><span class="p">:</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">last-edited-by</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;agent-slug&gt;</span><span class="w">      </span><span class="c1"># e.g. oe, devops, audit</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">last-edited-at</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;YYYY-MM-DD&gt;</span>
-</code></pre></div>
-<p>This builds on the existing <code>originSessionId</code> (which records <em>origin</em>, not <em>edits</em>). It gives the <strong>last
-editor</strong> — exactly the question that arose. <strong>Rejected as disproportionate (for now):</strong> version-controlling
-the whole memory dir — heavier, and the shared git identity means it still would not attribute to an agent
-without the stamp anyway. <strong>Enforcement is honest about its limit:</strong> memory is not in CI and the
-memory-<em>writing</em> behaviour is driven by the system prompt (not an OE-editable surface), so the stamp is a
-<strong>ritual</strong> (Enforcement Hierarchy level 2). The convention is surfaced to all agents via
-<code>knowledge-routing.md</code> (loaded at every anchor). Ties to the open shared-blackboard ownership question
-(<code>continuous-improvement.md</code>, the cwd-shared-auto-memory row).</p>
-<p><strong>Mechanical detection DEFERRED (2026-06-16, own strand).</strong> The originally-named check ("warn on a memory
-file whose <code>mtime</code> advanced without a matching stamp") is <strong>unreliable</strong>: in practice <code>mtime</code> advances on
-<strong>non-content operations</strong> (converge/checkout/sync/backup-restore) → false positives (DevOps, Essence-audit
-finding). The detection therefore needs a <strong>content/git-based design</strong> (e.g. <em>content changed without a stamp
-update</em>), not <code>mtime</code>. <strong>The self-stamp ritual is unaffected and stands.</strong> This is an OE-owned design strand
-(OE substrate + DevOps mechanic), non-blocking.</p>
-<h2 id="why-a-contract-the-lever-the-seam-gives-us">Why a contract (the lever the seam gives us)<a class="headerlink" href="#why-a-contract-the-lever-the-seam-gives-us" title="Permanent link">&para;</a></h2>
-<p>Because we <strong>own</strong> the inner face, the contract reveals <strong>design levers</strong>, not just risk to watch: with the
-Claude app or GitHub we can only observe + Canary; here we can <em>build</em> the substrate to satisfy the contract
-(make the inbox concurrency-safe, keep the pin path absolute + committed). A violation on <strong>either</strong> side is
-checked against the <strong>same</strong> contract — so "what changed under us" and "what we changed" are caught by one set
-of invariants.</p>
-<h2 id="relationship-to-other-elements">Relationship to other elements<a class="headerlink" href="#relationship-to-other-elements" title="Permanent link">&para;</a></h2>
+<p><strong>Completion (Done):</strong> the document opens with the four-line scope header · "Out of scope" links to the
+correct alternative home (or marks it <code>TBD</code>) · "Anti-pattern guarded" names a failure mode and references the
+catalog · the header is written in the document's own language.</p>
+<p><strong>Enforcement note (generic).</strong> A ritual; the natural mechanical promotion is a lint/CI check that fails
+when a method document lacks the scope header.</p>
+<h2 id="related">Related<a class="headerlink" href="#related" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Environment Knowledge</strong> (<code>practices/environment-knowledge.md</code>) — provides the uncontrolled-face work
-  product + Canary; the contract's external clauses reference it.</li>
-<li><strong>Controlled Method Rollout</strong> (<code>practices/controlled-method-rollout.md</code>) — a change that violates a contract
-  clause for a <em>drifted</em> agent is <strong>breaking</strong> → barrier mode. The contract feeds that classification.</li>
-<li><strong>Drift Awareness</strong> (register #106) / <strong>ADR-0012</strong> — convergence keeps a worktree's <em>copy</em> of the substrate
-  current; the contract states what the substrate must guarantee in the first place.</li>
-</ul>
-<h2 id="status-open">Status &amp; open<a class="headerlink" href="#status-open" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>C1, C3</strong> — ✅ live in the session-health hook (#117).</li>
-<li><strong>C2</strong> (durability) — ✅ <code>check_durable</code> <strong>live in the session-health hook (#133)</strong>.</li>
-<li><strong>C4</strong> (index-integrity) — ✅ <code>check_index_integrity</code> <strong>live in the session-health hook (#133)</strong> (decided lean 2026-06-14). Double-benefit: this is also the <strong>restore-integrity criterion</strong> for the Frozen-Plan §6.3 backup gate.</li>
-<li><strong>C5</strong> (provenance) — self-stamp <strong>ritual</strong> stands; <strong>mechanical detection deferred</strong> (mtime unreliable → own content/git-based design strand, OE-owned).</li>
-<li>Uncontrolled face (autoMemory resolution) — ✅ already an Environment Knowledge work product
-  (<code>environment/claude-code-app.md</code>, v2); no separate card.</li>
-<li><strong>Monitor (OE):</strong> if the index-integrity check ever trips in practice, revisit the lean stance (new
-  Improvement Step).</li>
+<li>klartext enactment: <a href="../../../enactment/practices/document-scoping/"><code>../../enactment/practices/document-scoping.md</code></a></li>
+<li><a href="../../_card-template/"><code>_card-template.md</code></a> · the method register row in <code>enactment/method.md</code>.</li>
 </ul>
 
 

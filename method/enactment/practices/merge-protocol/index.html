@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/superpowers/improvement/practices/document-scoping/">
+        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/method/enactment/practices/merge-protocol/">
       
       
       
@@ -23,7 +23,7 @@
     
     
       
-        <title>Practice: Document Scoping - klartext.jetzt – Spezifikation</title>
+        <title>Merge Protocol — klartext enactment - klartext.jetzt – Spezifikation</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#practice-document-scoping" class="md-skip">
+        <a href="#merge-protocol-klartext-enactment" class="md-skip">
           Zum Inhalt
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Practice: Document Scoping
+              Merge Protocol — klartext enactment
             
           </span>
         </div>
@@ -1650,7 +1650,7 @@
 
 
   
-    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/superpowers/improvement/practices/document-scoping.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/method/enactment/practices/merge-protocol.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1658,52 +1658,37 @@
   
 
 
-<h1 id="practice-document-scoping">Practice: Document Scoping<a class="headerlink" href="#practice-document-scoping" title="Permanent link">&para;</a></h1>
+<h1 id="merge-protocol-klartext-enactment">Merge Protocol — klartext enactment<a class="headerlink" href="#merge-protocol-klartext-enactment" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Scope.</strong> This document defines the <strong>Document Scoping</strong> practice — the cross-cutting convention that
-every document opens with a scope header.
-<strong>Out of scope.</strong> Conventions specific to a single document type live in that document; this is only the
-cross-cutting rule.
-<strong>Anti-pattern guarded.</strong> Wrong home / content drift — readers and agents putting the right content in the
-wrong document (see <code>continuous-improvement.md</code> §0 / RC1).
+<p><strong>Scope.</strong> klartext's enactment of the <strong>Merge Protocol</strong> practice: who owns the merge, the gatekeeper
+split, the live precedent, and the sunset clause.
+<strong>Out of scope.</strong> The generic rules — see the L3 card. Branch-protection mechanics (CI gates,
+<code>../continuous-improvement.md</code> §3); how tasks are cut and dispatched (Hannibal's coordination); the
+naht-check itself (DevOps activity, see <code>../method.md</code>).
+<strong>Anti-pattern guarded.</strong> "File-path-disjoint tasks ≠ regulated merge order" — parallel PRs whose merge
+sequence is left to chance (RC5; origin: H01-422, user-flagged).
 <strong>Language.</strong> English — documentation-language rule.</p>
-<p><strong>Status:</strong> active (ritual) · <strong>Owner:</strong> OE · <strong>Advances Alpha:</strong> Way of Working</p>
+<p><strong>L3 definition:</strong> <a href="../../../library/practices/merge-protocol/"><code>../../library/practices/merge-protocol.md</code></a>
+<strong>Status:</strong> living (ritual) · <strong>Owner:</strong> Hannibal (card support: OE) · <strong>Advances Alpha:</strong> Work · <strong>NN:</strong> ✓ (≥ 2 parallel dispatches)</p>
 </blockquote>
-<h2 id="goal">Goal<a class="headerlink" href="#goal" title="Permanent link">&para;</a></h2>
-<p>Every document declares, at its very top, <strong>what belongs in it and what does not</strong> — so content lands in the
-right home, and any reader (human or agent) immediately knows the document's boundaries.</p>
-<h2 id="the-header-apply-to-every-document">The header (apply to every document)<a class="headerlink" href="#the-header-apply-to-every-document" title="Permanent link">&para;</a></h2>
-<p>Place this block directly under the document title, <strong>in the document's own language</strong>:</p>
-<blockquote>
-<p><strong>Scope.</strong> This document holds &lt;X&gt;.
-<strong>Out of scope.</strong> &lt;Y&gt; belongs in &lt;link&gt;, not here.
-<strong>Anti-pattern guarded.</strong> &lt;named anti-pattern&gt; — see &lt;reference&gt;.
-<strong>Language.</strong> &lt;language&gt; — documentation-language rule.</p>
-</blockquote>
+<h2 id="klartext-bindings">klartext bindings<a class="headerlink" href="#klartext-bindings" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Scope</strong> — one sentence: what content this document is the home for.</li>
-<li><strong>Out of scope</strong> — what is easily confused with it but belongs elsewhere, <strong>with a link to where</strong>
-  (mark <code>TBD</code> if that home does not exist yet).</li>
-<li><strong>Anti-pattern guarded</strong> — the named failure mode this boundary prevents, referencing our anti-pattern
-  catalog: the root causes <strong>RC1–RC6</strong> and the three risks in <code>continuous-improvement.md</code> §0
-  (Verhäddern / side-effects / Eigensaft). A dedicated <code>anti-patterns.md</code> will be extracted <strong>only if</strong> the
-  catalog outgrows the RCA.</li>
-<li><strong>Language</strong> — the document's language, per the documentation-language rule.</li>
+<li><strong>Named merge owner:</strong> default <strong>Hannibal</strong> (the work-package coordinator — <em>Coordinate Activity</em>).
+  Execution may be delegated to <strong>DevOps as gatekeeper</strong>; ownership of the order stays with Hannibal.</li>
+<li><strong>Pre-merge gate:</strong> the <strong>E2E-before-done (A2 gate)</strong> runs on the final branch before the first merge.</li>
+<li><strong>Artifact verification:</strong> <code>gh pr view</code>, <code>git log origin/main</code> — never completion claims.</li>
+<li><strong>Shared-tree care — sunset clause:</strong> the foreign-uncommitted-edit check (<code>git status</code> before any
+  checkout/reset in the shared tree) <strong>dissolves if/when worktree-per-agent lands</strong> (which is now the
+  steady state — revisit whether this rule still applies).</li>
 </ul>
-<h2 id="work-products">Work Products<a class="headerlink" href="#work-products" title="Permanent link">&para;</a></h2>
+<h2 id="enforcement-klartext">Enforcement (klartext)<a class="headerlink" href="#enforcement-klartext" title="Permanent link">&para;</a></h2>
+<p>Ritual (level 2), non-negotiable for parallel dispatches. Mechanical promotion candidate: branch-protection
+merge-queue / required review order — evaluate when parallel volume grows.</p>
+<h2 id="evidence-learnings">Evidence / learnings<a class="headerlink" href="#evidence-learnings" title="Permanent link">&para;</a></h2>
 <ul>
-<li>A scope header at the top of every document.</li>
+<li><strong>First live enactment H01-422 (2026-06-10):</strong> #53→#54→#55, named owner, artifact-verified — succeeded.
+  This card was described from that run, not speculation.</li>
 </ul>
-<h2 id="completion-checklist-done">Completion Checklist (Done)<a class="headerlink" href="#completion-checklist-done" title="Permanent link">&para;</a></h2>
-<ul>
-<li>[ ] The document opens with the four-line scope header.</li>
-<li>[ ] "Out of scope" links to the correct alternative home (or marks it <code>TBD</code>).</li>
-<li>[ ] "Anti-pattern guarded" names a failure mode and references the catalog.</li>
-<li>[ ] The header is written in the document's own language.</li>
-</ul>
-<h2 id="enforcement">Enforcement<a class="headerlink" href="#enforcement" title="Permanent link">&para;</a></h2>
-<p>Currently a <strong>ritual</strong> (Enforcement Hierarchy level 2). Candidate for promotion to <strong>mechanical</strong>: a lint/CI
-check that fails when a Markdown file under our docs lacks the scope header.</p>
 
 
 

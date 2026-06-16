@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/superpowers/improvement/practices/environment-knowledge/">
+        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/method/library/practices/merge-protocol/">
       
       
       
@@ -23,7 +23,7 @@
     
     
       
-        <title>Practice: Environment Knowledge - klartext.jetzt – Spezifikation</title>
+        <title>Merge Protocol - klartext.jetzt – Spezifikation</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#practice-environment-knowledge" class="md-skip">
+        <a href="#merge-protocol" class="md-skip">
           Zum Inhalt
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Practice: Environment Knowledge
+              Merge Protocol
             
           </span>
         </div>
@@ -1650,7 +1650,7 @@
 
 
   
-    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/superpowers/improvement/practices/environment-knowledge.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/method/library/practices/merge-protocol.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1658,86 +1658,42 @@
   
 
 
-<h1 id="practice-environment-knowledge">Practice: Environment Knowledge<a class="headerlink" href="#practice-environment-knowledge" title="Permanent link">&para;</a></h1>
+<h1 id="merge-protocol">Merge Protocol<a class="headerlink" href="#merge-protocol" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Scope.</strong> This document defines the <strong>Environment Knowledge</strong> practice — the repeatable way we hold
-knowledge about our <strong>development environment</strong> (the tools we <em>use</em> but do not <em>build</em>: the Claude Code
-app/CLI, git/GitHub, Supabase, macOS) as <strong>version-bound, falsifiable</strong> Work Products.
-<strong>Out of scope.</strong> Knowledge about the <em>product</em> we build (lives in code, ADRs, domain docs); the external
-reference assets themselves (those are <strong>Resources</strong> — home <code>assets-local/</code>). This practice governs our
-<em>documented understanding</em> of those tools, not the tools.
-<strong>Anti-pattern guarded.</strong> A recorded environment fact silently drifting out of date as the environment
-changes — and then driving a decision as if still true (<strong>RC4</strong>). Live instance: ADR-0010's
-<em>"cwd strukturell unmöglich"</em> premise outlived the app version it was true for and drove the entire
-terminal migration.
-<strong>Language.</strong> English — documentation-language rule.</p>
-<p><strong>Status:</strong> active (ritual) · <strong>Owner:</strong> OE · <strong>Advances Alpha:</strong> Way of Working
-<strong>Source check:</strong> Essence — a Practice that produces a <strong>Work Product</strong> about a <strong>Resource</strong>; both elements
-already in our meta-language (<code>semat-definition.md</code> §3). Pure composition, no Kernel change (no Eigensaft).</p>
+<p><strong>Essence type:</strong> Practice
+<strong>Advances Alpha:</strong> Work  ·  <strong>Work Products:</strong> a named merge owner + a declared merge order; the verified integration on the mainline
+<strong>Activity / Activity Space:</strong> Coordinate Activity → land parallel-dispatched work on the mainline in a deliberate, verified order
+<strong>External dependencies (referenced Resources):</strong> none
+<strong>Enforcement:</strong> ritual  ·  <strong>NN:</strong> ✓ (for every work package with ≥ 2 parallel dispatches)
+<strong>Status:</strong> living  ·  <strong>Owner:</strong> the work-package coordinator (card support: OE)
+<strong>Enacted as:</strong> — (ritual; mechanical promotion candidate = merge-queue / required review order)</p>
 </blockquote>
-<h2 id="goal">Goal<a class="headerlink" href="#goal" title="Permanent link">&para;</a></h2>
-<p>Keep every load-bearing fact about our development environment <strong>trustworthy over time</strong> — so that no
-operating or architecture decision rests on an environment assumption that has quietly gone stale.
-Operationalizes the H01 guiding principle <em>"Before implementing: check feasibility against the environment"</em>
-(<code>continuous-improvement.md</code> §0) by giving each such check a <strong>shelf life</strong>: the version it was true for, a
-way to detect when it expires, and a list of what breaks when it does.</p>
-<h2 id="advances-alpha">Advances Alpha<a class="headerlink" href="#advances-alpha" title="Permanent link">&para;</a></h2>
-<p><strong>Way of Working</strong> — each environment Work Product produced or refreshed keeps the team's operating model
-anchored to the <em>actual</em> environment, not a remembered one.</p>
-<h2 id="when-to-run">When to run<a class="headerlink" href="#when-to-run" title="Permanent link">&para;</a></h2>
-<ul>
-<li>A load-bearing environment fact is <strong>discovered, changes, or is refuted</strong> (the ADR-0010 class).</li>
-<li>After an environment <strong>update</strong> (app/CLI/tool version bump) → run the <strong>Canary</strong> of every affected Work Product.</li>
-<li><strong>Before any decision</strong> that rests on an environment fact → confirm the fact's version-binding still holds.</li>
-</ul>
-<h2 id="steps">Steps<a class="headerlink" href="#steps" title="Permanent link">&para;</a></h2>
+<h2 id="purpose">Purpose<a class="headerlink" href="#purpose" title="Permanent link">&para;</a></h2>
+<p>Every parallel dispatch lands on the mainline in a <strong>deliberate, named order</strong> under a <strong>named merge owner</strong> —
+no PR sequence left to chance, no foreign uncommitted work endangered. Guards the failure mode where
+file-path-disjoint tasks are treated as if their merge sequence were irrelevant.</p>
+<h2 id="definition-delta">Definition / delta<a class="headerlink" href="#definition-delta" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>Name the Resource &amp; the fact.</strong> Which tool (the Resource), which specific behaviour — an empirical claim,
-   not an inference. Tag each fact <strong>tested / observed-untested / inferred</strong>; never let an untested claim pass
-   as tested (that was the ADR-0010 error).</li>
-<li><strong>Version-bind.</strong> Record the exact tool version/build the fact was verified against, plus the date and who
-   verified it. A fact with no version-binding is <strong>not a finished Work Product</strong>.</li>
-<li><strong>Write the Canary.</strong> A concrete check that re-proves — or breaks — the fact. When the Canary breaks, the
-   fact is <strong>presumed invalid until re-verified</strong>. Manual where the tool cannot be scripted (see Enforcement).</li>
-<li><strong>Map the dependency chain.</strong> List the operating/architecture decisions that hang on this fact, so a broken
-   Canary immediately shows the blast radius.</li>
-<li><strong>Land &amp; register.</strong> Write the Work Product at its repo home (<code>environment/</code>) and register it in
-   <code>method.md</code>. <strong>Four-eyes:</strong> the agent who ran the test owns/verifies the empirical content (typically
-   DevOps); OE owns the form and the home.</li>
-<li><strong>On refutation, supersede — never delete.</strong> A refuted fact is marked <em>superseded</em> with rationale and its
-   successor (mirrors the ADR + <code>method.md</code> retirement rule). A decision <em>against</em> an environment belief is
-   method knowledge of equal rank to one <em>for</em> it.</li>
+<li><strong>Named merge owner</strong> — the coordinator of the work package owns the merge sequence. Execution may be
+   delegated (to a gatekeeper); ownership of the <em>order</em> is not.</li>
+<li><strong>Explicit order, dependency-shaped</strong> — declared <em>at dispatch time</em>, e.g. contract → test → fix. Each
+   later PR rebases on the merged predecessor.</li>
+<li><strong>Pre-merge gate</strong> — end-to-end verification runs on the final branch <em>before</em> the first merge.</li>
+<li><strong>Artifact verification</strong> — after the sequence, the merge owner verifies against artifacts (PR states,
+   mainline log), never against completion claims.</li>
+<li><strong>Shared-tree care</strong> — before any checkout/reset in a shared working tree: check for foreign uncommitted
+   edits; destructive operations are announced. <em>(Dissolves if/when worktree-per-agent isolation lands.)</em></li>
+<li><strong>Cleanup</strong> — task branches are deleted after merge (short-lived by schema).</li>
 </ol>
-<h2 id="work-products">Work Products<a class="headerlink" href="#work-products" title="Permanent link">&para;</a></h2>
+<p><strong>Completion (Done):</strong> merge owner named at dispatch time · order declared before the first merge,
+dependency-justified · end-to-end gate passed before merging began · sequence verified against artifacts ·
+task branches deleted.</p>
+<p><strong>Enforcement note (generic).</strong> Ritual, non-negotiable for parallel dispatches. Mechanical promotion
+candidate: branch-protection merge-queue / required review order — evaluate when parallel volume grows.</p>
+<h2 id="related">Related<a class="headerlink" href="#related" title="Permanent link">&para;</a></h2>
 <ul>
-<li>One <strong>environment Work Product</strong> per Resource (or coherent fact-cluster), carrying: the fact(s), their
-  <strong>status tags</strong>, the <strong>version-binding</strong>, the <strong>Canary</strong> checklist, and the <strong>dependency chain</strong>.
-  Home: <code>docs/method/enactment/environment/</code>.</li>
-<li>A registered row / entry in <code>method.md</code>.</li>
-</ul>
-<h2 id="completion-checklist-done">Completion Checklist (Done)<a class="headerlink" href="#completion-checklist-done" title="Permanent link">&para;</a></h2>
-<ul>
-<li>[ ] Every fact names its Resource and is tagged tested / observed-untested / inferred.</li>
-<li>[ ] The Work Product is version-bound (tool version + build + date + verifier).</li>
-<li>[ ] A Canary exists that would break if the fact went stale.</li>
-<li>[ ] The dependency chain (what relies on the fact) is listed.</li>
-<li>[ ] Empirical content carries a four-eyes sign-off from the agent who verified it.</li>
-<li>[ ] Registered in <code>method.md</code>; any refuted predecessor marked <em>superseded</em> (not deleted).</li>
-</ul>
-<h2 id="enforcement">Enforcement<a class="headerlink" href="#enforcement" title="Permanent link">&para;</a></h2>
-<p><strong>Ritual (Enforcement Hierarchy level 2) — and mechanical is genuinely impossible for the flagship case.</strong>
-The Claude Code desktop app <strong>cannot be scripted</strong>, so its Canary cannot be a CI check; it is a <strong>manual
-post-update checklist</strong> a human runs. (That non-scriptability is itself an environment fact — and part of why
-this card exists.) Where the subject is a <strong>scriptable</strong> tool (git, Supabase, a CLI), the Canary <strong>should</strong> be
-promoted to a mechanical check per the Architectural-Linting rule. The card must <strong>never promise automation the
-environment cannot deliver</strong> — naming that honestly is the point.</p>
-<h2 id="notes">Notes<a class="headerlink" href="#notes" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>First enactment = retroactive formalization (2026-06-13).</strong> DevOps + user had already played through the
-  full check on the Claude app (cwd via the working-directory picker, <code>settings.json</code>/hooks via <code>/compact</code>,
-  <code>/clear</code> reset, Canary a/b/c, dependency chain, version-binding v1.12603.1) — only the card was missing.
-  The first Work Product (<code>environment/claude-code-app.md</code>) lifts that existing learning into the repo.
-  Mirrors how the Improvement Step card was validated by self-application.</li>
+<li>klartext enactment: <a href="../../../enactment/practices/merge-protocol/"><code>../../enactment/practices/merge-protocol.md</code></a></li>
+<li><a href="../../_card-template/"><code>_card-template.md</code></a> · the method register row in <code>enactment/method.md</code>.</li>
 </ul>
 
 

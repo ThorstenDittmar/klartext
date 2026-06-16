@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/superpowers/improvement/practices/retrospective/">
+        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/method/enactment/contracts/memory-substrate/">
       
       
       
@@ -23,7 +23,7 @@
     
     
       
-        <title>Practice: Retrospective - klartext.jetzt – Spezifikation</title>
+        <title>Dependency Contract (instance): Memory Substrate - klartext.jetzt – Spezifikation</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#practice-retrospective" class="md-skip">
+        <a href="#dependency-contract-instance-memory-substrate" class="md-skip">
           Zum Inhalt
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Practice: Retrospective
+              Dependency Contract (instance): Memory Substrate
             
           </span>
         </div>
@@ -1650,7 +1650,7 @@
 
 
   
-    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/superpowers/improvement/practices/retrospective.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/method/enactment/contracts/memory-substrate.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1658,150 +1658,172 @@
   
 
 
-<h1 id="practice-retrospective">Practice: Retrospective<a class="headerlink" href="#practice-retrospective" title="Permanent link">&para;</a></h1>
+<h1 id="dependency-contract-instance-memory-substrate">Dependency Contract (instance): Memory Substrate<a class="headerlink" href="#dependency-contract-instance-memory-substrate" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Scope.</strong> This document defines the <strong>Retrospective</strong> practice — the periodic, evidence-based
-way-of-working retro, including the <strong>Improvement</strong> sub-alpha it tracks.
-<strong>Out of scope.</strong> The incident-triggered test-gap retro (<code>qa-retro</code> skill — the sibling practice); decisions
-and rationale (<code>continuous-improvement.md</code>); the Improvement Register itself (lives in
-<code>continuous-improvement.md</code> §3).
-<strong>Anti-pattern guarded.</strong> Decided-but-never-verified measures (RC2 — the "check effectiveness" gap);
-impressions instead of evidence as retro input.
+<p><strong>What this is.</strong> The klartext-specific <strong>Dependency Contract</strong> for the storage substrate our way of
+working runs on — the concrete clauses C1–C5 below. For <em>what a Dependency Contract is</em> (the generic
+element: when to forge one, the clause / blast-radius / falsifiable-check structure, the relation to
+Environment Knowledge's dependency chain), see the L3 element card:
+<a href="../../../library/dependency-contract/"><code>../../library/dependency-contract.md</code></a>.
+<strong>The substrate.</strong> The durable team memory (<code>~/.claude/klartext-team-memory/</code>), the file inbox
+(<code>scripts/inbox.sh</code>), the <code>MEMORY.md</code> index, and the <code>autoMemoryDirectory</code> pin that makes the app resolve
+the shared path. Not "external" (we build <code>inbox.sh</code>, the layout, the convention) and not purely ours (the
+app's auto-memory resolution, <code>~/.claude</code> semantics, the filesystem) — a <strong>seam</strong>.
 <strong>Language.</strong> English — documentation-language rule.</p>
-<p><strong>Status:</strong> active (ritual) · <strong>Owner:</strong> OE · <strong>Advances Alpha:</strong> Way of Working
-<strong>Source:</strong> composed from IJI <em>Agile Retrospective Essentials</em> (card content CC BY 4.0; deck in
-<code>assets-local/</code>) + the Essence Alpha State Cards (alpha-walk as inspection grid) + our RCA discipline.
-<strong>Deliberately not adopted:</strong> <em>Mad/Sad/Glad</em> — emotion-based and human-specific; our data basis is
-concrete incidents, not impressions (§3 rule).</p>
+<p><strong>Status:</strong> draft v1 (2026-06-14) · <strong>Owner:</strong> OE (contract form + clauses) · DevOps (mechanization +
+empirical content) · <strong>Advances Alpha:</strong> Way of Working</p>
 </blockquote>
-<h2 id="goal">Goal<a class="headerlink" href="#goal" title="Permanent link">&para;</a></h2>
-<p>Make incremental improvements to the way of working through regular, evidence-based retrospectives —
-where <strong>no improvement counts as done until its results are evaluated</strong>.</p>
-<h2 id="advances-alpha">Advances Alpha<a class="headerlink" href="#advances-alpha" title="Permanent link">&para;</a></h2>
-<p><strong>Way of Working</strong> — advances it toward its <em>next</em> state, whichever currently applies; the steady-state
-target is <em>In Use</em> → <em>Working Well</em>. Early runs legitimately operate further back in the lifecycle (e.g.
-inspecting <em>Foundation Established</em> checkboxes) — running retrospectives is itself part of reaching
-<em>In Use</em>, whose checklist includes "regularly inspected". Defines and tracks the <strong>Improvement sub-alpha</strong>
-(adopted from IJI):</p>
-<blockquote>
-<p><strong>Improvement</strong> — a possible adaptation to improve the team's Way of Working.
-States: <em>Identified → Prioritized → Action Agreed → Trialed → Results Evaluated → In Use.</em></p>
-</blockquote>
-<p>An improvement that never reaches <em>Results Evaluated</em> stays visibly stuck — the register makes the
-RC2 failure mode ("decided, never verified") detectable.</p>
-<h2 id="trigger">Trigger<a class="headerlink" href="#trigger" title="Permanent link">&para;</a></h2>
-<p><strong>Event-based, never wall-clock:</strong> end of a sprint / work package (the Work alpha's <em>Closed</em> state requires
-"Lessons learned"), a defined milestone, or on demand after a significant incident.</p>
-<p><strong>Who triggers vs. who hosts (clarified 2026-06-10):</strong> the work-package owner (Hannibal — <em>Coordinate
-Activity</em>) <strong>triggers</strong> the retro by wanting to close the Work alpha — he cannot reach <em>Closed</em> without it.
-The <strong>Method Keeper (OE) hosts</strong>: invites the participants and leads the run. The coordinator must not
-host — the retro evaluates (among other things) how well his coordination worked; self-evaluation without
-a counterpart would break the four-eyes pattern. Precedent: <code>qa-retro</code> is led by its practice owner (QA).</p>
-<h2 id="entry-criteria">Entry Criteria<a class="headerlink" href="#entry-criteria" title="Permanent link">&para;</a></h2>
+<h2 id="the-seam-three-parts">The seam — three parts<a class="headerlink" href="#the-seam-three-parts" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Face</th>
+<th>What</th>
+<th>Modeled as</th>
+<th>Owner</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Uncontrolled</strong> (external-like)</td>
+<td>app <code>autoMemory</code> resolution (pin honored? per-cwd default? trust), <code>~/.claude</code> semantics, filesystem</td>
+<td><strong>Environment Knowledge</strong> work product (version-bound + <strong>Canary</strong>) — <strong>already in the repo</strong>: the autoMemory resolution lives in <code>environment/claude-code-app.md</code> (v2, #99/#103); same Resource = the app, so no separate card</td>
+<td>DevOps (empirical, four-eyes)</td>
+</tr>
+<tr>
+<td><strong>Controlled</strong> (our artifact)</td>
+<td><code>inbox.sh</code>, directory layout, <code>MEMORY.md</code> convention, committed pin</td>
+<td>our <strong>IaC + health-check</strong> (we change it deliberately — no Canary needed)</td>
+<td>DevOps (mechanism) + OE (conventions)</td>
+</tr>
+<tr>
+<td><strong>The seam</strong></td>
+<td>the invariants below — <em>whichever</em> side provides them</td>
+<td><strong>this Dependency Contract</strong></td>
+<td>OE</td>
+</tr>
+</tbody>
+</table>
+<h2 id="the-contract-invariants">The contract — invariants<a class="headerlink" href="#the-contract-invariants" title="Permanent link">&para;</a></h2>
+<p>Each clause states what must hold, its <strong>blast radius</strong> if violated, and its <strong>check</strong> (the mechanization
+that makes it falsifiable — a substrate health-check, DevOps, co-located with the ADR-0011 <strong>G2</strong> local-mode
+check).</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Invariant</th>
+<th>Blast radius if violated</th>
+<th>Check</th>
+<th>Holds today?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>C1</strong></td>
+<td>The team memory resolves to the <strong>same shared path for every agent</strong>, independent of worktree/cwd (committed <code>autoMemoryDirectory</code>).</td>
+<td>Agents read/write <em>different</em> memories → divergent truth (the autoMemory cutover pain).</td>
+<td>Health-check asserts the resolved memory path == the committed shared path — <strong>live in the session-health hook (#117)</strong>.</td>
+<td>✅ (after the pin rollout)</td>
+</tr>
+<tr>
+<td><strong>C2</strong></td>
+<td>The substrate is <strong>durable across sessions and session-types</strong> (terminal <em>and</em> app).</td>
+<td>Knowledge meant to outlive a session is lost on restart/clear → False-Persistence class.</td>
+<td><code>check_durable</code> asserts the dir exists + is writable — <strong>live in the session-health hook (#133)</strong>.</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>C3</strong></td>
+<td>The inbox is <strong>readable/writable by every session at a git-worktree-independent path</strong>.</td>
+<td>Cross-agent messages land where the recipient cannot see them (the #108 / mis-address class).</td>
+<td>Health-check asserts <code>inbox.sh</code> base resolves outside the worktree and is reachable — <strong>live in the session-health hook (#117)</strong>.</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>C4</strong></td>
+<td><strong>Concurrent writes</strong> (e.g. parallel memory consolidation) corrupt neither the <code>MEMORY.md</code> index nor any inbox message.</td>
+<td>Lost/garbled memories or index under simultaneous agent activity.</td>
+<td><code>check_index_integrity</code> (every <code>MEMORY.md</code> entry → a real file; no duplicate entries) — <strong>live in the session-health hook (#133)</strong>.</td>
+<td>✅ <strong>Decided (lean), 2026-06-14 — live #133</strong></td>
+</tr>
+<tr>
+<td><strong>C5</strong></td>
+<td><strong>Every memory edit is attributable</strong> — who last changed a memory file is recoverable.</td>
+<td>Unattributable shared state: 11 agents + the user write the same memory under one OS/git identity → "who wrote this?" is unanswerable (surfaced 2026-06-15).</td>
+<td><strong>Detection DEFERRED</strong> — the <code>mtime</code>-based check is unreliable (mtime advances on non-content ops → false positives); needs a content/git-based design. The <strong>self-stamp ritual stands</strong>.</td>
+<td>⚠️ <strong>Ritual decided 2026-06-15; mechanical detection deferred (own strand)</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>C4 — Decided (lean: eventual + reconcile), 2026-06-14 (user, by practice).</strong> The exposure is <strong>narrow</strong>:
+per-fact files are <strong>single-owner</strong> (distinct files → no collision) and inbox messages are <strong>one file each
+with a unique timestamp+slug name</strong> (no collision). The <em>only</em> shared hot file is <strong><code>MEMORY.md</code></strong> (the index).
+Guarantee: <em>no lost or garbled memory under normal concurrent operation</em> — held by a <strong>convention + reconciler</strong>,
+not a lock:</p>
 <ul>
-<li>A <strong>named, event-based trigger</strong> — recorded in the retro output (an unnamed trigger violates this card).</li>
-<li>The <strong>Improvement Register</strong> exists and reflects the current state.</li>
-<li>The <strong>alpha state checklists</strong> (<code>alpha-states.md</code>) are available for the alpha-walk.</li>
-<li>A <strong>leader with the required competency</strong> is present (see Competencies).</li>
+<li><strong>Fact files stay single-owner</strong> — never concurrently co-edited; a cross-owner change is routed via OE
+  (<code>knowledge-routing</code>), not edited in place.</li>
+<li><strong><code>MEMORY.md</code></strong> — each agent <strong>appends its own one-line entry</strong>; OE's <strong><code>consolidate-memory</code></strong> pass is the
+  reconciler/structural writer, and the <strong>index-integrity check</strong> (every entry → a real file, no duplicates —
+  exactly the check OE ran on 2026-06-14) catches and surfaces any rare clobber for repair.</li>
 </ul>
-<h2 id="competencies">Competencies<a class="headerlink" href="#competencies" title="Permanent link">&para;</a></h2>
+<p>A hard guard (lock / single-writer index) was <strong>considered and rejected</strong> as disproportionate for a
+rarely-written index whose only observed concurrency (parallel consolidation, 2026-06-14) produced no
+corruption. If the index-integrity check ever <em>does</em> trip in practice, that is the falsifiable signal to
+revisit (a new Improvement Step) — the lean stance is itself monitored.</p>
+<p><strong>C5 — Decided (lean self-stamp), 2026-06-15 (user, by practice).</strong> Trigger: an edit to
+<code>project_automemory_migration_status.md</code> could not be attributed — OE wrongly guessed "the user". Root
+cause is structural: the team memory is <strong>not version-controlled</strong> (no author, only <code>mtime</code>) <strong>and</strong> all 11
+agents + the user commit/write under one shared identity (<code>ThorstenDittmar</code>), so neither the filesystem nor
+git can say <em>who</em>. Decision: a <strong>self-stamp convention</strong> — every agent that writes a memory file stamps its
+own slug in the frontmatter <code>metadata</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">metadata</span><span class="p">:</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">last-edited-by</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;agent-slug&gt;</span><span class="w">      </span><span class="c1"># e.g. oe, devops, audit</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">last-edited-at</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;YYYY-MM-DD&gt;</span>
+</code></pre></div>
+<p>This builds on the existing <code>originSessionId</code> (which records <em>origin</em>, not <em>edits</em>). It gives the <strong>last
+editor</strong> — exactly the question that arose. <strong>Rejected as disproportionate (for now):</strong> version-controlling
+the whole memory dir — heavier, and the shared git identity means it still would not attribute to an agent
+without the stamp anyway. <strong>Enforcement is honest about its limit:</strong> memory is not in CI and the
+memory-<em>writing</em> behaviour is driven by the system prompt (not an OE-editable surface), so the stamp is a
+<strong>ritual</strong> (Enforcement Hierarchy level 2). The convention is surfaced to all agents via
+<code>knowledge-routing.md</code> (loaded at every anchor). Ties to the open shared-blackboard ownership question
+(<code>continuous-improvement.md</code>, the cwd-shared-auto-memory row).</p>
+<p><strong>Mechanical detection DEFERRED (2026-06-16, own strand).</strong> The originally-named check ("warn on a memory
+file whose <code>mtime</code> advanced without a matching stamp") is <strong>unreliable</strong>: in practice <code>mtime</code> advances on
+<strong>non-content operations</strong> (converge/checkout/sync/backup-restore) → false positives (DevOps, Essence-audit
+finding). The detection therefore needs a <strong>content/git-based design</strong> (e.g. <em>content changed without a stamp
+update</em>), not <code>mtime</code>. <strong>The self-stamp ritual is unaffected and stands.</strong> This is an OE-owned design strand
+(OE substrate + DevOps mechanic), non-blocking.</p>
+<h2 id="why-a-contract-here-the-lever-this-seam-gives-us">Why a contract here (the lever this seam gives us)<a class="headerlink" href="#why-a-contract-here-the-lever-this-seam-gives-us" title="Permanent link">&para;</a></h2>
+<p>Because we <strong>own</strong> the inner face, the contract reveals <strong>design levers</strong>, not just risk to watch: with the
+Claude app or GitHub we can only observe + Canary; here we can <em>build</em> the substrate to satisfy the contract
+(make the inbox concurrency-safe, keep the pin path absolute + committed). A violation on <strong>either</strong> side is
+checked against the <strong>same</strong> contract — so "what changed under us" and "what we changed" are caught by one set
+of invariants. (The generic form of this lever is in the L3 element card.)</p>
+<h2 id="relationship-to-other-elements">Relationship to other elements<a class="headerlink" href="#relationship-to-other-elements" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Leader</strong> — Method Literacy ≥ 2 (<em>Applies</em>): runs the alpha-walk, RC mapping and register maintenance
-  unaided. The lead attaches to the existing <strong>Method Keeper</strong> pattern (OE) — no separate role is imported
-  (checked against the standard 2026-06-10: the existing pattern covers the function).</li>
-<li><strong>Participants</strong> — Method Literacy ≥ 1 (<em>Assists</em>): follow the vocabulary, contribute evidence.</li>
-<li><em>"Whole team inspects and adapts"</em> is an <strong>In Place</strong> checkbox of the Way-of-Working alpha — full active
-  whole-team participation is the <em>target state</em>, not an entry requirement for early runs. Team-wide
-  literacy ≥ 2 is batched at the <em>Foundation Established</em> milestone (team refresh).</li>
+<li><strong>Dependency Contract (L3 element)</strong> (<code>../../library/dependency-contract.md</code>) — the generic definition this
+  file is an instance of.</li>
+<li><strong>Environment Knowledge</strong> — provides the uncontrolled-face work product + Canary; the contract's external
+  clauses reference it (<code>environment/claude-code-app.md</code>).</li>
+<li><strong>Controlled Method Rollout</strong> — a change that violates a contract clause for a <em>drifted</em> agent is
+  <strong>breaking</strong> → barrier mode. The contract feeds that classification.</li>
+<li><strong>Drift Awareness</strong> (register #106) / <strong>ADR-0012</strong> — convergence keeps a worktree's <em>copy</em> of the substrate
+  current; the contract states what the substrate must guarantee in the first place.</li>
 </ul>
-<h2 id="participants">Participants<a class="headerlink" href="#participants" title="Permanent link">&para;</a></h2>
-<p><strong>Default reach: the whole team — always.</strong> Limiting a retro to those who worked on the inspected work
-package would blind it to a failure mode it must detect: <em>someone should have been involved and was not</em>
-(RC3; precedent: the Community-Expert omission — the missing expert never got the chance to raise a hand).
-To keep cost sane, participation has two tiers:</p>
+<h2 id="status-open">Status &amp; open<a class="headerlink" href="#status-open" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Active input — mandatory</strong> from everyone who worked on the inspected work package (via the user as
-  channel): their experience is evidence that exists in no artifact.</li>
-<li><strong>Record review — everyone else:</strong> the retro record is routed to all agents (team roster) with two
-  explicit questions: <em>Should you have been involved in this work package?</em> and <em>Does any finding touch
-  your domain?</em> Responses — or silence — are noted in the record.</li>
+<li><strong>C1, C3</strong> — ✅ live in the session-health hook (#117).</li>
+<li><strong>C2</strong> (durability) — ✅ <code>check_durable</code> <strong>live in the session-health hook (#133)</strong>.</li>
+<li><strong>C4</strong> (index-integrity) — ✅ <code>check_index_integrity</code> <strong>live in the session-health hook (#133)</strong> (decided lean 2026-06-14). Double-benefit: this is also the <strong>restore-integrity criterion</strong> for the Frozen-Plan §6.3 backup gate.</li>
+<li><strong>C5</strong> (provenance) — self-stamp <strong>ritual</strong> stands; <strong>mechanical detection deferred</strong> (mtime unreliable → own content/git-based design strand, OE-owned).</li>
+<li>Uncontrolled face (autoMemory resolution) — ✅ already an Environment Knowledge work product
+  (<code>environment/claude-code-app.md</code>, v2); no separate card.</li>
+<li><strong>Monitor (OE):</strong> if the index-integrity check ever trips in practice, revisit the lean stance (new
+  Improvement Step).</li>
 </ul>
-<p><strong>Involvement check (explicit step):</strong> every retro asks <em>"who was not involved that should have been?"</em> —
-the answer is RC3 evidence, even when it is "nobody".</p>
-<h3 id="how-input-is-gathered-enactment">How input is gathered (enactment)<a class="headerlink" href="#how-input-is-gathered-enactment" title="Permanent link">&para;</a></h3>
-<p>The two tiers need different mechanisms, because they need different knowledge:</p>
-<ul>
-<li><strong>Record review</strong> asks about <em>domain match</em> ("does a finding touch your domain? should you have been
-  involved?") — answerable from <strong>disk</strong> (<code>agents/&lt;name&gt;/claude.md</code>, roster). → A <strong>forked subagent</strong> per
-  agent is sufficient; cheap broadcast, no live sessions needed.</li>
-<li><strong>Active input</strong> asks about <em>experience</em> — knowledge that may exist only in the participant's long-living
-  session. Two variants:</li>
-<li><strong>(a) Artifact-mediated (preferred, cheap):</strong> a forked subagent represents the participant, reading
-    their knowledge file + the work products. <strong>Valid only if</strong> that agent's session knowledge was captured
-    to disk (anchor-style capture with a held completion checklist) <strong>at or after work-package end</strong>.
-    Without that, the subagent is a simulation that misses exactly the evidence the retro exists to collect
-    (precedent: the "simulated Hannibal", deliberately discarded).</li>
-<li><strong>(b) Live session (fallback, expensive):</strong> query the agent's long-living session via the user as
-    channel. <strong>Required</strong> whenever (a)'s precondition is not confirmed — when in doubt, (b).</li>
-<li><strong>Entry criterion (per work-package participant):</strong> capture confirmed → (a); otherwise → (b).</li>
-</ul>
-<p><em>Current state (2026-06-10; skill renamed to <code>anchor</code> 2026-06-13):</em> the capture practice (<code>anchor</code>, formerly
-<code>pre-compact</code>) is German-only; a versioned repo copy was added 2026-06-13 (<code>docs/superpowers/skills/anchor.md</code>,
-machine-local install pending DevOps), and it is validated only on OE sessions → (a) is <strong>not yet trustworthy</strong> for other agents;
-active input therefore uses (b) until the capture practice is promoted (see the Improvement Register —
-that improvement is the enabler of cheap retros).</p>
-<p><em>Activation note:</em> the record-review tier becomes meaningful only after the team refresh (team-wide Method
-Literacy ≥ 1); until then OE + user run the involvement check manually against the roster.</p>
-<h2 id="steps">Steps<a class="headerlink" href="#steps" title="Permanent link">&para;</a></h2>
-<ol>
-<li><strong>Evaluate previous actions</strong> — walk the Improvement Register first: did each <em>Trialed</em> improvement
-   produce results? Advance its state (<em>Results Evaluated</em> / <em>In Use</em>) or retire it. Nothing stays silently
-   on <em>Action Agreed</em>.</li>
-<li><strong>Collect evidence</strong> — concrete incidents, CI status, compact-monitor digest, <code>PENDING.md</code> state.
-   No impressions without an incident behind them.</li>
-<li><strong>Alpha-walk</strong> — inspect the relevant Alpha state checklists (<code>alpha-states.md</code>), at minimum
-   <strong>Way of Working</strong>: which checkbox regressed? Which one blocks the next state?</li>
-<li><strong>Root-cause mapping</strong> — map findings to RC1–RC6 (<code>continuous-improvement.md</code> Phase 1). If none fits,
-   that is a candidate <strong>new</strong> root cause — record it explicitly.</li>
-<li><strong>Element sweep</strong> <em>(added 2026-06-10, user-prompted)</em> — walk the run's artifacts, activities, patterns
-   and competencies: which elements did this run <strong>use or produce</strong>? Each one: registered in <code>method.md</code>?
-   If not → register it (or record it as an Improvement candidate) <strong>in this retro</strong>. This reconciles the
-   <em>described</em> method against the <em>enacted</em> one — RC4 medicine applied to the method itself; the
-   maintenance ritual alone only catches deliberate changes, not elements that creep in through use.</li>
-<li><strong>Identify &amp; prioritize improvements</strong> — new Improvement instances enter the register
-   (<em>Identified</em> / <em>Prioritized</em>).</li>
-<li><strong>Agree actions</strong> — per improvement: <strong>owner + checkable DoD + enforcement level</strong>
-   (mechanical / ritual — never advisory-only). State → <em>Action Agreed</em>.</li>
-<li><strong>Capture &amp; route</strong> — learnings to <code>learnings/</code> (one file per learning), register updated, affected
-   practice cards / <code>method.md</code> updated <strong>in the same step</strong>; briefings routed via <code>knowledge-routing</code>
-   where other agents are affected.</li>
-</ol>
-<h2 id="work-products">Work Products<a class="headerlink" href="#work-products" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>Improvement Register</strong> — <code>continuous-improvement.md</code> §3 (Improvement instances with alpha state).</li>
-<li><strong>Learning entries</strong> — <code>docs/method/enactment/learnings/</code> (one file per learning).</li>
-<li>Updates to practice cards / <code>method.md</code>.</li>
-</ul>
-<h2 id="completion-checklist-done">Completion Checklist (Done)<a class="headerlink" href="#completion-checklist-done" title="Permanent link">&para;</a></h2>
-<ul>
-<li>[ ] The trigger event is named in the retro record (entry criterion held).</li>
-<li>[ ] The involvement check was run ("who was missing?") and its answer recorded; the record was routed
-      to the whole team (or the manual roster check was done — see activation note).</li>
-<li>[ ] Every previously <em>Trialed</em> improvement was evaluated — advanced or retired.</li>
-<li>[ ] Evidence basis was concrete (incidents / signals), not impressions.</li>
-<li>[ ] The Way-of-Working checklist was walked; regressions named.</li>
-<li>[ ] The element sweep ran — every element the run used/produced is registered in <code>method.md</code> or recorded
-      as an Improvement candidate.</li>
-<li>[ ] <strong>Deviation clause:</strong> if any mandatory input was missing or an enactment rule was bent, the deviation
-      is named and justified in the record, and missing input is carried as a <em>verified addendum</em> —
-      otherwise this retro is not Done.</li>
-<li>[ ] Each new improvement has owner + checkable DoD + enforcement level.</li>
-<li>[ ] Learnings captured at their home; register updated.</li>
-<li>[ ] Briefings routed where other agents are affected.</li>
-</ul>
-<h2 id="enforcement">Enforcement<a class="headerlink" href="#enforcement" title="Permanent link">&para;</a></h2>
-<p>Currently a <strong>ritual</strong> (level 2). Skill promotion after the first real runs. Relation: <code>qa-retro</code> is the
-<strong>incident-triggered sibling</strong> for test gaps — both feed Improvement instances into the same register.</p>
 
 
 

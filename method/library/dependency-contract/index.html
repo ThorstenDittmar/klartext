@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/superpowers/improvement/practices/merge-protocol/">
+        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/method/library/dependency-contract/">
       
       
       
@@ -18,19 +18,19 @@
         
       
       
-      <link rel="icon" href="../../../../assets/images/favicon.png">
+      <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
-        <title>Practice: Merge Protocol - klartext.jetzt – Spezifikation</title>
+        <title>Dependency Contract - klartext.jetzt – Spezifikation</title>
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -49,7 +49,7 @@
       
     
     
-    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#practice-merge-protocol" class="md-skip">
+        <a href="#dependency-contract" class="md-skip">
           Zum Inhalt
         </a>
       
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Kopfzeile">
-    <a href="../../../.." title="klartext.jetzt – Spezifikation" class="md-header__button md-logo" aria-label="klartext.jetzt – Spezifikation" data-md-component="logo">
+    <a href="../../.." title="klartext.jetzt – Spezifikation" class="md-header__button md-logo" aria-label="klartext.jetzt – Spezifikation" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Practice: Merge Protocol
+              Dependency Contract
             
           </span>
         </div>
@@ -217,7 +217,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../.." class="md-tabs__link">
+      <a href="../../.." class="md-tabs__link">
         
   
   
@@ -236,7 +236,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../../pruefbericht-klartext.html" class="md-tabs__link">
+      <a href="../../../pruefbericht-klartext.html" class="md-tabs__link">
         
   
   
@@ -257,7 +257,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../../kap-01-executive-summary/" class="md-tabs__link">
+        <a href="../../../kap-01-executive-summary/" class="md-tabs__link">
           
   
   
@@ -277,7 +277,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../../kap-06-systemarchitektur/" class="md-tabs__link">
+        <a href="../../../kap-06-systemarchitektur/" class="md-tabs__link">
           
   
   
@@ -297,7 +297,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../../kap-11-leser/" class="md-tabs__link">
+        <a href="../../../kap-11-leser/" class="md-tabs__link">
           
   
   
@@ -317,7 +317,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../../kap-19-umsetzung/" class="md-tabs__link">
+        <a href="../../../kap-19-umsetzung/" class="md-tabs__link">
           
   
   
@@ -335,7 +335,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../../developer-guide/" class="md-tabs__link">
+      <a href="../../../developer-guide/" class="md-tabs__link">
         
   
   
@@ -356,7 +356,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../../appendix-a/" class="md-tabs__link">
+        <a href="../../../appendix-a/" class="md-tabs__link">
           
   
   
@@ -398,7 +398,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../.." title="klartext.jetzt – Spezifikation" class="md-nav__button md-logo" aria-label="klartext.jetzt – Spezifikation" data-md-component="logo">
+    <a href="../../.." title="klartext.jetzt – Spezifikation" class="md-nav__button md-logo" aria-label="klartext.jetzt – Spezifikation" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -428,7 +428,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../.." class="md-nav__link">
+      <a href="../../.." class="md-nav__link">
         
   
   
@@ -455,7 +455,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../pruefbericht-klartext.html" class="md-nav__link">
+      <a href="../../../pruefbericht-klartext.html" class="md-nav__link">
         
   
   
@@ -536,7 +536,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-01-executive-summary/" class="md-nav__link">
+      <a href="../../../kap-01-executive-summary/" class="md-nav__link">
         
   
   
@@ -564,7 +564,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-02-problemdefinition/" class="md-nav__link">
+      <a href="../../../kap-02-problemdefinition/" class="md-nav__link">
         
   
   
@@ -592,7 +592,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-03-kognition/" class="md-nav__link">
+      <a href="../../../kap-03-kognition/" class="md-nav__link">
         
   
   
@@ -620,7 +620,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-04-vision/" class="md-nav__link">
+      <a href="../../../kap-04-vision/" class="md-nav__link">
         
   
   
@@ -648,7 +648,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-05-autorenumgebung/" class="md-nav__link">
+      <a href="../../../kap-05-autorenumgebung/" class="md-nav__link">
         
   
   
@@ -737,7 +737,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-06-systemarchitektur/" class="md-nav__link">
+      <a href="../../../kap-06-systemarchitektur/" class="md-nav__link">
         
   
   
@@ -765,7 +765,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-07-wirkmodelle/" class="md-nav__link">
+      <a href="../../../kap-07-wirkmodelle/" class="md-nav__link">
         
   
   
@@ -793,7 +793,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-08-verbindung/" class="md-nav__link">
+      <a href="../../../kap-08-verbindung/" class="md-nav__link">
         
   
   
@@ -821,7 +821,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-09-transparenzbericht/" class="md-nav__link">
+      <a href="../../../kap-09-transparenzbericht/" class="md-nav__link">
         
   
   
@@ -849,7 +849,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-10-perspektivpluralismus/" class="md-nav__link">
+      <a href="../../../kap-10-perspektivpluralismus/" class="md-nav__link">
         
   
   
@@ -938,7 +938,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-11-leser/" class="md-nav__link">
+      <a href="../../../kap-11-leser/" class="md-nav__link">
         
   
   
@@ -966,7 +966,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-12-distribution/" class="md-nav__link">
+      <a href="../../../kap-12-distribution/" class="md-nav__link">
         
   
   
@@ -994,7 +994,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-13-folgeprojekte/" class="md-nav__link">
+      <a href="../../../kap-13-folgeprojekte/" class="md-nav__link">
         
   
   
@@ -1022,7 +1022,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-14-technologie/" class="md-nav__link">
+      <a href="../../../kap-14-technologie/" class="md-nav__link">
         
   
   
@@ -1050,7 +1050,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-15-roadmap/" class="md-nav__link">
+      <a href="../../../kap-15-roadmap/" class="md-nav__link">
         
   
   
@@ -1078,7 +1078,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-16-relevanz/" class="md-nav__link">
+      <a href="../../../kap-16-relevanz/" class="md-nav__link">
         
   
   
@@ -1106,7 +1106,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-17-schluss/" class="md-nav__link">
+      <a href="../../../kap-17-schluss/" class="md-nav__link">
         
   
   
@@ -1134,7 +1134,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-18-wissenschaft/" class="md-nav__link">
+      <a href="../../../kap-18-wissenschaft/" class="md-nav__link">
         
   
   
@@ -1223,7 +1223,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-19-umsetzung/" class="md-nav__link">
+      <a href="../../../kap-19-umsetzung/" class="md-nav__link">
         
   
   
@@ -1251,7 +1251,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-20-literaten-workflow/" class="md-nav__link">
+      <a href="../../../kap-20-literaten-workflow/" class="md-nav__link">
         
   
   
@@ -1279,7 +1279,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-21-wirkmodell-workflow/" class="md-nav__link">
+      <a href="../../../kap-21-wirkmodell-workflow/" class="md-nav__link">
         
   
   
@@ -1307,7 +1307,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-22-leser-workflow/" class="md-nav__link">
+      <a href="../../../kap-22-leser-workflow/" class="md-nav__link">
         
   
   
@@ -1335,7 +1335,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-23-community/" class="md-nav__link">
+      <a href="../../../kap-23-community/" class="md-nav__link">
         
   
   
@@ -1363,7 +1363,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-24-datenmodell/" class="md-nav__link">
+      <a href="../../../kap-24-datenmodell/" class="md-nav__link">
         
   
   
@@ -1398,7 +1398,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../developer-guide/" class="md-nav__link">
+      <a href="../../../developer-guide/" class="md-nav__link">
         
   
   
@@ -1479,7 +1479,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../appendix-a/" class="md-nav__link">
+      <a href="../../../appendix-a/" class="md-nav__link">
         
   
   
@@ -1561,7 +1561,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../adr/0001-detector-quality-testing/" class="md-nav__link">
+      <a href="../../../adr/0001-detector-quality-testing/" class="md-nav__link">
         
   
   
@@ -1589,7 +1589,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../adr/0002-test-data-object-mother/" class="md-nav__link">
+      <a href="../../../adr/0002-test-data-object-mother/" class="md-nav__link">
         
   
   
@@ -1650,7 +1650,7 @@
 
 
   
-    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/superpowers/improvement/practices/merge-protocol.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/method/library/dependency-contract.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1658,47 +1658,93 @@
   
 
 
-<h1 id="practice-merge-protocol">Practice: Merge Protocol<a class="headerlink" href="#practice-merge-protocol" title="Permanent link">&para;</a></h1>
+<h1 id="dependency-contract">Dependency Contract<a class="headerlink" href="#dependency-contract" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Scope.</strong> How parallel-dispatched work lands on <code>main</code>: merge ownership, ordering, and verification.
-<strong>Out of scope.</strong> Branch protection mechanics (CI gates, <code>continuous-improvement.md</code> §3); how tasks are
-cut and dispatched (Hannibal's coordination); the naht-check itself (DevOps activity, see <code>method.md</code>).
-<strong>Anti-pattern guarded.</strong> "File-path-disjoint tasks ≠ regulated merge order" — parallel PRs whose merge
-sequence is left to chance (RC5; origin: H01-422, user-flagged).
-<strong>Language.</strong> English — documentation-language rule.</p>
-<p><strong>Status:</strong> active (ritual) · <strong>Owner:</strong> Hannibal (card support: OE) · <strong>Advances Alpha:</strong> Work
-<strong>Non-negotiable</strong> for every work package with ≥ 2 parallel dispatches.
-<strong>Source:</strong> first live enactment H01-422 (2026-06-10): #53→#54→#55, named owner, artifact-verified —
-succeeded; described from that run, not speculation.</p>
+<p><strong>Essence type:</strong> Work Product
+<strong>Advances Alpha:</strong> Way of Working (Non-negotiable practices &amp; tools identified · Gaps between available and needed way of working understood)  ·  <strong>Work Products:</strong> the contract itself (a set of invariant clauses)
+<strong>Activity / Activity Space:</strong> Prepare to do the Work → identify and bind the invariants a central dependency must uphold
+<strong>External dependencies (referenced Resources):</strong> none — this is our own element definition
+<strong>Enforcement:</strong> convention (each clause names its own check; the check's enforcement level is per-clause: mechanical · ritual · convention)
+<strong>NN:</strong> —
+<strong>Status:</strong> living  ·  <strong>Owner:</strong> OE (form + element definition)
+<strong>Enacted as:</strong> one card per contract under <code>docs/method/enactment/contracts/</code> (L2 instances)
+<em>(Element kind: this card defines the Dependency-Contract Work-Product type; the actual contracts are its L2 instances. The "(element)" clarifier is kept out of the Essence-type value so the half-(ii) CI core check sees a clean enum token.)</em></p>
 </blockquote>
-<h2 id="goal">Goal<a class="headerlink" href="#goal" title="Permanent link">&para;</a></h2>
-<p>Every parallel dispatch lands on <code>main</code> in a <strong>deliberate, named order</strong> under a <strong>named merge owner</strong> —
-no PR sequence left to chance, no foreign uncommitted work endangered.</p>
-<h2 id="rules">Rules<a class="headerlink" href="#rules" title="Permanent link">&para;</a></h2>
-<ol>
-<li><strong>Named merge owner</strong> — the coordinator of the work package owns the merge sequence (default: Hannibal).
-   Execution may be delegated (DevOps as gatekeeper); ownership of the <em>order</em> is not.</li>
-<li><strong>Explicit order, dependency-shaped</strong> — declared <em>at dispatch time</em>, e.g. contract → test → fix.
-   Each later PR rebases on the merged predecessor.</li>
-<li><strong>Pre-merge gate</strong> — E2E-before-done (A2 gate) runs on the final branch <em>before</em> the first merge.</li>
-<li><strong>Artifact verification</strong> — after the sequence, the merge owner verifies against artifacts
-   (<code>gh pr view</code>, <code>git log origin/main</code>), never against completion claims.</li>
-<li><strong>Shared-tree care</strong> — before any checkout/reset in the shared working tree: check for foreign
-   uncommitted edits (<code>git status</code>); destructive operations are announced. <em>(Sunset clause: this rule
-   dissolves if/when worktree-per-agent lands.)</em></li>
-<li><strong>Cleanup</strong> — task branches are deleted after merge (short-lived by schema).</li>
-</ol>
-<h2 id="completion-checklist-done">Completion Checklist (Done)<a class="headerlink" href="#completion-checklist-done" title="Permanent link">&para;</a></h2>
+<h2 id="purpose">Purpose<a class="headerlink" href="#purpose" title="Permanent link">&para;</a></h2>
+<p>A <strong>Dependency Contract</strong> captures the <strong>invariants our way of working requires <em>from</em> a central
+component we depend on</strong> — the storage substrate, an external service, a shared tool. It is the
+<em>upstream</em> counterpart to Environment Knowledge's <strong>dependency chain</strong>:</p>
 <ul>
-<li>[ ] Merge owner named at dispatch time.</li>
-<li>[ ] Order declared before the first merge, dependency-justified.</li>
-<li>[ ] E2E gate passed before merging began.</li>
-<li>[ ] Sequence verified against artifacts (PR states, <code>main</code> log).</li>
-<li>[ ] Task branches deleted.</li>
+<li>a <strong>dependency chain</strong> lists <em>what of ours breaks</em> if a fact about a dependency changes
+  (the <strong>downstream blast radius</strong> — what we watch);</li>
+<li>a <strong>Dependency Contract</strong> lists <em>what we require to hold</em> (the <strong>invariants</strong> — what we demand).</li>
 </ul>
-<h2 id="enforcement">Enforcement<a class="headerlink" href="#enforcement" title="Permanent link">&para;</a></h2>
-<p>Ritual (level 2), non-negotiable for parallel dispatches. Mechanical promotion candidate: branch-protection
-merge-queue / required review order — evaluate when parallel volume grows.</p>
+<p>They are complementary, not duplicate. A dependency chain is observational ("if this changes, these
+break"); a contract is prescriptive ("this must hold, and here is how we catch it if it does not").</p>
+<h2 id="when-to-forge-one-the-schnur">When to forge one — the "Schnur"<a class="headerlink" href="#when-to-forge-one-the-schnur" title="Permanent link">&para;</a></h2>
+<p>Forge a Dependency Contract only when <strong>both</strong> conditions hold (otherwise: <em>Flut vermeiden</em> — do not
+contract every dependency):</p>
+<ol>
+<li><strong>Central</strong> — the way of working genuinely depends on this component; a violation has broad blast
+   radius across the endeavour, not a single local feature.</li>
+<li><strong>A future external update could change it non-obviously</strong> — the component (or the seam we share
+   with it) can shift <em>under us</em> in a way that is not loud at change-time, so an explicit, checkable
+   invariant is the only thing that turns a silent drift into a caught failure.</li>
+</ol>
+<p>If a dependency is central but fully <strong>owned</strong> by us (we change it only deliberately, loudly), an
+IaC + health-check usually suffices and no contract is needed. The contract earns its keep precisely
+at a <strong>seam</strong> — where neither pure "external" (only observe + Canary) nor pure "ours" (just build it
+right) describes the relationship, so a shared set of invariants is checked against <strong>whichever side
+provides them</strong>.</p>
+<h2 id="structure-clause-blast-radius-falsifiable-check">Structure — clause + blast radius + falsifiable check<a class="headerlink" href="#structure-clause-blast-radius-falsifiable-check" title="Permanent link">&para;</a></h2>
+<p>A Dependency Contract is a set of <strong>clauses</strong>. Each clause has exactly three parts:</p>
+<table>
+<thead>
+<tr>
+<th>Part</th>
+<th>What it states</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Invariant</strong></td>
+<td>The single thing that must hold (one clause = one invariant).</td>
+</tr>
+<tr>
+<td><strong>Blast radius</strong></td>
+<td>What breaks across the way of working if this invariant is violated.</td>
+</tr>
+<tr>
+<td><strong>Falsifiable check</strong></td>
+<td>The mechanization that makes the invariant <em>checkable</em> — a health-check, test, or (where mechanization is not yet possible) an explicitly-named ritual. A clause without a check is an aspiration, not a contract clause.</td>
+</tr>
+</tbody>
+</table>
+<p>A clause may also carry a <strong>status</strong> (holds today? · decided/deferred · live in which hook) so the
+contract doubles as a live ledger of which invariants are actually enforced versus still aspirational.</p>
+<h2 id="why-a-contract-the-lever-the-seam-gives-us">Why a contract — the lever the seam gives us<a class="headerlink" href="#why-a-contract-the-lever-the-seam-gives-us" title="Permanent link">&para;</a></h2>
+<p>Because we (partly) <strong>own</strong> the inner face of a seam, a contract reveals <strong>design levers</strong>, not just
+risk to watch: with a purely external component we can only observe and Canary; at a seam we can
+<em>build</em> the inner face to satisfy the contract. A violation on <strong>either</strong> side is checked against the
+<strong>same</strong> clauses — so "what changed under us" and "what we changed" are caught by one set of
+invariants.</p>
+<h2 id="relationship-to-other-elements">Relationship to other elements<a class="headerlink" href="#relationship-to-other-elements" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Environment Knowledge</strong> (dependency chain + Canary) — provides the <em>uncontrolled-face</em> work
+  product; a contract's external-facing clauses reference it. The two are deliberately
+  distinct elements (KB-confirmed, no Kernel change — a Work-Product type alongside the others).</li>
+<li><strong>Controlled Method Rollout</strong> — a change that violates a contract clause for a <em>drifted</em> consumer is
+  <strong>breaking</strong> (barrier mode). The contract feeds that classification.</li>
+<li><strong>Drift Awareness / convergence</strong> — convergence keeps a consumer's <em>copy</em> of the substrate current;
+  the contract states what the substrate must guarantee in the first place.</li>
+</ul>
+<h2 id="related">Related<a class="headerlink" href="#related" title="Permanent link">&para;</a></h2>
+<ul>
+<li>L2 instances live under <a href="../enactment/contracts/"><code>../enactment/contracts/</code></a> — e.g.
+  <a href="../../enactment/contracts/memory-substrate/"><code>memory-substrate.md</code></a> (the klartext team-memory + inbox + pin substrate, clauses C1–C5).</li>
+<li><a href="../../../adr/0013-separating-method-from-product/">ADR-0013</a> — method/product separation (L3 vs L2).</li>
+<li>The method register's <em>Dependency Contracts</em> paragraph in <a href="../../enactment/method/"><code>../enactment/method.md</code></a>.</li>
+</ul>
 
 
 
@@ -1754,10 +1800,10 @@ merge-queue / required review order — evaluate when parallel volume grows.</p>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.path", "navigation.top", "toc.integrate", "search.highlight", "search.suggest", "content.code.copy", "content.action.edit"], "search": "../../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "In Zwischenablage kopiert", "clipboard.copy": "In Zwischenablage kopieren", "search.result.more.one": "1 weiteres Suchergebnis auf dieser Seite", "search.result.more.other": "# weitere Suchergebnisse auf dieser Seite", "search.result.none": "Keine Suchergebnisse", "search.result.one": "1 Suchergebnis", "search.result.other": "# Suchergebnisse", "search.result.placeholder": "Suchbegriff eingeben", "search.result.term.missing": "Es fehlt", "select.version": "Version ausw\u00e4hlen"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.path", "navigation.top", "toc.integrate", "search.highlight", "search.suggest", "content.code.copy", "content.action.edit"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "In Zwischenablage kopiert", "clipboard.copy": "In Zwischenablage kopieren", "search.result.more.one": "1 weiteres Suchergebnis auf dieser Seite", "search.result.more.other": "# weitere Suchergebnisse auf dieser Seite", "search.result.none": "Keine Suchergebnisse", "search.result.one": "1 Suchergebnis", "search.result.other": "# Suchergebnisse", "search.result.placeholder": "Suchbegriff eingeben", "search.result.term.missing": "Es fehlt", "select.version": "Version ausw\u00e4hlen"}, "version": null}</script>
     
     
-      <script src="../../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>
