@@ -131,7 +131,7 @@ als CLAUDE.md und lädt sie beim Start — kein explizites Lesen nötig.
 
 If the agent needs project-specific skills, create them in:
 
-- `docs/superpowers/skills/<skill-name>.md` — project-level skill (committed to repo)
+- `docs/method/enactment/skills/<skill-name>.md` — project-level skill (committed to repo)
 - `~/.claude/skills/<skill-name>/` — user-level skill (richer format, local to machine)
 
 Use the `skill-creator` skill to create or refine skill files.
@@ -143,7 +143,7 @@ Use the `skill-creator` skill to create or refine skill files.
 Commit all changes together:
 
 ```
-git add agents/<name>/ CLAUDE.md docs/superpowers/skills/
+git add agents/<name>/ CLAUDE.md docs/method/enactment/skills/
 git commit -m "Add <name> agent: start script, knowledge file, domain entry"
 ```
 
