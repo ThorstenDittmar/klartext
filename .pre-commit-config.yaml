@@ -2,6 +2,9 @@
 # Install once after cloning: pre-commit install  (handled by setup.sh)
 # Run manually on all files: pre-commit run --all-files
 
+# Install both the pre-commit and commit-msg stages (the agent-provenance trailer is commit-msg).
+default_install_hook_types: [pre-commit, commit-msg]
+
 repos:
   # ---------------------------------------------------------------------------
   # Python: ruff (lint + format)
@@ -65,6 +68,17 @@ repos:
         language: system
         types_or: [ts, tsx]
         pass_filenames: false
+
+  # ---------------------------------------------------------------------------
+  # Agent provenance: the ADR-0014 `Agent: <slug>` commit trailer (commit-msg stage)
+  # ---------------------------------------------------------------------------
+  - repo: local
+    hooks:
+      - id: agent-trailer
+        name: agent provenance trailer (ADR-0014)
+        entry: api/.venv/bin/python scripts/agent_trailer.py
+        language: system
+        stages: [commit-msg]   # receives the commit-msg file; adds/validates the Agent trailer
 
   # ---------------------------------------------------------------------------
   # Architectural linting: semgrep (custom rules in .semgrep/rules/)

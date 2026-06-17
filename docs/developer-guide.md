@@ -290,6 +290,7 @@ GitHub Actions workflows run on every push and pull request:
 | `test.yml` | push to `main` / PR | Unit tests (no Supabase required) |
 | `classify-gate.yml` | PR | Requires a `rolling`/`breaking` label on Way-of-Working PRs (see below) |
 | `method-classification.yml` | PR | Enforces the method path-classification + card well-formedness gate (F0.3, see below) |
+| `agent-provenance.yml` | PR | Rejects any PR commit lacking a well-formed `Agent: <slug>` trailer (ADR-0014, see below) |
 | `deploy-docs.yml` | push to `main` (docs/** changed) | Builds and deploys MkDocs to GitHub Pages |
 
 > CI triggers on `push` are restricted to `main`; PRs are validated via the `pull_request`
@@ -329,6 +330,25 @@ The mechanical half of the F0 acceptance criterion ([ADR-0013](adr/0013-separati
 
 The card form is defined in `docs/method/library/_card-template.md` (SA-ratified). Semantic correctness
 (e.g. klartext evidence leaking into an L3 card) is **not** mechanically checkable and stays SA's review.
+
+### Agent provenance trailer (`agent-provenance.yml`, ADR-0014)
+
+Every commit records **which agent** authored it via a footer trailer, alongside `Co-Authored-By:`:
+
+```
+Agent: <slug>                     # slug = the agents/<name>/ directory name (the SSOT)
+Agent: <lead> (spawned <task>)    # spawn-aware: a lead that spawned a sub-agent
+Agent: human                      # explicit bypass for a genuine non-agent / manual commit
+```
+
+- **Local (commit-msg hook):** `scripts/agent_trailer.py` (wired in `.pre-commit-config.yaml` at the
+  `commit-msg` stage, installed by `pre-commit install` via `default_install_hook_types`) validates the
+  message and, when the committing agent is derivable from the worktree basename, **injects** the trailer.
+- **CI (`agent-provenance.yml`):** rejects any PR commit whose message lacks a well-formed trailer.
+
+The decision logic is unit-tested in `api/tests/infrastructure/test_agent_trailer.py`. *Note: on the
+shared-worktree dev machine `core.hooksPath` points all worktrees at the main checkout's `.git/hooks`;
+the commit-msg hook is installed there once — CI enforces it regardless of local hook state.*
 
 ---
 
