@@ -38,6 +38,24 @@ count_unread() {
     find "$dir" -maxdepth 1 -name '*.md' -type f | wc -l | tr -d ' '
 }
 
+# Warns (on stderr) when the current worktree is behind origin/main, so a recipient
+# converges BEFORE acting on a briefing that may reference fresh main state. This is
+# the sender-independent half of the freshness fix: it fires on every inbox read,
+# regardless of whether the sender remembered to flag it. Best-effort — silent when
+# not in a git repo; degrades to a soft note when origin can't be fetched (offline).
+freshness_warning() {
+    git rev-parse --show-toplevel >/dev/null 2>&1 || return 0
+    if ! git fetch --quiet origin 2>/dev/null; then
+        echo "⚠ inbox: konnte origin nicht fetchen — Aktualität ungeprüft. Vor dem Reagieren auf Briefings manuell 'klartext converge'." >&2
+        return 0
+    fi
+    local behind
+    behind="$(git rev-list --count HEAD..origin/main 2>/dev/null || echo 0)"
+    if [ "${behind:-0}" -gt 0 ]; then
+        echo "⚠ du bist ${behind} Commit(s) hinter origin/main — führe 'klartext converge' aus, BEVOR du auf Briefings reagierst (sonst bewertest du veralteten Stand)." >&2
+    fi
+}
+
 cmd="${1:-}"
 shift || usage
 
@@ -75,10 +93,12 @@ case "$cmd" in
         ;;
     unread)
         [ $# -eq 1 ] || usage
+        freshness_warning
         count_unread "$1"
         ;;
     read)
         [ $# -eq 1 ] || usage
+        freshness_warning
         slug="$1"; dir="$BASE/$slug"; archive="$dir/.read"
         if [ "$(count_unread "$slug")" -eq 0 ]; then
             echo "(no unread messages for $slug)"
