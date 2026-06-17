@@ -1725,6 +1725,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#agent-provenance-trailer-agent-provenanceyml-adr-0014" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent provenance trailer (agent-provenance.yml, ADR-0014)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2386,6 +2397,11 @@ to the same directory.</p>
 <td>Enforces the method path-classification + card well-formedness gate (F0.3, see below)</td>
 </tr>
 <tr>
+<td><code>agent-provenance.yml</code></td>
+<td>PR</td>
+<td>Rejects any PR commit lacking a well-formed <code>Agent: &lt;slug&gt;</code> trailer (ADR-0014, see below)</td>
+</tr>
+<tr>
 <td><code>deploy-docs.yml</code></td>
 <td>push to <code>main</code> (docs/** changed)</td>
 <td>Builds and deploys MkDocs to GitHub Pages</td>
@@ -2438,27 +2454,42 @@ without a new commit (it listens for <code>labeled</code>/<code>unlabeled</code>
 </ul>
 <p>The card form is defined in <code>docs/method/library/_card-template.md</code> (SA-ratified). Semantic correctness
 (e.g. klartext evidence leaking into an L3 card) is <strong>not</strong> mechanically checkable and stays SA's review.</p>
+<h3 id="agent-provenance-trailer-agent-provenanceyml-adr-0014">Agent provenance trailer (<code>agent-provenance.yml</code>, ADR-0014)<a class="headerlink" href="#agent-provenance-trailer-agent-provenanceyml-adr-0014" title="Permanent link">&para;</a></h3>
+<p>Every commit records <strong>which agent</strong> authored it via a footer trailer, alongside <code>Co-Authored-By:</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>Agent: &lt;slug&gt;                     # slug = the agents/&lt;name&gt;/ directory name (the SSOT)
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>Agent: &lt;lead&gt; (spawned &lt;task&gt;)    # spawn-aware: a lead that spawned a sub-agent
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>Agent: human                      # explicit bypass for a genuine non-agent / manual commit
+</code></pre></div>
+<ul>
+<li><strong>Local (commit-msg hook):</strong> <code>scripts/agent_trailer.py</code> (wired in <code>.pre-commit-config.yaml</code> at the
+  <code>commit-msg</code> stage, installed by <code>pre-commit install</code> via <code>default_install_hook_types</code>) validates the
+  message and, when the committing agent is derivable from the worktree basename, <strong>injects</strong> the trailer.</li>
+<li><strong>CI (<code>agent-provenance.yml</code>):</strong> rejects any PR commit whose message lacks a well-formed trailer.</li>
+</ul>
+<p>The decision logic is unit-tested in <code>api/tests/infrastructure/test_agent_trailer.py</code>. <em>Note: on the
+shared-worktree dev machine <code>core.hooksPath</code> points all worktrees at the main checkout's <code>.git/hooks</code>;
+the commit-msg hook is installed there once — CI enforces it regardless of local hook state.</em></p>
 <hr />
 <h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>klartext/
-<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>├── api/                   # Python 3.12 + FastAPI
-<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>│   ├── routers/           # HTTP routing only
-<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>│   ├── services/          # Business logic (OOP)
-<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>│   ├── repositories/      # Data access (Supabase adapters)
-<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>│   ├── models/            # Domain objects
-<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>│   ├── schemas/           # Pydantic request/response shapes
-<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>│   ├── exceptions/        # Exception hierarchy per layer
-<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>│   ├── providers/         # AI provider adapters (Claude)
-<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>│   ├── parsers/           # Input parsers (Markdown)
-<a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>│   ├── cli.py             # typer CLI
-<a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a>│   └── main.py            # FastAPI app entry point
-<a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a>├── frontend/              # React 18 + TypeScript + Vite
-<a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a>├── supabase/
-<a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a>│   ├── migrations/        # SQL migration files (source of truth)
-<a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a>│   └── config.toml        # Supabase project config
-<a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a>├── docs/                  # MkDocs Material — specification + developer docs
-<a id="__codelineno-11-18" name="__codelineno-11-18" href="#__codelineno-11-18"></a>├── setup.sh               # One-shot bootstrap script
-<a id="__codelineno-11-19" name="__codelineno-11-19" href="#__codelineno-11-19"></a>└── .github/workflows/     # CI/CD pipelines
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>klartext/
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>├── api/                   # Python 3.12 + FastAPI
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>│   ├── routers/           # HTTP routing only
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>│   ├── services/          # Business logic (OOP)
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>│   ├── repositories/      # Data access (Supabase adapters)
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>│   ├── models/            # Domain objects
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>│   ├── schemas/           # Pydantic request/response shapes
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>│   ├── exceptions/        # Exception hierarchy per layer
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>│   ├── providers/         # AI provider adapters (Claude)
+<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>│   ├── parsers/           # Input parsers (Markdown)
+<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>│   ├── cli.py             # typer CLI
+<a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a>│   └── main.py            # FastAPI app entry point
+<a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a>├── frontend/              # React 18 + TypeScript + Vite
+<a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a>├── supabase/
+<a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a>│   ├── migrations/        # SQL migration files (source of truth)
+<a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a>│   └── config.toml        # Supabase project config
+<a id="__codelineno-12-17" name="__codelineno-12-17" href="#__codelineno-12-17"></a>├── docs/                  # MkDocs Material — specification + developer docs
+<a id="__codelineno-12-18" name="__codelineno-12-18" href="#__codelineno-12-18"></a>├── setup.sh               # One-shot bootstrap script
+<a id="__codelineno-12-19" name="__codelineno-12-19" href="#__codelineno-12-19"></a>└── .github/workflows/     # CI/CD pipelines
 </code></pre></div>
 <p>See <a href="../CLAUDE.md"><code>CLAUDE.md</code></a> for the full coding standards.</p>
 
