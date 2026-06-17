@@ -98,6 +98,33 @@ Impact:    [Nur QA betroffen]
 
 QA hat Write-Access auf `api/tests/infrastructure/` — direkte Assertion-Ergänzungen ohne Briefing.
 
+## qa-review-Ausführung: fremde PRs & Sub-Agent-Ausfall
+
+qa-review ist QA-Urteilsvermögen, nicht an den Sub-Agenten-Dispatch gebunden. Zwei Fälle,
+die der qa-review-Skill (noch) nicht abdeckt — Technik aus dem F2-Gate-1-Review auf
+#158/#157 (2026-06-17):
+
+1. **529-Fallback (Sub-Agent hängt).** Hängt der qa-review-Sub-Agent-Dispatch in
+   Server-Überlast (529), den Review **inline** fahren statt zu warten — das Urteil ist
+   QA-eigen, nicht an den Sub-Agenten gebunden.
+
+2. **Fremd-PR-Review via Wegwerf-Worktree.** Einen PR, dessen Code auf dem eigenen
+   `agent/qa`-Branch noch nicht existiert (z.B. ein DevOps-Branch vor dem Merge), reviewt
+   man **nicht** gegen `git diff HEAD` — sonst läuft die Suite gegen den falschen Tree:
+   ```bash
+   git worktree add --detach origin/<branch>   # Tests dort laufen lassen
+   git worktree remove --force <pfad>           # danach: Hygiene (Anchor prüft das)
+   ```
+   Für reines Lesen reicht `git archive origin/<branch> <pfade> | tar -x -C /tmp/...`.
+
+3. **Gap-Test-Übergabe per cherry-pick.** `api/tests/infrastructure/` ist QA-Shared-Write,
+   aber der fremde PR-Branch gehört seinem Owner — **nicht** auf seinen Branch pushen.
+   Gap-Tests auf einem QA-Commit ablegen, den der Owner eincherry-pickt
+   (Beispiel: `b80c3ac` → `38bb74d` auf #158).
+
+> Dauerhafte Skill-Verankerung dieses Fallbacks ist als Improvement-Kandidat registriert
+> (`continuous-improvement.md` §3, *Identified*) — SoT ist die Repo-Skill-Kopie, via skill-sync.
+
 ## Contract-Test-Pattern
 
 Erkenntniss aus H01-422: `FakeNarrativeUnitService` in Router-Tests umgeht `Fragment.create()` komplett —
