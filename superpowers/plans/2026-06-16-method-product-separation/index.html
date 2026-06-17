@@ -1794,15 +1794,33 @@ and verify evidence are recorded <strong>here</strong>; OE countersigns the F3-e
 </ul>
 <h3 id="f3-steps-sequence-status">F3 steps (sequence) — status<a class="headerlink" href="#f3-steps-sequence-status" title="Permanent link">&para;</a></h3>
 <ul>
-<li>[ ] <strong>#3b</strong> skill-distribution isolation <em>(substrate-touching; superpowers-contract S1–S4 / state-isolation
-  boundary impact → clear with OE via user before hardening — OE owns contract impact)</em>.</li>
-<li>[ ] <strong>#1b</strong> filter-repo extraction along the L3 stems (<code>docs/method/library/</code>) — full history; squash snapshot
-  for the semAIt seed. Mechanical (F0 produced well-formed L3 objects); flag any path-classification surprise here.</li>
-<li>[ ] <strong>#2</strong> ADR-0014 provenance hook (commit-msg hook + CI check for the <code>Agent: &lt;slug&gt;</code> trailer) → status Accepted.</li>
+<li>[x] <strong>#3b</strong> skill-distribution isolation — <strong>DONE</strong> (#160 merged <code>58cb989</code>; all 12 skill executables →
+  <code>docs/method/enactment/skills/</code>, generic defs stay in L3 cards; SA all-12→L2 + OE S2/S3 + OE closing
+  countersign; the 5-stale-ref skill-body catch fixed in <code>439eaa5</code>; full sweep clean).</li>
+<li>[x] <strong>#1b</strong> semAIt seed — <strong>DONE</strong> (SA-ratified scope + mechanic; OE+user-confirmed location). It is a
+  <strong>COPY</strong> (State A: klartext retains <code>docs/method/library/</code> in full, nothing moved out) via a <strong>snapshot</strong>,
+  not filter-repo (ADR-0013 §History-separation sanctions snapshot for the one-time seed; <code>library/</code> had
+  12 commits, no history of value). Seed at <code>/Users/thormar/klartext-method-seed/</code> (plain 29-file tree +
+  single-commit <code>method-library.bundle</code> <code>f6865fc</code> + MANIFEST); verified: bundle reconstructs 29 files
+  byte-identical. Code stems deferred/never (klartext enactment, not definitions); Direction-C plugin
+  extraction is Phase-2. semAIt imports the artifact into its own repo (klartext↔semait isolation).</li>
+<li>[x] <strong>#2</strong> ADR-0014 provenance hook — <strong>DONE</strong> (#161 merged <code>8d47c46</code>). commit-msg hook (inject/validate)</li>
+<li><code>agent-provenance.yml</code> CI gate live; the gate caught + fixed its own merge-commit dogfood bug
+  (<code>--no-merges</code>). 21 tests (incl. qa-review gap tests); SA ratified (faithful to ADR-0014), OE confirmed
+  the agent-model. <em>ADR-0014 status <code>Proposed → Accepted</code> is SA's flip (rule owner).</em></li>
 </ul>
-<h3 id="f3-exit-oe-countersigned-via-user">F3 exit (OE-countersigned via user)<a class="headerlink" href="#f3-exit-oe-countersigned-via-user" title="Permanent link">&para;</a></h3>
-<p>Extraction verified · provenance live (#2) · <strong>substrate restored-and-verified checkpoint (OE-owned)</strong> · then
-delete the retained backup (secrets!) · semAIt seeds once from the post-cut state · agents wake + converge.</p>
+<h3 id="f3-exit-complete-oe-countersigned-2026-06-17">F3 exit — ✅ COMPLETE (OE-countersigned 2026-06-17)<a class="headerlink" href="#f3-exit-complete-oe-countersigned-2026-06-17" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Extraction verified (#1b) · provenance live (#2) · <strong>substrate restored-and-verified — OE countersigned</strong>
+  (independently: live C4 clean / 47 index entries / 0 orphan; retained backup byte-faithful manifest +
+  modes held; <code>pre-f3</code> tag stands).</li>
+<li><strong>Retained backup deleted</strong> (cleartext <code>.env</code> cleanup obligation discharged; <code>~/klartext-substrate-backups/</code>
+  removed, no leftover).</li>
+<li><strong>Inbox UNFREEZES</strong> — coordination returns to the steady-state long-lived-session + inbox model (§2).
+  Remaining steady-state restoration (not DevOps build work): semAIt seeds once from the artifact (semAIt's
+  team); the asleep product-domain agents wake + <code>converge</code> on their next session.</li>
+</ul>
+<p><strong>That closes F3 — and the whole F0 → F3 method/product separation.</strong></p>
 
 
 
