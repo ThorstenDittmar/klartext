@@ -113,8 +113,19 @@ This plan is **frozen** when: DevOps has verified §6/§7, OE and DevOps both si
   single-commit `method-library.bundle` `f6865fc` + MANIFEST); verified: bundle reconstructs 29 files
   byte-identical. Code stems deferred/never (klartext enactment, not definitions); Direction-C plugin
   extraction is Phase-2. semAIt imports the artifact into its own repo (klartext↔semait isolation).
-- [ ] **#2** ADR-0014 provenance hook (commit-msg hook + CI check for the `Agent: <slug>` trailer) → status Accepted.
+- [x] **#2** ADR-0014 provenance hook — **DONE** (#161 merged `8d47c46`). commit-msg hook (inject/validate)
+  + `agent-provenance.yml` CI gate live; the gate caught + fixed its own merge-commit dogfood bug
+  (`--no-merges`). 21 tests (incl. qa-review gap tests); SA ratified (faithful to ADR-0014), OE confirmed
+  the agent-model. *ADR-0014 status `Proposed → Accepted` is SA's flip (rule owner).*
 
-### F3 exit (OE-countersigned via user)
-Extraction verified · provenance live (#2) · **substrate restored-and-verified checkpoint (OE-owned)** · then
-delete the retained backup (secrets!) · semAIt seeds once from the post-cut state · agents wake + converge.
+### F3 exit — ✅ COMPLETE (OE-countersigned 2026-06-17)
+- Extraction verified (#1b) · provenance live (#2) · **substrate restored-and-verified — OE countersigned**
+  (independently: live C4 clean / 47 index entries / 0 orphan; retained backup byte-faithful manifest +
+  modes held; `pre-f3` tag stands).
+- **Retained backup deleted** (cleartext `.env` cleanup obligation discharged; `~/klartext-substrate-backups/`
+  removed, no leftover).
+- **Inbox UNFREEZES** — coordination returns to the steady-state long-lived-session + inbox model (§2).
+  Remaining steady-state restoration (not DevOps build work): semAIt seeds once from the artifact (semAIt's
+  team); the asleep product-domain agents wake + `converge` on their next session.
+
+**That closes F3 — and the whole F0 → F3 method/product separation.**
