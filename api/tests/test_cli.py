@@ -15,12 +15,14 @@ import typer
 
 from api.cli import (
     ConvergeAction,
+    LandedStatus,
     SkillsSyncAction,
     _converge_decision,
     _evaluate_checks,
     _evaluate_preconditions,
     _is_home_branch,
     _is_worktree_clean,
+    _landed_verdict,
     _parse_worktree_list,
     _sync_skills,
     _validate_merge_method,
@@ -519,3 +521,42 @@ def test_sync_skills_nonexistent_source_does_not_prune_managed_targets(tmp_path:
     assert "tdd" not in result
     assert managed.exists(), "a missing source must not prune already-installed managed skills"
     assert (managed / "SKILL.md").read_text() == "tdd body"
+
+
+# ---------------------------------------------------------------------------
+# "landed?" verdict: did a ref's work reach origin/main? Distinguishes SHA-
+# reachability from content-presence — the squash-merge trap (a squash gets a
+# NEW sha on main, so the branch commit is never reachable, yet its content is
+# fully present). Reasoning by `--contains` alone reports landed work as orphaned.
+# ---------------------------------------------------------------------------
+
+
+def test_landed_verdict_reports_sha_when_commit_reachable_from_main() -> None:
+    """Expects LANDED_BY_SHA when the ref is reachable from main (merge-commit / fast-forward)."""
+    assert _landed_verdict(sha_contained=True, changes_in_main=True) == LandedStatus.LANDED_BY_SHA
+
+
+def test_landed_verdict_reports_sha_even_when_main_moved_on() -> None:
+    """Expects LANDED_BY_SHA when the ref is reachable but main has advanced past it.
+
+    Reachability is the stronger statement: the ref's work is in main regardless of a non-empty
+    diff caused by main moving on afterwards.
+    """
+    assert _landed_verdict(sha_contained=True, changes_in_main=False) == LandedStatus.LANDED_BY_SHA
+
+
+def test_landed_verdict_reports_content_when_squash_merged_sha_absent() -> None:
+    """Expects LANDED_BY_CONTENT when the SHA is absent from main but the content is fully present.
+
+    The squash-merge trap: a squash-merged branch commit gets a new SHA on main, so it is never
+    reachable (sha_contained False), yet `git diff <ref> origin/main` is empty. This is the exact
+    false conclusion (f0fc0b6 read as orphaned, though landed via #120) this verdict guards against.
+    """
+    assert (
+        _landed_verdict(sha_contained=False, changes_in_main=True) == LandedStatus.LANDED_BY_CONTENT
+    )
+
+
+def test_landed_verdict_reports_not_landed_when_content_differs() -> None:
+    """Expects NOT_LANDED when the ref is neither reachable from nor content-subsumed by main."""
+    assert _landed_verdict(sha_contained=False, changes_in_main=False) == LandedStatus.NOT_LANDED
