@@ -106,10 +106,13 @@ This plan is **frozen** when: DevOps has verified §6/§7, OE and DevOps both si
 - [x] **#3b** skill-distribution isolation — **DONE** (#160 merged `58cb989`; all 12 skill executables →
   `docs/method/enactment/skills/`, generic defs stay in L3 cards; SA all-12→L2 + OE S2/S3 + OE closing
   countersign; the 5-stale-ref skill-body catch fixed in `439eaa5`; full sweep clean).
-- [ ] **#1b** filter-repo extraction along the L3 stems — **BLOCKED on OE cut call for the code stems.**
-  `docs/method/library/` is clean/ready; but `scripts/`, method `.github/workflows/`, hooks were never
-  per-object cut-classified (F0 did only `docs/method/`) and `api/cli.py`'s converge slice is not
-  path-separable. Concrete path-set proposal posted as a #159 comment — awaiting OE's seed-scope confirm.
+- [x] **#1b** semAIt seed — **DONE** (SA-ratified scope + mechanic; OE+user-confirmed location). It is a
+  **COPY** (State A: klartext retains `docs/method/library/` in full, nothing moved out) via a **snapshot**,
+  not filter-repo (ADR-0013 §History-separation sanctions snapshot for the one-time seed; `library/` had
+  12 commits, no history of value). Seed at `/Users/thormar/klartext-method-seed/` (plain 29-file tree +
+  single-commit `method-library.bundle` `f6865fc` + MANIFEST); verified: bundle reconstructs 29 files
+  byte-identical. Code stems deferred/never (klartext enactment, not definitions); Direction-C plugin
+  extraction is Phase-2. semAIt imports the artifact into its own repo (klartext↔semait isolation).
 - [ ] **#2** ADR-0014 provenance hook (commit-msg hook + CI check for the `Agent: <slug>` trailer) → status Accepted.
 
 ### F3 exit (OE-countersigned via user)
