@@ -1789,15 +1789,27 @@ Befund Audit O4 (2026-06-10): Dieser Abschnitt fehlte auf <code>main</code> — 
 </tr>
 <tr>
 <td>UX (+ QA-Kriterien)</td>
-<td><code>verify</code>-Skill-Drift nachziehen (<code>docs/method/enactment/skills/verify.md</code>) + L2-Karte synchronisieren: (a) 5-Screen-URLs veraltet ggü. App.tsx (<code>/reading</code> nicht gemountet; <code>/causal-model</code>+<code>/narrative</code> brauchen IDs; <code>NarrativeEditor</code>→<code>NarrativeDetail</code>); (b) Browser-MCP-Reihenfolge — Claude_Preview primär, Claude_in_Chrome Fallback (localhost-Sperre)</td>
+<td><code>verify</code>-Skill-Drift nachziehen (<code>docs/method/enactment/skills/verify.md</code>) + L2-Karte synchronisieren: (a) 5-Screen-URLs veraltet ggü. App.tsx (<code>/reading</code> nicht gemountet; <code>/causal-model</code>+<code>/narrative</code> brauchen IDs; <code>NarrativeEditor</code>→<code>NarrativeDetail</code>); (b) Browser-MCP-Reihenfolge — Claude_Preview primär, Claude_in_Chrome Fallback (localhost-Sperre) — <strong>tieferer Befund (2026-06-17): das ist nur das Symptom; <code>verify</code> ist eine QA×UX-Matrixzelle, kein UX-Solo → [[project-matrix-organisation]]</strong></td>
 <td>OE (F0.2-P-D, UX-geflaggt #150)</td>
 <td>2026-06-16</td>
 </tr>
 <tr>
 <td>DevOps</td>
-<td>Stale Agent-Spawn-Worktrees aufräumen: nach den F0.1/F0.2-Spawns liegen ~7 Worktrees unter <code>~/klartext/.claude/worktrees/agent-*</code> (Branches bereits gemerged+gelöscht auf origin) — <code>git worktree prune</code> / <code>remove</code></td>
+<td>Stale Agent-Spawn-Worktrees aufräumen: nach den F0.1/F0.2-Spawns liegen ~7 Worktrees unter <code>~/klartext/.claude/worktrees/agent-*</code> (Branches bereits gemerged+gelöscht auf origin) — <code>git worktree prune</code> / <code>remove</code>. <strong>2026-06-17: real 11; DevOps hat Entfernung angeboten, OE-„ja"</strong></td>
 <td>OE (F0.2-Anchor 2026-06-16)</td>
 <td>2026-06-16</td>
+</tr>
+<tr>
+<td>SA</td>
+<td>ADR-0014 Status <code>Proposed→Accepted</code> flippen (Hook+CI seit #161 live auf main) — dabei C5-Wording-Präzision: der Trailer ist das <strong>git-commit-Geschwister</strong> von C5, NICHT „generalises C5" (Memory-File-Provenance bleibt self-stamp, liegt außerhalb git)</td>
+<td>OE (F3-Anchor 2026-06-17)</td>
+<td>2026-06-17</td>
+</tr>
+<tr>
+<td>~~OE (Nachfolge-Session)~~</td>
+<td>~~Geparkte F3-Befunde per <code>rolling</code>-PR ins Improvement-Register (<code>continuous-improvement.md</code> §3, <em>Identified</em>): (1) <strong>Matrix-Org</strong>; (2) <strong>Klassifikations-Disqualifikator</strong>; (3) <strong>L3-Owner-Felder→Rollennamen</strong>; (4) <strong>Code-Stämme per-File cut-klassifizieren</strong>~~ — <strong>erledigt 2026-06-17 (dieser PR)</strong>: 5 Zeilen in §3 <em>Identified</em> (die 4 + <strong>qa-review-Skill-Gap</strong> aus QA-Anchor-Briefing) + QA-Technik „fremde PRs &amp; Sub-Agent-Ausfall" in <code>agents/qa/claude.md</code></td>
+<td>OE (F3-Anchor 2026-06-17)</td>
+<td>2026-06-17</td>
 </tr>
 </tbody>
 </table>
