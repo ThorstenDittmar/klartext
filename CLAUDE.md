@@ -412,6 +412,24 @@ Project-level baseline permissions (all agents): `.claude/settings.json`
 | Audit Expert | Verification procedures, claim extraction (`api/providers/`) |
 | Community Expert | User/community backend (`api/*/user*`) |
 
+### Test-helper ownership (fakes / mothers / fixtures)
+
+A domain-shaped test helper — a fake (`api/tests/fakes/`), an object mother (`api/tests/mothers/`),
+or a fixture that mirrors a domain interface — belongs to the **same cell** as the interface it
+mirrors: the **domain vertical authors and maintains** it (it must track the interface), while **QA
+owns the cross-cutting contract** (fake behaviour-parity, mother validity, coverage) and reviews.
+This is the same `… (koordiniert mit QA)` cell already used for `test_<domain>*.py`.
+
+At the provider seam (`api/providers/`, Audit-owned) the cell follows what the helper **does**, decided
+per case (OE-adjudicated): a *verification procedure* (e.g. `fake_consistency_checker`) → Audit
+(competency); a *suggestion/linking* provider (e.g. `fake_wirkgefuege_suggestion_provider`) → Causal
+Model (subject). The latter splits the **fake** (Causal Model) from the **real** provider in
+`api/providers/` (Audit) — tracked as part of the open `wirkgefuege_suggestion_service` cross-domain
+escalation; the real-provider ownership is **not** decided here.
+
+Per-domain assignments live in each agent's `Domain — Write Access` block. Enforcement is currently
+documentation/ritual; a mechanical path-ownership check (CODEOWNERS-style) is a separate DevOps item.
+
 ### Way of Working — our method (SEMAT/Essence)
 
 Our way of working is being forged as an explicit, evolving **method**, using **Essence/SEMAT** as the

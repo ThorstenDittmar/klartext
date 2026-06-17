@@ -14,6 +14,7 @@ api/routers/users*.py             Users Router
 api/schemas/user*.py              User Pydantic Schemas
 api/exceptions/user*.py           User Exception Classes
 api/tests/test_user*.py           User Tests (koordiniert mit QA)
+api/tests/fakes/fake_user_repository.py, fake_user_service.py   Community Fakes (koordiniert mit QA)
 ```
 
 ## Koordination

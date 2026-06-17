@@ -17,6 +17,8 @@ api/schemas/claim*.py             Claim Pydantic Schemas
 api/exceptions/claim*.py          Claim Exception Classes
 api/tests/test_claim*.py          Claim Tests (koordiniert mit QA)
 api/tests/test_claude_*.py        Provider Tests (koordiniert mit QA)
+api/tests/fakes/fake_claim_repository.py, fake_narrative_analysis_provider.py, fake_consistency_checker.py   Audit Fakes (koordiniert mit QA)
+api/tests/mothers/claim_mother.py   Claim Mother (koordiniert mit QA)
 ```
 
 ## Ports & Adapters Prinzip

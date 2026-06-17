@@ -16,6 +16,8 @@ api/routers/causal_model*.py      Causal Model Router
 api/schemas/causal_model*.py      Causal Model Pydantic Schemas
 api/exceptions/causal_model*.py   Causal Model Exception Classes
 api/tests/test_causal_model*.py   Causal Model Tests (koordiniert mit QA)
+api/tests/fakes/fake_causal_model_repository.py, fake_wirkgefuege_suggestion_provider.py   Causal-Model Fakes (koordiniert mit QA; wirkgefuege-Fake: realer Provider liegt bei Audit — Split, s. CLAUDE.md §Test-helper ownership)
+api/tests/mothers/causal_model_mother.py   Causal-Model Mother (koordiniert mit QA)
 ```
 
 ## Wirkgefüge Design-Prinzipien
