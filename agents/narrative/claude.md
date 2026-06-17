@@ -14,6 +14,8 @@ api/routers/narrative*.py         Narrative Router (covers narrative_units.py)
 api/schemas/narrative*.py         Narrative Pydantic Schemas
 api/exceptions/narrative*.py      Narrative Exception Classes
 api/tests/test_narrative*.py      Narrative Tests (koordiniert mit QA)
+api/tests/fakes/fake_narrative*.py   Narrative Fakes (koordiniert mit QA)
+api/tests/mothers/narrative_mother.py, narrative_unit_mother.py, scene_mother.py   Narrative/Scene Mothers (koordiniert mit QA)
 ```
 
 ## Domain — Read Only

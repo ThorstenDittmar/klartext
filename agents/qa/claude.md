@@ -7,8 +7,8 @@ Blind Spots aufdecken, Fake-Contracts vollständig halten, Semgrep-QA-Rules pfle
 ## Domain — Write Access
 
 ```
-api/tests/                        Alle Tests, Fakes, Fixtures
-api/tests/fakes/                  Shared Fake Repositories
+api/tests/                        Test-Standards + Review über ALLE Tests (Schichten, Coverage); Fach-Tests/-Helfer autoren die Verticals (koord. mit QA)
+api/tests/fakes/, api/tests/mothers/   Helfer-CONTRACT (Fake-Parity, Mother-Validität) + Review; per-Domain-Helfer gehören dem Interface-/Domänen-Eigner (s. CLAUDE.md §Test-helper ownership)
 api/tests/infrastructure/         Infrastructure Tests (shared mit DevOps)
 .semgrep/rules/qa/                QA Semgrep Rules (qa-*.yaml)
 scripts/check_test_coverage.py    Struktureller Coverage-Checker

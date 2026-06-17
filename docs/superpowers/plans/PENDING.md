@@ -37,7 +37,7 @@ Verwahr-Depot der Retro-Inputs: Hannibal-Memory `project_h01422_retro_inputs.md`
 | Agent | Aufgabe | Delegiert von | Datum |
 |---|---|---|---|
 | SA (via Hannibal-Task) | Semgrep-Regel Ports & Adapters: „Service importiert nie direkt einen Adapter" — dokumentiert, nicht enforced | Audit Expert | 2026-06-10 |
-| OE | Fake-Ownership in `api/tests/fakes/` klären (`fake_narrative_repository.py`: NE-Interface, kein Owner) | Audit Expert | 2026-06-10 |
+| ~~OE~~ | ~~Fake-Ownership in `api/tests/fakes/` klären (`fake_narrative_repository.py`: NE-Interface, kein Owner)~~ — **erledigt 2026-06-17 (dieser PR)**: Regel in CLAUDE.md §Test-helper ownership (Helfer → Interface-Eigner-Zelle, QA = Contract); fakes + mothers per-Domain in die Agenten-Write-Access eingetragen; wirkgefuege-Fake→CM mit Split-Notiz; mechanische Enforcement (CODEOWNERS-artig) = separates DevOps-Item | Audit Expert | 2026-06-10 |
 | ~~OE (Register)~~ | ~~Improvement-Kandidat: Semgrep-Gate gegen `# type: ignore`~~ — **erledigt 2026-06-10**, Register-Zeile in §3 (Owner SA+DevOps) | Causal Model Expert | 2026-06-10 |
 | ~~UX/UI~~ | ~~A1–A3 aus Hannibals Verwahr-Depot in `agents/ux/claude.md` eintragen~~ — **erledigt 2026-06-12** (PR #84, `f7cc1c7`, OE-Sign-off als Review-Kommentar, artefakt-verifiziert auf main); Depot-Freigabe an Hannibal erteilt | OE (pre-compact 2026-06-10) | 2026-06-10 |
 | ~~DevOps~~ | ~~Mini-Inkrement landen~~ — **erledigt 2026-06-10** (`c20a79d`, artefakt-verifiziert: Permissions in den Skripten) | OE (pre-compact 2026-06-10) | 2026-06-10 |
