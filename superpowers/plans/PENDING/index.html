@@ -1777,7 +1777,7 @@ Befund Audit O4 (2026-06-10): Dieser Abschnitt fehlte auf <code>main</code> — 
 </tr>
 <tr>
 <td>DevOps</td>
-<td>ADR-0014 Agent-Provenance: commit-msg-Hook + CI-Check für Trailer <code>Agent: &lt;slug&gt;</code> (spawn-aware) bauen — Briefing liegt in DevOps' Inbox, unblocked seit #129 auf main</td>
+<td>ADR-0014 Agent-Provenance-Hook <strong>GEBAUT ✅ (#161, F3-#2, gemergt 2026-06-17)</strong>: commit-msg-Hook (<code>scripts/agent_trailer.py</code>, inject+validate) + <code>agent-provenance.yml</code> CI-Gate, spawn-aware, <code>Agent: human</code>-Bypass. <strong>Rest-Folge (low-prio):</strong> commit-msg-Hook einmalig auf der shared-<code>core.hooksPath</code>-dev-Maschine installieren (<code>pre-commit install</code> verweigert bei gesetztem hooksPath) — CI enforced serverseitig ohnehin. ADR-0014-Status Proposed→Accepted = SA-Flip.</td>
 <td>System Architect</td>
 <td>2026-06-16</td>
 </tr>
