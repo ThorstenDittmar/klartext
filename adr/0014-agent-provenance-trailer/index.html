@@ -1659,8 +1659,8 @@
 
 
 <h1 id="0014-agent-provenance-one-identity-across-inbox-memory-and-git">0014 — Agent Provenance: One Identity Across Inbox, Memory, and Git<a class="headerlink" href="#0014-agent-provenance-one-identity-across-inbox-memory-and-git" title="Permanent link">&para;</a></h1>
-<p><strong>Status:</strong> Proposed — SA-owned. The enforcement half (commit-msg hook + CI check) touches the <strong>Infrastructure Perimeter</strong> and requires the DevOps Briefing below before it is built.
-<strong>Decided by:</strong> User (direction — provenance as C5 generalised to git, 2026-06-15).
+<p><strong>Status:</strong> Accepted — SA-owned. The enforcement half (commit-msg hook + CI check) is <strong>built and live on <code>main</code></strong> — #161: <code>scripts/agent_trailer.py</code> (inject + validate) and the <code>agent-provenance.yml</code> CI gate, spawn-aware, with an <code>Agent: human</code> bypass. Live proof: PR #163 (<code>766b7a0</code>) carried <code>Agent: oe</code> and passed the gate. Residual #162 (install the hook in each local clone) is low-priority — CI enforces server-side regardless.
+<strong>Decided by:</strong> User (direction — extend provenance to git as a <strong>sibling</strong> of memory's C5, 2026-06-15).
 <strong>Author / Sign-off:</strong> System Architect.
 <strong>Spun out of:</strong> <a href="../0013-separating-method-from-product/">ADR-0013</a> Decision (c) — separated because it is independently landable and crosses into the Infrastructure Perimeter.
 <strong>Relates to:</strong> the team-memory <strong>contract clause C5</strong> (last-edited-by provenance); ADR-0010 §2 (worktree-per-agent); ADR-0012 (<code>converge</code>, lead-and-spawn execution).</p>
@@ -1671,7 +1671,7 @@
 <li>Already rendered: the <strong>inbox</strong> <code>from</code>/<code>to</code> fields; <strong>team-memory</strong> last-edited-by (contract clause <strong>C5</strong>).</li>
 <li><strong>Missing: git.</strong> All agents commit under the single GitHub identity <code>ThorstenDittmar</code> (the reason GitHub rejects self-approval on our PRs — see the SA sign-off process). A commit therefore does not record <strong>which agent</strong> authored it. With lead-and-spawn execution (ADR-0012 / ADR-0013), where a lead spawns sub-agents that commit, the attribution gap widens.</li>
 </ul>
-<p>This is the same provenance need C5 already answers for memory, not yet answered for git.</p>
+<p>This is the same provenance <strong>need</strong> C5 answers for memory, for a different substrate. The trailer is git's <strong>sibling</strong> of C5 — a parallel mechanism, not a generalisation of it: C5 self-stamps memory files (which live outside git), the trailer stamps git commits. Two provenance mechanisms for two substrates; neither subsumes the other.</p>
 <h2 id="decision">Decision<a class="headerlink" href="#decision" title="Permanent link">&para;</a></h2>
 <p><strong>Record agent provenance as a git commit trailer.</strong></p>
 <ul>
@@ -1718,27 +1718,29 @@
 - Mechanical enforcement (hook + CI) — not a review-time convention that erodes under pressure.</p>
 <p><strong>Negative / Risks</strong>
 - A new commit-msg hook is friction if it rejects commits; it must fail with a clear, copy-pasteable fix and a documented bypass for genuine non-agent commits.
-- Until the hook lands, the trailer is a manual convention (ritual-level) and will be applied unevenly.</p>
+- Until the hook lands, the trailer is a manual convention (ritual-level) and applied unevenly. <strong>Mitigated</strong> — the hook + CI gate landed in #161; the trailer is now mechanically enforced.</p>
 <h2 id="devops-briefing">DevOps Briefing<a class="headerlink" href="#devops-briefing" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Need:      A commit-msg hook + CI check enforcing the `Agent: &lt;slug&gt;` commit trailer
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>           (spawn-aware: `Agent: &lt;lead&gt; (spawned &lt;task&gt;)`), slug = agents/&lt;name&gt;/ dir name.
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>Why:       Close the git attribution gap — git is the one substrate where the single
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>           GitHub identity (ThorstenDittmar) hides which agent authored a commit.
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>           Generalises team-memory contract clause C5 to git (ADR-0014).
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>Domain:    Config / CI / Hooks (Infrastructure Perimeter: .pre-commit-config.yaml or a
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>           commit-msg hook, .github/workflows/, possibly api/cli.py for a helper).
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>Approach:  (suggestion) commit-msg hook injects/validates the trailer from the worktree&#39;s
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>           agent slug; CI rejects a method/agent commit without a well-formed trailer;
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>           define the non-agent bypass and the spawn-aware form.
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>Impact:    All agents — every commit gains the trailer; CI gate applies to method/agent paths.
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>           Git&#39;s commit-trailer sibling of team-memory contract clause C5 — a parallel
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>           provenance mechanism for a different substrate, not a generalisation (ADR-0014).
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>Domain:    Config / CI / Hooks (Infrastructure Perimeter: .pre-commit-config.yaml or a
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>           commit-msg hook, .github/workflows/, possibly api/cli.py for a helper).
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>Approach:  (suggestion) commit-msg hook injects/validates the trailer from the worktree&#39;s
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>           agent slug; CI rejects a method/agent commit without a well-formed trailer;
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>           define the non-agent bypass and the spawn-aware form.
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>Impact:    All agents — every commit gains the trailer; CI gate applies to method/agent paths.
 </code></pre></div>
 <p>SA defines the rule (this ADR); DevOps owns the mechanism and wires the hook + CI. Neither acts alone — the rule is documentation until DevOps enforces it.</p>
-<h2 id="open-questions">Open questions<a class="headerlink" href="#open-questions" title="Permanent link">&para;</a></h2>
+<h2 id="open-questions-resolved-by-the-enforcement-build-161">Open questions — resolved by the enforcement build (#161)<a class="headerlink" href="#open-questions-resolved-by-the-enforcement-build-161" title="Permanent link">&para;</a></h2>
 <ol>
-<li>Exact scope of the CI gate — all commits, or only method/agent-path commits (consistent with the ADR-0013 path stems)?</li>
-<li>The non-agent bypass form (e.g. a human/manual commit) — explicit marker vs allowlist.</li>
-<li>Whether the helper lives in <code>api/cli.py</code> (<code>klartext commit</code> wrapper) or purely in the hook — DevOps to decide at build time.</li>
+<li>~~Exact scope of the CI gate — all commits, or only method/agent-path commits?~~ → <strong>All commits.</strong> <code>agent-provenance.yml</code> validates every commit on the branch, with an explicit <code>Agent: human</code> bypass for genuine non-agent commits — not a path-restricted gate.</li>
+<li>~~The non-agent bypass form — explicit marker vs allowlist.~~ → <strong>Explicit marker:</strong> <code>Agent: human</code> (no allowlist).</li>
+<li>~~Helper in <code>api/cli.py</code> (<code>klartext commit</code> wrapper) or purely in the hook?~~ → <strong>Purely in the hook</strong> — the logic lives in <code>scripts/agent_trailer.py</code>; no CLI wrapper.</li>
 </ol>
+<p><strong>Known limitation (parked, 2026-06-17):</strong> the trailer stamps the <em>agent</em>, not the <em>generation</em> — a predecessor and a successor of the same role both read <code>Agent: &lt;slug&gt;</code>. Surfaced when #163 was squashed (two <code>Agent: oe</code> stamps collapsed to one). Tracked in team-memory <code>project_adr0014_generation_provenance</code>; currently judged unimportant.</p>
 
 
 
