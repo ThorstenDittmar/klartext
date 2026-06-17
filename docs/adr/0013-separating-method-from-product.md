@@ -47,7 +47,7 @@ The 2↔3 cut runs **through** each practice card (definition + klartext evidenc
 
 ### (c) Agent-Provenance trailer — recorded direction; spun out to ADR-0014
 
-**One identity:** the SSOT is the `agents/<name>/` directory name; `team.yaml` is metadata only. Rendered across substrates: inbox `from`/`to`; team-memory last-edited-by (= contract clause **C5**); a **git commit trailer `Agent: <slug>`** (commit-msg hook + CI check; spawn-aware `Agent: <lead> (spawned <task>)`). This generalises C5 to git. **Not ratified here** — it is separable, touches the **Infrastructure Perimeter** (commit-msg hook, CI), and needs a DevOps Briefing. It ships as **[ADR-0014](0014-agent-provenance-trailer.md)** (SA-owned + DevOps Briefing). Per-agent real GitHub identities are deferred (confirmed).
+**One identity:** the SSOT is the `agents/<name>/` directory name; `team.yaml` is metadata only. Rendered across substrates: inbox `from`/`to`; team-memory last-edited-by (= contract clause **C5**); a **git commit trailer `Agent: <slug>`** (commit-msg hook + CI check; spawn-aware `Agent: <lead> (spawned <task>)`). This is git's **sibling** of C5 — a parallel provenance mechanism for a different substrate, not a generalisation of it. **Not ratified here** — it is separable, touches the **Infrastructure Perimeter** (commit-msg hook, CI), and needs a DevOps Briefing. It ships as **[ADR-0014](0014-agent-provenance-trailer.md)** (SA-owned + DevOps Briefing). Per-agent real GitHub identities are deferred (confirmed).
 
 ## Rejected / deferred alternatives
 
