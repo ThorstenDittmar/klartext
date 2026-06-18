@@ -18,6 +18,18 @@
 
 - **Triggers vs. hosts (clarified 2026-06-10):** **Hannibal** (coordinator — *Coordinate Activity*) triggers;
   the **Method Keeper (OE) hosts**. Precedent: `qa-retro` is led by its practice owner (QA).
+- **Cadence (hybrid, decided 2026-06-18):** the retro fires **event-based** (work-package end / milestone —
+  Hannibal triggers) **and** on a **standing backstop** so it can never go stale — a WoW-retro runs **at
+  minimum at every milestone / team-refresh**, even if no work-package closed. This makes the Way-of-Working
+  alpha's *In Use* box **"Regularly inspected"** true (the soft box today). The exact interval is **tuned in
+  use** (the alpha's *Working Well* state is literally "continually tuned"), not fixed rigidly now. Rationale:
+  our rhythm is work-package/session-based, not calendar-based — a pure time cadence would mismatch it, a pure
+  event trigger leaves "regularly" unsatisfied in quiet phases.
+- **Health grid (what the retro walks):** the retro inspects the way of working against the **Way-of-Working
+  alpha state checklist** (`../../library/alpha-states.md` § Way of Working) — the explicit measure of "is our
+  way of working healthy?" ("checklists, not vibes"). Standing 2026-06-18: **In Use**, reaching toward *In
+  Place*; first open boxes = **"Non-negotiable practices identified"** (*Foundation*, 5/6, OE) and **"Regularly
+  inspected"** (closed by the cadence above).
 - **Root-cause mapping** maps findings to **RC1–RC6** (`../continuous-improvement.md` Phase 1).
 - **Element sweep** reconciles against `../method.md` (RC4 medicine applied to the method itself).
 - **Homes:** Improvement Register → `../continuous-improvement.md` §3; learning entries →
