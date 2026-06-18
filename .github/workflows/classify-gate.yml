@@ -10,6 +10,11 @@ name: Classification Gate
 # can be a required check without the "skipped required check blocks merge forever" footgun.
 # The script decides applicability (non-WoW PRs pass instantly). `labeled`/`unlabeled` let a
 # label added after the fact turn the check green without a new commit.
+#
+# Labels are read LIVE at job runtime (`gh pr view --json labels`), not from the event payload.
+# The `opened` payload predates `gh pr create --label …` (race → spurious red), and a
+# `gh run rerun` would replay that stale snapshot and overwrite a green labeled-run with red.
+# A live read makes every run — opened, labeled, rerun — idempotent w.r.t. the current labels.
 
 on:
   pull_request:
@@ -30,11 +35,12 @@ jobs:
       - name: Run classification gate
         env:
           GH_TOKEN: ${{ github.token }}
-          # JSON array of the PR's label names; scripts/classify_gate.py parses JSON or
-          # newline/comma-separated input.
-          LABELS: ${{ toJson(github.event.pull_request.labels.*.name) }}
+          PR: ${{ github.event.pull_request.number }}
         run: |
-          changed_paths="$(gh pr diff "${{ github.event.pull_request.number }}" --name-only)"
+          # Live label read (see header): a JSON array of the PR's current label names, which
+          # scripts/classify_gate.py parses. Not the event payload — that races the label attach.
+          labels="$(gh pr view "$PR" --json labels --jq '[.labels[].name]')"
+          changed_paths="$(gh pr diff "$PR" --name-only)"
           python3 scripts/classify_gate.py \
             --changed-paths "$changed_paths" \
-            --labels "$LABELS"
+            --labels "$labels"
