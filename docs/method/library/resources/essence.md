@@ -24,7 +24,7 @@ baseline travels *with* the method. But without a version pin its divergence —
 importantly for cross-project transfer) against a consumer's *adapted* copy — is not derivable. **This card is
 that pin.**
 
-## The reference rule — referenced, never vendored
+## The reference rule — referenced, never vendored, never extracted
 
 Same L3 Resource contract as superpowers (`_card-template.md`, Type-specific notes):
 
@@ -34,7 +34,8 @@ Same L3 Resource contract as superpowers (`_card-template.md`, Type-specific not
 - **A consumer adopts the Kernel themselves** — the dependency is satisfied in the consumer's *understanding*
   of the same standard, not by claiming ownership of the OMG text. When the L3 Library travels to another
   endeavour, **this card and our rendition travel** (normal L3 objects); the normative OMG spec does not — the
-  consumer references the same standard at the same pinned baseline.
+  consumer references the same standard at the same pinned baseline (the L3-travels-but-the-material-does-not
+  rule: SA ratification, PR #137).
 
 ## Provenance & version binding
 
@@ -42,13 +43,13 @@ Same L3 Resource contract as superpowers (`_card-template.md`, Type-specific not
 |---|---|
 | **Standard** | Essence — Kernel and Language for Software Engineering Methods (OMG) |
 | **Baseline pin** | **v1.2** — OMG document **formal/18-10-02**, adopted **July 2018** |
-| **Upstream status** | v1.2 = latest **formal**; **v2.0** is *beta 2* (not formal); **v1.3 RTF** revision in progress |
+| **Upstream status** | v1.2 = latest **formal**; **v2.0 beta 2** (March 2026) is the current in-process revision — *informational, not formal* (verified against `omg.org/spec/Essence/`; no v1.3 is listed) |
 | **Spec home** | `https://www.omg.org/spec/Essence/1.2/` |
 | **Our rendition** | `semat-definition.md` (self-contained summary, rendered 2026-06) + `alpha-states.md` (the kernel state checklists) |
 | **Our extensions** | klartext Practices/Patterns + tracked Work Products — additions *on top of* the Kernel, not changes to it |
 
 The pin is what an **L2 Dependency-Contract instance** (`../../enactment/contracts/essence.md`, to follow)
-checks against: an upstream move (v2.0 going formal, or v1.3) is a **contract concern** — re-check our
+checks against: an upstream move (e.g. v2.0 going formal) is a **contract concern** — re-check our
 rendition against the new edition — **not a silent drift** (RC4).
 
 ## What depends on it

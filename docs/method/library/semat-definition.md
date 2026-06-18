@@ -156,7 +156,7 @@ with its checklist. Cards make the method tangible and checkable rather than a t
 
 *Source / baseline pin: our self-contained summary of the **OMG Essence specification v1.2** (*Essence —
 Kernel and Language for Software Engineering Methods*, OMG document **formal/18-10-02**, adopted **July 2018**
-— the latest **formal** version; v2.0 is beta 2, v1.3 RTF in progress). Rendered 2026-06 for klartext; kept
+— the latest **formal** version; v2.0 beta 2, March 2026, is informational/not formal). Rendered 2026-06 for klartext; kept
 self-contained on purpose, so we stay independent of the external site (RC4). Our additions on top of the
 Kernel (our Practices/Patterns, our tracked Work Products) are **extensions, not changes to the standard**.
 Declared + version-bound as a referenced Resource in [`resources/essence.md`](resources/essence.md) — an
