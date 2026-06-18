@@ -8,7 +8,9 @@ Plans that are next in line. Tests may already be written (RED).
 
 **Work-Alpha: CLOSED** (Retro 2, 2026-06-10). Record:
 `docs/method/enactment/learnings/2026-06-10-h01-422-retrospective.md`.
-*Foundation Established* danach 5/6 — letzte Box („non-negotiables per practice") bei OE.
+*Foundation Established* **REACHED 6/6 (2026-06-10)** — the last box (non-negotiables per practice) was closed
+the same day via the NN flags in `method.md`; see `continuous-improvement.md` (🏁 Foundation Established REACHED).
+*(This line read "5/6 — last box at OE" until 2026-06-19 — stale; corrected.)*
 
 Erster realer Lauf der Methode am H01-422-Wund („+ Absatz hinzufügen" → 422 → kein Tippen möglich).
 Alle Schritte mit `task-readiness`-Gate dispatcht; Sign-off an der Naht VOR den Builder-Dispatches.
