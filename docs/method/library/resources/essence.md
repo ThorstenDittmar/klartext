@@ -48,7 +48,7 @@ Same L3 Resource contract as superpowers (`_card-template.md`, Type-specific not
 | **Our rendition** | `semat-definition.md` (self-contained summary, rendered 2026-06) + `alpha-states.md` (the kernel state checklists) |
 | **Our extensions** | klartext Practices/Patterns + tracked Work Products — additions *on top of* the Kernel, not changes to it |
 
-The pin is what an **L2 Dependency-Contract instance** (`../../enactment/contracts/essence.md`, to follow)
+The pin is what the **L2 Dependency-Contract instance** ([`../../enactment/contracts/essence.md`](../../enactment/contracts/essence.md))
 checks against: an upstream move (e.g. v2.0 going formal) is a **contract concern** — re-check our
 rendition against the new edition — **not a silent drift** (RC4).
 
@@ -63,5 +63,5 @@ practice/pattern card that names an Alpha or a Kernel element.
 - [`../semat-definition.md`](../semat-definition.md) — our self-contained rendition (carries the inline baseline pin).
 - [`superpowers.md`](superpowers.md) — the sibling referenced-never-vendored Resource (same contract).
 - [`../_card-template.md`](../_card-template.md) — the Resource-card type note + the reference rule.
-- L2 contract instance: `../../enactment/contracts/essence.md` (to follow) — the invariants our way of working relies on *from* the Kernel.
+- L2 contract instance: [`../../enactment/contracts/essence.md`](../../enactment/contracts/essence.md) — the invariants our way of working relies on *from* the Kernel.
 - [ADR-0013](../../adr/0013-separating-method-from-product.md) — method/product separation (why a referenced Resource is declared, never extracted into the product).
