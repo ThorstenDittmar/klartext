@@ -430,6 +430,25 @@ escalation; the real-provider ownership is **not** decided here.
 Per-domain assignments live in each agent's `Domain — Write Access` block. Enforcement is currently
 documentation/ritual; a mechanical path-ownership check (CODEOWNERS-style) is a separate DevOps item.
 
+### OE structural changes → SA peer-review (decided + ratified 2026-06-18)
+
+OE's structural changes get a four-eyes peer-review from **SA** before landing — the structural
+counterpart to QA reviewing DevOps infra-tests. **SA is first reviewer; the user remains decider /
+ratifier.** Reciprocal with the existing path where OE gates SA's ratified ADRs.
+
+**Triggers SA review — exactly these.** An OE change that
+**(a)** alters the role table / domain boundaries in `CLAUDE.md § Agent Roles`,
+**(b)** shifts write-access / ownership between agents, or
+**(c)** changes the matrix / collaboration model itself.
+Routine method-doc edits do **not** trigger it — those are covered by the mechanical method gates
+(`method-classification`, `classify-gate`) and the WoW-retrospective.
+
+**Mechanism.** SA signs off as a **persistent GitHub review comment** on the PR (never chat-only — RC1).
+SA = first reviewer, the user = decider / ratifier.
+
+Part of the OE-self-assurance model (mechanical method-linter · WoW-alpha state checklist ·
+cadence-retrospective · SA structural peer).
+
 ### Way of Working — our method (SEMAT/Essence)
 
 Our way of working is being forged as an explicit, evolving **method**, using **Essence/SEMAT** as the
