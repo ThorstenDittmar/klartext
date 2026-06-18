@@ -240,3 +240,39 @@ def test_parse_list_reads_mixed_commas_and_newlines() -> None:
 def test_parse_list_drops_empty_strings_in_json_array() -> None:
     """Expects empty strings inside a JSON array to be dropped (GitHub can emit blanks)."""
     assert _gate._parse_list('["rolling", "", "breaking"]') == ["rolling", "breaking"]
+
+
+def test_parse_list_reads_empty_json_array_as_no_items() -> None:
+    """Expects an empty JSON array to parse to no items.
+
+    This is exactly what the workflow's live `gh pr view --json labels --jq '[.labels[].name]'`
+    emits for a label-less PR — the gate must read it as "no label present", not choke on it.
+    """
+    assert _gate._parse_list("[]") == []
+
+
+def test_parse_list_reads_whitespace_wrapped_empty_json_array_as_no_items() -> None:
+    """Expects a `[]` with surrounding whitespace / a trailing newline to still parse to no items.
+
+    The workflow captures the live labels via shell command substitution
+    (`labels="$(gh pr view ... --jq '[.labels[].name]')"`), which can carry a trailing newline.
+    `_parse_list` strips before the JSON branch, so a surrounding-space or trailing-newline `[]`
+    must read as "no label present" — exactly the label-less PR shape the live-read fix relies on.
+    """
+    assert _gate._parse_list(" [] ") == []
+    assert _gate._parse_list("[]\n") == []
+
+
+def test_evaluate_trigger_with_empty_label_set_fails_with_guidance() -> None:
+    """Pins the race red-path: a WoW surface with a truly empty label set FAILs with guidance.
+
+    This is the exact state the live-read fix protects: when the event-payload snapshot raced the
+    label attach, the gate saw zero labels on a WoW PR. The verdict must be FAIL and the message
+    must tell the author what to do (add exactly one of rolling | breaking) and name the surface —
+    not a bare/generic failure.
+    """
+    result = _gate.evaluate(["docs/method/library/practices/tdd.md"], set())
+    assert result.passed is False
+    assert "no classification label" in result.message.lower()
+    assert "rolling" in result.message and "breaking" in result.message
+    assert "docs/method/library/practices/tdd.md" in result.message
