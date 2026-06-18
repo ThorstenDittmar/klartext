@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/method/library/resources/essence/">
+        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/method/enactment/contracts/essence/">
       
       
       
@@ -23,7 +23,7 @@
     
     
       
-        <title>Essence (OMG Kernel & Language) - klartext.jetzt – Spezifikation</title>
+        <title>Dependency Contract (instance): Essence (OMG Kernel & Language) - klartext.jetzt – Spezifikation</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#essence-omg-kernel-language" class="md-skip">
+        <a href="#dependency-contract-instance-essence-omg-kernel-language" class="md-skip">
           Zum Inhalt
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Essence (OMG Kernel &amp; Language)
+              Dependency Contract (instance): Essence (OMG Kernel &amp; Language)
             
           </span>
         </div>
@@ -1650,7 +1650,7 @@
 
 
   
-    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/method/library/resources/essence.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/method/enactment/contracts/essence.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1658,90 +1658,134 @@
   
 
 
-<h1 id="essence-omg-kernel-language">Essence (OMG Kernel &amp; Language)<a class="headerlink" href="#essence-omg-kernel-language" title="Permanent link">&para;</a></h1>
+<h1 id="dependency-contract-instance-essence-omg-kernel-language">Dependency Contract (instance): Essence (OMG Kernel &amp; Language)<a class="headerlink" href="#dependency-contract-instance-essence-omg-kernel-language" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Essence type:</strong> Resource
-<strong>Advances Alpha:</strong> — (a Resource is referenced material, not a Practice — it advances no Alpha on its own; the practices built on the Kernel do)
-<strong>Work Products:</strong> none (a Resource produces no Work Product — it is consumed, not authored, by us)
-<strong>Activity / Activity Space:</strong> — (not an Activity; it is the meta-language the method is forged in)
-<strong>External dependencies (referenced Resources):</strong> none — <strong>this card <em>is</em> the external thing</strong>; it declares the dependency rather than depending further
-<strong>Enforcement:</strong> convention (the version pin is a convention; the practices built on the Kernel carry their own enforcement)
-<strong>NN:</strong> —
-<strong>Status:</strong> living  ·  <strong>Owner:</strong> OE (the meta-language baseline + the reference rule)
-<strong>Enacted as:</strong> our self-contained rendition in <a href="../../semat-definition/"><code>../semat-definition.md</code></a> + the kernel state checklists in <a href="../../alpha-states/"><code>../alpha-states.md</code></a></p>
+<p><strong>What this is.</strong> The klartext-specific <strong>Dependency Contract</strong> for the <strong>Essence</strong> meta-language — the
+concrete clauses E1–E4 below. For <em>what a Dependency Contract is</em> (when to forge one, the clause /
+blast-radius / falsifiable-check structure, the relation to Environment Knowledge's dependency chain), see
+the L3 element card: <a href="../../../library/dependency-contract/"><code>../../library/dependency-contract.md</code></a>.
+<strong>The dependency.</strong> The <strong>OMG Essence specification</strong>, pinned baseline <strong>v1.2</strong> (<code>formal/18-10-02</code>, July 2018).
+For provenance, the version pin, and the <em>referenced-never-vendored-never-extracted</em> rule see the L3 Resource
+card: <a href="../../../library/resources/essence/"><code>../../library/resources/essence.md</code></a>.
+<strong>Why a contract here.</strong> This is a <strong>seam</strong> like the superpowers one, but with a twist: there is no <em>install</em>
+to resolve — Essence is <strong>rendered</strong>, not installed. We <strong>own</strong> a self-contained summary
+(<code>../../library/semat-definition.md</code> + <code>alpha-states.md</code>) of a standard we <strong>do not own</strong>. If our rendition
+silently drifts from the pinned baseline — by reinterpretation, by mixing in v2.0-beta concepts, or by an
+upstream move we never notice — then the <em>entire</em> L3 Library that builds on the Kernel vocabulary rests on an
+unstated baseline, and cross-project transfer (the OE hub) can no longer reconcile our rendition with a
+consumer's adapted copy. The contract turns that silent drift into a caught failure.
+<strong>Language.</strong> English — documentation-language rule.</p>
+<p><strong>Status:</strong> draft v1 (2026-06-18) · <strong>Owner:</strong> OE (contract form + clauses + the rendition); SA (L3
+well-formedness of the rendition) · <strong>Advances Alpha:</strong> Way of Working</p>
 </blockquote>
-<h2 id="purpose">Purpose<a class="headerlink" href="#purpose" title="Permanent link">&para;</a></h2>
-<p><strong>Essence</strong> is the OMG standard our entire way of working is forged in — the <strong>Kernel</strong> (the seven Alphas,
-the activity spaces, the competencies) and the <strong>Language</strong> for describing Practices and composing them into
-a Method. It is the same <em>class</em> of object as <a href="../superpowers/"><code>superpowers.md</code></a>: material we <strong>reference but
-do not own and do not produce</strong>. We adopt it <strong>as-is and only extend it</strong> (our own Practices/Patterns on top)
-— we never modify the standard.</p>
-<p>This card exists so the dependency is <strong>declared and version-bound, not silently assumed</strong>. Unlike a live
-fetch, our rendition is deliberately <strong>self-contained</strong> (<code>semat-definition.md</code>, RC4 medicine) — so the
-baseline travels <em>with</em> the method. But without a version pin its divergence — against upstream OMG, and (more
-importantly for cross-project transfer) against a consumer's <em>adapted</em> copy — is not derivable. <strong>This card is
-that pin.</strong></p>
-<h2 id="the-reference-rule-referenced-never-vendored-never-extracted">The reference rule — referenced, never vendored, never extracted<a class="headerlink" href="#the-reference-rule-referenced-never-vendored-never-extracted" title="Permanent link">&para;</a></h2>
-<p>Same L3 Resource contract as superpowers (<code>_card-template.md</code>, Type-specific notes):</p>
-<ul>
-<li><strong>Referenced</strong> — our cards build on the Kernel's vocabulary (Alphas, states, Practices); <code>semat-definition.md</code>
-  is a <em>working summary rendition</em>, not a copy of the normative OMG text.</li>
-<li><strong>Never vendored</strong> — the normative spec is not committed into the repo; we hold our rendition + this pointer.</li>
-<li><strong>A consumer adopts the Kernel themselves</strong> — the dependency is satisfied in the consumer's <em>understanding</em>
-  of the same standard, not by claiming ownership of the OMG text. When the L3 Library travels to another
-  endeavour, <strong>this card and our rendition travel</strong> (normal L3 objects); the normative OMG spec does not — the
-  consumer references the same standard at the same pinned baseline (the L3-travels-but-the-material-does-not
-  rule: SA ratification, PR #137).</li>
-</ul>
-<h2 id="provenance-version-binding">Provenance &amp; version binding<a class="headerlink" href="#provenance-version-binding" title="Permanent link">&para;</a></h2>
+<h2 id="the-seam-three-parts">The seam — three parts<a class="headerlink" href="#the-seam-three-parts" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th>Field</th>
-<th>Value</th>
+<th>Face</th>
+<th>What</th>
+<th>Modeled as</th>
+<th>Owner</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Standard</strong></td>
-<td>Essence — Kernel and Language for Software Engineering Methods (OMG)</td>
+<td><strong>Uncontrolled</strong> (external)</td>
+<td>the OMG Essence standard itself — its Kernel (Alphas, areas, competencies), its Language, the editions OMG publishes (v1.2 formal; v2.0 beta)</td>
+<td>the <strong>Resource card</strong> (<code>../../library/resources/essence.md</code>) + the version pin; an upstream change is observed, not authored by us</td>
+<td>OMG (content)</td>
 </tr>
 <tr>
-<td><strong>Baseline pin</strong></td>
-<td><strong>v1.2</strong> — OMG document <strong>formal/18-10-02</strong>, adopted <strong>July 2018</strong></td>
+<td><strong>Controlled</strong> (our artifact)</td>
+<td>our <strong>self-contained rendition</strong> (<code>semat-definition.md</code> summary + <code>alpha-states.md</code> state checklists) <strong>and</strong> our extensions (klartext Practices/Patterns + tracked Work Products) on top of the Kernel</td>
+<td>our own L3 files + the practice/pattern cards</td>
+<td>OE</td>
 </tr>
 <tr>
-<td><strong>Upstream status</strong></td>
-<td>v1.2 = latest <strong>formal</strong>; <strong>v2.0 beta 2</strong> (March 2026) is the current in-process revision — <em>informational, not formal</em> (verified against <code>omg.org/spec/Essence/</code>; no v1.3 is listed)</td>
-</tr>
-<tr>
-<td><strong>Spec home</strong></td>
-<td><code>https://www.omg.org/spec/Essence/1.2/</code></td>
-</tr>
-<tr>
-<td><strong>Our rendition</strong></td>
-<td><code>semat-definition.md</code> (self-contained summary, rendered 2026-06) + <code>alpha-states.md</code> (the kernel state checklists)</td>
-</tr>
-<tr>
-<td><strong>Our extensions</strong></td>
-<td>klartext Practices/Patterns + tracked Work Products — additions <em>on top of</em> the Kernel, not changes to it</td>
+<td><strong>The seam</strong></td>
+<td>the invariants below — <em>whichever</em> side provides them</td>
+<td><strong>this Dependency Contract</strong></td>
+<td>OE</td>
 </tr>
 </tbody>
 </table>
-<p>The pin is what the <strong>L2 Dependency-Contract instance</strong> (<a href="../../../enactment/contracts/essence/"><code>../../enactment/contracts/essence.md</code></a>)
-checks against: an upstream move (e.g. v2.0 going formal) is a <strong>contract concern</strong> — re-check our
-rendition against the new edition — <strong>not a silent drift</strong> (RC4).</p>
-<h2 id="what-depends-on-it">What depends on it<a class="headerlink" href="#what-depends-on-it" title="Permanent link">&para;</a></h2>
-<p>Everything. The Kernel / Alphas / states / Practices / Methods vocabulary underpins the whole L3 Library and
-our way of working — directly <code>semat-definition.md</code>, <code>alpha-states.md</code>, <code>semat-glossary.md</code>, and every
-practice/pattern card that names an Alpha or a Kernel element.</p>
-<h2 id="related">Related<a class="headerlink" href="#related" title="Permanent link">&para;</a></h2>
+<h2 id="the-contract-invariants">The contract — invariants<a class="headerlink" href="#the-contract-invariants" title="Permanent link">&para;</a></h2>
+<p>Each clause states what must hold, its <strong>blast radius</strong> if violated, and its <strong>falsifiable check</strong> (the
+mechanization that makes it checkable, or — where mechanization is not yet built — the explicitly-named ritual
+that stands in).</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Invariant</th>
+<th>Blast radius if violated</th>
+<th>Falsifiable check</th>
+<th>Holds today?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>E1</strong></td>
+<td>The <strong>baseline is pinned</strong> — our rendition declares it summarizes OMG Essence <strong>v1.2</strong> (<code>formal/18-10-02</code>), explicitly, in both <code>semat-definition.md</code> and the Resource card.</td>
+<td>Without the pin, the whole method vocabulary rests on an <em>unstated</em> edition; an upstream move (or a consumer's diverged copy) is undetectable — the OE transfer hub cannot reconcile two renditions.</td>
+<td>The version string <code>v1.2</code> / <code>formal/18-10-02</code> is present in <code>semat-definition.md</code>'s baseline-pin note <strong>and</strong> the Resource-card provenance table. Grep-able; candidate for the method-classification gate.</td>
+<td>✅ (pinned in both places, #174)</td>
+</tr>
+<tr>
+<td><strong>E2</strong></td>
+<td><strong>Rendition fidelity</strong> — our self-contained summary faithfully represents the <em>pinned</em> Kernel (the seven Alphas, the three areas, the state-checklist concept, the Practice/Method language); it is a summary, <strong>not</strong> a divergent reinterpretation.</td>
+<td>If our rendition invents or bends Essence concepts, <strong>KB-first lookups return the wrong meta-language</strong> → we forge parallel concepts (Eigensaft, the RC2 class the Classify step guards against) and think we are "in Essence" when we are not.</td>
+<td>The rendition is reviewable against the OMG spec <strong>at the pinned version</strong>; SA's L3 well-formedness review + the KB-first rule are the standing checks. Mechanization (a structural diff against a Kernel element list) is open.</td>
+<td>⚠️ <strong>Ritual</strong> — SA-reviewed (L3 well-formedness, #174); no mechanized fidelity diff yet</td>
+</tr>
+<tr>
+<td><strong>E3</strong></td>
+<td><strong>Extensions on top, never modifications</strong> — our additions (klartext Practices/Patterns, tracked Work Products) sit <strong>beside</strong> the Kernel; we never alter the standard's Kernel itself.</td>
+<td>If we modify the Kernel (rename an Alpha, change the areas), we <strong>fork Essence</strong> — and lose the "same standard" basis that makes cross-project transfer meaningful (a consumer inheriting our rendition would inherit a non-standard Kernel).</td>
+<td>Our extensions are declared as extensions (separate practice/pattern cards); the Kernel description in <code>semat-definition.md</code> matches v1.2's elements, unmodified. Reviewable (SA L3); candidate vendoring/fidelity lint.</td>
+<td>✅ (by construction — extensions are separate cards; the Kernel section is rendition-only)</td>
+</tr>
+<tr>
+<td><strong>E4</strong></td>
+<td>A <strong>baseline bump is a deliberate, reviewed event</strong>, not a silent adoption — the pin (v1.2) only moves when someone re-reads the new edition (e.g. v2.0 going formal) and confirms our rendition <strong>and</strong> extensions still compose.</td>
+<td>An upstream edition can change the Kernel <em>under us</em>; silently pulling v2.0 concepts into the rendition while the pin still says v1.2 means our cards reference a baseline the pin does not declare — exactly the <strong>Controlled Method Rollout</strong> "breaking for a drifted consumer" case, now at the meta-language layer.</td>
+<td>The pin lives in the Resource card + this contract; moving it requires re-rendering against the new edition, re-checking E2/E3, and updating the pin in the same change. Convention today (a rendition does not auto-update).</td>
+<td>✅ (convention — pin is explicit; no float possible for a frozen rendition)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>E1/E2 — why a check and not just trust.</strong> Because the rendition is <em>self-contained</em>, nothing forces it to
+match upstream — that independence is the RC4 medicine (we do not break when the OMG site moves), but it is
+also the risk: the rendition can quietly say something the standard does not. E1 catches "no declared baseline";
+E2 catches "declared, but the rendition has drifted from it." Both are silent at change-time — the cards still
+<em>read</em> fine, they just rest on a meta-language that is no longer the pinned standard.</p>
+<p><strong>E2 — the SA seam.</strong> Rendition fidelity against the standard is <strong>SA's L3 well-formedness face</strong> (SA reviews
+whether an L3 card is properly generic and standard-conformant). SA reviewed the Resource card + pin on #174;
+the rendition body in <code>semat-definition.md</code> carries the same review hat. The clause stays ritual until a
+mechanized Kernel-element diff lands — an open OE/SA candidate.</p>
+<h2 id="why-a-contract-here-the-lever-this-seam-gives-us">Why a contract here (the lever this seam gives us)<a class="headerlink" href="#why-a-contract-here-the-lever-this-seam-gives-us" title="Permanent link">&para;</a></h2>
+<p>Like superpowers, we <strong>own</strong> the inner face (the rendition + extensions), so the contract is a <strong>design lever</strong>,
+not just risk to watch: we <em>build</em> the rendition to declare-its-baseline (E1) and to extend-not-modify (E3), so
+a violation on <strong>either</strong> side — an upstream edition moving <em>or</em> a rendition drifting into reinterpretation — is
+caught against the <strong>same</strong> clauses. This is what lets the OE transfer hub later merge our rendition with
+semAIt's adapted one: both declare the same pinned baseline, so their delta is <em>derivable</em> rather than guessed.</p>
+<h2 id="relationship-to-other-elements">Relationship to other elements<a class="headerlink" href="#relationship-to-other-elements" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="../../semat-definition/"><code>../semat-definition.md</code></a> — our self-contained rendition (carries the inline baseline pin).</li>
-<li><a href="../superpowers/"><code>superpowers.md</code></a> — the sibling referenced-never-vendored Resource (same contract).</li>
-<li><a href="../../_card-template/"><code>../_card-template.md</code></a> — the Resource-card type note + the reference rule.</li>
-<li>L2 contract instance: <a href="../../../enactment/contracts/essence/"><code>../../enactment/contracts/essence.md</code></a> — the invariants our way of working relies on <em>from</em> the Kernel.</li>
-<li><a href="../../adr/0013-separating-method-from-product.md">ADR-0013</a> — method/product separation (why a referenced Resource is declared, never extracted into the product).</li>
+<li><strong>Dependency Contract (L3 element)</strong> (<code>../../library/dependency-contract.md</code>) — the generic definition this file instances.</li>
+<li><strong>Essence Resource card</strong> (<code>../../library/resources/essence.md</code>) — the referenced material, its provenance and version pin; this contract states what we <em>require</em> of it.</li>
+<li><strong>superpowers contract</strong> (<a href="../superpowers/"><code>superpowers.md</code></a>) — the sibling L2 instance; same clause shape, tilted toward an <em>installed</em> dependency where this one is tilted toward a <em>rendered</em> one.</li>
+<li><strong>Controlled Method Rollout</strong> — an upstream edition that violates E2/E4 for a drifted consumer is <strong>breaking</strong> → barrier mode. This contract feeds that classification.</li>
+<li><strong><code>semat-definition.md</code> + <code>alpha-states.md</code></strong> — the rendition the clauses guard.</li>
+</ul>
+<h2 id="status-open">Status &amp; open<a class="headerlink" href="#status-open" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>E1</strong> (baseline pinned) — ✅ pinned in <code>semat-definition.md</code> + the Resource card (#174).</li>
+<li><strong>E2</strong> (rendition fidelity) — ⚠️ ritual; SA-reviewed for L3 well-formedness; mechanized Kernel-element diff open.</li>
+<li><strong>E3</strong> (extend, never modify) — ✅ by construction.</li>
+<li><strong>E4</strong> (bump is deliberate) — ✅ convention; a frozen rendition cannot auto-float.</li>
+<li><strong>Open (OE/SA):</strong> whether E2 graduates from ritual to a mechanized fidelity check (a structural diff of the
+  rendition's Kernel section against the pinned edition's element list). Non-blocking; tracked as a candidate
+  Improvement Step.</li>
 </ul>
 
 
