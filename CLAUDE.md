@@ -444,7 +444,6 @@ Routine method-doc edits do **not** trigger it — those are covered by the mech
 (`method-classification`, `classify-gate`) and the WoW-retrospective.
 
 **Mechanism.** SA signs off as a **persistent GitHub review comment** on the PR (never chat-only — RC1).
-SA = first reviewer, the user = decider / ratifier.
 
 Part of the OE-self-assurance model (mechanical method-linter · WoW-alpha state checklist ·
 cadence-retrospective · SA structural peer).
