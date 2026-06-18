@@ -64,6 +64,7 @@ executable L2 enactment, the card is the L3 description.
 | Anchor — session safeguard (formerly *Pre-Compact Capture*; renamed 2026-06-13 — no longer tied to /compact, the loss-free path is /clear; +conditional successor-seed step; enacted as `anchor` skill) | Way of Working | ritual (user-triggered) | ✓ (North Star: no insight lost) | ✅ `../library/practices/anchor.md` · `practices/anchor.md` |
 | Systematic Debugging (enacted as `systematic-debugging` skill) | Software System | ritual | — | ✅ `../library/practices/systematic-debugging.md` · `practices/systematic-debugging.md` |
 | Agent Onboarding (enacted as `agent-onboarding` skill) | Team | ritual | ✓ (when adding an agent) | ✅ `../library/practices/agent-onboarding.md` (L3 only — OE-owned, no separate L2 sibling) |
+| Project Onboarding (stand up an endeavour's operating system from the method seed) | Way of Working | ritual | ✓ (when standing up a new endeavour) | ✅ `../library/practices/project-onboarding.md` (L3 only — generic; no L2 sibling, the seed is klartext's export) |
 | Frontend Verification (enacted as `verify` skill; QA owns criteria, UX/UI executes — four-eyes instance) | Software System | ritual | ✓ (for UI changes) | ✅ `practices/verify.md` (wholly-L2 instance) |
 | Frontend Standards (enacted as `frontend` skill) | Software System | ritual | — | ✅ `practices/frontend.md` (wholly-L2 instance) |
 | Frontend Testing (QA-owned; frontend test criteria — flagged missing in F0.2-P-D) | Software System | ritual | ✓ (for UI changes) | ✅ `practices/frontend-testing.md` (wholly-L2 instance) |
