@@ -18,7 +18,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from api.cli import ConvergeAction, _converge_worktree
+from wow_cli.converge import ConvergeAction, _converge_worktree
 
 _REPO_ROOT = Path(__file__).parents[3]
 
