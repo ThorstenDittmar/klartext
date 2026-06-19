@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Portable interpreter shim (method-seed export, phase 2). Rendered from seed.toml's `interpreter`
+# value, this is the single indirection point for "which interpreter runs the WoW hooks/scripts".
+# WoW hooks and pre-commit entries invoke this stable bin/ path instead of a hardcoded venv layout,
+# so adopting the seed on a different stack is a one-line seed.toml edit, not a hook-by-hook rewrite.
+exec {{interpreter}} "$@"
