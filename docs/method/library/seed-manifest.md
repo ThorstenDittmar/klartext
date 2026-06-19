@@ -35,7 +35,7 @@ action:
 | `template` | ② / ③ | rendered **1:1 from a `.tmpl`**, reading the config source (`seed.toml`), to `target` |
 | `config_source` | ③ | the `seed.toml` itself — shipped into the bundle **verbatim** for the consumer to **fill**; everything else reads from it |
 | `generated` | new | produced by the assembly step **from logic, not a 1:1 template render** (e.g. an assembled index, the bundle tree) — distinct from `template` |
-| `deferred` | new | **in scope but not yet shippable** — the assembly **skips** it and the completeness check **flags it as a known gap** (a part not yet built, or one that still carries source literals pending a later phase). Not silent, not shipped — the honest middle between a real disposition and a silent omission |
+| `deferred` | new | **in scope but not yet *dispositionable*** — its source is **absent** (nothing to ship yet) or it is **structurally blocked** from taking a normal disposition (e.g. it still hardcodes source literals, pending a later phase). The assembly **skips** it and the completeness check **flags it as a known gap**. Distinct from a `template`/`as_is` whose **source exists** and only awaits a build step — that keeps its target disposition (build-readiness is tracked by the owning role, not by re-labelling as `deferred`) |
 | `declared` | ④ | a **prerequisite the importer provides** — never shipped, never vendored (see contract) |
 | `exclude` | ⑤ | product *Fachlichkeit* — never travels (listed so the boundary is explicit, not silent) |
 
