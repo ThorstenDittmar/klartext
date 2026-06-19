@@ -168,3 +168,94 @@ def test_load_manifest_reads_the_real_seed_manifest_with_known_dispositions() ->
     assert len(manifest.entries) >= 20
     for entry in manifest.entries:
         assert entry.disposition in _assemble.KNOWN_DISPOSITIONS, entry
+
+
+# --- phase 4 / OE #191: glob (**) + brace expansion + target relocation for copy dispositions ----
+
+
+def test_assemble_expands_brace_glob_and_relocates(tmp_path: Path) -> None:
+    """Expects `base/{a,b}/**` → target to copy each member's tree, relative to base, under target.
+
+    base = the non-glob prefix (before `{`); dest = target / (file relative to base), so
+    seed/baseline/agents/oe/claude.md lands at agents/oe/claude.md (the #191 relocation).
+    """
+    repo = _fake_repo(tmp_path)
+    for member in ("oe", "devops"):
+        d = repo / "seed" / "baseline" / "agents" / member
+        d.mkdir(parents=True)
+        (d / "claude.md").write_text(f"{member} hoheitswissen\n")
+    out = tmp_path / "bundle"
+    manifest = _assemble.Manifest(
+        entries=[
+            _entry(
+                _assemble,
+                path="seed/baseline/agents/{oe,devops}/**",
+                disposition="as_is",
+                target="agents/",
+            )
+        ]
+    )
+
+    _assemble.assemble(manifest, repo, out)
+
+    assert (out / "agents" / "oe" / "claude.md").read_text() == "oe hoheitswissen\n"
+    assert (out / "agents" / "devops" / "claude.md").read_text() == "devops hoheitswissen\n"
+
+
+def test_assemble_glob_identity_relocation(tmp_path: Path) -> None:
+    """Expects `dir/**` → `dir/` to glob-expand in place (base == target)."""
+    repo = _fake_repo(tmp_path)
+    lib = repo / "docs" / "method" / "library" / "practices"
+    lib.mkdir(parents=True)
+    (lib / "tdd.md").write_text("tdd card\n")
+    out = tmp_path / "bundle"
+    manifest = _assemble.Manifest(
+        entries=[
+            _entry(
+                _assemble,
+                path="docs/method/library/**",
+                disposition="as_is",
+                target="docs/method/library/",
+            )
+        ]
+    )
+
+    _assemble.assemble(manifest, repo, out)
+
+    rendered = out / "docs" / "method" / "library" / "practices" / "tdd.md"
+    assert rendered.read_text() == "tdd card\n"
+
+
+def test_assemble_glob_matching_no_files_fails_loud(tmp_path: Path) -> None:
+    """Expects a glob that matches no file to fail loud — never a silently empty relocation."""
+    repo = _fake_repo(tmp_path)
+    out = tmp_path / "bundle"
+    manifest = _assemble.Manifest(
+        entries=[_entry(_assemble, path="seed/baseline/nope/**", disposition="as_is", target="x/")]
+    )
+    with pytest.raises(_assemble.AssemblyError) as exc:
+        _assemble.assemble(manifest, repo, out)
+    assert "nope" in str(exc.value)
+
+
+def test_assemble_rejects_mid_pattern_glob(tmp_path: Path) -> None:
+    """Expects a non-trailing `**` (e.g. a/**/b) to fail loud, not silently mis-relocate.
+
+    SA #194 robustness note: only a trailing `/**` (or a leaf `{…}`) is supported. A mid-pattern
+    `**` would fall through with a base from the non-glob prefix and mis-relocate; reject it.
+    """
+    repo = _fake_repo(tmp_path)
+    # a file the mid-** pattern WOULD match — so without a guard it relocates silently (no fail).
+    member = repo / "seed" / "baseline" / "agents" / "oe"
+    member.mkdir(parents=True)
+    (member / "claude.md").write_text("x\n")
+    out = tmp_path / "bundle"
+    manifest = _assemble.Manifest(
+        entries=[
+            _entry(_assemble, path="seed/baseline/**/claude.md", disposition="as_is", target="x/")
+        ]
+    )
+    with pytest.raises(_assemble.AssemblyError) as exc:
+        _assemble.assemble(manifest, repo, out)
+    msg = str(exc.value).lower()
+    assert "trailing" in msg or "unsupported" in msg

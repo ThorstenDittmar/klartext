@@ -16,6 +16,7 @@ self-contained artefact. Stack-neutral (stdlib only; a Python runtime is a decla
 
 from __future__ import annotations
 
+import re
 import shutil
 import sys
 import tomllib
@@ -103,6 +104,59 @@ def load_manifest(path: Path) -> Manifest:
     return Manifest(entries=entries)
 
 
+def _has_glob(path: str) -> bool:
+    """True if the manifest path is a glob (a `**`/`*` wildcard or a `{a,b}` brace group)."""
+    return any(ch in path for ch in "*{")
+
+
+def _expand_braces(pattern: str) -> list[str]:
+    """Expands one or more `{a,b,c}` brace groups into concrete patterns (recursive)."""
+    match = re.search(r"\{([^}]*)\}", pattern)
+    if not match:
+        return [pattern]
+    expanded: list[str] = []
+    for option in match.group(1).split(","):
+        expanded.extend(
+            _expand_braces(pattern[: match.start()] + option + pattern[match.end() :])
+        )
+    return expanded
+
+
+def _glob_base(path: str) -> str:
+    """The non-glob prefix of a glob path — the segments before the first wildcard/brace.
+
+    Relocation maps this base to the entry's `target`: a matched file's path relative to the base
+    is preserved under target (so `seed/baseline/agents/{oe}/**` → `agents/` lands `oe/claude.md`
+    at `agents/oe/claude.md`).
+    """
+    segments: list[str] = []
+    for segment in path.split("/"):
+        if _has_glob(segment):
+            break
+        segments.append(segment)
+    return "/".join(segments)
+
+
+def _glob_files(repo_root: Path, pattern: str) -> list[Path]:
+    """Returns the files matched by a (possibly brace-expanded) glob pattern, sorted."""
+    files: list[Path] = []
+    for concrete in _expand_braces(pattern):
+        if "**" in concrete and not concrete.endswith("/**"):
+            # Only a trailing /** (or a leaf {…}) is supported. A mid-pattern ** (a/**/b) would
+            # relocate against a base computed from the non-glob prefix — fail loud, never silently
+            # mis-relocate (SA #194 robustness note).
+            raise AssemblyError(
+                f"unsupported glob '{concrete}': '**' must be a trailing /** segment"
+            )
+        if concrete.endswith("/**"):
+            base = repo_root / concrete[: -len("/**")]
+            if base.is_dir():
+                files.extend(sorted(p for p in base.rglob("*") if p.is_file()))
+        else:
+            files.extend(sorted(p for p in repo_root.glob(concrete) if p.is_file()))
+    return files
+
+
 def assemble(manifest: Manifest, repo_root: Path, out_dir: Path) -> AssembleResult:
     """Produces the bundle under out_dir per the manifest dispositions. Fails loud on any missing source.
 
@@ -123,6 +177,22 @@ def assemble(manifest: Manifest, repo_root: Path, out_dir: Path) -> AssembleResu
             raise AssemblyError(
                 f"manifest entry '{entry.path}' is 'generated' — assembly-from-logic is not implemented"
             )
+        if _has_glob(entry.path):
+            if entry.disposition in _RENDER_DISPOSITIONS:
+                raise AssemblyError(f"a template path cannot be a glob: {entry.path}")
+            base = repo_root / _glob_base(entry.path)
+            matched = _glob_files(repo_root, entry.path)
+            if not matched:
+                raise AssemblyError(
+                    f"manifest glob matched no files: {entry.path} ({entry.disposition})"
+                )
+            for source in matched:
+                rel = source.relative_to(base)
+                dest = out_dir / entry.target / rel
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(source, dest)
+                produced.append((Path(entry.target) / rel).as_posix())
+            continue
         source = repo_root / entry.path
         if not source.is_file():
             raise AssemblyError(
