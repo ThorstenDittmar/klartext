@@ -20,13 +20,8 @@ from wow_cli.converge import (
     _parse_worktree_list,
 )
 from wow_cli.landed import LandedStatus, _landed_verdict
+from wow_cli.merge import _evaluate_checks, _evaluate_preconditions, _validate_merge_method
 from wow_cli.skills import SkillsSyncAction, _sync_skills
-
-from api.cli import (
-    _evaluate_checks,
-    _evaluate_preconditions,
-    _validate_merge_method,
-)
 
 # ---------------------------------------------------------------------------
 # Merge-method policy: squash + merge allowed, rebase excluded (stack footgun)
