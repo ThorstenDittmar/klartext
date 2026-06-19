@@ -51,6 +51,7 @@ into one of five categories:
 | **ADR-Mechanism template** | ② | the lifecycle/gate/supersession/sign-off — *not* klartext's ADRs |
 | **QA substance** — 4 principles + 2 de-cored rituals + helper-ownership rule | ① / ② | per QA's verdict (§6); only coverage-invariant-1 ships as (parameterized) code |
 | **Bootstrap procedure** — "stand up the OS from zero" | new | the key missing artefact (§8) |
+| **Method-Isolation practice** — "isolate the method from an entangled endeavour" | ① | the **export-side** how-to (mirror of Bootstrap/onboarding); was missing — without it a consumer cannot keep its product isolated, and un-isolated content bleeds back through the bidirectional channel (added 2026-06-19). Card: `../library/practices/method-isolation.md` |
 | **MANIFEST + prerequisites contract** | ④ | what the importer must already have (§3, §8) |
 
 ---
