@@ -236,3 +236,26 @@ def test_assemble_glob_matching_no_files_fails_loud(tmp_path: Path) -> None:
     with pytest.raises(_assemble.AssemblyError) as exc:
         _assemble.assemble(manifest, repo, out)
     assert "nope" in str(exc.value)
+
+
+def test_assemble_rejects_mid_pattern_glob(tmp_path: Path) -> None:
+    """Expects a non-trailing `**` (e.g. a/**/b) to fail loud, not silently mis-relocate.
+
+    SA #194 robustness note: only a trailing `/**` (or a leaf `{…}`) is supported. A mid-pattern
+    `**` would fall through with a base from the non-glob prefix and mis-relocate; reject it.
+    """
+    repo = _fake_repo(tmp_path)
+    # a file the mid-** pattern WOULD match — so without a guard it relocates silently (no fail).
+    member = repo / "seed" / "baseline" / "agents" / "oe"
+    member.mkdir(parents=True)
+    (member / "claude.md").write_text("x\n")
+    out = tmp_path / "bundle"
+    manifest = _assemble.Manifest(
+        entries=[
+            _entry(_assemble, path="seed/baseline/**/claude.md", disposition="as_is", target="x/")
+        ]
+    )
+    with pytest.raises(_assemble.AssemblyError) as exc:
+        _assemble.assemble(manifest, repo, out)
+    msg = str(exc.value).lower()
+    assert "trailing" in msg or "unsupported" in msg

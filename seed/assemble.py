@@ -141,6 +141,13 @@ def _glob_files(repo_root: Path, pattern: str) -> list[Path]:
     """Returns the files matched by a (possibly brace-expanded) glob pattern, sorted."""
     files: list[Path] = []
     for concrete in _expand_braces(pattern):
+        if "**" in concrete and not concrete.endswith("/**"):
+            # Only a trailing /** (or a leaf {…}) is supported. A mid-pattern ** (a/**/b) would
+            # relocate against a base computed from the non-glob prefix — fail loud, never silently
+            # mis-relocate (SA #194 robustness note).
+            raise AssemblyError(
+                f"unsupported glob '{concrete}': '**' must be a trailing /** segment"
+            )
         if concrete.endswith("/**"):
             base = repo_root / concrete[: -len("/**")]
             if base.is_dir():
