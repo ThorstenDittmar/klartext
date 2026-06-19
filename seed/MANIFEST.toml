@@ -87,8 +87,8 @@ note        = "DevOps confirmed ships verbatim (the 1 literal is incidental)"
 
 [[entry]]
 path        = "scripts/classify_gate.py"
-disposition = "deferred"
-note        = "DevOps correction: the live gate still HARDCODES TRIGGER_PATTERNS (incl. api/cli.py + WoW paths) — B-Seed-only shipped only the trigger_patterns_from_config bridge; B-voll (config-driven live gate) is deferred. Until B-voll it carries klartext literals and must NOT ship as_is. Becomes as_is once config-driven."
+disposition = "as_is"
+note        = "B-voll DONE (#197): the live gate now sources TRIGGER_PATTERNS from seed.toml (no hardcoded klartext paths) → ships as_is, reads the consumer's config. (Was deferred pending B-voll.)"
 
 [[entry]]
 path        = "scripts/method_classification.py"
@@ -165,8 +165,8 @@ note        = "L2 enactment skeleton (_skeleton.md) + one worked example (EXAMPL
 
 [[entry]]
 path        = "seed/baseline/README.md"
-disposition = "as_is"
-note        = "explains the generic baseline artefacts"
+disposition = "exclude"
+note        = "seed-internal meta-doc (explains seed/baseline/ to a seed maintainer) — not consumer-bundle content. Per DevOps: a no-target as_is would ship at its path; exclude keeps it out cleanly."
 
 # ── declared — prerequisites the importer provides (never shipped) ─────────────
 [[entry]]
