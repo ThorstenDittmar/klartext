@@ -11,10 +11,12 @@ two-mode-consistency question explicitly:
 The gate is default-free: it never infers the classification. PRs that touch no WoW surface
 pass unconditionally, so ordinary code/test PRs are unaffected.
 
-The trigger-path list is OE's literal list plus agents/**/claude.md and docs/method/** (the
-migrated method library/enactment surface — added in F0.3 to close the gap where method changes
-escaped the gate; see ADR-0013). Further broadening (e.g. .github/workflows/**) is a one-line
-change here — see the design spec docs/superpowers/specs/2026-06-15-classification-gate-design.md.
+The trigger-path list is sourced from the method-seed config (`seed/seed.toml`), not hardcoded:
+`wow_trigger_paths` (SA's generic-WoW classification — CLAUDE.md, docs/method/**, the workflows,
+scripts/**, …) plus the parametrized `cli_entrypoint` (the product CLI path, kept out of the generic
+list per export plan §9). seed.toml is the single source of truth (plan §4), so broadening the gate's
+scope is an edit to that config — not to this script. This unifies the live gate with the shipped
+seed gate (B-voll), collapsing the former two-sources-of-truth.
 
 Used by .github/workflows/classify-gate.yml, which collects the changed paths and the PR's
 labels and forwards this module's exit code (0 = pass, 1 = fail).
@@ -25,21 +27,31 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import tomllib
 from dataclasses import dataclass
+from pathlib import Path
+
+# The method-seed config source (export plan §4) — the single source of the gate's trigger paths.
+_SEED_TOML: Path = Path(__file__).resolve().parents[1] / "seed" / "seed.toml"
+
+
+def load_trigger_patterns(seed_path: Path = _SEED_TOML) -> list[str]:
+    """Builds the Way-of-Working trigger patterns from a seed.toml.
+
+    The patterns are the config's generic `wow_trigger_paths` plus the parametrized
+    `cli_entrypoint` (the product CLI path) — the same derivation the shipped seed gate uses,
+    so the live gate stays config-driven instead of carrying a hardcoded literal.
+    """
+    with seed_path.open("rb") as handle:
+        config = tomllib.load(handle)
+    return [*config["wow_trigger_paths"], config["cli_entrypoint"]]
+
 
 # Way-of-Working trigger patterns. A PR touching any matching path is "in scope" for the gate.
 #   "<dir>/**"        -> any path under <dir>
 #   "<head>**<tail>"  -> any path that starts with <head> and ends with <tail>
 #   "<exact>"         -> that exact path
-TRIGGER_PATTERNS: list[str] = [
-    "CLAUDE.md",
-    "docs/method/**",
-    "agents/**/claude.md",
-    ".claude/settings.json",
-    ".github/workflows/**",  # the mechanical enforcement layer is itself WoW (SA §9; ADR-0012)
-    "scripts/**",
-    "api/cli.py",
-]
+TRIGGER_PATTERNS: list[str] = load_trigger_patterns()
 
 VALID_LABELS: frozenset[str] = frozenset({"rolling", "breaking"})
 

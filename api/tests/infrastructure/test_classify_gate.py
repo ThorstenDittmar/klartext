@@ -34,6 +34,82 @@ def _load():
 _gate = _load()
 
 
+# --- config-driven trigger patterns: sourced from seed.toml (B-voll unification) -----------
+
+
+def test_trigger_patterns_are_derived_from_a_seed_toml(tmp_path: Path) -> None:
+    """Expects load_trigger_patterns to build the gate's patterns from a given seed.toml.
+
+    The patterns are the config's generic `wow_trigger_paths` plus the parametrized
+    `cli_entrypoint` — proving the live gate is config-driven (seed.toml is the single
+    source of truth, plan §4), not a hardcoded literal. Feeding a custom seed.toml must
+    change the result, which a hardcoded list could never do.
+    """
+    seed = tmp_path / "seed.toml"
+    seed.write_text('cli_entrypoint = "app/main.py"\nwow_trigger_paths = ["GUIDE.md", "ops/**"]\n')
+    patterns = _gate.load_trigger_patterns(seed)
+    assert patterns == ["GUIDE.md", "ops/**", "app/main.py"]
+
+
+def test_module_trigger_patterns_come_from_the_repo_seed_toml() -> None:
+    """Expects the module-level TRIGGER_PATTERNS to equal the repo seed.toml derivation.
+
+    Pins the default wiring: the constant the workflow consumes is the seed.toml-derived
+    list, so editing seed.toml (not this script) is what moves the live gate's scope.
+    """
+    repo_seed = Path(__file__).parents[3] / "seed" / "seed.toml"
+    assert _gate.TRIGGER_PATTERNS == _gate.load_trigger_patterns(repo_seed)
+
+
+# --- config-driven: fail-loud on a malformed seed.toml (GREEN regression guards) ----------
+# These pin the "fail loud, never silently no-op" contract of load_trigger_patterns. A missing
+# required key MUST raise (KeyError), not degrade to an empty / partial pattern list — because an
+# empty TRIGGER_PATTERNS would make the gate pass every PR, silently disabling WoW classification.
+# They are GREEN against the current `config[key]` subscript and would go RED if a regression
+# switched to `config.get(key, <default>)`.
+
+
+def test_load_trigger_patterns_raises_when_cli_entrypoint_key_is_missing(tmp_path: Path) -> None:
+    """Expects a KeyError when seed.toml lacks `cli_entrypoint` — fail loud, never silently drop it.
+
+    A regression to `config.get("cli_entrypoint", "")` would silently append an empty pattern
+    instead of raising; this guards the loud-failure contract.
+    """
+    import pytest
+
+    seed = tmp_path / "seed.toml"
+    seed.write_text('wow_trigger_paths = ["GUIDE.md"]\n')
+    with pytest.raises(KeyError):
+        _gate.load_trigger_patterns(seed)
+
+
+def test_load_trigger_patterns_raises_when_wow_trigger_paths_key_is_missing(tmp_path: Path) -> None:
+    """Expects a KeyError when seed.toml lacks `wow_trigger_paths` — fail loud.
+
+    A regression to `config.get("wow_trigger_paths", [])` would silently yield a gate that only
+    triggers on the CLI path (every doc/agent/infra WoW surface would slip through unclassified).
+    This guards against that silent scope collapse.
+    """
+    import pytest
+
+    seed = tmp_path / "seed.toml"
+    seed.write_text('cli_entrypoint = "app/main.py"\n')
+    with pytest.raises(KeyError):
+        _gate.load_trigger_patterns(seed)
+
+
+def test_empty_wow_trigger_paths_yields_only_the_cli_entrypoint(tmp_path: Path) -> None:
+    """Expects an empty `wow_trigger_paths` to yield exactly [cli_entrypoint] — no crash.
+
+    Documents the boundary: an empty generic-WoW list is valid config (the gate then
+    triggers only on the product CLI path). A non-CLI WoW surface must then PASS, and the
+    CLI path must still trip.
+    """
+    seed = tmp_path / "seed.toml"
+    seed.write_text('cli_entrypoint = "app/main.py"\nwow_trigger_paths = []\n')
+    assert _gate.load_trigger_patterns(seed) == ["app/main.py"]
+
+
 # --- not applicable: no Way-of-Working surface touched -----------------------------------
 
 
