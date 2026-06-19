@@ -11,6 +11,7 @@ worktree_base     = "$HOME/klartext-worktrees"         # launcher
 identity_preamble = "the klartext multi-agent system"  # load_agent_identity.py
 interpreter       = "api/.venv/bin/python3"            # portable interpreter (§7, phase 2)
 cli_entrypoint    = "api/cli.py"                       # consumer's product CLI the gate watches (SA §9)
+wow_cli_command   = "klartext"                          # how the consumer invokes the WoW CLI (`<cmd> converge`)
 
 # Way-of-Working trigger surfaces for the classification gate (SA §9). These are the GENERIC paths
 # whose change is a rolling-vs-breaking question. NOTE the convention these encode: `scripts/` holds

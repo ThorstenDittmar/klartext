@@ -29,6 +29,7 @@ REQUIRED_KEYS: tuple[str, ...] = (
     "identity_preamble",
     "interpreter",
     "cli_entrypoint",
+    "wow_cli_command",
 )
 
 # The list-valued keys every seed.toml must carry. `wow_trigger_paths` holds SA's generic-WoW

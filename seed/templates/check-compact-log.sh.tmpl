@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+# check-compact-log.sh — compact monitor for {{project_name}}
+#
+# Checks compact-log.txt for new "| auto |" entries since the last run and sends a
+# macOS notification as a trailing feedback signal.
+#
+# Runs hourly via launchd (macOS-only — no launchd on Linux/Codespace).
+# Installation: setup.sh registers the launchd agent plist.
+#
+# The log lives centrally in the pinned team memory, NOT per repo/worktree —
+# otherwise this single launchd instance would not see the compacts of the
+# per-agent worktrees.
+# State: compact-log-lastcheck stores the last checked line number.
+# Digest: compact-monitor-digest.txt — readable at session start.
+
+set -euo pipefail
+
+# Base directory (pinned team memory) is the first parameter (set by the plist).
+BASE_DIR="${1:-$HOME/.claude/{{memory_dir}}}"
+LOG_FILE="$BASE_DIR/compact-log.txt"
+STATE_FILE="$BASE_DIR/compact-log-lastcheck"
+DIGEST_FILE="$BASE_DIR/compact-monitor-digest.txt"
+
+# Log does not exist yet → nothing to do
+if [ ! -f "$LOG_FILE" ]; then
+    exit 0
+fi
+
+CURRENT_LINES=$(wc -l < "$LOG_FILE")
+LAST_CHECKED=0
+
+if [ -f "$STATE_FILE" ]; then
+    LAST_CHECKED=$(cat "$STATE_FILE")
+fi
+
+# No new lines
+if [ "$CURRENT_LINES" -le "$LAST_CHECKED" ]; then
+    echo "$CURRENT_LINES" > "$STATE_FILE"
+    exit 0
+fi
+
+# Check the lines added since the last check for auto entries.
+# `grep -c` counts matches; on zero matches grep exits 1, which under
+# `set -euo pipefail` would abort the script (state would stay put) — hence
+# `|| true`, so "no auto-compacts" is a regular 0 case, not an error.
+NEW_AUTO=$(tail -n +"$((LAST_CHECKED + 1))" "$LOG_FILE" | grep -c "| auto |" || true)
+
+# Update state
+echo "$CURRENT_LINES" > "$STATE_FILE"
+
+# No new auto-compacts → done
+if [ "$NEW_AUTO" -eq 0 ]; then
+    exit 0
+fi
+
+# Write digest
+TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%S")
+echo "$TIMESTAMP — $NEW_AUTO auto-compact(s) since last check" >> "$DIGEST_FILE"
+
+# macOS notification
+osascript -e "display notification \"$NEW_AUTO auto-compact(s) since last check. Signal: compact proactively earlier next time. Check whether anything needed saving.\" with title \"{{project_name}} — auto-compact detected\""

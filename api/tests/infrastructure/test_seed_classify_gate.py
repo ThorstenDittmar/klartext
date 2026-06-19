@@ -39,6 +39,7 @@ def test_trigger_patterns_from_config_combines_paths_and_cli(tmp_path: Path) -> 
     path.write_text(
         'project_name = "demo"\nenv_prefix = "D_"\nmemory_dir = "m"\nproduct_domain = "d"\n'
         'repo_slug = "a/d"\nworktree_base = "$HOME/w"\nidentity_preamble = "x"\n'
+        'wow_cli_command = "x"\n'
         'interpreter = "p"\ncli_entrypoint = "app/cli.py"\n'
         'wow_trigger_paths = ["CLAUDE.md", "scripts/**"]\n'
     )
