@@ -1715,7 +1715,7 @@ action:</p>
 <tr>
 <td><code>deferred</code></td>
 <td>new</td>
-<td><strong>in scope but not yet shippable</strong> — the assembly <strong>skips</strong> it and the completeness check <strong>flags it as a known gap</strong> (a part not yet built, or one that still carries source literals pending a later phase). Not silent, not shipped — the honest middle between a real disposition and a silent omission</td>
+<td><strong>in scope but not yet <em>dispositionable</em></strong> — its source is <strong>absent</strong> (nothing to ship yet) or it is <strong>structurally blocked</strong> from taking a normal disposition (e.g. it still hardcodes source literals, pending a later phase). The assembly <strong>skips</strong> it and the completeness check <strong>flags it as a known gap</strong>. Distinct from a <code>template</code>/<code>as_is</code> whose <strong>source exists</strong> and only awaits a build step — that keeps its target disposition (build-readiness is tracked by the owning role, not by re-labelling as <code>deferred</code>)</td>
 </tr>
 <tr>
 <td><code>declared</code></td>
