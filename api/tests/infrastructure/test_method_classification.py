@@ -2,10 +2,9 @@
 
 The mechanical half of the F0 acceptance criterion (ADR-0013):
 
-  * **half-(i) path classification** — method content lives only in the L3/L2 stems; the migrated
-    legacy tree `docs/superpowers/improvement/**` must stay empty; a card must not be *half-split*
-    (carry both an `Essence type:` self-definition AND an `L3 definition:` delegation pointer — OE's
-    mechanical "mixed card" signal). Semantic bleed is SA's well-formedness *review*, not the gate.
+  * **half-(i) path classification** — a card must not be *half-split* (carry both an `Essence
+    type:` self-definition AND an `L3 definition:` delegation pointer — the "mixed card" signal).
+    Semantic bleed is SA's well-formedness *review*, not the gate.
   * **half-(ii) well-formedness** — every element card is type-conditionally well-formed per
     `docs/method/library/_card-template.md` (SA-ratified CI scope):
       - every standalone card: a clean `Essence type` enum token + an `External dependencies` field;
@@ -132,25 +131,6 @@ def test_non_practice_card_may_not_delegate() -> None:
     assert violations
 
 
-# --- half-(i) path classification: legacy tree must stay empty ----------------------------
-
-
-def test_legacy_improvement_tree_with_a_file_is_a_violation(tmp_path: Path) -> None:
-    """Expects a file under docs/superpowers/improvement/ to be reported (must stay empty)."""
-    legacy = tmp_path / "docs" / "superpowers" / "improvement" / "practices"
-    legacy.mkdir(parents=True)
-    (legacy / "leaked.md").write_text("method content in the old place")
-
-    violations = mc.legacy_violations(tmp_path)
-
-    assert any("improvement" in v for v in violations)
-
-
-def test_empty_legacy_tree_has_no_violations(tmp_path: Path) -> None:
-    """Expects an absent/empty legacy improvement tree to produce no violation."""
-    assert mc.legacy_violations(tmp_path) == []
-
-
 # --- parser + card-set + aggregation (regression guards) ----------------------------------
 
 
@@ -200,8 +180,13 @@ def test_find_card_paths_selects_cards_and_excludes_readmes_templates_contracts(
     assert "memory-substrate.md" not in names  # contracts are instances, not element cards
 
 
-def test_check_tree_reports_both_legacy_and_card_violations(tmp_path: Path) -> None:
-    """Expects check_tree to aggregate a leaked legacy file AND a malformed card in one run."""
+def test_check_tree_flags_malformed_cards_and_ignores_the_old_legacy_tree(tmp_path: Path) -> None:
+    """Expects check_tree to flag malformed cards but NOT files under the old legacy tree.
+
+    The klartext-specific legacy-empty-tree check was removed so the gate ships generically (seed
+    export, Model B): docs/superpowers/improvement/ is gone and no longer a method surface. A file
+    under it must NOT be flagged; a malformed card still must be.
+    """
     (tmp_path / "docs/superpowers/improvement").mkdir(parents=True)
     (tmp_path / "docs/superpowers/improvement/leak.md").write_text("method content")
     (tmp_path / "docs/method/library/practices").mkdir(parents=True)
@@ -209,8 +194,9 @@ def test_check_tree_reports_both_legacy_and_card_violations(tmp_path: Path) -> N
 
     violations = mc.check_tree(tmp_path)
 
-    assert any("improvement" in v for v in violations)
     assert any("bad.md" in v for v in violations)
+    assert not any("improvement" in v for v in violations), violations
+    assert not any("superpowers" in v for v in violations), violations
 
 
 # --- the F0-acceptance assertion: the real method tree passes both halves -----------------
@@ -219,8 +205,8 @@ def test_check_tree_reports_both_legacy_and_card_violations(tmp_path: Path) -> N
 def test_real_method_tree_passes_the_gate() -> None:
     """Expects the live method tree on main to be fully classified + well-formed (F0-acceptance).
 
-    The encoded gate OE establishes on the PR: every card under docs/method/ is well-formed and the
-    legacy improvement tree is empty. On failure, the offending card/path is named in the message.
+    The encoded gate OE establishes on the PR: every card under docs/method/ is well-formed. On
+    failure, the offending card/path is named in the message.
     """
     violations = mc.check_tree(_REPO_ROOT)
     assert violations == [], "method tree not clean:\n" + "\n".join(violations)
