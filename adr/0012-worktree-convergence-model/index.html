@@ -1876,6 +1876,62 @@ barrier set small — the barrier is the exception, not the norm.</p>
 <li><strong>Cost:</strong> a real classification step on every way-of-working PR, plus an occasional coordinated halt.
   Mitigated by expand–contract keeping most changes on the rolling path.</li>
 </ul>
+<h2 id="addendum-what-counts-as-a-way-of-working-surface-2026-06-19">Addendum — What counts as a Way-of-Working surface (2026-06-19)<a class="headerlink" href="#addendum-what-counts-as-a-way-of-working-surface-2026-06-19" title="Permanent link">&para;</a></h2>
+<p><strong>Status:</strong> Accepted — the enforcement is live (#183, <code>34ed934</code>: <code>.github/workflows/**</code> added to the
+classify-gate, with a unit test in the same commit). <strong>Decided by:</strong> User (direction — SA §9 verdict,
+adopted via the OE hub, 2026-06-19). <strong>Author / Sign-off:</strong> System Architect. <strong>Gate:</strong> OE.
+<strong>Classification of this change:</strong> <strong>breaking</strong> (it tightened the gate's surface — see below).</p>
+<h3 id="why-the-addendum-needs-a-refinement">Why the addendum needs a refinement<a class="headerlink" href="#why-the-addendum-needs-a-refinement" title="Permanent link">&para;</a></h3>
+<p>The two-mode addendum requires every way-of-working PR to answer <em>"breaking for a drifted agent?"</em>, but
+it leaves <strong>what counts as a way-of-working surface</strong> as prose ("skills, rituals, <code>settings.json</code> / hooks
+/ allowlists, and the commands and paths they reference"). The operational instance — the
+<code>TRIGGER_PATTERNS</code> list in <code>scripts/classify_gate.py</code> — has grown by ad-hoc addition (F0.3 added
+<code>docs/method/**</code>; 2026-06-19 added <code>.github/workflows/**</code>). Without a stated <strong>criterion</strong>, each addition
+is an ad-hoc judgement rather than a derivable one, and the durable definition lives only in a code
+comment + a design spec. This addendum states the criterion and gives the surface set a durable home.</p>
+<h3 id="decision-the-way-of-working-surface-criterion">Decision — the Way-of-Working surface criterion<a class="headerlink" href="#decision-the-way-of-working-surface-criterion" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>A path is a <strong>Way-of-Working surface</strong> iff a change to it alters either <strong>(1) the method's <em>definition</em></strong>
+(its standards, roles, agent Hoheitswissen, method library, collaboration model) <strong>or (2) the method's
+mechanical <em>enforcement</em></strong> (the gates, hooks, and scripts that make the method binding).</p>
+</blockquote>
+<p><strong>Corollary (the 2026-06-19 addition): the enforcement layer is itself a Way-of-Working surface.</strong>
+<code>.github/workflows/**</code> — the CI gates that <em>enforce</em> the method — therefore triggers the classification:
+a workflow change is a rolling-vs-breaking question (tightening a gate is <strong>breaking</strong>; adding an advisory
+check is <strong>rolling</strong>). This is clause (2) of the criterion applied to CI; the same clause already
+justifies <code>scripts/**</code> and <code>.claude/settings.json</code> being in the set.</p>
+<p><strong>Generic vs product (SA §9).</strong> The <em>literal</em> trigger list mixes <strong>generic-WoW</strong> paths — <code>CLAUDE.md</code>,
+<code>docs/method/**</code>, <code>agents/**/claude.md</code>, <code>.claude/settings.json</code>, <code>scripts/**</code>, <code>.github/workflows/**</code> —
+with one <strong>product-specific</strong> path, <code>api/cli.py</code> (klartext's CLI; parametrized as <code>cli_entrypoint</code> in the
+method seed, not hardcoded). The <strong>criterion</strong> is what travels; the literal list is klartext's instance.
+The <code>scripts/**</code> entry stays a clean WoW trigger only under the convention <em>scripts/ holds WoW machinery
+only — product code lives in the product stack</em>.</p>
+<p><strong>Note — a derivable case, not decided here.</strong> By clause (1), a method / operating-model ADR (this one
+included) alters the method's <em>definition</em> — yet <code>docs/adr/**</code> is <strong>not</strong> in the current trigger set.
+That is consistent, not an oversight: ADRs are mixed (product ADRs exist too) and already pass through
+review + explicit ratification, so they are not silently-drifting surfaces in the way <code>settings.json</code> or a
+hook is. Whether to add a <em>method-ADR</em> trigger is a follow-up the criterion now makes <strong>derivable</strong> — to
+be decided (and, if adopted, shipped with its test) separately, not in this addendum.</p>
+<h3 id="enacted-instance-referenced-not-duplicated">Enacted instance — referenced, not duplicated<a class="headerlink" href="#enacted-instance-referenced-not-duplicated" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>The live surface set:</strong> <code>scripts/classify_gate.py</code> <code>TRIGGER_PATTERNS</code>.</li>
+<li><strong>The 2026-06-19 addition</strong> (<code>.github/workflows/**</code>): PR #183 (<code>34ed934</code>), shipped with its unit test in
+  the <strong>same commit</strong> — the Standards-Charter "rule + check" rule (a rule without a check is documentation).</li>
+<li><strong>The design spec:</strong> <code>docs/superpowers/specs/2026-06-15-classification-gate-design.md</code>.</li>
+</ul>
+<p>This addendum fixes the <strong>criterion</strong>. A future addition to the surface set that the criterion <em>already
+covers</em> is a one-line code change + test, <strong>not</strong> an ADR edit. A change to the <strong>criterion itself</strong> is an
+ADR amendment (a further addendum).</p>
+<h3 id="consequences_2">Consequences<a class="headerlink" href="#consequences_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li>The Way-of-Working surface set now has a stated criterion and a durable home; additions become
+  <strong>derivable</strong>, not ad-hoc.</li>
+<li>Workflow changes now carry the rolling/breaking classification — closing the gap where the method's
+  <em>enforcement</em> could change <strong>unclassified</strong>.</li>
+<li><strong>Cost:</strong> every PR touching <code>.github/workflows/**</code> now needs exactly one <code>rolling</code> / <code>breaking</code> label
+  (the all-agents heads-up OE broadcast on 2026-06-19), or the gate fails. Global on merge, no lazy
+  per-worktree adoption — which is itself why this change is classified <strong>breaking</strong>.</li>
+</ul>
 
 
 
