@@ -45,12 +45,22 @@ def test_precommit_template_is_valid_yaml() -> None:
     yaml.safe_load(_TEMPLATE.read_text())
 
 
-def test_precommit_ships_the_generic_wow_hooks() -> None:
-    """Expects the agent-trailer + semgrep hooks (the generic WoW enforcement) to be present."""
-    config = yaml.safe_load(_TEMPLATE.read_text())
-    ids = _hook_ids(config)
+def test_precommit_ships_agent_trailer_as_the_active_generic_hook() -> None:
+    """Expects agent-trailer (fully generic, no project config) to be an active hook."""
+    ids = _hook_ids(yaml.safe_load(_TEMPLATE.read_text()))
     assert "agent-trailer" in ids
-    assert "semgrep" in ids
+
+
+def test_precommit_does_not_ship_semgrep_as_an_active_hook_but_recommends_it() -> None:
+    """Expects semgrep NOT to be an active hook — its rules + file-filter are consumer-specific.
+
+    SA §185 review: an active semgrep hook bakes a Python-stack assumption (types_or) and points at
+    a non-shipping `.semgrep/rules/` dir. Per the Standards-Charter cut (mechanism generic, rules =
+    consumer's own), semgrep moves into the documented slot as a recommendation, not an active hook.
+    """
+    text = _TEMPLATE.read_text()
+    assert "semgrep" not in _hook_ids(yaml.safe_load(text)), "semgrep must not be an active hook"
+    assert "semgrep" in text, "semgrep should still be recommended in the slot comment"
 
 
 def test_precommit_does_not_ship_product_stack_linters() -> None:
