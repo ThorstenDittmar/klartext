@@ -1,0 +1,190 @@
+# Seed Manifest — klartext's worked instance.
+#
+# The authoritative inventory of the method seed and the keystone the assembly step reads
+# (manifest-driven assembly, model B: as_is files are pulled from the live repo, not stored as copies).
+# See docs/method/library/seed-manifest.md for the disposition taxonomy and the completeness rule.
+#
+# disposition ∈ { as_is | template | config_source | generated | declared | exclude }
+#   as_is        → copy verbatim from the live `path`
+#   template     → render from seed.toml to `target`
+#   config_source→ the consumer fills it; everything else reads from it
+#   generated    → produced by the assembly step
+#   declared     → prerequisite the importer provides; never shipped, never vendored
+#   exclude      → product Fachlichkeit; never travels (listed so the boundary is explicit)
+#
+# NOTE markers "REVIEW (DevOps)" flag entries whose as_is-vs-template disposition is a DevOps mechanism
+# call (the file carries klartext literals — see the literal counts). OE proposes; DevOps confirms when it
+# builds the assembly step. This is the manifest doing its completeness-audit job, not a finished call.
+
+# ── config source ──────────────────────────────────────────────────────────
+[[entry]]
+path        = "seed/seed.toml"
+disposition = "config_source"
+note        = "the keystone; the consumer fills it, every template reads from it"
+
+# ── assembly mechanism ───────────────────────────────────────────────────────
+[[entry]]
+path        = "seed/render.py"
+disposition = "as_is"
+note        = "the render/assembly mechanism (reads seed.toml + this manifest)"
+
+[[entry]]
+path        = "seed/MANIFEST.toml"
+disposition = "as_is"
+note        = "this file — the inventory the assembly step iterates"
+
+# ── templates (rendered from seed.toml) ──────────────────────────────────────
+[[entry]]
+path        = "seed/templates/claude-settings.json.tmpl"
+disposition = "template"
+target      = ".claude/settings.json"
+
+[[entry]]
+path        = "seed/templates/pre-commit-config.yaml.tmpl"
+disposition = "template"
+target      = ".pre-commit-config.yaml"
+
+[[entry]]
+path        = "seed/templates/bin-seed-python.tmpl"
+disposition = "template"
+target      = "bin/python-shim"
+note        = "portable interpreter shim (rendered from seed.toml `interpreter`)"
+
+# ── L3 method library (ships as-is — generic, the method itself) ──────────────
+[[entry]]
+path        = "docs/method/library/**"
+disposition = "as_is"
+target      = "docs/method/library/"
+note        = "the whole L3 library: practices, patterns, resources, semat-definition, adr-mechanism, standards-charter, seed-manifest, dependency-contract, alpha-states, glossary, _card-template"
+
+# ── generic WoW gates (workflows, 0 klartext literals — verbatim) ─────────────
+[[entry]]
+path        = ".github/workflows/agent-provenance.yml"
+disposition = "as_is"
+
+[[entry]]
+path        = ".github/workflows/classify-gate.yml"
+disposition = "as_is"
+note        = "config-driven (reads wow_trigger_paths from seed.toml, #185)"
+
+[[entry]]
+path        = ".github/workflows/method-classification.yml"
+disposition = "as_is"
+
+# ── WoW machinery scripts (0 literals — verbatim) ─────────────────────────────
+[[entry]]
+path        = "scripts/ci_scope.py"
+disposition = "as_is"
+
+[[entry]]
+path        = "scripts/substrate_restore.py"
+disposition = "as_is"
+
+[[entry]]
+path        = "scripts/agent_trailer.py"
+disposition = "as_is"
+note        = "DevOps confirmed ships verbatim (the 1 literal is incidental)"
+
+[[entry]]
+path        = "scripts/classify_gate.py"
+disposition = "deferred"
+note        = "DevOps correction: the live gate still HARDCODES TRIGGER_PATTERNS (incl. api/cli.py + WoW paths) — B-Seed-only shipped only the trigger_patterns_from_config bridge; B-voll (config-driven live gate) is deferred. Until B-voll it carries klartext literals and must NOT ship as_is. Becomes as_is once config-driven."
+
+[[entry]]
+path        = "scripts/method_classification.py"
+disposition = "as_is"
+note        = "REVIEW (DevOps): ships verbatim ONLY AFTER removing the dead docs/superpowers/improvement/** legacy check (post-F0)"
+
+# ── scripts carrying klartext literals — disposition is a DevOps mechanism call ─
+[[entry]]
+path        = "scripts/inbox.sh"
+disposition = "template"
+note        = "REVIEW (DevOps + OE-scope §9): 7 literals (memory_dir, env_prefix KLARTEXT_INBOX_BASE) → parametrize"
+
+[[entry]]
+path        = "scripts/start-agent.sh"
+disposition = "template"
+note        = "REVIEW (DevOps): 7 literals (worktree_base, project_name)"
+
+[[entry]]
+path        = "scripts/substrate_backup.py"
+disposition = "template"
+note        = "REVIEW (DevOps): 7 literals (memory_dir)"
+
+[[entry]]
+path        = "scripts/load_agent_identity.py"
+disposition = "template"
+note        = "REVIEW (DevOps): identity_preamble literal"
+
+[[entry]]
+path        = "scripts/session_health.py"
+disposition = "template"
+note        = "REVIEW (DevOps): 3 literals"
+
+[[entry]]
+path        = "scripts/check-compact-log.sh"
+disposition = "template"
+note        = "REVIEW (DevOps): 3 literals"
+
+[[entry]]
+path        = "scripts/check_test_coverage.py"
+disposition = "template"
+note        = "QA coverage-invariant 1 (SOURCE_DIRS/EXCLUDED_FILES are config, plan §6); REVIEW (DevOps+QA)"
+
+[[entry]]
+path        = "scripts/com.klartext.compact-monitor.plist.template"
+disposition = "template"
+note        = "macOS launch agent; already a .template, parametrize the label/paths"
+
+# ── agent-team framework (baseline roles only — ② per plan §6 decision 3) ──────
+[[entry]]
+path        = "agents/team.yaml"
+disposition = "template"
+note        = "baseline roster only: OE · DevOps · SA · QA · Hannibal(PO) · one Domain-Expert template"
+
+[[entry]]
+path        = "agents/{oe,devops,system-architect,qa,hannibal}/**"
+disposition = "template"
+note        = "baseline-role agent triples (start.sh/allowed-tools.txt/claude.md); content → placeholder/example, war-stories stripped (plan §6 decision 4)"
+
+[[entry]]
+path        = "agents/_domain-expert-template/**"
+disposition = "deferred"
+note        = "the cloneable Domain-Expert template — NOT YET BUILT (completeness-audit finding, OE backlog). Becomes `template` once authored."
+
+# ── declared — prerequisites the importer provides (never shipped) ─────────────
+[[entry]]
+path        = "superpowers"
+disposition = "declared"
+note        = "external plugin; see docs/method/library/resources/superpowers.md"
+
+[[entry]]
+path        = "essence-baseline"
+disposition = "declared"
+note        = "pinned meta-language; see docs/method/library/resources/essence.md"
+
+[[entry]]
+path        = "toolchain"
+disposition = "declared"
+note        = "Claude Code (app + hooks), git, gh, Python 3.x, a per-project memory dir"
+
+# ── exclude — product Fachlichkeit & product CI (never travels) ────────────────
+[[entry]]
+path        = "api/**"
+disposition = "exclude"
+note        = "product backend (FastAPI)"
+
+[[entry]]
+path        = "frontend/**"
+disposition = "exclude"
+note        = "product frontend (React)"
+
+[[entry]]
+path        = "agents/{narrative,causal-model,audit,community}/**"
+disposition = "exclude"
+note        = "klartext domain agents — the ROLE template ships, these specific agents do not"
+
+[[entry]]
+path        = ".github/workflows/{integration,lint,qa,test,setup-smoke-test,deploy-docs}.yml"
+disposition = "exclude"
+note        = "product CI (Supabase / product stack lint+test / docs deploy)"
