@@ -32,9 +32,10 @@ action:
 | Disposition | Category | Assembly action |
 |---|---|---|
 | `as_is` | ① As-is | pulled **verbatim** from the live repo at `path` (no stored copy — single source of truth) |
-| `template` | ② / ③ | rendered from the config source (`seed.toml`) to `target` |
-| `config_source` | ③ | the `seed.toml` itself — the consumer **fills** it; everything else reads from it |
-| `generated` | new | produced by the assembly step (e.g. the render mechanism's output, the bundle tree) |
+| `template` | ② / ③ | rendered **1:1 from a `.tmpl`**, reading the config source (`seed.toml`), to `target` |
+| `config_source` | ③ | the `seed.toml` itself — shipped into the bundle **verbatim** for the consumer to **fill**; everything else reads from it |
+| `generated` | new | produced by the assembly step **from logic, not a 1:1 template render** (e.g. an assembled index, the bundle tree) — distinct from `template` |
+| `deferred` | new | **in scope but not yet shippable** — the assembly **skips** it and the completeness check **flags it as a known gap** (a part not yet built, or one that still carries source literals pending a later phase). Not silent, not shipped — the honest middle between a real disposition and a silent omission |
 | `declared` | ④ | a **prerequisite the importer provides** — never shipped, never vendored (see contract) |
 | `exclude` | ⑤ | product *Fachlichkeit* — never travels (listed so the boundary is explicit, not silent) |
 

@@ -87,8 +87,8 @@ note        = "DevOps confirmed ships verbatim (the 1 literal is incidental)"
 
 [[entry]]
 path        = "scripts/classify_gate.py"
-disposition = "as_is"
-note        = "config-driven (reads seed.toml); 1 literal — REVIEW (DevOps) confirm"
+disposition = "deferred"
+note        = "DevOps correction: the live gate still HARDCODES TRIGGER_PATTERNS (incl. api/cli.py + WoW paths) — B-Seed-only shipped only the trigger_patterns_from_config bridge; B-voll (config-driven live gate) is deferred. Until B-voll it carries klartext literals and must NOT ship as_is. Becomes as_is once config-driven."
 
 [[entry]]
 path        = "scripts/method_classification.py"
@@ -149,8 +149,8 @@ note        = "baseline-role agent triples (start.sh/allowed-tools.txt/claude.md
 
 [[entry]]
 path        = "agents/_domain-expert-template/**"
-disposition = "template"
-note        = "REVIEW (OE): the cloneable Domain-Expert template — NOT YET BUILT (completeness-audit finding; briefing to follow)"
+disposition = "deferred"
+note        = "the cloneable Domain-Expert template — NOT YET BUILT (completeness-audit finding, OE backlog). Becomes `template` once authored."
 
 # ── declared — prerequisites the importer provides (never shipped) ─────────────
 [[entry]]
