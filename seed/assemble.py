@@ -35,11 +35,24 @@ class Manifest:
 
 
 def load_manifest(path: Path) -> Manifest:
-    """Parses the interim TOML manifest into (src, dest) pairs for templates and as-is files."""
+    """Parses the interim TOML manifest into (src, dest) pairs for templates and as-is files.
+
+    Fails loud if nothing is recognized — a guard against the seam with OE's authoritative #187
+    MANIFEST, which uses a richer `[[entry]] + disposition` schema this interim loader does not yet
+    read. Without this, the #187 manifest would parse to an empty Manifest and assemble would produce
+    a silently-empty bundle (SA #188 seam contract, Risk 1). RECONCILIATION TRACKED: this loader must
+    be adapted to the #187 disposition schema (as_is→copy · template→render · declared/exclude→tracked
+    not copied · config_source/generated→explicit) before the two are wired together.
+    """
     with path.open("rb") as handle:
         data = tomllib.load(handle)
     templates = [(entry["src"], entry["dest"]) for entry in data.get("template", [])]
     as_is = [(entry["src"], entry["dest"]) for entry in data.get("as_is", [])]
+    if not templates and not as_is:
+        raise AssemblyError(
+            f"manifest {path} has no recognized [[template]]/[[as_is]] entries — schema mismatch? "
+            "(the #187 disposition schema is not yet read by this interim loader)"
+        )
     return Manifest(templates=templates, as_is=as_is)
 
 

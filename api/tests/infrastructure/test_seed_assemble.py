@@ -84,6 +84,21 @@ def test_assemble_fails_loud_on_missing_template_source(tmp_path: Path) -> None:
     assert "gone" in str(exc.value)
 
 
+def test_load_manifest_fails_loud_on_unrecognized_schema(tmp_path: Path) -> None:
+    """Expects a manifest with no recognized template/as-is entries to FAIL LOUD, not yield empty.
+
+    SA #188 seam contract (Risk 1): the authoritative #187 MANIFEST uses a [[entry]]+disposition
+    schema this interim loader does not read. Without a guard, such a manifest parses to an empty
+    Manifest and assemble produces a silently-empty bundle (RC4 landmine). Fail loud at the seam
+    until the loader is reconciled to the #187 disposition schema.
+    """
+    path = tmp_path / "manifest.toml"
+    path.write_text('[[entry]]\npath = "x"\ndisposition = "as_is"\ntarget = "x"\n')
+    with pytest.raises(_assemble.AssemblyError) as exc:
+        _assemble.load_manifest(path)
+    assert "no recognized" in str(exc.value).lower() or "schema" in str(exc.value).lower()
+
+
 def test_load_manifest_parses_template_and_as_is_entries(tmp_path: Path) -> None:
     """Expects the interim TOML manifest to parse into template + as-is (src, dest) pairs."""
     path = tmp_path / "manifest.toml"
