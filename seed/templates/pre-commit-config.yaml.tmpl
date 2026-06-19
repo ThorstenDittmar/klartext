@@ -1,0 +1,40 @@
+# Pre-commit hooks (method-seed template). Ships the GENERIC Way-of-Working hooks only:
+#   - agent-trailer: the ADR-0014 `Agent: <slug>` commit-msg provenance trailer
+#   - semgrep: the architectural-rule scan (.semgrep/rules/)
+# Install once after cloning: pre-commit install
+#
+# Stack-specific linters (ruff/mypy/tach/eslint/tsc/…) are NOT generic — add them in the slot
+# below for whatever stack the importer chose. The agent-trailer runs the interpreter via the
+# portable `bin/seed-python` shim (rendered from seed.toml's `interpreter`), so there is no
+# hardcoded venv layout to edit.
+
+default_install_hook_types: [pre-commit, commit-msg]
+
+repos:
+  # ---------------------------------------------------------------------------
+  # SLOT — add the importer's stack-specific linters here (ruff, mypy, eslint, …).
+  # ---------------------------------------------------------------------------
+
+  # ---------------------------------------------------------------------------
+  # Agent provenance: the ADR-0014 `Agent: <slug>` commit trailer (commit-msg stage)
+  # ---------------------------------------------------------------------------
+  - repo: local
+    hooks:
+      - id: agent-trailer
+        name: agent provenance trailer (ADR-0014)
+        entry: bin/seed-python scripts/agent_trailer.py
+        language: system
+        stages: [commit-msg]   # receives the commit-msg file; adds/validates the Agent trailer
+
+  # ---------------------------------------------------------------------------
+  # Architectural linting: semgrep (custom rules in .semgrep/rules/)
+  # ---------------------------------------------------------------------------
+  - repo: local
+    hooks:
+      - id: semgrep
+        name: semgrep (architectural rules)
+        entry: semgrep
+        language: system
+        args: [scan, --config=.semgrep/rules/, --error, --metrics=off]
+        pass_filenames: false
+        types_or: [python]
