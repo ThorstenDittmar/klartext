@@ -97,34 +97,40 @@ note        = "REVIEW (DevOps): ships verbatim ONLY AFTER removing the dead docs
 
 # ── scripts carrying klartext literals — disposition is a DevOps mechanism call ─
 [[entry]]
-path        = "scripts/inbox.sh"
+path        = "seed/templates/inbox.sh.tmpl"
 disposition = "template"
-note        = "REVIEW (DevOps + OE-scope §9): 7 literals (memory_dir, env_prefix KLARTEXT_INBOX_BASE) → parametrize"
+target      = "scripts/inbox.sh"
+note        = "parametrized: env_prefix INBOX_BASE, memory_dir, project_name, wow_cli_command; EN-first"
 
 [[entry]]
-path        = "scripts/start-agent.sh"
+path        = "seed/templates/start-agent.sh.tmpl"
 disposition = "template"
-note        = "REVIEW (DevOps): 7 literals (worktree_base, project_name)"
+target      = "scripts/start-agent.sh"
+note        = "parametrized: env_prefix REPO_ROOT/WORKTREE_BASE/NO_LAUNCH, worktree_base, project_name; EN-first wake-prompt"
 
 [[entry]]
-path        = "scripts/substrate_backup.py"
+path        = "seed/templates/substrate_backup.py.tmpl"
 disposition = "template"
-note        = "REVIEW (DevOps): 7 literals (memory_dir)"
+target      = "scripts/substrate_backup.py"
+note        = "parametrized: env_prefix BACKUP_ROOT, memory_dir, project_name (wip-ref); klartext war-stories stripped (plan §6 decision 4)"
 
 [[entry]]
-path        = "scripts/load_agent_identity.py"
+path        = "seed/templates/load_agent_identity.py.tmpl"
 disposition = "template"
-note        = "REVIEW (DevOps): identity_preamble literal"
+target      = "scripts/load_agent_identity.py"
+note        = "parametrized: identity_preamble (rendered before the runtime .format(slug=))"
 
 [[entry]]
-path        = "scripts/session_health.py"
+path        = "seed/templates/session_health.py.tmpl"
 disposition = "template"
-note        = "REVIEW (DevOps): 3 literals"
+target      = "scripts/session_health.py"
+note        = "parametrized: wow_cli_command (converge call ×2), memory_dir"
 
 [[entry]]
-path        = "scripts/check-compact-log.sh"
+path        = "seed/templates/check-compact-log.sh.tmpl"
 disposition = "template"
-note        = "REVIEW (DevOps): 3 literals"
+target      = "scripts/check-compact-log.sh"
+note        = "parametrized: project_name, memory_dir; DE->EN (EN-first, plan §6 decision 1)"
 
 [[entry]]
 path        = "scripts/check_test_coverage.py"

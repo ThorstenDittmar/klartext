@@ -52,6 +52,7 @@ def _complete_seed_toml(tmp_path: Path) -> Path:
         'identity_preamble = "the demo multi-agent system"\n'
         'interpreter       = ".venv/bin/python3"\n'
         'cli_entrypoint    = "app/cli.py"\n'
+        'wow_cli_command   = "demo"\n'
         'wow_trigger_paths = ["CLAUDE.md", "scripts/**"]\n'
     )
     return path
@@ -128,6 +129,7 @@ def test_load_seed_config_accepts_empty_list_value(tmp_path: Path) -> None:
     path.write_text(
         'project_name = "demo"\nenv_prefix = "D_"\nmemory_dir = "m"\nproduct_domain = "d"\n'
         'repo_slug = "a/d"\nworktree_base = "$HOME/w"\nidentity_preamble = "x"\n'
+        'wow_cli_command = "x"\n'
         'interpreter = "p"\ncli_entrypoint = "app/cli.py"\nwow_trigger_paths = []\n'
     )
     config = _render.load_seed_config(path)
@@ -144,6 +146,7 @@ def test_load_seed_config_coerces_non_string_list_items_to_str(tmp_path: Path) -
     path.write_text(
         'project_name = "demo"\nenv_prefix = "D_"\nmemory_dir = "m"\nproduct_domain = "d"\n'
         'repo_slug = "a/d"\nworktree_base = "$HOME/w"\nidentity_preamble = "x"\n'
+        'wow_cli_command = "x"\n'
         'interpreter = "p"\ncli_entrypoint = "app/cli.py"\nwow_trigger_paths = [1, 2]\n'
     )
     config = _render.load_seed_config(path)
@@ -174,6 +177,7 @@ def test_load_seed_config_rejects_toml_table_value(tmp_path: Path) -> None:
     path.write_text(
         'project_name = "demo"\nenv_prefix = "D_"\nmemory_dir = "m"\nproduct_domain = "d"\n'
         'repo_slug = "a/d"\nworktree_base = "$HOME/w"\nidentity_preamble = "x"\n'
+        'wow_cli_command = "x"\n'
         'interpreter = "p"\ncli_entrypoint = "app/cli.py"\nwow_trigger_paths = ["x"]\n'
         '[section]\nkey = "v"\n'
     )
@@ -188,6 +192,7 @@ def test_load_seed_config_requires_cli_entrypoint(tmp_path: Path) -> None:
     path.write_text(
         'project_name = "demo"\nenv_prefix = "D_"\nmemory_dir = "m"\nproduct_domain = "d"\n'
         'repo_slug = "a/d"\nworktree_base = "$HOME/w"\nidentity_preamble = "x"\n'
+        'wow_cli_command = "x"\n'
         'interpreter = "p"\nwow_trigger_paths = ["CLAUDE.md"]\n'  # cli_entrypoint absent
     )
     with pytest.raises(_render.SeedConfigError) as exc:
@@ -201,6 +206,7 @@ def test_load_seed_config_requires_wow_trigger_paths(tmp_path: Path) -> None:
     path.write_text(
         'project_name = "demo"\nenv_prefix = "D_"\nmemory_dir = "m"\nproduct_domain = "d"\n'
         'repo_slug = "a/d"\nworktree_base = "$HOME/w"\nidentity_preamble = "x"\n'
+        'wow_cli_command = "x"\n'
         'interpreter = "p"\ncli_entrypoint = "app/cli.py"\n'  # wow_trigger_paths absent
     )
     with pytest.raises(_render.SeedConfigError) as exc:

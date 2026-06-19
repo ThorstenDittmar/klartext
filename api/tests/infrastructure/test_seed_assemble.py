@@ -48,7 +48,8 @@ def _fake_repo(tmp_path: Path) -> Path:
     (repo / "seed" / "seed.toml").write_text(
         'project_name = "demo"\nenv_prefix = "D_"\nmemory_dir = "demo-mem"\nproduct_domain = "d"\n'
         'repo_slug = "a/d"\nworktree_base = "$HOME/w"\nidentity_preamble = "x"\n'
-        'interpreter = "p"\ncli_entrypoint = "app/cli.py"\nwow_trigger_paths = ["CLAUDE.md"]\n'
+        'interpreter = "p"\ncli_entrypoint = "app/cli.py"\nwow_cli_command = "demo"\n'
+        'wow_trigger_paths = ["CLAUDE.md"]\n'
     )
     (repo / "seed" / "templates" / "greeting.txt.tmpl").write_text("hello {{project_name}}\n")
     (repo / "src" / "asis.txt").write_text("verbatim content\n")

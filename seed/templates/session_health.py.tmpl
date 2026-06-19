@@ -1,0 +1,217 @@
+#!/usr/bin/env python3
+"""SessionStart hook: drift warning — "verify current before resume".
+
+ADR-0012 detection half + the Controlled-Method-Rollout practice. A fail-soft, **non-blocking**
+check run at session start (and ``/clear``): if the worktree is behind ``origin/main``, it warns —
+pointing at ``{{wow_cli_command}} converge`` — so a session does not resume work on a stale
+substrate. It **never** blocks or fails a session: any error, or an unreachable remote, exits 0
+with no output.
+
+Stdlib only, runs under system ``python3``. The detection sharpness is behind a ``DriftSignal``
+port (L1 = commit-count) so a later L2 (shared-layer-weighted) is an adapter swap, not a rewrite.
+
+Behaviour:
+- worktree behind origin/main -> emit a SessionStart additionalContext warning
+- up to date / not a git repo / offline / any error -> no output, exit 0 (graceful)
+"""
+
+from __future__ import annotations
+
+import json
+import os
+import re
+import subprocess
+import sys
+from abc import ABC, abstractmethod
+from dataclasses import dataclass
+from pathlib import Path
+
+
+@dataclass(frozen=True)
+class DriftContext:
+    """What a drift signal judges: how far behind, and which paths changed (for a future L2)."""
+
+    commits_behind: int
+    changed_paths: tuple[str, ...] = ()
+
+
+class DriftSignal(ABC):
+    """Port: decides whether a worktree's drift warrants a warning."""
+
+    @abstractmethod
+    def should_warn(self, ctx: DriftContext) -> bool:
+        """Returns True if the drift described by ctx should produce a warning."""
+
+
+class CommitCountDrift(DriftSignal):
+    """L1 adapter: warn on any commits behind (coarse). L2 would weigh shared-layer paths."""
+
+    def should_warn(self, ctx: DriftContext) -> bool:
+        """Warns whenever the worktree is at least one commit behind origin/main."""
+        return ctx.commits_behind > 0
+
+
+def _project_dir() -> Path:
+    """Returns the project root — CLAUDE_PROJECT_DIR if set, else the current working directory."""
+    return Path(os.environ.get("CLAUDE_PROJECT_DIR") or os.getcwd())
+
+
+def _git(project_dir: Path, *args: str) -> subprocess.CompletedProcess[str]:
+    """Runs a git command in project_dir, capturing output. Never raises (check=False)."""
+    return subprocess.run(
+        ["git", "-C", str(project_dir), *args], capture_output=True, text=True
+    )
+
+
+def assess_drift(project_dir: Path, signal: DriftSignal | None = None) -> str | None:
+    """Returns a drift warning for project_dir, or None when current / offline / not assessable.
+
+    Fail-soft by design: a fetch failure (offline) or any git error yields None — the hook stays
+    quiet rather than nagging on a state it cannot verify, and never blocks the session.
+    """
+    signal = signal or CommitCountDrift()
+    fetch = _git(project_dir, "fetch", "origin", "--quiet")
+    if fetch.returncode != 0:
+        return None  # offline / no remote — cannot assess, stay quiet
+    behind = _git(project_dir, "rev-list", "--count", "HEAD..origin/main")
+    if behind.returncode != 0:
+        return None  # no origin/main ref (non-main default) — cannot assess
+    count = int(behind.stdout.strip() or "0")
+    if not signal.should_warn(DriftContext(commits_behind=count)):
+        return None
+    plural = "s" if count != 1 else ""
+    return (
+        f"⚠ Worktree is {count} commit{plural} behind origin/main — the shared way-of-working "
+        f"may be stale. Run `{{wow_cli_command}} converge` before starting new work (it rebases a "
+        f"clean home branch and safely skips otherwise)."
+    )
+
+
+def _team_memory_dir() -> Path:
+    """The shared team-memory directory every agent's auto-memory pin must resolve to."""
+    return Path.home() / ".claude" / "{{memory_dir}}"
+
+
+def check_pin(project_dir: Path, expected_dir: Path | None = None) -> str | None:
+    """Memory-substrate C1: the committed autoMemoryDirectory resolves to the shared team path.
+
+    Applies only to an agent worktree (a `.claude/` dir present); a bare directory is not a finding.
+    A wrong/absent pin is exactly the "lonely store" failure the cutover off user-global introduces.
+    """
+    if not (project_dir / ".claude").is_dir():
+        return None
+    expected = expected_dir or _team_memory_dir()
+    try:
+        data = json.loads((project_dir / ".claude" / "settings.json").read_text())
+    except (OSError, ValueError):
+        return "⚠ .claude/settings.json missing or unreadable — memory pin cannot be verified."
+    pin = data.get("autoMemoryDirectory")
+    if not pin:
+        return "⚠ no autoMemoryDirectory pin in .claude/settings.json — team memory may not be shared."
+    if Path(os.path.expanduser(pin)) != expected:
+        return (
+            f"⚠ autoMemoryDirectory ({pin}) does not resolve to the shared team path "
+            f"({expected}) — this worktree may write to a lonely memory store."
+        )
+    return None
+
+
+def check_inbox(project_dir: Path) -> str | None:
+    """Memory-substrate C3: the cross-agent inbox transport is reachable from this worktree.
+
+    Applies only to an agent worktree. The inbox base is created on demand by inbox.sh, so the
+    worktree-side requirement is that the transport script itself is present.
+    """
+    if not (project_dir / ".claude").is_dir():
+        return None
+    if not (project_dir / "scripts" / "inbox.sh").is_file():
+        return "⚠ scripts/inbox.sh missing — the cross-agent inbox is unreachable from this worktree."
+    return None
+
+
+def check_durable(project_dir: Path, memory_dir: Path | None = None) -> str | None:
+    """Memory-substrate C2: the shared team memory is durable — it exists and is writable.
+
+    Applies only to an agent worktree. A missing or read-only substrate is the False-Persistence
+    class: knowledge meant to outlive a session cannot be written.
+    """
+    if not (project_dir / ".claude").is_dir():
+        return None
+    mem = memory_dir or _team_memory_dir()
+    if not mem.is_dir():
+        return f"⚠ team memory dir ({mem}) does not exist — durable substrate missing (C2)."
+    if not os.access(mem, os.W_OK):
+        return f"⚠ team memory dir ({mem}) is not writable — substrate not durable this session (C2)."
+    return None
+
+
+def check_index_integrity(
+    project_dir: Path, memory_dir: Path | None = None
+) -> str | None:
+    """Memory-substrate C4: every MEMORY.md entry points at a real file; no duplicate targets.
+
+    The index is the only shared hot file; concurrent appends could clobber it. This is the
+    falsifiable signal (every entry -> a real file, no duplicates) — a warning, never a block.
+    Absent index = nothing to verify (not a finding). Http links are external, not local files.
+    """
+    if not (project_dir / ".claude").is_dir():
+        return None
+    mem = memory_dir or _team_memory_dir()
+    index = mem / "MEMORY.md"
+    if not index.is_file():
+        return None
+    targets = re.findall(r"\]\(([^)]+)\)", index.read_text(encoding="utf-8"))
+    local = [t for t in targets if not t.startswith(("http://", "https://"))]
+    missing = sorted({t for t in local if not (mem / t).is_file()})
+    duplicates = sorted({t for t in local if local.count(t) > 1})
+    problems = []
+    if missing:
+        problems.append(
+            f"MEMORY.md points at missing files: {', '.join(missing)} (C4)."
+        )
+    if duplicates:
+        problems.append(
+            f"MEMORY.md has duplicate entries: {', '.join(duplicates)} (C4)."
+        )
+    return " ".join(problems) if problems else None
+
+
+def build_warnings(project_dir: Path) -> str | None:
+    """Collects all session-health warnings for project_dir, or None if everything is healthy.
+
+    Drift (ADR-0012) + the memory-substrate contract: C1 (pin resolves), C2 (durable substrate),
+    C3 (inbox reachable), C4 (index integrity). C5 (provenance) is deferred — see the contract.
+    """
+    checks = (
+        assess_drift(project_dir),
+        check_pin(project_dir),
+        check_durable(project_dir),
+        check_inbox(project_dir),
+        check_index_integrity(project_dir),
+    )
+    parts = [w for w in checks if w]
+    return "\n".join(parts) if parts else None
+
+
+def main() -> int:
+    """Emits a SessionStart additionalContext warning if unhealthy. Never fails the session."""
+    try:
+        warnings = build_warnings(_project_dir())
+    except Exception:
+        return 0  # fail-soft: a health check must never block a session
+    if not warnings:
+        return 0
+    json.dump(
+        {
+            "hookSpecificOutput": {
+                "hookEventName": "SessionStart",
+                "additionalContext": warnings,
+            }
+        },
+        sys.stdout,
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
