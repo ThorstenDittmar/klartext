@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/method/library/practices/project-onboarding/">
+        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/method/library/practices/method-isolation/">
       
       
       
@@ -23,7 +23,7 @@
     
     
       
-        <title>Project Onboarding - klartext.jetzt – Spezifikation</title>
+        <title>Method Isolation - klartext.jetzt – Spezifikation</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#project-onboarding" class="md-skip">
+        <a href="#method-isolation" class="md-skip">
           Zum Inhalt
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Project Onboarding
+              Method Isolation
             
           </span>
         </div>
@@ -1650,7 +1650,7 @@
 
 
   
-    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/method/library/practices/project-onboarding.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/method/library/practices/method-isolation.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1658,75 +1658,76 @@
   
 
 
-<h1 id="project-onboarding">Project Onboarding<a class="headerlink" href="#project-onboarding" title="Permanent link">&para;</a></h1>
+<h1 id="method-isolation">Method Isolation<a class="headerlink" href="#method-isolation" title="Permanent link">&para;</a></h1>
 <blockquote>
 <p><strong>Essence type:</strong> Practice
-<strong>Advances Alpha:</strong> Way of Working  ·  <strong>Work Products:</strong> a filled <code>seed.toml</code> (the single config source) · the rendered configuration (settings, hooks, gates, inbox, CLI defaults) · the agent-team framework (<code>agents/</code> + roster) with the baseline roles · the wired memory + inbox directories · a first convergence · a passing bootstrap smoke-test
-<strong>Activity / Activity Space:</strong> Support the Team → stand up a new endeavour's operating system — its way of working, agent-team framework, collaboration fabric and configuration — from the method seed
-<strong>External dependencies (referenced Resources):</strong> the <strong>method seed</strong> bundle + its declared prerequisites — Claude Code (app + hooks), git, gh, a Python runtime, the <code>superpowers</code> plugin and the <strong>Essence</strong> baseline (both <em>declared-not-vendored</em>, see <code>../resources/</code>)
-<strong>Enforcement:</strong> ritual  ·  <strong>NN:</strong> ✓ (when standing up a new endeavour from the seed)
+<strong>Advances Alpha:</strong> Way of Working  ·  <strong>Work Products:</strong> a classified artefact inventory (every artefact sorted method-vs-product) · the separated method layer (its own L3/L2 tree) · the wired keep-separated enforcement (a classification gate / path-ownership)
+<strong>Activity / Activity Space:</strong> Support the Team → isolate an entangled endeavour's transferable <strong>method</strong> from its product <strong>Fachlichkeit</strong>, so the method can be exported and updated without product content bleeding across
+<strong>External dependencies (referenced Resources):</strong> none (the cut criterion is defined by ADR-0013, an internal decision, not an external Resource)
+<strong>Enforcement:</strong> ritual  ·  <strong>NN:</strong> ✓ (when extracting a method from an existing endeavour, or before opening a bidirectional method-transfer channel)
 <strong>Status:</strong> living  ·  <strong>Owner:</strong> OE
-<strong>Enacted as:</strong> the seed's bootstrap procedure (a <code>project-onboarding</code> skill is a candidate once the seed is built)</p>
+<strong>Enacted as:</strong> the F0→F3 method/product isolation (see <code>enactment/method-seed-export-plan.md</code> for klartext's worked run); a <code>method-isolation</code> skill is a candidate</p>
 </blockquote>
 <h2 id="purpose">Purpose<a class="headerlink" href="#purpose" title="Permanent link">&para;</a></h2>
-<p>Stand up a <strong>new endeavour's operating system</strong> — its way of working, agent-team framework, collaboration
-fabric and configuration — <strong>from the method seed</strong>, such that the new project can run the improvement loop
-without re-deriving the method. This is the project-level sibling of <a href="../agent-onboarding/"><code>agent-onboarding.md</code></a>:
-that one integrates <em>an agent into an existing system</em>; this one <strong>creates the system from nothing</strong>.</p>
-<p>Guards three failure modes: a project that <strong>copies</strong> the source endeavour (a fork) instead of <em>parameterizing</em>
-it; a project de-source-ified by <strong>global find-replace</strong> (fragile — a literal missed anywhere breaks silently);
-and a <strong>half-stood-up</strong> operating system (the method is imported but the hooks/gates are not wired, so nothing
-is actually enforced — the RC2 "documentation, not a standard" failure, at project scale).</p>
+<p><strong>Isolate an entangled endeavour into a transferable <em>method<em> layer and its product </em>Fachlichkeit</em></strong> — so the
+method can be lifted into a seed and <strong>kept</strong> separate as updates flow back and forth. This is the <strong>export side</strong>
+of the method/product cut, and the macro sibling of the two existing cuts: <a href="../document-scoping/"><code>document-scoping.md</code></a>
+cuts a <em>single document</em>; this practice cuts the <em>whole endeavour</em>; <a href="../project-onboarding/"><code>project-onboarding.md</code></a>
+then stands a <em>new project up from the seed</em> (the import side). Triad: <strong>isolate → seed → onboard.</strong></p>
+<p>The driving risk is <strong>bleed</strong>. Method transfer through a hub (OE) is <strong>bidirectional</strong>: a consumer adopts the
+seed, adapts it, and later its changes flow back. If the method layer was never cleanly isolated — product
+Fachlichkeit left mixed in, or product-specific content lifted as if generic — then that content travels in both
+directions, and a consumer's domain can <strong>bleed into the source</strong> through the return channel. Isolation is the
+safeguard on <strong>both</strong> ends, not a one-time export chore.</p>
+<p>Guards three failure modes: an <strong>incomplete cut</strong> (product Fachlichkeit left in the method layer — it bleeds on
+export and on return); <strong>over-extraction</strong> (product-specific content lifted into the method as if it were
+generic — a copy-fork at the source); and a <strong>cut with no enforcement</strong> (nothing prevents re-entanglement, so
+the layers silently re-tangle — the RC2 "documentation, not a standard" failure applied to the boundary itself).</p>
 <h2 id="definition-delta">Definition / delta<a class="headerlink" href="#definition-delta" title="Permanent link">&para;</a></h2>
-<p>Onboarding proceeds <strong>parameterize-before-render</strong> — fill the single config source <em>before</em> touching any
-template — in seven steps:</p>
+<p>Isolation proceeds <strong>classify-before-move</strong> — sort every artefact <em>before</em> relocating anything — in six steps:</p>
 <ol>
-<li><strong>Verify the prerequisites.</strong> The seed is <em>referenced-not-vendored</em>: confirm the consumer environment has
-   what the seed declares but does not ship — Claude Code (app + hooks), git, gh, a Python runtime, the
-   <code>superpowers</code> plugin (at its pinned version), and the <strong>Essence baseline</strong> (the pinned meta-language the L3
-   library stands on). A missing prerequisite is a stop, not a workaround.</li>
-<li><strong>Fill the config source (<code>seed.toml</code>).</strong> One file carries every endeavour-specific literal — project name,
-   env prefix, memory/inbox directory, repo slug, worktree base, identity preamble, interpreter. This is the
-   <strong>single decision</strong> that drives every later artifact; nothing downstream is edited by hand. (The anti-pattern
-   this closes: de-source-ification as a global <code>sed</code>.)</li>
-<li><strong>Render the configuration from <code>seed.toml</code>.</strong> Generate the parameterized artifacts — session settings +
-   hooks, the pre-commit config, the way-of-working CI gates + their scripts, the inbox fabric, the CLI
-   defaults — reading every literal from the config source, never re-typing it.</li>
-<li><strong>Create the agent-team framework.</strong> A directory per agent (start wrapper + tool allowlist + knowledge file)
-   plus the roster, seeded with the <strong>baseline roles</strong> (a method/organisation role, an infrastructure role, an
-   architecture role, a quality role, a coordination/product-owner role, and one cloneable domain-expert
-   template). The consumer's own domain agents are added later via <code>agent-onboarding</code>.</li>
-<li><strong>Wire the fabric.</strong> Install the session-start identity + freshness hooks, the way-of-working gates and the
-   pre-commit hooks; create the memory and inbox directories. Until this step lands, the imported method is
-   documentation, not an operating system.</li>
-<li><strong>First convergence + handoff.</strong> Run the first <code>converge</code>; hand off to the new team: read the L3 library,
-   fill the L2 enactment from the shipped skeleton + worked example, and define the domain agents via
-   <code>agent-onboarding</code>.</li>
-<li><strong>Verify against the DoD.</strong> Run the <strong>bootstrap smoke-test</strong>: from the seed + a filled <code>seed.toml</code>, a fresh
-   project stands up where the identity/freshness hooks fire, the gates run, the inbox works, a baseline agent
-   is onboardable, and a first <code>converge</code> succeeds — with <strong>zero source-endeavour literal</strong> remaining
-   (grep-checkable). The project is not "stood up" until this passes.</li>
+<li><strong>Establish the cut criterion.</strong> Make the method/product distinction explicit (ADR-0013): the generic,
+   transferable <strong>mechanism</strong> is method; the lived, endeavour-specific <strong>content</strong> is product (and travels, if at
+   all, only as a <em>worked example</em>). This single criterion drives every later judgement.</li>
+<li><strong>Inventory and classify.</strong> Sort <strong>every</strong> artefact into one of five categories — <strong>as-is</strong> (generic, transfers
+   unchanged), <strong>template</strong> (structure transfers, content → placeholder/example), <strong>config</strong> (transfers but needs
+   path/name parameterization), <strong>declared-not-shipped</strong> (an external dependency the consumer provides; never
+   vendored), <strong>exclude</strong> (product Fachlichkeit; never ships). An unclassified artefact is an un-cut artefact.</li>
+<li><strong>Separate physically.</strong> Move the method artefacts into their <strong>own layer</strong> (a dedicated tree — e.g. L3 generic
+   definitions + L2 enactment), leaving product in the product stack. The boundary must be a <em>place</em>, not a
+   convention in someone's head.</li>
+<li><strong>Cut the entanglement points.</strong> Files that mix both — shared config, the CLI, harness settings — are
+   <strong>parameterized, not copied</strong>: the endeavour-specific literals move to a single config source, the structure
+   stays generic. (The anti-pattern this closes: de-source-ification as a global <code>sed</code>, the fragile mirror of
+   over-extraction.)</li>
+<li><strong>Wire the keep-separated enforcement.</strong> Install the mechanism that catches re-entanglement — a classification
+   gate over the method surfaces, path-ownership, a zero-product-literal check. Until this lands, the cut is a
+   one-time snapshot that re-tangles on the next commit; <em>staying</em> isolated is the property that defeats bleed.</li>
+<li><strong>Verify the cut.</strong> The method layer carries <strong>zero hard product reference</strong> (grep-checkable); the product
+   still builds and runs; the bidirectional channel is clean (a return update touches only method surfaces). The
+   endeavour is not "isolated" until all three hold.</li>
 </ol>
-<p><strong>Completion (Done):</strong> prerequisites verified (or the stop is explicit) · <code>seed.toml</code> filled as the single
-source — no by-hand literal edits downstream · configuration rendered from it · the agent-team framework exists
-with the baseline roles · hooks + gates + memory/inbox wired · a first <code>converge</code> succeeded · the bootstrap
-smoke-test is green with <strong>zero source-endeavour literal</strong> remaining.</p>
-<p><strong>Enforcement note (generic).</strong> A ritual owned by the team-formation / method role. Its non-negotiable core is
-mechanizable as the <strong>bootstrap smoke-test</strong> (step 7): a fresh project stands up <em>and</em> carries no source-literal.
-A project whose gates are not wired (step 5 skipped) is not onboarded — the method runs on top of nothing, the
-project-scale form of "a rule without enforcement is documentation."</p>
+<p><strong>Completion (Done):</strong> the cut criterion is explicit · every artefact is classified into the five categories ·
+the method is physically separated into its own layer · entanglement points are parameterized (not copied) · the
+keep-separated enforcement is wired · the method layer carries <strong>zero product literal</strong> (grep-checkable) · the
+product still works.</p>
+<p><strong>Enforcement note (generic).</strong> A ritual owned by the method/organisation role. Its non-negotiable core is
+mechanizable: the <strong>zero-product-literal grep</strong> over the method layer (step 6) and the <strong>classification gate</strong>
+that keeps surfaces sorted going forward (step 5). A cut whose enforcement is not wired (step 5 skipped) is not
+an isolation — it is a snapshot that re-tangles, the boundary-level form of "a rule without enforcement is
+documentation" (see <a href="../../standards-charter/"><code>../standards-charter.md</code></a>).</p>
 <h2 id="related">Related<a class="headerlink" href="#related" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="../agent-onboarding/"><code>agent-onboarding.md</code></a> — the per-agent sibling (integrate into an existing system).</li>
-<li>The <strong>method seed</strong> bundle + its config source (<code>seed.toml</code>) and prerequisites contract.</li>
-<li><a href="../../resources/superpowers/"><code>../resources/superpowers.md</code></a> + <a href="../../resources/essence/"><code>../resources/essence.md</code></a> — the <em>declared-not-vendored</em> dependencies a consumer must provide.</li>
-<li><a href="../../_card-template/"><code>_card-template.md</code></a> · the method register row in <code>enactment/method.md</code>.</li>
+<li><a href="../project-onboarding/"><code>project-onboarding.md</code></a> — the import-side sibling (stand a new project up <em>from</em> the
+  seed). Isolation produces what onboarding consumes.</li>
+<li><a href="../document-scoping/"><code>document-scoping.md</code></a> — the micro sibling (cut a single document); this practice is
+  the same discipline at endeavour scale.</li>
+<li><a href="../../standards-charter/"><code>../standards-charter.md</code></a> — step 5 is the charter's "rule + check" applied to the
+  method/product boundary itself.</li>
+<li>ADR-0013 (separating method from product) — the cut criterion this practice operationalizes.</li>
+<li><code>enactment/method-seed-export-plan.md</code> — klartext's <strong>worked example</strong>: the F0→F3 run of this practice, with the
+  five-category taxonomy (§1) and the seed anatomy (§2).</li>
 </ul>
-<blockquote>
-<p><em>No klartext L2 sibling: this is generic stand-up-a-project-from-the-seed guidance. klartext did not onboard
-itself from a seed (the seed is klartext's </em><em>export</em><em>); the seed and its <code>seed.toml</code> values live in their own
-home (the method-seed bundle), not as a separate enactment of this practice.</em></p>
-</blockquote>
 
 
 
