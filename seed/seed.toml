@@ -1,0 +1,12 @@
+# Method-seed config source (export plan §4). Every endeavour-specific literal lives here; every
+# templated artefact renders from it. An importer adapts THIS file — not a global find-replace.
+# These are klartext's own values, serving as the worked example a consumer overwrites.
+
+project_name      = "klartext"                         # the slug everywhere
+env_prefix        = "KLARTEXT_"                         # env-var prefix
+memory_dir        = "klartext-team-memory"             # ~/.claude/<memory_dir>/ (memory + inbox)
+product_domain    = "klartext.jetzt"                   # help strings
+repo_slug         = "ThorstenDittmar/klartext"         # gh / CI
+worktree_base     = "$HOME/klartext-worktrees"         # launcher
+identity_preamble = "the klartext multi-agent system"  # load_agent_identity.py
+interpreter       = "api/.venv/bin/python3"            # portable interpreter (§7, phase 2)
