@@ -2,7 +2,7 @@
 
 > **Essence type:** Practice
 > **Advances Alpha:** Way of Working  ·  **Work Products:** a classified artefact inventory (every artefact sorted method-vs-product) · the separated method layer (its own L3/L2 tree) · the wired keep-separated enforcement (a classification gate / path-ownership)
-> **Activity / Activity Space:** Support the Endeavour → isolate an entangled endeavour's transferable **method** from its product **Fachlichkeit**, so the method can be exported and updated without product content bleeding across
+> **Activity / Activity Space:** Support the Team → isolate an entangled endeavour's transferable **method** from its product **Fachlichkeit**, so the method can be exported and updated without product content bleeding across
 > **External dependencies (referenced Resources):** none (the cut criterion is defined by ADR-0013, an internal decision, not an external Resource)
 > **Enforcement:** ritual  ·  **NN:** ✓ (when extracting a method from an existing endeavour, or before opening a bidirectional method-transfer channel)
 > **Status:** living  ·  **Owner:** OE

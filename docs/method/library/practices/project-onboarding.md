@@ -2,7 +2,7 @@
 
 > **Essence type:** Practice
 > **Advances Alpha:** Way of Working  ·  **Work Products:** a filled `seed.toml` (the single config source) · the rendered configuration (settings, hooks, gates, inbox, CLI defaults) · the agent-team framework (`agents/` + roster) with the baseline roles · the wired memory + inbox directories · a first convergence · a passing bootstrap smoke-test
-> **Activity / Activity Space:** Support the Endeavour → stand up a new endeavour's operating system — its way of working, agent-team framework, collaboration fabric and configuration — from the method seed
+> **Activity / Activity Space:** Support the Team → stand up a new endeavour's operating system — its way of working, agent-team framework, collaboration fabric and configuration — from the method seed
 > **External dependencies (referenced Resources):** the **method seed** bundle + its declared prerequisites — Claude Code (app + hooks), git, gh, a Python runtime, the `superpowers` plugin and the **Essence** baseline (both *declared-not-vendored*, see `../resources/`)
 > **Enforcement:** ritual  ·  **NN:** ✓ (when standing up a new endeavour from the seed)
 > **Status:** living  ·  **Owner:** OE
