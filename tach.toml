@@ -49,3 +49,10 @@ depends_on = [
     {path = "api.parsers"}, {path = "api.schemas"},
     {path = "api.services"},
 ]
+
+# The extracted, stack-neutral WoW CLI (method-seed phase 4). depends_on = [] enforces that it
+# imports nothing internal — only stdlib + typer — so it stays standalone / seed-shippable. Any
+# future wow_cli → api back-import is a tach violation (SA briefing: rule + check, not just true).
+[[modules]]
+path = "wow_cli"
+depends_on = []
