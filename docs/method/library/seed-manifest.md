@@ -37,7 +37,7 @@ action:
 | `generated` | new | produced by the assembly step **from logic, not a 1:1 template render** (e.g. an assembled index, the bundle tree) — distinct from `template` |
 | `deferred` | new | **in scope but not yet *dispositionable*** — its source is **absent** (nothing to ship yet) or it is **structurally blocked** from taking a normal disposition (e.g. it still hardcodes source literals, pending a later phase). The assembly **skips** it and the completeness check **flags it as a known gap**. Distinct from a `template`/`as_is` whose **source exists** and only awaits a build step — that keeps its target disposition (build-readiness is tracked by the owning role, not by re-labelling as `deferred`) |
 | `declared` | ④ | a **prerequisite the importer provides** — never shipped, never vendored (see contract) |
-| `exclude` | ⑤ | product *Fachlichkeit* — never travels (listed so the boundary is explicit, not silent) |
+| `exclude` | ⑤ | **never travels into the bundle** — product *Fachlichkeit*, or **seed-internal tooling/meta** not meant for the consumer (listed so the boundary is explicit, not silent) |
 
 ### Manifest format (the concrete instance)
 
