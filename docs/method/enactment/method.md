@@ -5,7 +5,7 @@ This is klartext's **Method-composition object** (L2). F0.2 completes it (compos
 > **What this document *is* (composition statement).** This register **is** klartext's instance of the Essence
 > **Method** element — *the composition of the kernel and a set of practices for a specific purpose*. Concretely:
 > the **Library practices** (the reusable L3 cards under `../library/practices/`, `../library/patterns/`,
-> `../library/dependency-contract.md`, `../library/adr-mechanism.md`, `../library/resources/`) **composed** into our way of working and shown
+> `../library/dependency-contract.md`, `../library/adr-mechanism.md`, `../library/standards-charter.md`, `../library/resources/`) **composed** into our way of working and shown
 > here **with their lived Alpha states** (which Alpha each advances, enforcement, NN, and — for the practices we
 > have actually run — their validated lifecycle). Each row links the **L3 definition** (reusable card) and, where
 > one exists, the **L2 instance** (our enacted sibling under `practices/`). F0.1 produced the cards; F0.2-P-F
