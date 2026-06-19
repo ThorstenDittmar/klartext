@@ -1,0 +1,6 @@
+# Baseline allowlist for the quality/tests role. EXAMPLE — replace with yours.
+Edit(<your-test-dir>)
+Write(<your-test-dir>)
+Bash(git add <your-test-dir>)
+Bash(git commit *)
+Bash(<your-test-runner>)

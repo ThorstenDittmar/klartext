@@ -44,8 +44,8 @@ into one of five categories:
 | `seed.toml` — the **config source** | ③ | the keystone; everything else templates from it (§4) |
 | **L3 Practice Library** (`docs/method/library/**`) | ① | already in the prior seed `~/klartext-method-seed/`; ships as-is |
 | **Essence baseline** (pin + dependency-contract) | ④ + ① | see §3 — the meta-language our L3 stands on |
-| **L2 enactment skeletons + one worked example per practice** | ② | empty stem + one `EXAMPLE — replace with yours` model (§6, decision 2) |
-| **Agent-team framework** — `agents/<slug>/{start.sh, allowed-tools.txt, claude.md}` + `team.yaml` | ② | baseline roles only (§6, decision 3) |
+| **L2 enactment skeletons + one worked example per practice** | ② → ① | BUILT 2026-06-19: `seed/baseline/l2/_skeleton.md` + `EXAMPLE-improvement-step.md`; authored generic → ships `as_is` (§6 decision 2) |
+| **Agent-team framework** — `agents/<slug>/{start.sh, allowed-tools.txt, claude.md}` + `team.yaml` | ② → ① | BUILT 2026-06-19: `seed/baseline/agents/**` — baseline roles OE/DevOps/SA/QA/PO + one `_domain-expert` clone-template; war-stories stripped (§6 decisions 3,4). Authored generic → ships `as_is`. **EN now; bilingual (DE) = flagged follow-up (decision 1).** |
 | **Collaboration fabric** — `inbox.sh`, identity/health hooks, the 4 WoW gates, the gated landing path, freshness warning | ③ | generic mechanisms, parameterized |
 | **Standards-Charter** (stack-neutral) | ② | OE-authored from SA's input (§5); spine = enforcement philosophy |
 | **ADR-Mechanism template** | ② | the lifecycle/gate/supersession/sign-off — *not* klartext's ADRs |

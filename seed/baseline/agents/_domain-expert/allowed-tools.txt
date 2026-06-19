@@ -1,0 +1,5 @@
+# Baseline allowlist for a domain-expert role. EXAMPLE — clone per domain, replace paths.
+Edit(<your-domain-source-dir>)
+Write(<your-domain-source-dir>)
+Bash(git add <your-domain-source-dir>)
+Bash(git commit *)

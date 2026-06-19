@@ -1,0 +1,5 @@
+# Baseline allowlist for the product-owner / planning role. EXAMPLE — replace with yours.
+Edit(<your-plans-dir>)
+Write(<your-plans-dir>)
+Bash(git add <your-plans-dir>)
+Bash(git commit *)

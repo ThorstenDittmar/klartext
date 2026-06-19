@@ -136,21 +136,37 @@ path        = "scripts/com.klartext.compact-monitor.plist.template"
 disposition = "template"
 note        = "macOS launch agent; already a .template, parametrize the label/paths"
 
-# ── agent-team framework (baseline roles only — ② per plan §6 decision 3) ──────
+# ── agent-team framework (baseline roles, authored generic — ship as_is) ───────
+# Source is seed/baseline/ (NOT the live agents/, which is the source endeavour's real team = excluded
+# Fachlichkeit). These are authored generic skeletons with placeholders → copied verbatim, consumer edits.
 [[entry]]
-path        = "agents/team.yaml"
-disposition = "template"
-note        = "baseline roster only: OE · DevOps · SA · QA · Hannibal(PO) · one Domain-Expert template"
+path        = "seed/baseline/agents/team.yaml"
+disposition = "as_is"
+target      = "agents/team.yaml"
+note        = "baseline roster: OE · DevOps · SA · QA · Product Owner (+ clone _domain-expert per domain)"
 
 [[entry]]
-path        = "agents/{oe,devops,system-architect,qa,hannibal}/**"
-disposition = "template"
-note        = "baseline-role agent triples (start.sh/allowed-tools.txt/claude.md); content → placeholder/example, war-stories stripped (plan §6 decision 4)"
+path        = "seed/baseline/agents/{oe,devops,system-architect,qa,product-owner}/**"
+disposition = "as_is"
+target      = "agents/"
+note        = "baseline-role triples (start.sh/allowed-tools.txt/claude.md), war-stories stripped (plan §6 decision 4). EN now; bilingual = flagged follow-up (decision 1)"
 
 [[entry]]
-path        = "agents/_domain-expert-template/**"
-disposition = "deferred"
-note        = "the cloneable Domain-Expert template — NOT YET BUILT (completeness-audit finding, OE backlog). Becomes `template` once authored."
+path        = "seed/baseline/agents/_domain-expert/**"
+disposition = "as_is"
+target      = "agents/_domain-expert/"
+note        = "the one cloneable Domain-Expert template — clone per consumer domain (plan §6 decision 3)"
+
+[[entry]]
+path        = "seed/baseline/l2/**"
+disposition = "as_is"
+target      = "docs/method/enactment/practices/"
+note        = "L2 enactment skeleton (_skeleton.md) + one worked example (EXAMPLE-improvement-step.md), plan §6 decision 2"
+
+[[entry]]
+path        = "seed/baseline/README.md"
+disposition = "as_is"
+note        = "explains the generic baseline artefacts"
 
 # ── declared — prerequisites the importer provides (never shipped) ─────────────
 [[entry]]

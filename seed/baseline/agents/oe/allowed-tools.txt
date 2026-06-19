@@ -1,0 +1,9 @@
+# Baseline allowlist for the method/organisation role. EXAMPLE — replace with yours.
+# One entry per line; read by scripts/start-agent.sh. Read/analyse is granted project-wide.
+Edit(agents/)
+Write(agents/)
+Edit(<your-root-standards-doc>)
+Write(<your-root-standards-doc>)
+Bash(git add agents/)
+Bash(git commit *)
+Bash(chmod +x agents/*/start.sh)

@@ -1,0 +1,10 @@
+# Baseline allowlist for the infrastructure/tooling role (gatekeeper). EXAMPLE — replace with yours.
+# One entry per line; read by scripts/start-agent.sh. Read/analyse is granted project-wide.
+Edit(.github/workflows/)
+Write(.github/workflows/)
+Edit(scripts/)
+Write(scripts/)
+Edit(<your-ci-config>)
+Write(<your-ci-config>)
+Bash(git add *)
+Bash(git commit *)
