@@ -10,3 +10,17 @@ repo_slug         = "ThorstenDittmar/klartext"         # gh / CI
 worktree_base     = "$HOME/klartext-worktrees"         # launcher
 identity_preamble = "the klartext multi-agent system"  # load_agent_identity.py
 interpreter       = "api/.venv/bin/python3"            # portable interpreter (§7, phase 2)
+cli_entrypoint    = "api/cli.py"                       # consumer's product CLI the gate watches (SA §9)
+
+# Way-of-Working trigger surfaces for the classification gate (SA §9). These are the GENERIC paths
+# whose change is a rolling-vs-breaking question. NOTE the convention these encode: `scripts/` holds
+# WoW machinery only — product code lives in the product stack, never under scripts/, or it would
+# falsely trip the gate. The product CLI is parametrized separately (cli_entrypoint), not listed here.
+wow_trigger_paths = [
+    "CLAUDE.md",
+    "docs/method/**",
+    "agents/**/claude.md",
+    ".claude/settings.json",
+    ".github/workflows/**",
+    "scripts/**",
+]
