@@ -21,7 +21,6 @@ from __future__ import annotations
 import asyncio
 import json
 import re
-import shutil
 import subprocess
 import sys
 import time
@@ -32,6 +31,8 @@ from typing import Any
 
 import httpx
 import typer
+from wow_cli import landed as landed_cmd
+from wow_cli.skills import SkillsSyncAction, _sync_skills
 
 # ---------------------------------------------------------------------------
 # App setup
@@ -49,11 +50,14 @@ app.add_typer(db_app, name="db")
 skills_app = typer.Typer(help="Skill distribution (repo → ~/.claude/skills/).")
 app.add_typer(skills_app, name="skills")
 
+# WoW commands extracted to the stack-neutral wow_cli package (phase 4) — re-registered here so
+# klartext keeps its single entrypoint; the seed ships wow_cli as the importer's standalone CLI.
+landed_cmd.register(app)
+
 _PROJECT_ROOT = Path(__file__).parent.parent
 _FRONTEND_DIR = _PROJECT_ROOT / "frontend"
 _SKILLS_SOURCE = _PROJECT_ROOT / "docs" / "method" / "enactment" / "skills"
 _SKILLS_TARGET = Path.home() / ".claude" / "skills"
-_REPO_MANAGED_MARKER = ".repo-managed"
 
 
 # ---------------------------------------------------------------------------
@@ -560,31 +564,6 @@ def _validate_merge_method(method: str) -> str:
     raise typer.BadParameter(f"unknown merge method '{method}' — use 'squash' or 'merge'")
 
 
-class LandedStatus(StrEnum):
-    """Whether a ref's work has reached origin/main, and by which evidence."""
-
-    LANDED_BY_SHA = "landed_by_sha"  # reachable from main (merge-commit / fast-forward)
-    LANDED_BY_CONTENT = "landed_by_content"  # sha absent from main, but content fully present
-    NOT_LANDED = "not_landed"  # neither reachable nor content-subsumed — genuinely unmerged
-
-
-def _landed_verdict(*, sha_contained: bool, changes_in_main: bool) -> LandedStatus:
-    """Decides whether a ref's work is in origin/main, distinguishing SHA- from change-presence.
-
-    The squash-merge trap: our default merge method squashes, so a merged branch commit gets a NEW
-    sha on main and is never reachable from it (`git branch --contains` reports it as unmerged),
-    even though its changes are present. Reachability (`sha_contained`) is the stronger signal when
-    present; otherwise change-equivalence (`changes_in_main` — every commit of the ref has an
-    equivalent patch upstream) is the reliable evidence that the work landed under a squash. Only
-    when neither holds is the work genuinely unmerged.
-    """
-    if sha_contained:
-        return LandedStatus.LANDED_BY_SHA
-    if changes_in_main:
-        return LandedStatus.LANDED_BY_CONTENT
-    return LandedStatus.NOT_LANDED
-
-
 def _evaluate_checks(checks: list[dict[str, Any]]) -> str:
     """Collapses a list of gh check buckets into one verdict: pass | fail | pending.
 
@@ -913,200 +892,10 @@ def converge(
 
 
 # ---------------------------------------------------------------------------
-# landed — did a ref's work reach origin/main? (squash-aware: content, not SHA)
-# ---------------------------------------------------------------------------
-
-
-def _fetch_origin(path: Path) -> bool:
-    """Fetches origin quietly; returns False when the fetch failed (e.g. offline)."""
-    return (
-        subprocess.run(
-            ["git", "-C", str(path), "fetch", "origin", "--quiet"], capture_output=True
-        ).returncode
-        == 0
-    )
-
-
-def _ref_resolves(path: Path, ref: str) -> bool:
-    """True when `ref` resolves to a commit object — guards against a typo'd or deleted ref."""
-    return (
-        subprocess.run(
-            ["git", "-C", str(path), "rev-parse", "--verify", "--quiet", f"{ref}^{{commit}}"],
-            capture_output=True,
-        ).returncode
-        == 0
-    )
-
-
-def _ref_landed_status(path: Path, ref: str) -> LandedStatus:
-    """Computes the landed verdict for `ref` against the local origin/main (caller fetches first).
-
-    Reachability via `git merge-base --is-ancestor`. Change-presence via `git cherry`, which marks
-    each of the ref's commits `-` when an equivalent patch (same patch-id) already exists upstream
-    and `+` when it does not — so a squash-merge is detected by change-equivalence even after main
-    has moved on, where a whole-tree diff would always show differences.
-    """
-    sha_contained = (
-        subprocess.run(
-            ["git", "-C", str(path), "merge-base", "--is-ancestor", ref, "origin/main"],
-            capture_output=True,
-        ).returncode
-        == 0
-    )
-    cherry = subprocess.run(
-        ["git", "-C", str(path), "cherry", "origin/main", ref], capture_output=True, text=True
-    )
-    changes_in_main = cherry.returncode == 0 and not any(
-        line.startswith("+") for line in cherry.stdout.splitlines()
-    )
-    return _landed_verdict(sha_contained=sha_contained, changes_in_main=changes_in_main)
-
-
-@app.command()
-def landed(
-    ref: str = typer.Argument(..., help="branch or commit to check against origin/main"),
-) -> None:
-    """Report whether <ref>'s work has reached origin/main — by change-equivalence, not just SHA.
-
-    Under our squash-merge default a merged branch commit gets a NEW SHA on main, so
-    `git branch --contains` wrongly reports it as unmerged. This checks reachability AND
-    change-presence (patch-id equivalence) and prints the verdict; it exits non-zero only when the
-    work is genuinely not landed. Use it instead of SHA-containment to answer "did this land?".
-    """
-    cwd = Path.cwd()
-    if not _fetch_origin(cwd):
-        typer.secho(
-            "⚠  could not fetch origin — answering against a possibly-stale origin/main.",
-            fg=typer.colors.YELLOW,
-            err=True,
-        )
-    if not _ref_resolves(cwd, ref):
-        typer.secho(f"✗  no such ref: {ref}", fg=typer.colors.RED)
-        raise typer.Exit(2)
-    status = _ref_landed_status(cwd, ref)
-    if status == LandedStatus.LANDED_BY_SHA:
-        typer.secho(
-            f"✓  {ref} landed — reachable from origin/main (SHA present).", fg=typer.colors.GREEN
-        )
-    elif status == LandedStatus.LANDED_BY_CONTENT:
-        typer.secho(
-            f"✓  {ref} landed by content — SHA absent from main (squash), content fully present.",
-            fg=typer.colors.GREEN,
-        )
-    else:
-        typer.secho(
-            f"✗  {ref} not landed — content differs from origin/main (genuinely unmerged).",
-            fg=typer.colors.RED,
-        )
-        raise typer.Exit(1)
-
-
-# ---------------------------------------------------------------------------
 # skills sync — mirror repo skills into ~/.claude/skills/ (repo is the SoT)
+# The stack-neutral logic lives in wow_cli.skills (phase 4 extraction); this command wires
+# klartext's source/target paths and re-uses it.
 # ---------------------------------------------------------------------------
-
-
-class SkillsSyncAction(StrEnum):
-    """Outcome of mirroring one skill from the repo into the install directory."""
-
-    INSTALLED = "installed"
-    UPDATED = "updated"
-    UNCHANGED = "unchanged"
-    PRUNED = "pruned"
-
-
-def _collect_skill_files(source: Path) -> dict[str, bytes]:
-    """Returns the desired install file set for one source skill, keyed by relative path.
-
-    A flat `<name>.md` source becomes a single `SKILL.md`; a `<name>/` directory is mirrored
-    file-for-file (multi-file skills like qa-review keep their companion docs). The
-    `.repo-managed` marker is never part of the comparison set — it is install metadata.
-    """
-    if source.is_file():
-        return {"SKILL.md": source.read_bytes()}
-    files: dict[str, bytes] = {}
-    for path in sorted(p for p in source.rglob("*") if p.is_file()):
-        rel = path.relative_to(source).as_posix()
-        if rel == _REPO_MANAGED_MARKER:
-            continue
-        files[rel] = path.read_bytes()
-    return files
-
-
-def _read_managed_files(skill_dir: Path) -> dict[str, bytes]:
-    """Returns a target skill dir's installed files by relative path (excludes the marker)."""
-    files: dict[str, bytes] = {}
-    for path in sorted(p for p in skill_dir.rglob("*") if p.is_file()):
-        rel = path.relative_to(skill_dir).as_posix()
-        if rel == _REPO_MANAGED_MARKER:
-            continue
-        files[rel] = path.read_bytes()
-    return files
-
-
-def _source_skills(source_dir: Path) -> dict[str, Path]:
-    """Maps skill name → source path. Skills are flat `<name>.md` files or `<name>/` directories."""
-    skills: dict[str, Path] = {}
-    if not source_dir.exists():
-        return skills
-    for entry in sorted(source_dir.iterdir()):
-        if entry.is_dir():
-            skills[entry.name] = entry
-        elif entry.suffix == ".md":
-            skills[entry.stem] = entry
-    return skills
-
-
-def _sync_skills(source_dir: Path, target_dir: Path) -> dict[str, SkillsSyncAction]:
-    """Mirrors repo skills into the install dir, idempotently and prune-safely.
-
-    The repo is the single source of truth. Each source skill (flat `<name>.md` or `<name>/`
-    directory) is installed as `<target>/<name>/` with a `.repo-managed` marker. Re-running is a
-    no-op (UNCHANGED) when content matches; changed content is overwritten (UPDATED). Managed
-    target dirs whose source has disappeared are pruned (handles renames like pre-compact→anchor);
-    unmarked foreign/plugin skills are never touched.
-    """
-    result: dict[str, SkillsSyncAction] = {}
-    sources = _source_skills(source_dir)
-
-    for name, source in sources.items():
-        desired = _collect_skill_files(source)
-        skill_dir = target_dir / name
-        if not skill_dir.exists():
-            action = SkillsSyncAction.INSTALLED
-        elif _read_managed_files(skill_dir) != desired:
-            action = SkillsSyncAction.UPDATED
-        else:
-            action = SkillsSyncAction.UNCHANGED
-
-        if action in (SkillsSyncAction.INSTALLED, SkillsSyncAction.UPDATED):
-            if skill_dir.exists():
-                shutil.rmtree(skill_dir)
-            for rel, content in desired.items():
-                dest = skill_dir / rel
-                dest.parent.mkdir(parents=True, exist_ok=True)
-                dest.write_bytes(content)
-        # Always ensure the marker exists, even on an UNCHANGED re-sync of a hand-copied dir.
-        marker = skill_dir / _REPO_MANAGED_MARKER
-        if not marker.exists():
-            marker.write_text("")
-        result[name] = action
-
-    # Prune managed dirs whose source is gone; leave unmarked foreign skills untouched.
-    # Guard: never prune when the source yielded *no* skills. A missing or empty source dir
-    # (a path typo, a wrong cwd, a broken checkout) must not be read as "every skill deleted"
-    # and wipe the whole ~/.claude/skills/ install — pruning only ever follows a real source.
-    if sources and target_dir.exists():
-        for entry in sorted(target_dir.iterdir()):
-            if (
-                entry.is_dir()
-                and entry.name not in sources
-                and (entry / _REPO_MANAGED_MARKER).exists()
-            ):
-                shutil.rmtree(entry)
-                result[entry.name] = SkillsSyncAction.PRUNED
-
-    return result
 
 
 @skills_app.command("sync")
