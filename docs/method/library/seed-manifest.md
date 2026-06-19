@@ -1,6 +1,8 @@
 # Seed Manifest
 
 > **Essence type:** Work Product
+> **Advances Alpha:** Way of Working (Non-negotiable practices & tools identified · Gaps between available and needed way of working understood)  ·  **Work Products:** the manifest / inventory itself
+> **Activity / Activity Space:** Prepare to do the Work → enumerate and disposition every part of the seed so the bundle is assemblable and provably complete
 > **External dependencies (referenced Resources):** none (it *references* the declared-not-shipped resources — see the prerequisites contract below — but owns no external material itself)
 > **Enforcement:** mechanical (the assembly step reads it; a completeness check asserts every shipped path is listed exactly once)  ·  **NN:** ✓ (a seed without a manifest is not assemblable)
 > **Status:** living  ·  **Owner:** OE
