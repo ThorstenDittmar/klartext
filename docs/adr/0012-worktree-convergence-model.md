@@ -178,3 +178,67 @@ barrier set small — the barrier is the exception, not the norm.
   rolling default for everything else.
 - **Cost:** a real classification step on every way-of-working PR, plus an occasional coordinated halt.
   Mitigated by expand–contract keeping most changes on the rolling path.
+
+## Addendum — What counts as a Way-of-Working surface (2026-06-19)
+
+**Status:** Accepted — the enforcement is live (#183, `34ed934`: `.github/workflows/**` added to the
+classify-gate, with a unit test in the same commit). **Decided by:** User (direction — SA §9 verdict,
+adopted via the OE hub, 2026-06-19). **Author / Sign-off:** System Architect. **Gate:** OE.
+**Classification of this change:** **breaking** (it tightened the gate's surface — see below).
+
+### Why the addendum needs a refinement
+
+The two-mode addendum requires every way-of-working PR to answer *"breaking for a drifted agent?"*, but
+it leaves **what counts as a way-of-working surface** as prose ("skills, rituals, `settings.json` / hooks
+/ allowlists, and the commands and paths they reference"). The operational instance — the
+`TRIGGER_PATTERNS` list in `scripts/classify_gate.py` — has grown by ad-hoc addition (F0.3 added
+`docs/method/**`; 2026-06-19 added `.github/workflows/**`). Without a stated **criterion**, each addition
+is an ad-hoc judgement rather than a derivable one, and the durable definition lives only in a code
+comment + a design spec. This addendum states the criterion and gives the surface set a durable home.
+
+### Decision — the Way-of-Working surface criterion
+
+> A path is a **Way-of-Working surface** iff a change to it alters either **(1) the method's *definition***
+> (its standards, roles, agent Hoheitswissen, method library, collaboration model) **or (2) the method's
+> mechanical *enforcement*** (the gates, hooks, and scripts that make the method binding).
+
+**Corollary (the 2026-06-19 addition): the enforcement layer is itself a Way-of-Working surface.**
+`.github/workflows/**` — the CI gates that *enforce* the method — therefore triggers the classification:
+a workflow change is a rolling-vs-breaking question (tightening a gate is **breaking**; adding an advisory
+check is **rolling**). This is clause (2) of the criterion applied to CI; the same clause already
+justifies `scripts/**` and `.claude/settings.json` being in the set.
+
+**Generic vs product (SA §9).** The *literal* trigger list mixes **generic-WoW** paths — `CLAUDE.md`,
+`docs/method/**`, `agents/**/claude.md`, `.claude/settings.json`, `scripts/**`, `.github/workflows/**` —
+with one **product-specific** path, `api/cli.py` (klartext's CLI; parametrized as `cli_entrypoint` in the
+method seed, not hardcoded). The **criterion** is what travels; the literal list is klartext's instance.
+The `scripts/**` entry stays a clean WoW trigger only under the convention *scripts/ holds WoW machinery
+only — product code lives in the product stack*.
+
+**Note — a derivable case, not decided here.** By clause (1), a method / operating-model ADR (this one
+included) alters the method's *definition* — yet `docs/adr/**` is **not** in the current trigger set.
+That is consistent, not an oversight: ADRs are mixed (product ADRs exist too) and already pass through
+review + explicit ratification, so they are not silently-drifting surfaces in the way `settings.json` or a
+hook is. Whether to add a *method-ADR* trigger is a follow-up the criterion now makes **derivable** — to
+be decided (and, if adopted, shipped with its test) separately, not in this addendum.
+
+### Enacted instance — referenced, not duplicated
+
+- **The live surface set:** `scripts/classify_gate.py` `TRIGGER_PATTERNS`.
+- **The 2026-06-19 addition** (`.github/workflows/**`): PR #183 (`34ed934`), shipped with its unit test in
+  the **same commit** — the Standards-Charter "rule + check" rule (a rule without a check is documentation).
+- **The design spec:** `docs/superpowers/specs/2026-06-15-classification-gate-design.md`.
+
+This addendum fixes the **criterion**. A future addition to the surface set that the criterion *already
+covers* is a one-line code change + test, **not** an ADR edit. A change to the **criterion itself** is an
+ADR amendment (a further addendum).
+
+### Consequences
+
+- The Way-of-Working surface set now has a stated criterion and a durable home; additions become
+  **derivable**, not ad-hoc.
+- Workflow changes now carry the rolling/breaking classification — closing the gap where the method's
+  *enforcement* could change **unclassified**.
+- **Cost:** every PR touching `.github/workflows/**` now needs exactly one `rolling` / `breaking` label
+  (the all-agents heads-up OE broadcast on 2026-06-19), or the gate fails. Global on merge, no lazy
+  per-worktree adoption — which is itself why this change is classified **breaking**.
