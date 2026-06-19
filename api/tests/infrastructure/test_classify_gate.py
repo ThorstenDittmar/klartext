@@ -74,6 +74,18 @@ def test_method_docs_are_a_trigger() -> None:
 # --- each trigger pattern matches a representative path ------------------------------------
 
 
+def test_github_workflows_are_a_trigger() -> None:
+    """Expects .github/workflows/** to be a WoW surface (SA §9 verdict).
+
+    The workflows ARE the mechanical enforcement layer; a change to them is a rolling-vs-breaking
+    question (ADR-0006), so a workflow-only PR must carry a classification label. Rule + check in
+    the same commit (SA §1 charter).
+    """
+    assert _gate.is_trigger_path(".github/workflows/test.yml") is True
+    result = _gate.evaluate([".github/workflows/classify-gate.yml"], set())
+    assert result.passed is False
+
+
 def test_each_trigger_pattern_matches_a_representative_path() -> None:
     """Expects every Way-of-Working trigger pattern to be recognised for a representative path."""
     representatives = [
