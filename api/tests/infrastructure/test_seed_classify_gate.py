@@ -1,13 +1,13 @@
 """Infrastructure tests: the config-driven classify-gate pattern source (export phase 3.2).
 
-The shipped seed gate (B-Seed-only) sources its trigger patterns from seed.toml instead of a
-hardcoded list: `trigger_patterns_from_config` builds TRIGGER_PATTERNS from `wow_trigger_paths`
-(SA's generic-WoW classification) plus the parametrized `cli_entrypoint` (the product CLI path).
+The shipped seed gate sources its trigger patterns from seed.toml instead of a hardcoded list:
+`trigger_patterns_from_config` builds TRIGGER_PATTERNS from `wow_trigger_paths` (SA's generic-WoW
+classification) plus the parametrized `cli_entrypoint` (the product CLI path).
 
 Critically, a CONSISTENCY DOGFOOD pins that this config-derived list matches klartext's LIVE
-hardcoded `scripts/classify_gate.py` TRIGGER_PATTERNS. B-Seed-only leaves the live gate hardcoded
-for now, so the two sources must stay in sync until the live gate is unified (B-voll, tracked in
-team memory) — this test is the guard that catches drift between them.
+`scripts/classify_gate.py` TRIGGER_PATTERNS. Both now read seed.toml (B-voll done — the live gate
+no longer hardcodes the list), so seed.toml is the single source of truth; this test guards against
+the two derivation implementations drifting.
 """
 
 from __future__ import annotations
@@ -50,8 +50,8 @@ def test_trigger_patterns_from_config_combines_paths_and_cli(tmp_path: Path) -> 
 def test_config_patterns_match_live_gate_trigger_patterns() -> None:
     """Pins consistency: klartext's seed.toml-derived patterns == the LIVE classify_gate list.
 
-    B-Seed-only keeps the live gate hardcoded; this guards against the two sources drifting until
-    the live gate is unified to read from seed.toml (B-voll, deferred).
+    Both the seed renderer and the live gate now derive their patterns from seed.toml (B-voll done);
+    this guards against the two derivation implementations drifting from one another.
     """
     config = _render.load_seed_config(_REPO_ROOT / "seed" / "seed.toml")
     derived = sorted(_render.trigger_patterns_from_config(config))
