@@ -1,0 +1,62 @@
+{
+  "autoMemoryEnabled": true,
+  "autoMemoryDirectory": "~/.claude/{{memory_dir}}",
+  "permissions": {
+    "allow": [
+      "Read",
+
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git status*)",
+      "Bash(git show*)",
+
+      "Bash(ls*)",
+      "Bash(find *)",
+      "Bash(grep*)",
+
+      "Bash(semgrep*)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/scripts/load_agent_identity.py\""
+          }
+        ]
+      },
+      {
+        "matcher": "startup|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/scripts/session_health.py\""
+          }
+        ]
+      }
+    ],
+    "PostCompact": [
+      {
+        "matcher": "auto",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "mkdir -p \"$HOME/.claude/{{memory_dir}}\" && echo \"$(date -u +%Y-%m-%dT%H:%M:%S) | auto | $(git -C \"$CLAUDE_PROJECT_DIR\" branch --show-current)\" >> \"$HOME/.claude/{{memory_dir}}/compact-log.txt\""
+          }
+        ]
+      },
+      {
+        "matcher": "manual",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "mkdir -p \"$HOME/.claude/{{memory_dir}}\" && echo \"$(date -u +%Y-%m-%dT%H:%M:%S) | manual | $(git -C \"$CLAUDE_PROJECT_DIR\" branch --show-current)\" >> \"$HOME/.claude/{{memory_dir}}/compact-log.txt\""
+          }
+        ]
+      }
+    ]
+  }
+}
