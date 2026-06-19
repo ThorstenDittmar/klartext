@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/method/enactment/method/">
+        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/method/library/seed-manifest/">
       
       
       
@@ -23,7 +23,7 @@
     
     
       
-        <title>The klartext Method - klartext.jetzt – Spezifikation</title>
+        <title>Seed Manifest - klartext.jetzt – Spezifikation</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#the-klartext-method" class="md-skip">
+        <a href="#seed-manifest" class="md-skip">
           Zum Inhalt
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              The klartext Method
+              Seed Manifest
             
           </span>
         </div>
@@ -1650,7 +1650,7 @@
 
 
   
-    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/method/enactment/method.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/method/library/seed-manifest.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1658,397 +1658,106 @@
   
 
 
-<h1 id="the-klartext-method">The klartext Method<a class="headerlink" href="#the-klartext-method" title="Permanent link">&para;</a></h1>
-<p>This is klartext's <strong>Method-composition object</strong> (L2). F0.2 completes it (composed Library practices + lived Alpha states).</p>
+<h1 id="seed-manifest">Seed Manifest<a class="headerlink" href="#seed-manifest" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>What this document <em>is</em> (composition statement).</strong> This register <strong>is</strong> klartext's instance of the Essence
-<strong>Method</strong> element — <em>the composition of the kernel and a set of practices for a specific purpose</em>. Concretely:
-the <strong>Library practices</strong> (the reusable L3 cards under <code>../library/practices/</code>, <code>../library/patterns/</code>,
-<code>../library/dependency-contract.md</code>, <code>../library/adr-mechanism.md</code>, <code>../library/standards-charter.md</code>, <code>../library/seed-manifest.md</code>, <code>../library/resources/</code>) <strong>composed</strong> into our way of working and shown
-here <strong>with their lived Alpha states</strong> (which Alpha each advances, enforcement, NN, and — for the practices we
-have actually run — their validated lifecycle). Each row links the <strong>L3 definition</strong> (reusable card) and, where
-one exists, the <strong>L2 instance</strong> (our enacted sibling under <code>practices/</code>). F0.1 produced the cards; F0.2-P-F
-closes the register so every composed element resolves to a card. Path convention: bare <code>practices/…</code> /
-<code>contracts/…</code> paths are L2 (this <code>enactment/</code> tree); <code>../library/…</code> paths are L3.</p>
-<p><strong>Scope.</strong> The <strong>composition of our way of working</strong>: the authoritative register of the elements — Practices,
-Patterns, Work Products, gates, roles — that make up the klartext method, each with its Essence type, the
-Alpha it advances, enforcement level and card status. This is our instance of the Essence <strong>Method</strong> element
-("the composition of a kernel and a set of practices to fulfill a specific purpose").
-<strong>Out of scope.</strong> Practice <em>content</em> (lives in <code>practices/</code> — our <strong>Practice Library</strong>); the meta-language
-reference (<code>semat-definition.md</code>); term definitions (<code>semat-glossary.md</code>); decisions and rationale
-(<code>continuous-improvement.md</code>).
-<strong>Anti-pattern guarded.</strong> Implicit/unlisted method elements — completeness that cannot be checked (RC1;
-cf. the Community-omission incident: no list meant no completeness check).
-<strong>Language.</strong> English — documentation-language rule.</p>
-<p><strong>Owner:</strong> OE · <strong>Status:</strong> living · <strong>Maintenance ritual:</strong> updated in the same Improvement Step (step 3,
-Record) that adds, changes, promotes or retires an element.
-The <strong>Card</strong> column doubles as the migration diagnostic — the only <em>temporary</em> aspect of this document:
-❌ entries are <em>enacted</em> (lived, often as a skill) but not yet <em>described</em> in our meta-language.</p>
-<p><strong>Non-negotiable (NN) flag</strong> <em>(added 2026-06-10, closes the last Foundation-Established checkbox)</em>:
-✓ = must run whenever its trigger condition applies; skipping requires a <strong>recorded deviation</strong> (cf. the
-retro deviation clause). — = strong convention, context may override without a record. All mechanical
-gates are non-negotiable by nature.</p>
-<p><strong>Retirement rule</strong> <em>(added 2026-06-10, user-requested)</em>: elements are <strong>never deleted</strong> from this
-register. When an element is abandoned or replaced, its row gets status <strong><code>retired</code></strong> or
-<strong><code>superseded by &lt;element&gt;</code></strong> plus a one-line rationale (and a pointer to the Improvement-Register row
-or ADR carrying the full why). Modeled on the ADR supersession mechanism. Decisions <em>against</em> a way of
-working are method knowledge of equal rank to decisions <em>for</em> one — they must survive compactions and
-generation changes.</p>
+<p><strong>Essence type:</strong> Work Product
+<strong>Advances Alpha:</strong> Way of Working (Non-negotiable practices &amp; tools identified · Gaps between available and needed way of working understood)  ·  <strong>Work Products:</strong> the manifest / inventory itself
+<strong>Activity / Activity Space:</strong> Prepare to do the Work → enumerate and disposition every part of the seed so the bundle is assemblable and provably complete
+<strong>External dependencies (referenced Resources):</strong> none (it <em>references</em> the declared-not-shipped resources — see the prerequisites contract below — but owns no external material itself)
+<strong>Enforcement:</strong> mechanical (the assembly step reads it; a completeness check asserts every shipped path is listed exactly once)  ·  <strong>NN:</strong> ✓ (a seed without a manifest is not assemblable)
+<strong>Status:</strong> living  ·  <strong>Owner:</strong> OE
+<strong>Enacted as:</strong> <code>seed/MANIFEST.toml</code> (klartext's worked instance) + the assembly step that reads it</p>
 </blockquote>
-<h2 id="practices-composed-all-carded">Practices — composed (all carded)<a class="headerlink" href="#practices-composed-all-carded" title="Permanent link">&para;</a></h2>
-<p>Every composed practice now resolves to an <strong>L3 definition card</strong> (<code>../library/practices/</code>) and, where we enact
-it as our own sibling, an <strong>L2 instance</strong> (<code>practices/</code>). The migration diagnostic that this column used to
-carry (the ❌ "enacted but not described" backlog) is <strong>closed by F0.2</strong> — the table below merges the formerly
-two-part split into one register. Several of these are <em>enacted as Claude Code skills</em>; the skill is the
-executable L2 enactment, the card is the L3 description.</p>
+<h2 id="purpose">Purpose<a class="headerlink" href="#purpose" title="Permanent link">&para;</a></h2>
+<p>The <strong>authoritative inventory of a method seed</strong> — and, under the manifest-driven assembly model, its
+<strong>keystone</strong>: the single list the assembly step reads to produce a consumable bundle. Every part of the seed
+appears here exactly once, tagged with <strong>how</strong> it travels (verbatim, rendered, generated, or merely declared).
+Two failure modes drive it: a seed assembled from an <strong>implicit</strong> file set (whatever happens to be in a
+directory — unlistable, uncheckable, the RC1 anti-pattern at bundle scale), and a seed that silently <strong>carries
+product content</strong> because nothing enumerated what is in vs. out. The manifest makes both <strong>derivable</strong>: the
+inventory is the completeness contract.</p>
+<p>It pairs with two siblings: <a href="../practices/method-isolation/"><code>practices/method-isolation.md</code></a> produces the cut
+(what is method vs. product); the manifest <strong>records</strong> that cut as a checkable inventory;
+<a href="../practices/project-onboarding/"><code>practices/project-onboarding.md</code></a> consumes the assembled bundle.</p>
+<h2 id="definition-delta">Definition / delta<a class="headerlink" href="#definition-delta" title="Permanent link">&para;</a></h2>
+<h3 id="disposition-taxonomy">Disposition taxonomy<a class="headerlink" href="#disposition-taxonomy" title="Permanent link">&para;</a></h3>
+<p>Every entry carries exactly one <strong>disposition</strong>, mapping the export plan's five categories (§1) onto an assembly
+action:</p>
 <table>
 <thead>
 <tr>
-<th>Element</th>
-<th>Advances Alpha</th>
-<th>Enforcement</th>
-<th>NN</th>
-<th>Card (L3 def · L2 instance)</th>
+<th>Disposition</th>
+<th>Category</th>
+<th>Assembly action</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Improvement Step</td>
-<td>Way of Working</td>
-<td>ritual</td>
-<td>✓</td>
-<td>✅ <code>../library/practices/improvement-step.md</code> · <code>practices/improvement-step.md</code></td>
+<td><code>as_is</code></td>
+<td>① As-is</td>
+<td>pulled <strong>verbatim</strong> from the live repo at <code>path</code> (no stored copy — single source of truth)</td>
 </tr>
 <tr>
-<td>Document Scoping</td>
-<td>Way of Working</td>
-<td>ritual</td>
-<td>—</td>
-<td>✅ <code>../library/practices/document-scoping.md</code> · <code>practices/document-scoping.md</code></td>
+<td><code>template</code></td>
+<td>② / ③</td>
+<td>rendered <strong>1:1 from a <code>.tmpl</code></strong>, reading the config source (<code>seed.toml</code>), to <code>target</code></td>
 </tr>
 <tr>
-<td>Retrospective</td>
-<td>Way of Working (tracks Improvement sub-alpha)</td>
-<td>ritual</td>
-<td>✓ (Work cannot reach <em>Closed</em> without it)</td>
-<td>✅ <code>../library/practices/retrospective.md</code> · <code>practices/retrospective.md</code></td>
+<td><code>config_source</code></td>
+<td>③</td>
+<td>the <code>seed.toml</code> itself — shipped into the bundle <strong>verbatim</strong> for the consumer to <strong>fill</strong>; everything else reads from it</td>
 </tr>
 <tr>
-<td>Merge Protocol</td>
-<td>Work</td>
-<td>ritual</td>
-<td>✓ (for parallel dispatches)</td>
-<td>✅ <code>../library/practices/merge-protocol.md</code> · <code>practices/merge-protocol.md</code></td>
+<td><code>generated</code></td>
+<td>new</td>
+<td>produced by the assembly step <strong>from logic, not a 1:1 template render</strong> (e.g. an assembled index, the bundle tree) — distinct from <code>template</code></td>
 </tr>
 <tr>
-<td>Environment Knowledge</td>
-<td>Way of Working</td>
-<td>ritual (manual canary — flagship Resource not scriptable)</td>
-<td>✓ (before an env-fact-dependent decision; after a tool update)</td>
-<td>✅ <code>../library/practices/environment-knowledge.md</code> · <code>practices/environment-knowledge.md</code></td>
+<td><code>deferred</code></td>
+<td>new</td>
+<td><strong>in scope but not yet shippable</strong> — the assembly <strong>skips</strong> it and the completeness check <strong>flags it as a known gap</strong> (a part not yet built, or one that still carries source literals pending a later phase). Not silent, not shipped — the honest middle between a real disposition and a silent omission</td>
 </tr>
 <tr>
-<td>Controlled Method Rollout</td>
-<td>Way of Working</td>
-<td>ritual (classification gate + drift/G2 verify = mechanical promotions, DevOps)</td>
-<td>✓ (every way-of-working change: classify breaking-for-a-drifted-agent → rolling default / barrier for breaking)</td>
-<td>✅ <code>../library/practices/controlled-method-rollout.md</code> · <code>practices/controlled-method-rollout.md</code></td>
+<td><code>declared</code></td>
+<td>④</td>
+<td>a <strong>prerequisite the importer provides</strong> — never shipped, never vendored (see contract)</td>
 </tr>
 <tr>
-<td>TDD (enacted as <code>tdd</code> skill, wraps superpowers TDD)</td>
-<td>Software System, Requirements</td>
-<td>ritual + partly mechanical (CI test gate)</td>
-<td>✓</td>
-<td>✅ <code>../library/practices/tdd.md</code> · <code>practices/tdd.md</code></td>
-</tr>
-<tr>
-<td>QA Review (enacted as <code>qa-review</code> skill, called by <code>tdd</code> step 3)</td>
-<td>Software System</td>
-<td>ritual</td>
-<td>✓</td>
-<td>✅ <code>../library/practices/qa-review.md</code> · <code>practices/qa-review.md</code></td>
-</tr>
-<tr>
-<td>QA Retro (enacted as <code>qa-retro</code> skill, test-gap learning loop)</td>
-<td>Way of Working, Software System</td>
-<td>ritual</td>
-<td>✓ (when triggered)</td>
-<td>✅ <code>../library/practices/qa-retro.md</code> · <code>practices/qa-retro.md</code></td>
-</tr>
-<tr>
-<td>Task Readiness (enacted as <code>task-readiness</code> skill)</td>
-<td>Work</td>
-<td>ritual — <strong>validated H01-422: invoked 3/3 dispatches</strong> (drained to <code>main</code> PR #52)</td>
-<td>✓</td>
-<td>✅ <code>../library/practices/task-readiness.md</code> · <code>practices/task-readiness.md</code></td>
-</tr>
-<tr>
-<td>Knowledge Routing (enacted as <code>knowledge-routing</code> skill)</td>
-<td>Team, Way of Working</td>
-<td>ritual (runs within the anchor ritual)</td>
-<td>✓</td>
-<td>✅ <code>../library/practices/knowledge-routing.md</code> · <code>practices/knowledge-routing.md</code></td>
-</tr>
-<tr>
-<td>Anchor — session safeguard (formerly <em>Pre-Compact Capture</em>; renamed 2026-06-13 — no longer tied to /compact, the loss-free path is /clear; +conditional successor-seed step; enacted as <code>anchor</code> skill)</td>
-<td>Way of Working</td>
-<td>ritual (user-triggered)</td>
-<td>✓ (North Star: no insight lost)</td>
-<td>✅ <code>../library/practices/anchor.md</code> · <code>practices/anchor.md</code></td>
-</tr>
-<tr>
-<td>Systematic Debugging (enacted as <code>systematic-debugging</code> skill)</td>
-<td>Software System</td>
-<td>ritual</td>
-<td>—</td>
-<td>✅ <code>../library/practices/systematic-debugging.md</code> · <code>practices/systematic-debugging.md</code></td>
-</tr>
-<tr>
-<td>Agent Onboarding (enacted as <code>agent-onboarding</code> skill)</td>
-<td>Team</td>
-<td>ritual</td>
-<td>✓ (when adding an agent)</td>
-<td>✅ <code>../library/practices/agent-onboarding.md</code> (L3 only — OE-owned, no separate L2 sibling)</td>
-</tr>
-<tr>
-<td>Project Onboarding (stand up an endeavour's operating system from the method seed)</td>
-<td>Way of Working</td>
-<td>ritual</td>
-<td>✓ (when standing up a new endeavour)</td>
-<td>✅ <code>../library/practices/project-onboarding.md</code> (L3 only — generic; no L2 sibling, the seed is klartext's export)</td>
-</tr>
-<tr>
-<td>Method Isolation (isolate an entangled endeavour's method from its product — the export-side cut)</td>
-<td>Way of Working</td>
-<td>ritual (mechanizable core: zero-product-literal grep + classification gate)</td>
-<td>✓ (when extracting a method, or before a bidirectional transfer channel)</td>
-<td>✅ <code>../library/practices/method-isolation.md</code> (L3 only — generic; klartext's F0→F3 run is the worked example in <code>method-seed-export-plan.md</code>)</td>
-</tr>
-<tr>
-<td>Frontend Verification (enacted as <code>verify</code> skill; QA owns criteria, UX/UI executes — four-eyes instance)</td>
-<td>Software System</td>
-<td>ritual</td>
-<td>✓ (for UI changes)</td>
-<td>✅ <code>practices/verify.md</code> (wholly-L2 instance)</td>
-</tr>
-<tr>
-<td>Frontend Standards (enacted as <code>frontend</code> skill)</td>
-<td>Software System</td>
-<td>ritual</td>
-<td>—</td>
-<td>✅ <code>practices/frontend.md</code> (wholly-L2 instance)</td>
-</tr>
-<tr>
-<td>Frontend Testing (QA-owned; frontend test criteria — flagged missing in F0.2-P-D)</td>
-<td>Software System</td>
-<td>ritual</td>
-<td>✓ (for UI changes)</td>
-<td>✅ <code>practices/frontend-testing.md</code> (wholly-L2 instance)</td>
+<td><code>exclude</code></td>
+<td>⑤</td>
+<td>product <em>Fachlichkeit</em> — never travels (listed so the boundary is explicit, not silent)</td>
 </tr>
 </tbody>
 </table>
-<h2 id="patterns-named-structures">Patterns — named structures<a class="headerlink" href="#patterns-named-structures" title="Permanent link">&para;</a></h2>
-<p>Eight are now <strong>carded</strong> under <code>../library/patterns/</code>; the rest stay <strong>prose, not carded (lean)</strong> — they live in
-<code>CLAUDE.md</code> / <code>continuous-improvement.md</code> and don't yet warrant their own card. Note: <strong>Naht-Check</strong> and
-<strong>E2E-before-done</strong> are Essence type <strong>Activity</strong> (gates), not Pattern — kept in this table by origin (element-sweep)
-but typed correctly.</p>
-<table>
-<thead>
-<tr>
-<th>Element</th>
-<th>Essence type</th>
-<th>Card / where it lives</th>
-<th>Enforcement</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Four-Eyes Principle (executor / criteria-owner pair)</td>
-<td>Pattern</td>
-<td>✅ <code>../library/patterns/four-eyes.md</code></td>
-<td>ritual</td>
-</tr>
-<tr>
-<td>KB-First Lookup (SEMAT/method questions: own reference first, web on miss, backfill gaps in the same step)</td>
-<td>Pattern</td>
-<td>✅ <code>../library/patterns/kb-first-lookup.md</code></td>
-<td>ritual</td>
-</tr>
-<tr>
-<td>Method Keeper (OE owns the method; locates way-of-working topics in Essence terms before solutioning)</td>
-<td>Pattern (role)</td>
-<td>✅ <code>../library/patterns/method-keeper.md</code></td>
-<td>ritual</td>
-</tr>
-<tr>
-<td>Memory Park / Custody (out-of-tree redundancy for at-risk knowledge: park verbatim in auto-memory with restore condition + delete-after-verification; applied 3× on 2026-06-10, bridged two data-loss incidents)</td>
-<td>Pattern</td>
-<td>✅ <code>../library/patterns/memory-park.md</code></td>
-<td>ritual</td>
-</tr>
-<tr>
-<td>Blocker Protocol (on an unlocatable/blocked step: STOP → classify in Essence/RC terms → escalate to the owner — never improvise; first run: Hannibal B2, 2026-06-10)</td>
-<td>Pattern</td>
-<td>✅ <code>../library/patterns/blocker-protocol.md</code></td>
-<td>ritual</td>
-</tr>
-<tr>
-<td>Agent Provenance (every agent self-stamps its work — commit trailer / file header — so authorship survives compaction; C5 substrate clause)</td>
-<td>Pattern</td>
-<td>✅ <code>../library/patterns/agent-provenance.md</code></td>
-<td>ritual (mechanical detection deferred — see Dependency Contracts C5)</td>
-</tr>
-<tr>
-<td>Naht-Check (every PR verified to contain exactly the intended files, nothing else; DevOps, every increment since #45)</td>
-<td><strong>Activity</strong> (gate)</td>
-<td>✅ <code>../library/patterns/naht-check.md</code></td>
-<td>ritual</td>
-</tr>
-<tr>
-<td>E2E-before-done (A2 gate: end-to-end verification on the live system <em>before</em> merge, evidence captured; first run H01-422)</td>
-<td><strong>Activity</strong> (gate)</td>
-<td>✅ <code>../library/patterns/e2e-before-done.md</code></td>
-<td>ritual</td>
-</tr>
-<tr>
-<td>Domain Respect</td>
-<td>Pattern</td>
-<td>prose (<code>CLAUDE.md</code> § Agent Roles), not carded (lean)</td>
-<td>ritual</td>
-</tr>
-<tr>
-<td>Infrastructure Perimeter</td>
-<td>Pattern</td>
-<td>prose (<code>CLAUDE.md</code>), not carded (lean)</td>
-<td>ritual</td>
-</tr>
-<tr>
-<td>Salvage Branch Policy</td>
-<td>Pattern</td>
-<td>prose (<code>continuous-improvement.md</code>), not carded (lean)</td>
-<td>ritual</td>
-</tr>
-<tr>
-<td>Enforcement Hierarchy</td>
-<td>Pattern (cross-cutting principle)</td>
-<td>prose (<code>continuous-improvement.md</code> §1), not carded (lean)</td>
-<td>ritual</td>
-</tr>
-<tr>
-<td>Role Description</td>
-<td>Pattern</td>
-<td>prose (<code>job-description</code> skill), not carded (lean)</td>
-<td>—</td>
-</tr>
-<tr>
-<td>Salvage Triage (a/b) (per quarantined file: (a) belongs in repo → commit to main; (b) machine-local → gitignore/outside; freeze → tag/bundle, never a branch in the shared tree)</td>
-<td>Activity</td>
-<td>prose (<code>continuous-improvement.md</code> drain warnings), not carded (lean)</td>
-<td>ritual</td>
-</tr>
-</tbody>
-</table>
-<h2 id="competencies-kernel-extension">Competencies (kernel extension)<a class="headerlink" href="#competencies-kernel-extension" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th>Element</th>
-<th>Levels (Essence)</th>
-<th>Purpose</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Method Literacy</strong> — the ability to locate way-of-working topics in Essence terms (element type, Alpha) and to use the method document set</td>
-<td>1 <em>Assists</em> … 5 <em>Innovates</em></td>
-<td>Target for agent onboarding and the team refresh: every agent reaches at least level 2 (<em>Applies</em>). Referenced by practice cards: the Retrospective requires ≥ 2 for the leader (via the Method Keeper pattern), ≥ 1 for participants.</td>
-</tr>
-</tbody>
-</table>
-<h2 id="mechanical-gates-activities-checks">Mechanical gates (activities / checks)<a class="headerlink" href="#mechanical-gates-activities-checks" title="Permanent link">&para;</a></h2>
-<p>Our strongest enforcement points — mechanical by design: branch protection on <code>main</code> (6 required CI checks,
-strict) · CI workflows (lint, tests, QA, integration) · Semgrep rules (<code>.semgrep/</code>) · tach layer boundaries ·
-pre-commit hooks · infrastructure tests · health-endpoint tests · PostCompact/PreCompact audit hooks + compact
-monitor (launchd).</p>
-<h2 id="work-products-in-circulation">Work Products in circulation<a class="headerlink" href="#work-products-in-circulation" title="Permanent link">&para;</a></h2>
-<p>Specs (<code>docs/superpowers/specs/</code>) · Plans (<code>docs/superpowers/plans/</code>) · <code>PENDING.md</code> (delegation tracking) ·
-ADRs (<code>docs/adr/</code>) · QA learnings (<code>docs/superpowers/qa-learnings/</code>) · Practice cards (<code>practices/</code>) · Method
-docs (this set) · Agent knowledge files (<code>agents/*/claude.md</code>) + start scripts · Knowledge briefings &amp; DevOps
-briefings (formats defined, <strong>no declared home — RC1 candidates</strong>) · Sign-offs (<strong>unresolved H01 pain point</strong>) ·
-Compact log/digest (gitignored, local) · <strong>Friction Reports</strong> (capture-validation output; element-sweep find
-retro 2 — no declared home yet, currently routed via custody depots) · Retro records (<code>learnings/</code>) ·
-<strong>Team Roster</strong> (<code>agents/team.yaml</code>, added 2026-06-12) — advances the <strong>Team</strong> alpha; owner OE; maintenance
-ritual: updated in the same step as the event that changes it (onboarding/offboarding/migration); stores only
-non-derivable facts (status app|terminal, active flag, display name) — existence and worktree state stay
-derivable from <code>agents/*/</code> and <code>git worktree list</code> (RC4 guard: no second truth); consumers: launcher/start
-tooling (DevOps mechanics).</p>
-<p><strong>Environment Work Products</strong> (<code>docs/method/enactment/environment/</code>) — our <strong>version-bound, falsifiable</strong>
-knowledge about the tools we <em>use</em> (Claude Code app/CLI, git, Supabase, macOS); produced by the <strong>Environment
-Knowledge</strong> practice. Each carries version-binding + a manual <strong>Canary</strong> + a <strong>dependency chain</strong> + status tags
-(tested / observed-untested / inferred / superseded). First instance: <code>claude-code-app.md</code> (v1.12603.1). Owner
-OE (form + home); empirical content four-eyes-verified by the testing agent (DevOps). Distinct from <strong>Resources</strong>
-below (which we <em>reference</em>, not <em>produce</em>).</p>
-<p><strong>Dependency Contracts</strong> — the <strong>invariants our way of working requires from</strong> a central IT component we depend
-on (the <em>upstream</em> counterpart to a <strong>dependency chain</strong>, which lists the downstream blast radius). Each clause
-carries its blast radius + a falsifiable check. New lean element (2026-06-14), KB-confirmed distinct from the
-dependency chain. Owner OE (form + clauses); mechanization + empirical content four-eyes (DevOps). Bind only
-<strong>central</strong> functionality this way — <em>Flut vermeiden</em>.
-- <strong>L3 element definition</strong> (the generic Dependency-Contract element): ✅ <code>../library/dependency-contract.md</code>.
-- <strong>L2 instances</strong> (our actual contracts): ✅ <code>contracts/memory-substrate.md</code> (team memory + inbox + pin substrate;
-  C1–C5 specified — C1/C3 live #117, <strong>C2/C4 live #133</strong>, C5 provenance = self-stamp <em>ritual</em>; mechanical
-  detection deferred: mtime unreliable → content/git-based design strand, OE-owned) · ✅ <code>contracts/superpowers.md</code>
-  (the superpowers skill framework we build our skills on).</p>
-<p><strong>Resources</strong> (referenced, <strong>never vendored/produced</strong> — Essence element): external reference assets we depend on
-but keep outside the tree; licensed-asset home <code>assets-local/</code> (gitignored; README = provenance register,
-convention in <code>setup.sh</code>). The reusable L3 register lives at <code>../library/resources/</code>.
-- ✅ <strong>superpowers</strong> — <code>../library/resources/superpowers.md</code> (the skill framework; basis of <code>tdd</code>, <code>qa-review</code>,
-  <code>systematic-debugging</code>, the <code>verify</code>/<code>frontend</code> skills, and the anchor/brainstorming/plan rituals).
-- <strong>IJI <em>Agile Retrospective Essentials</em></strong> — referenced by <code>../library/practices/retrospective.md</code> (the
-  Retrospective practice is <em>composed</em> from it, CC BY 4.0; the Improvement sub-alpha is adopted from it).
-- <strong>Parallel Change / expand–contract (Martin Fowler)</strong> — referenced by
-  <code>../library/practices/controlled-method-rollout.md</code> (adopted pattern, not invented).
-- <strong>Essence Kernel / Language (OMG/SEMAT)</strong> — referenced by <code>../library/alpha-states.md</code> and
-  <code>../library/semat-definition.md</code> (the meta-language and the Alpha State Cards we use as the inspection grid).</p>
-<blockquote>
-<p>This list is the <strong>seed of the Artifact Register</strong> (Phase 2 instrument candidate, see
-<code>continuous-improvement.md</code>).</p>
-</blockquote>
-<h2 id="roles-team">Roles / Team<a class="headerlink" href="#roles-team" title="Permanent link">&para;</a></h2>
-<p>The ten agents are instances of the <strong>Team Alpha</strong>; the role SSOT is <code>CLAUDE.md</code> § Agent Roles. Hannibal's
-coordination fills the kernel activity space <em>Coordinate Activity</em>. A maintained <strong>team roster</strong> is decided as
-the Artifact-Register pilot (Phase 2).</p>
-<h2 id="practice-defined-alphas-extensions">Practice-defined Alphas (extensions)<a class="headerlink" href="#practice-defined-alphas-extensions" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th>Element</th>
-<th>States</th>
-<th>Defined by</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Improvement</strong> — a possible adaptation to improve the team's Way of Working</td>
-<td>Identified → Prioritized → Action Agreed → Trialed → Results Evaluated → In Use</td>
-<td><code>practices/retrospective.md</code> (adopted from IJI Agile Retrospective Essentials); instances tracked in the Improvement Register (<code>continuous-improvement.md</code> §3)</td>
-</tr>
-</tbody>
-</table>
-<h2 id="known-gaps-migration-diagnostic-temporary">Known gaps (migration diagnostic — temporary)<a class="headerlink" href="#known-gaps-migration-diagnostic-temporary" title="Permanent link">&para;</a></h2>
+<h3 id="manifest-format-the-concrete-instance">Manifest format (the concrete instance)<a class="headerlink" href="#manifest-format-the-concrete-instance" title="Permanent link">&para;</a></h3>
+<p>The worked instance is <code>seed/MANIFEST.toml</code> — one table per entry:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">[[entry]]</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">path</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;docs/method/library/**&quot;</span><span class="w">   </span><span class="c1"># source in the live repo (or the template path)</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">disposition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;as_is&quot;</span><span class="w">                     </span><span class="c1"># one of the taxonomy values</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">target</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;docs/method/library/&quot;</span><span class="w">      </span><span class="c1"># where it lands in the assembled bundle (template/generated)</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">note</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;the L3 practice library&quot;</span><span class="w">   </span><span class="c1"># optional</span>
+</code></pre></div>
+<p>The assembly step iterates the entries: <code>as_is</code> → copy from live <code>path</code>; <code>template</code> → render to <code>target</code>;
+<code>declared</code>/<code>exclude</code> → never copied (recorded for the completeness check only).</p>
+<h3 id="prerequisites-contract-the-declared-entries">Prerequisites contract (the <code>declared</code> entries)<a class="headerlink" href="#prerequisites-contract-the-declared-entries" title="Permanent link">&para;</a></h3>
+<p>What the importer must already have for the assembled bundle to run — declared, <strong>never vendored</strong>:
+Claude Code (desktop app + hooks), git, gh CLI, a Python 3.x runtime, a per-project memory directory, the
+<strong><code>superpowers</code></strong> plugin (see <a href="../resources/superpowers/"><code>resources/superpowers.md</code></a>) and the <strong>Essence
+baseline</strong> (the pinned meta-language, see <a href="../resources/essence/"><code>resources/essence.md</code></a>). A missing
+prerequisite is a stop, not a workaround (cf. <code>project-onboarding</code> step 1).</p>
+<h3 id="completeness-rule">Completeness rule<a class="headerlink" href="#completeness-rule" title="Permanent link">&para;</a></h3>
+<p>Every path the seed ships appears in the manifest <strong>exactly once</strong>. The mechanizable core: an assembly-time
+check that (a) every <code>as_is</code> source resolves in the live repo, (b) every <code>template</code> renders, and (c) no shipped
+path is unlisted — the RC1 "implicit/unlisted, cannot be checked" guard, applied to the bundle. This is the
+manifest's enforcement; without it the inventory is documentation, not a contract (cf.
+<a href="../standards-charter/"><code>standards-charter.md</code></a> §1).</p>
+<h2 id="related">Related<a class="headerlink" href="#related" title="Permanent link">&para;</a></h2>
 <ul>
-<li>~~Retro practice has no card~~ — <strong>closed 2026-06-10</strong> (<code>../library/practices/retrospective.md</code>).</li>
-<li>~~Process-learnings home missing~~ — <strong>closed 2026-06-10</strong> (<code>learnings/</code>).</li>
-<li>~~Practices enacted-as-skills with no description card (the ❌ backlog: TDD, QA Review, QA Retro, Task
-  Readiness, Knowledge Routing, Anchor, Frontend Verification, Systematic Debugging, Frontend Standards, Agent
-  Onboarding)~~ — <strong>closed 2026-06-16 by F0.2</strong> (all carded; see <em>Practices — composed</em>). The patterns backlog
-  (four-eyes, memory-park, blocker-protocol, naht-check, e2e-before-done, kb-first-lookup, method-keeper,
-  agent-provenance) is <strong>closed</strong> in the same step.</li>
-<li>~~Frontend test criteria missing as a distinct practice~~ — <strong>closed 2026-06-16</strong> (Frontend Testing row added,
-  <code>practices/frontend-testing.md</code>; flagged by QA in F0.2-P-D).</li>
-<li><strong>Walking Skeleton practice</strong> — planned, no card yet. <em>(still open)</em></li>
-<li><strong><code>task-readiness</code> is advisory</strong> — the only H01-grade enforcement hole still open in the skill set (T6/RC2).
-  <em>(still open — carding it did not change enforcement level)</em></li>
-<li><strong>Briefings / sign-offs without declared homes</strong> — RC1 candidates → Artifact Register (Phase 2). <em>(still open)</em></li>
+<li><a href="../practices/method-isolation/"><code>practices/method-isolation.md</code></a> — produces the cut the manifest records.</li>
+<li><a href="../practices/project-onboarding/"><code>practices/project-onboarding.md</code></a> — consumes the assembled bundle.</li>
+<li><a href="../standards-charter/"><code>standards-charter.md</code></a> — the "rule + check" the completeness rule applies.</li>
+<li><code>enactment/method-seed-export-plan.md</code> §1 (the five categories), §2 (seed anatomy), §7 (the build/assembly
+  phases) — klartext's worked example.</li>
 </ul>
 
 
