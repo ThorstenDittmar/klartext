@@ -36,6 +36,7 @@ TRIGGER_PATTERNS: list[str] = [
     "docs/method/**",
     "agents/**/claude.md",
     ".claude/settings.json",
+    ".github/workflows/**",  # the mechanical enforcement layer is itself WoW (SA §9; ADR-0012)
     "scripts/**",
     "api/cli.py",
 ]
