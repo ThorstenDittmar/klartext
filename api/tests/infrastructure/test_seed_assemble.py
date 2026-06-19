@@ -1,10 +1,16 @@
-"""Infrastructure tests: the method-seed bundle assembly (Model B, OE bundling decision 2026-06-19).
+"""Infrastructure tests: the method-seed bundle assembly (Model B, reconciled to the #187 manifest).
 
-seed/ stores only the .tmpl files + this assembly mechanism (+ later OE's MANIFEST). `assemble`
-produces a self-contained bundle on demand: render each template from seed.toml, copy each as-is
-file verbatim from the live repo. No as-is file is stored in seed/ — single source of truth = live;
-bundle is the self-contained artefact. The manifest format here is a simple interim one (OE defines
-the authoritative format); the assembly mechanism is built against it.
+seed/ stores only the .tmpl files + this assembly mechanism + the MANIFEST. `assemble` produces a
+self-contained bundle on demand from `seed/MANIFEST.toml`, routing by disposition:
+
+  * as_is / config_source → copy `path` verbatim from the live repo to `target`
+  * template              → render `path` from seed.toml to `target`
+  * declared / exclude    → never shipped (prerequisite / product boundary) — not copied
+  * deferred              → in-scope but not yet shippable — skipped + reported as a known gap
+  * generated             → produced by assembly logic; none exist yet → fail loud if encountered
+
+The seam dogfood loads the real `seed/MANIFEST.toml` and asserts every disposition is recognised —
+SA's #188 contract: the loader reads the authoritative manifest, never diverging silently.
 """
 
 from __future__ import annotations
@@ -35,7 +41,7 @@ _assemble = _load_assemble()
 
 
 def _fake_repo(tmp_path: Path) -> Path:
-    """Builds a fake source repo: a seed.toml, a template, and an as-is file."""
+    """Builds a fake source repo: a seed.toml, a template, an as-is file."""
     repo = tmp_path / "repo"
     (repo / "seed" / "templates").mkdir(parents=True)
     (repo / "src").mkdir()
@@ -49,71 +55,116 @@ def _fake_repo(tmp_path: Path) -> Path:
     return repo
 
 
-def test_assemble_renders_templates_and_copies_as_is(tmp_path: Path) -> None:
-    """Expects assemble to render a template from seed.toml and copy an as-is file verbatim."""
+def _entry(_assemble_mod, **kw):
+    """Builds an Entry with sensible defaults (target defaults to path; note empty)."""
+    return _assemble_mod.Entry(
+        path=kw["path"],
+        disposition=kw["disposition"],
+        target=kw.get("target", kw["path"]),
+        note=kw.get("note", ""),
+    )
+
+
+def test_assemble_renders_templates_and_copies_as_is_and_config_source(tmp_path: Path) -> None:
+    """Expects template→render, as_is→copy, config_source→copy verbatim."""
     repo = _fake_repo(tmp_path)
     out = tmp_path / "bundle"
     manifest = _assemble.Manifest(
-        templates=[("seed/templates/greeting.txt.tmpl", "greeting.txt")],
-        as_is=[("src/asis.txt", "src/asis.txt")],
+        entries=[
+            _entry(
+                _assemble,
+                path="seed/templates/greeting.txt.tmpl",
+                disposition="template",
+                target="greeting.txt",
+            ),
+            _entry(_assemble, path="src/asis.txt", disposition="as_is"),
+            _entry(_assemble, path="seed/seed.toml", disposition="config_source"),
+        ]
     )
 
-    _assemble.assemble(manifest, repo, out)
+    result = _assemble.assemble(manifest, repo, out)
 
     assert (out / "greeting.txt").read_text() == "hello demo\n"
     assert (out / "src" / "asis.txt").read_text() == "verbatim content\n"
+    assert (out / "seed" / "seed.toml").exists()  # config_source ships verbatim to be filled
+    assert set(result.produced) == {"greeting.txt", "src/asis.txt", "seed/seed.toml"}
 
 
-def test_assemble_fails_loud_on_missing_as_is_source(tmp_path: Path) -> None:
-    """Expects a missing as-is source to raise, not silently skip — the bundle must be complete."""
+def test_assemble_skips_declared_exclude_and_reports_deferred_as_gap(tmp_path: Path) -> None:
+    """Expects declared/exclude to be skipped silently and deferred reported as a known gap."""
     repo = _fake_repo(tmp_path)
     out = tmp_path / "bundle"
-    manifest = _assemble.Manifest(templates=[], as_is=[("src/nope.txt", "src/nope.txt")])
+    manifest = _assemble.Manifest(
+        entries=[
+            _entry(_assemble, path="superpowers", disposition="declared"),
+            _entry(_assemble, path="api/domain.py", disposition="exclude"),
+            _entry(_assemble, path="scripts/classify_gate.py", disposition="deferred"),
+        ]
+    )
+
+    result = _assemble.assemble(manifest, repo, out)
+
+    assert result.produced == []
+    assert result.deferred == ["scripts/classify_gate.py"]
+    assert not any(out.rglob("*"))  # nothing copied
+
+
+def test_assemble_fails_loud_on_missing_source(tmp_path: Path) -> None:
+    """Expects a missing as_is/template source to raise — never a silently partial bundle."""
+    repo = _fake_repo(tmp_path)
+    out = tmp_path / "bundle"
+    manifest = _assemble.Manifest(
+        entries=[_entry(_assemble, path="src/nope.txt", disposition="as_is")]
+    )
     with pytest.raises(_assemble.AssemblyError) as exc:
         _assemble.assemble(manifest, repo, out)
     assert "nope.txt" in str(exc.value)
 
 
-def test_assemble_fails_loud_on_missing_template_source(tmp_path: Path) -> None:
-    """Expects a missing template source to raise rather than produce an incomplete bundle."""
+def test_assemble_fails_loud_on_generated_disposition(tmp_path: Path) -> None:
+    """Expects 'generated' (assembly-from-logic, none implemented) to fail loud if encountered."""
     repo = _fake_repo(tmp_path)
     out = tmp_path / "bundle"
-    manifest = _assemble.Manifest(templates=[("seed/templates/gone.tmpl", "gone")], as_is=[])
+    manifest = _assemble.Manifest(
+        entries=[_entry(_assemble, path="index", disposition="generated")]
+    )
     with pytest.raises(_assemble.AssemblyError) as exc:
         _assemble.assemble(manifest, repo, out)
-    assert "gone" in str(exc.value)
+    assert "generated" in str(exc.value).lower()
 
 
-def test_load_manifest_fails_loud_on_unrecognized_schema(tmp_path: Path) -> None:
-    """Expects a manifest with no recognized template/as-is entries to FAIL LOUD, not yield empty.
-
-    SA #188 seam contract (Risk 1): the authoritative #187 MANIFEST uses a [[entry]]+disposition
-    schema this interim loader does not read. Without a guard, such a manifest parses to an empty
-    Manifest and assemble produces a silently-empty bundle (RC4 landmine). Fail loud at the seam
-    until the loader is reconciled to the #187 disposition schema.
-    """
+def test_load_manifest_rejects_unknown_disposition(tmp_path: Path) -> None:
+    """Expects an unknown disposition value to fail loud at load (the seam guard)."""
     path = tmp_path / "manifest.toml"
-    path.write_text('[[entry]]\npath = "x"\ndisposition = "as_is"\ntarget = "x"\n')
+    path.write_text('[[entry]]\npath = "x"\ndisposition = "frobnicate"\n')
     with pytest.raises(_assemble.AssemblyError) as exc:
         _assemble.load_manifest(path)
-    assert "no recognized" in str(exc.value).lower() or "schema" in str(exc.value).lower()
+    assert "frobnicate" in str(exc.value)
 
 
-def test_load_manifest_parses_template_and_as_is_entries(tmp_path: Path) -> None:
-    """Expects the interim TOML manifest to parse into template + as-is (src, dest) pairs."""
+def test_load_manifest_rejects_empty_manifest(tmp_path: Path) -> None:
+    """Expects a manifest with no [[entry]] to fail loud (schema mismatch / empty)."""
     path = tmp_path / "manifest.toml"
-    path.write_text(
-        "[[template]]\n"
-        'src = "seed/templates/claude-settings.json.tmpl"\n'
-        'dest = ".claude/settings.json"\n\n'
-        "[[as_is]]\n"
-        'src = ".github/workflows/agent-provenance.yml"\n'
-        'dest = ".github/workflows/agent-provenance.yml"\n'
-    )
+    path.write_text('title = "not a manifest"\n')
+    with pytest.raises(_assemble.AssemblyError):
+        _assemble.load_manifest(path)
+
+
+def test_load_manifest_target_defaults_to_path(tmp_path: Path) -> None:
+    """Expects an entry without an explicit target to default target to path."""
+    path = tmp_path / "manifest.toml"
+    path.write_text('[[entry]]\npath = "seed/render.py"\ndisposition = "as_is"\n')
     manifest = _assemble.load_manifest(path)
-    assert manifest.templates == [
-        ("seed/templates/claude-settings.json.tmpl", ".claude/settings.json")
-    ]
-    assert manifest.as_is == [
-        (".github/workflows/agent-provenance.yml", ".github/workflows/agent-provenance.yml")
-    ]
+    assert manifest.entries[0].target == "seed/render.py"
+
+
+def test_load_manifest_reads_the_real_seed_manifest_with_known_dispositions() -> None:
+    """Seam dogfood: the real seed/MANIFEST.toml loads and every disposition is recognised.
+
+    This is SA's #188 contract realised: the loader reads the authoritative #187 manifest directly,
+    so the two cannot silently diverge. Every entry routes through a known disposition.
+    """
+    manifest = _assemble.load_manifest(_REPO_ROOT / "seed" / "MANIFEST.toml")
+    assert len(manifest.entries) >= 20
+    for entry in manifest.entries:
+        assert entry.disposition in _assemble.KNOWN_DISPOSITIONS, entry
