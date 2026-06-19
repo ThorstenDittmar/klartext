@@ -3,11 +3,10 @@
 
 The mechanical half of the F0 acceptance criterion. Two checks over the working tree:
 
-  * **half-(i) path classification** — the migrated legacy tree `docs/superpowers/improvement/**`
-    must stay empty (its content moved to `docs/method/{library,enactment}/` in F0.1/F0.2), and no
-    card may be *half-split* (carry both an `Essence type:` self-definition AND an `L3 definition:`
-    delegation pointer — OE's mechanical "mixed card" signal). Semantic bleed (klartext evidence in an
-    L3 card, etc.) is **not** mechanically checkable and stays SA's well-formedness review.
+  * **half-(i) path classification** — no card may be *half-split* (carry both an `Essence type:`
+    self-definition AND an `L3 definition:` delegation pointer — OE's mechanical "mixed card" signal).
+    Semantic bleed (klartext evidence in an L3 card, etc.) is **not** mechanically checkable and stays
+    SA's well-formedness review.
   * **half-(ii) well-formedness** — every Essence element card is type-conditionally well-formed per
     `docs/method/library/_card-template.md` (SA-ratified CI scope, PR #137/#142/#150):
       - every standalone card: a clean `Essence type` enum token + an `External dependencies` field
@@ -47,13 +46,6 @@ CARD_DIRS: tuple[str, ...] = (
 )
 # Named element cards that live at a stem root rather than in a card directory.
 NAMED_CARD_FILES: tuple[str, ...] = ("docs/method/library/dependency-contract.md",)
-
-# Legacy method trees that F0/F3 emptied and that must stay empty. `improvement/` migrated in F0.1/F0.2;
-# `skills/` migrated in F3 #3b (executables → docs/method/enactment/skills/; generic defs stay in L3 cards).
-LEGACY_EMPTY_DIRS: tuple[str, ...] = (
-    "docs/superpowers/improvement",
-    "docs/superpowers/skills",
-)
 
 _TYPE_MARKER = "**Essence type:**"
 _L3DEF_MARKER = "**L3 definition:**"
@@ -146,24 +138,9 @@ def find_card_paths(root: Path) -> list[Path]:
     return cards
 
 
-def legacy_violations(root: Path) -> list[str]:
-    """Returns a violation per file found under a legacy-empty tree (path classification, half-i)."""
-    violations: list[str] = []
-    for legacy in LEGACY_EMPTY_DIRS:
-        base = root / legacy
-        if not base.exists():
-            continue
-        for path in sorted(p for p in base.rglob("*") if p.is_file()):
-            violations.append(
-                f"{path.relative_to(root).as_posix()}: method content in the emptied legacy tree "
-                f"'{legacy}/' — it must move to docs/method/{{library,enactment}}/"
-            )
-    return violations
-
-
 def check_tree(root: Path) -> list[str]:
     """Returns all path-classification + well-formedness violations for the method tree under `root`."""
-    violations = legacy_violations(root)
+    violations: list[str] = []
     for path in find_card_paths(root):
         violations.extend(
             card_violations(path.relative_to(root).as_posix(), path.read_text())
