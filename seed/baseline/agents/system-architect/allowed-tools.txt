@@ -1,0 +1,7 @@
+# Baseline allowlist for the architecture/standards role. EXAMPLE — replace with yours.
+Edit(docs/adr/)
+Write(docs/adr/)
+Edit(<your-standards-doc>)
+Write(<your-standards-doc>)
+Bash(git add docs/adr/)
+Bash(git commit *)

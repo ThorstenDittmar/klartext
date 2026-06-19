@@ -1,0 +1,33 @@
+# Team Roster (baseline) — Work Product advancing the Team alpha.
+# EXAMPLE — adapt to your endeavour. Owner: the method/organisation role.
+# Maintenance ritual: update in the SAME step as the event that changes it (onboarding, offboarding).
+# Stores ONLY non-derivable facts:
+#   - who exists       -> derivable from agents/*/ directories (NOT duplicated here)
+#   - worktree present -> derivable from `git worktree list` (NOT duplicated here)
+#   - status           -> the session/runtime state your launcher needs
+#   - active           -> false = offboarded/paused (kept for history, not started)
+#   - display          -> label for the start tooling
+#
+# Baseline roles ship with the seed: OE (method/org) · DevOps · System Architect · QA · Product Owner.
+# Domain-expert roles are added per consumer by cloning agents/_domain-expert (see its claude.md).
+
+agents:
+  - slug: product-owner
+    display: "Product Owner"
+    active: true
+  - slug: oe
+    display: "OE — Method & Organisation"
+    active: true
+  - slug: devops
+    display: "DevOps"
+    active: true
+  - slug: system-architect
+    display: "System Architect"
+    active: true
+  - slug: qa
+    display: "QA"
+    active: true
+  # Add your domain experts here — clone agents/_domain-expert per domain, then list them:
+  # - slug: <your-domain>
+  #   display: "<Your Domain> Expert"
+  #   active: true
