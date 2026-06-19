@@ -26,9 +26,12 @@ operating-model rule, a cross-cutting convention. Small, local, reversible choic
 
 Every ADR is a file `NNNN-kebab-title.md` (a monotonically increasing number + a short title) carrying:
 
-- **Status** — `Proposed` · `Accepted` · `Superseded by NNNN` (the lifecycle state, §3).
+- **Status** — `Proposed` · `Accepted` · `Superseded by NNNN` · `Retired` (sunset without a successor) — the
+  lifecycle state, §3.
 - **Decided by** — the **decision-owner / ratifier** (who has the authority to ratify).
-- **Author / Sign-off** — who drafted it · who **reviewed** it (the gate, §3).
+- **Author / Sign-off** — who **drafted** it, and a record *that* sign-off occurred. The sign-off **artefact**
+  itself is the reviewer's persistent review comment (§3.2), not a header field — this field records authorship
+  and notes the reviewer, the gate evidence does not live here.
 - **Relates to / Supersedes / Superseded by** — provenance links to sibling and predecessor ADRs.
 - **Context** — the forces and the problem; *why* a decision is needed now.
 - **Decision** — what was decided, stated plainly.
@@ -47,6 +50,9 @@ Every ADR is a file `NNNN-kebab-title.md` (a monotonically increasing number + a
 4. **Supersession with provenance.** An accepted ADR is **never silently overwritten or deleted**. When it is
    replaced, a **later ADR supersedes it**: the old one's status becomes `Superseded by NNNN`, the new one
    carries `Supersedes NNNN` and **states what changed and why**. The decision history stays reconstructable.
+5. **Retired (no successor).** A decision **sunset without being replaced** — the rule simply no longer applies —
+   gets status `Retired` with a one-line reason. This differs from supersession: nothing takes its place. The
+   record is kept for provenance, never deleted.
 
 ## 4. Transferable mechanism vs example fillings
 
@@ -68,4 +74,8 @@ not):
   *defines* the generic-vs-lived cut this section applies.
 - The **roles / landing-path** — the gate in §3 (review-comment sign-off, decision-owner ratifies) is wired to a
   team's reviewer roles; a consumer binds it to its own.
-- [`_card-template.md`](_card-template.md) · referenced from the method register `enactment/method.md` (a top-level reference doc, like `semat-definition.md` — no Practices/Patterns row).
+- [`_card-template.md`](_card-template.md) — the shared header/scaffold for method cards.
+- This document is registered in the method register `enactment/method.md` as a **composed L3 element** — named in
+  the composition statement alongside [`dependency-contract.md`](dependency-contract.md). It carries no separate
+  Practices/Patterns lifecycle row (it is a mechanism, not a run-and-validated Practice), but — unlike the pure
+  meta-language reference `semat-definition.md` — it *is* a composed element of our way of working.
