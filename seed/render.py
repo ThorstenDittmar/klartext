@@ -103,6 +103,16 @@ def load_seed_config(path: Path) -> SeedConfig:
     return SeedConfig(values)
 
 
+def trigger_patterns_from_config(config: SeedConfig) -> list[str]:
+    """Builds the classify-gate TRIGGER_PATTERNS from seed.toml: generic WoW paths + the product CLI.
+
+    The config-driven gate (B-Seed-only) sources its patterns here instead of hardcoding them:
+    `wow_trigger_paths` (SA's generic-WoW classification) plus the parametrized `cli_entrypoint`
+    (the consumer's product CLI path, kept out of the generic list per SA §9).
+    """
+    return [*config.get_list("wow_trigger_paths"), config["cli_entrypoint"]]
+
+
 def render(template: str, config: SeedConfig) -> str:
     """Substitutes every `{{key}}` placeholder from the config.
 
