@@ -133,9 +133,10 @@ target      = "scripts/check-compact-log.sh"
 note        = "parametrized: project_name, memory_dir; DE->EN (EN-first, plan §6 decision 1)"
 
 [[entry]]
-path        = "scripts/check_test_coverage.py"
+path        = "seed/templates/check_test_coverage.py.tmpl"
 disposition = "template"
-note        = "QA coverage-invariant 1 (SOURCE_DIRS/EXCLUDED_FILES are config, plan §6); REVIEW (DevOps+QA)"
+target      = "scripts/check_test_coverage.py"
+note        = "QA verdict: ships ONLY Coverage-Invariant 1 (inv. 2/3 stripped); config (source_dirs, excluded_files, test_file_overrides, backend_dir, tests_dir) read from seed.toml at runtime; docstring project_name"
 
 [[entry]]
 path        = "scripts/com.klartext.compact-monitor.plist.template"

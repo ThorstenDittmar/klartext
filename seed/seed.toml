@@ -25,3 +25,27 @@ wow_trigger_paths = [
     ".github/workflows/**",
     "scripts/**",
 ]
+
+# Coverage-Invariant 1 config (read at runtime by scripts/check_test_coverage.py — QA verdict, plan
+# §6). source_dirs are the source layers under backend_dir; excluded_files have no domain logic;
+# test_file_overrides are "source.py=test_file.py" strings for non-default test names. These are
+# klartext's own values, the worked example a consumer overwrites for its stack.
+backend_dir       = "api"
+tests_dir         = "api/tests"
+source_dirs       = ["models", "services", "repositories", "routers"]
+excluded_files    = [
+    "__init__.py",
+    "dependencies.py",
+    "main.py",
+    "cli.py",
+    "seeddata.py",
+    "user_repository.py",
+    "_supabase.py",
+    "supabase_causal_model_repository.py",
+    "supabase_claim_repository.py",
+    "supabase_narrative_repository.py",
+    "supabase_narrative_unit_repository.py",
+    "supabase_user_repository.py",
+    "health_service.py",
+]
+test_file_overrides = ["causal_models.py=test_causal_model_router.py"]
