@@ -21,7 +21,13 @@ on:
     types: [opened, synchronize, reopened, labeled, unlabeled]
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  # Key on the PR HEAD SHA, not the PR ref. `gh pr update-branch` creates a new head SHA, but the
+  # ref (refs/pull/N/merge) is identical across SHAs — so a ref-keyed group cancels the prior SHA's
+  # run, leaving a CANCELLED entry for this REQUIRED check that makes the merge ambiguous (BLOCKED)
+  # even though the new run is green (observed 3× on 2026-06-19: #179, #191, #198). Per-SHA grouping
+  # cancels only redundant runs on the SAME commit (label/rerun → latest wins); a new commit gets
+  # its own group and never cancels the old, so no cancelled run ever blocks the required status.
+  group: ${{ github.workflow }}-${{ github.event.pull_request.head.sha || github.ref }}
   cancel-in-progress: true
 
 jobs:
