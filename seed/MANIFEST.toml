@@ -24,14 +24,24 @@ note        = "the keystone; the consumer fills it, every template reads from it
 
 # ── assembly mechanism ───────────────────────────────────────────────────────
 [[entry]]
+path        = "seed/assemble.py"
+disposition = "as_is"
+note        = "THE assembler — reads this manifest + seed.toml and produces the bundle. Without it the bundle is unbuildable (a consumer cannot self-assemble). Ships verbatim, stdlib-only."
+
+[[entry]]
 path        = "seed/render.py"
 disposition = "as_is"
-note        = "the render/assembly mechanism (reads seed.toml + this manifest)"
+note        = "the renderer assemble.py imports (substitutes seed.toml placeholders into templates)"
 
 [[entry]]
 path        = "seed/MANIFEST.toml"
 disposition = "as_is"
 note        = "this file — the inventory the assembly step iterates"
+
+[[entry]]
+path        = "seed/smoke_test.py"
+disposition = "as_is"
+note        = "consumer self-validation: assembles a throwaway project from a demo seed.toml and asserts completeness + zero-literal on rendered/config + a runnable fabric. Ships so the importer can verify their stood-up project (project-onboarding §7 DoD)."
 
 # ── templates (rendered from seed.toml) ──────────────────────────────────────
 [[entry]]
@@ -70,6 +80,11 @@ note        = "config-driven (reads wow_trigger_paths from seed.toml, #185)"
 [[entry]]
 path        = ".github/workflows/method-classification.yml"
 disposition = "as_is"
+
+[[entry]]
+path        = ".github/workflows/bootstrap-smoke-test.yml"
+disposition = "as_is"
+note        = "consumer self-validation CI: runs seed/smoke_test.py (assemble a throwaway project + assert completeness/zero-literal/runnable fabric). 0 klartext literals (verified) — ships verbatim (#204)."
 
 # ── WoW machinery scripts (0 literals — verbatim) ─────────────────────────────
 [[entry]]

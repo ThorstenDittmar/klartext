@@ -52,13 +52,17 @@ template — in seven steps:
    `agent-onboarding`.
 7. **Verify against the DoD.** Run the **bootstrap smoke-test**: from the seed + a filled `seed.toml`, a fresh
    project stands up where the identity/freshness hooks fire, the gates run, the inbox works, a baseline agent
-   is onboardable, and a first `converge` succeeds — with **zero source-endeavour literal** remaining
-   (grep-checkable). The project is not "stood up" until this passes.
+   is onboardable, and a first `converge` succeeds — with **zero source-endeavour literal** remaining in the
+   **rendered + config outputs** (grep-checkable). That scope is deliberate: it targets the global-`sed`
+   anti-pattern. As-is **method-library content legitimately cites the source endeavour as its worked example**
+   (the L3 cards illustrate with the originating project) and is **out of this scope** — scrubbing it would
+   destroy the worked example. The project is not "stood up" until this passes.
 
 **Completion (Done):** prerequisites verified (or the stop is explicit) · `seed.toml` filled as the single
 source — no by-hand literal edits downstream · configuration rendered from it · the agent-team framework exists
 with the baseline roles · hooks + gates + memory/inbox wired · a first `converge` succeeded · the bootstrap
-smoke-test is green with **zero source-endeavour literal** remaining.
+smoke-test is green with **zero source-endeavour literal** remaining in the rendered + config outputs (worked-example
+citations in as-is method content excepted, per step 7).
 
 **Enforcement note (generic).** A ritual owned by the team-formation / method role. Its non-negotiable core is
 mechanizable as the **bootstrap smoke-test** (step 7): a fresh project stands up *and* carries no source-literal.
