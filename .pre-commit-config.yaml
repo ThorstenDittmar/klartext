@@ -9,8 +9,10 @@ repos:
   # ---------------------------------------------------------------------------
   # Python: ruff (lint + format)
   # ---------------------------------------------------------------------------
+  # rev MUST match the pinned ruff in api/pyproject.toml dev extra (==0.15.18) so local pre-commit
+  # and CI's `pip install -e .[dev]` ruff never drift (a skew lets commits pass locally but fail CI).
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.12
+    rev: v0.15.18
     hooks:
       - id: ruff
         name: ruff lint
