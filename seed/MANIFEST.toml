@@ -140,8 +140,8 @@ note        = "QA verdict: ships ONLY Coverage-Invariant 1 (inv. 2/3 stripped); 
 
 [[entry]]
 path        = "scripts/com.klartext.compact-monitor.plist.template"
-disposition = "template"
-note        = "macOS launch agent; already a .template, parametrize the label/paths"
+disposition = "deferred"
+note        = "macOS launch agent. In-scope but not yet shippable: the klartext literal is in the FILENAME (com.klartext.compact-monitor.plist) + the Label, so it needs target-PATH parametrization (assemble renders content, not target paths) + EN comments. Tracked as the next template increment; assemble reports it as a known gap so the bundle stays source-literal-clean."
 
 # ── agent-team framework (baseline roles, authored generic — ship as_is) ───────
 # Source is seed/baseline/ (NOT the live agents/, which is the source endeavour's real team = excluded

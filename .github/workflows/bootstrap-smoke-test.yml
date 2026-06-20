@@ -1,0 +1,43 @@
+name: Bootstrap Smoke Test
+
+# Stands up a throwaway project from the method seed + a demo seed.toml and verifies it
+# (export plan §10 / project-onboarding.md §7): the rendered fabric is complete, runnable, and
+# carries zero source-endeavour literal — proving the parameterization, not a global sed.
+# The project-onboarding-scale sibling of setup-smoke-test.yml. Logic lives in seed/smoke_test.py
+# (unit-tested in api/tests/infrastructure/test_seed_smoke_test.py); this workflow just runs it.
+
+on:
+  # push only on main; PRs validated via pull_request (the branch filter avoids duplicate runs).
+  push:
+    branches: [main]
+    paths:
+      - "seed/**"
+      - ".github/workflows/bootstrap-smoke-test.yml"
+  pull_request:
+    paths:
+      - "seed/**"
+      - ".github/workflows/bootstrap-smoke-test.yml"
+  workflow_dispatch:
+
+concurrency:
+  # Per head SHA (not ref): update-branch must not cancel the prior run and leave an ambiguous
+  # status. Same rationale as classify-gate.yml.
+  group: ${{ github.workflow }}-${{ github.event.pull_request.head.sha || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke-test:
+    name: Bootstrap from seed
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Run bootstrap smoke-test
+        # Assembles a throwaway bundle from the live tree + a demo seed.toml and asserts the rendered
+        # fabric is complete, runnable, and source-literal-clean. stdlib only — no install step.
+        run: python3 seed/smoke_test.py
