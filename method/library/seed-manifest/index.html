@@ -1747,9 +1747,15 @@ baseline</strong> (the pinned meta-language, see <a href="../resources/essence/"
 prerequisite is a stop, not a workaround (cf. <code>project-onboarding</code> step 1).</p>
 <h3 id="completeness-rule">Completeness rule<a class="headerlink" href="#completeness-rule" title="Permanent link">&para;</a></h3>
 <p>Every path the seed ships appears in the manifest <strong>exactly once</strong>. The mechanizable core: an assembly-time
-check that (a) every <code>as_is</code> source resolves in the live repo, (b) every <code>template</code> renders, and (c) no shipped
-path is unlisted — the RC1 "implicit/unlisted, cannot be checked" guard, applied to the bundle. This is the
-manifest's enforcement; without it the inventory is documentation, not a contract (cf.
+check that (a) every <code>as_is</code> source resolves in the live repo, (b) every <code>template</code> renders, (c) no shipped
+path is unlisted — the RC1 "implicit/unlisted, cannot be checked" guard, applied to the bundle — and (d) the
+<strong>buildability inverse</strong>: the bundle ships everything a consumer needs to <em>build and self-validate</em> it, the
+<strong>assembler itself first of all</strong>. (a)–(c) iterate the manifest and so can only see <em>listed</em> entries; they are
+blind to a file that is <strong>needed but unlisted</strong>. The assembler (<code>assemble.py</code>) was exactly such a gap — every
+listed entry resolved cleanly while the tool that resolves them was itself absent from the bundle, caught only
+by the bootstrap smoke-test actually assembling from the shipped tree. (d) closes that blind spot: assert the
+assembler, its renderer, this manifest, the config source, and the self-validation harness are all listed
+<code>as_is</code>. This is the manifest's enforcement; without it the inventory is documentation, not a contract (cf.
 <a href="../standards-charter/"><code>standards-charter.md</code></a> §1).</p>
 <h2 id="related">Related<a class="headerlink" href="#related" title="Permanent link">&para;</a></h2>
 <ul>

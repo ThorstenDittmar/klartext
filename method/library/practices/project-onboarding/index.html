@@ -1708,13 +1708,17 @@ template — in seven steps:</p>
    <code>agent-onboarding</code>.</li>
 <li><strong>Verify against the DoD.</strong> Run the <strong>bootstrap smoke-test</strong>: from the seed + a filled <code>seed.toml</code>, a fresh
    project stands up where the identity/freshness hooks fire, the gates run, the inbox works, a baseline agent
-   is onboardable, and a first <code>converge</code> succeeds — with <strong>zero source-endeavour literal</strong> remaining
-   (grep-checkable). The project is not "stood up" until this passes.</li>
+   is onboardable, and a first <code>converge</code> succeeds — with <strong>zero source-endeavour literal</strong> remaining in the
+   <strong>rendered + config outputs</strong> (grep-checkable). That scope is deliberate: it targets the global-<code>sed</code>
+   anti-pattern. As-is <strong>method-library content legitimately cites the source endeavour as its worked example</strong>
+   (the L3 cards illustrate with the originating project) and is <strong>out of this scope</strong> — scrubbing it would
+   destroy the worked example. The project is not "stood up" until this passes.</li>
 </ol>
 <p><strong>Completion (Done):</strong> prerequisites verified (or the stop is explicit) · <code>seed.toml</code> filled as the single
 source — no by-hand literal edits downstream · configuration rendered from it · the agent-team framework exists
 with the baseline roles · hooks + gates + memory/inbox wired · a first <code>converge</code> succeeded · the bootstrap
-smoke-test is green with <strong>zero source-endeavour literal</strong> remaining.</p>
+smoke-test is green with <strong>zero source-endeavour literal</strong> remaining in the rendered + config outputs (worked-example
+citations in as-is method content excepted, per step 7).</p>
 <p><strong>Enforcement note (generic).</strong> A ritual owned by the team-formation / method role. Its non-negotiable core is
 mechanizable as the <strong>bootstrap smoke-test</strong> (step 7): a fresh project stands up <em>and</em> carries no source-literal.
 A project whose gates are not wired (step 5 skipped) is not onboarded — the method runs on top of nothing, the
