@@ -65,9 +65,15 @@ prerequisite is a stop, not a workaround (cf. `project-onboarding` step 1).
 ### Completeness rule
 
 Every path the seed ships appears in the manifest **exactly once**. The mechanizable core: an assembly-time
-check that (a) every `as_is` source resolves in the live repo, (b) every `template` renders, and (c) no shipped
-path is unlisted — the RC1 "implicit/unlisted, cannot be checked" guard, applied to the bundle. This is the
-manifest's enforcement; without it the inventory is documentation, not a contract (cf.
+check that (a) every `as_is` source resolves in the live repo, (b) every `template` renders, (c) no shipped
+path is unlisted — the RC1 "implicit/unlisted, cannot be checked" guard, applied to the bundle — and (d) the
+**buildability inverse**: the bundle ships everything a consumer needs to *build and self-validate* it, the
+**assembler itself first of all**. (a)–(c) iterate the manifest and so can only see *listed* entries; they are
+blind to a file that is **needed but unlisted**. The assembler (`assemble.py`) was exactly such a gap — every
+listed entry resolved cleanly while the tool that resolves them was itself absent from the bundle, caught only
+by the bootstrap smoke-test actually assembling from the shipped tree. (d) closes that blind spot: assert the
+assembler, its renderer, this manifest, the config source, and the self-validation harness are all listed
+`as_is`. This is the manifest's enforcement; without it the inventory is documentation, not a contract (cf.
 [`standards-charter.md`](standards-charter.md) §1).
 
 ## Related
