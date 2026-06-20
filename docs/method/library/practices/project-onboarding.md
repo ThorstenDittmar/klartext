@@ -30,7 +30,11 @@ template — in seven steps:
    `superpowers` plugin (at its pinned version), and the **Essence baseline** (the pinned meta-language the L3
    library stands on). A missing prerequisite is a stop, not a workaround.
 2. **Fill the config source (`seed.toml`).** One file carries every endeavour-specific literal — project name,
-   env prefix, memory/inbox directory, repo slug, worktree base, identity preamble, interpreter. This is the
+   env prefix, memory/inbox directory, repo slug, worktree base, identity preamble, interpreter, product domain,
+   the product CLI the gate watches, and the **WoW-CLI invocation name** (how the team invokes `<cmd> converge`,
+   kept distinct from the project name). The authoritative key set is the renderer's `REQUIRED_KEYS` /
+   `REQUIRED_LISTS` — they fail loud on a missing key, and `seed.toml` self-documents each one inline, so this
+   prose stays illustrative, not a second source to drift. This is the
    **single decision** that drives every later artifact; nothing downstream is edited by hand. (The anti-pattern
    this closes: de-source-ification as a global `sed`.)
 3. **Render the configuration from `seed.toml`.** Generate the parameterized artifacts — session settings +
