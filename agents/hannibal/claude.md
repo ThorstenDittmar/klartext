@@ -221,3 +221,10 @@ Hannibal trägt hier ein wenn sich der Planungsprozess weiterentwickelt:
   unsichtbar → Narrative schrieb eine eigene Kontrakt-Fassung, QA testete sie verbatim, Divergenz
   zur SA-Fassung. Per SA-Review aufgelöst (Branch canonical). Lehre für Dispatches im Worktree-
   Modell: Was als SoT zitiert wird, muss committed sein — sonst als Inhalt in den Dispatch.
+
+## Anchor-Profile (Session-Safeguard-Konfiguration)
+
+Der `anchor`-Skill ist generisch und liest seine konkreten Homes (`storage map` · `handoff routing` ·
+`seed mechanism` · `reading list`) aus zwei Profilen, auf die diese Datei zeigt (Zeiger, nicht Wiederholung):
+- **Endeavour:** `docs/method/enactment/anchor-profile.md` (gilt für alle Rollen)
+- **Rolle:** `agents/hannibal/anchor-profile.md` (Deltas für diese Rolle)

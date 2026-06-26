@@ -96,3 +96,10 @@ Diese Datei enthält die Basis-Regeln. Der UX/UI Agent ergänzt hier:
 - Design-Token-Regeln
 - Accessibility-Standards
 - Testing-Strategie (Vitest, Testing Library)
+
+## Anchor-Profile (Session-Safeguard-Konfiguration)
+
+Der `anchor`-Skill ist generisch und liest seine konkreten Homes (`storage map` · `handoff routing` ·
+`seed mechanism` · `reading list`) aus zwei Profilen, auf die diese Datei zeigt (Zeiger, nicht Wiederholung):
+- **Endeavour:** `docs/method/enactment/anchor-profile.md` (gilt für alle Rollen)
+- **Rolle:** `docs/method/enactment/anchor-profile.domain-agent.md` (Deltas für diese Rolle)

@@ -69,3 +69,10 @@ DevOps ist nicht involviert — kein Briefing nötig.
 | Neue Test-Dependencies | QA brieft DevOps |
 | Neue Frontend-Build-Config | UX/UI brieft DevOps |
 | Neuer Agent | OE — vollständig OE-Domain, kein DevOps-Involvement |
+
+## Anchor-Profile (Session-Safeguard-Konfiguration)
+
+Der `anchor`-Skill ist generisch und liest seine konkreten Homes (`storage map` · `handoff routing` ·
+`seed mechanism` · `reading list`) aus zwei Profilen, auf die diese Datei zeigt (Zeiger, nicht Wiederholung):
+- **Endeavour:** `docs/method/enactment/anchor-profile.md` (gilt für alle Rollen)
+- **Rolle:** `agents/devops/anchor-profile.md` (Deltas für diese Rolle)
