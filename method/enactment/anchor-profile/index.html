@@ -6,12 +6,11 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Anchor the session — secure everything that only lives in the chat to durable storage BEFORE context is lost (via /clear, /compact, or session end). Use whenever the user says "anchor", "session sichern", "nichts vergessen", "alles sichern", "vor clear", "vor neustart", "vor compact", or anything suggesting they want to checkpoint the session before context is reset. On a RESTART (generation change: next step is /clear and a successor session takes over) it also seeds the successor. Project-/role-agnostic: all concrete homes, routing, seed mechanism and reading list come from the anchor profiles the active CLAUDE.md declares — this skill hardcodes none of them; if no profile is declared it asks the user. Supersedes the former `pre-compact` skill — renamed because the ritual is no longer tied to /compact (the loss-free path is /clear; /compact only summarizes and is False-Persistence-prone).
-">
+        <meta name="description" content="Narrative Epistemik – Eine Autorenumgebung für transparente, kausal konsistente und narrativ vermittelbare Wirkmodelle">
       
       
       
-        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/method/enactment/skills/anchor/">
+        <link rel="canonical" href="https://thorstendittmar.github.io/klartext/method/enactment/anchor-profile/">
       
       
       
@@ -19,19 +18,19 @@
         
       
       
-      <link rel="icon" href="../../../../assets/images/favicon.png">
+      <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
-        <title>Anchor — Session Safeguard - klartext.jetzt – Spezifikation</title>
+        <title>Anchor-Profil — klartext (Endeavour) - klartext.jetzt – Spezifikation</title>
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -50,7 +49,7 @@
       
     
     
-    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -75,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#anchor-session-safeguard" class="md-skip">
+        <a href="#anchor-profil-klartext-endeavour" class="md-skip">
           Zum Inhalt
         </a>
       
@@ -91,7 +90,7 @@
 
 <header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Kopfzeile">
-    <a href="../../../.." title="klartext.jetzt – Spezifikation" class="md-header__button md-logo" aria-label="klartext.jetzt – Spezifikation" data-md-component="logo">
+    <a href="../../.." title="klartext.jetzt – Spezifikation" class="md-header__button md-logo" aria-label="klartext.jetzt – Spezifikation" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -111,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Anchor — Session Safeguard
+              Anchor-Profil — klartext (Endeavour)
             
           </span>
         </div>
@@ -218,7 +217,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../.." class="md-tabs__link">
+      <a href="../../.." class="md-tabs__link">
         
   
   
@@ -237,7 +236,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../../pruefbericht-klartext.html" class="md-tabs__link">
+      <a href="../../../pruefbericht-klartext.html" class="md-tabs__link">
         
   
   
@@ -258,7 +257,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../../kap-01-executive-summary/" class="md-tabs__link">
+        <a href="../../../kap-01-executive-summary/" class="md-tabs__link">
           
   
   
@@ -278,7 +277,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../../kap-06-systemarchitektur/" class="md-tabs__link">
+        <a href="../../../kap-06-systemarchitektur/" class="md-tabs__link">
           
   
   
@@ -298,7 +297,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../../kap-11-leser/" class="md-tabs__link">
+        <a href="../../../kap-11-leser/" class="md-tabs__link">
           
   
   
@@ -318,7 +317,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../../kap-19-umsetzung/" class="md-tabs__link">
+        <a href="../../../kap-19-umsetzung/" class="md-tabs__link">
           
   
   
@@ -336,7 +335,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../../developer-guide/" class="md-tabs__link">
+      <a href="../../../developer-guide/" class="md-tabs__link">
         
   
   
@@ -357,7 +356,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../../appendix-a/" class="md-tabs__link">
+        <a href="../../../appendix-a/" class="md-tabs__link">
           
   
   
@@ -399,7 +398,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../.." title="klartext.jetzt – Spezifikation" class="md-nav__button md-logo" aria-label="klartext.jetzt – Spezifikation" data-md-component="logo">
+    <a href="../../.." title="klartext.jetzt – Spezifikation" class="md-nav__button md-logo" aria-label="klartext.jetzt – Spezifikation" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -429,7 +428,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../.." class="md-nav__link">
+      <a href="../../.." class="md-nav__link">
         
   
   
@@ -456,7 +455,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../pruefbericht-klartext.html" class="md-nav__link">
+      <a href="../../../pruefbericht-klartext.html" class="md-nav__link">
         
   
   
@@ -537,7 +536,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-01-executive-summary/" class="md-nav__link">
+      <a href="../../../kap-01-executive-summary/" class="md-nav__link">
         
   
   
@@ -565,7 +564,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-02-problemdefinition/" class="md-nav__link">
+      <a href="../../../kap-02-problemdefinition/" class="md-nav__link">
         
   
   
@@ -593,7 +592,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-03-kognition/" class="md-nav__link">
+      <a href="../../../kap-03-kognition/" class="md-nav__link">
         
   
   
@@ -621,7 +620,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-04-vision/" class="md-nav__link">
+      <a href="../../../kap-04-vision/" class="md-nav__link">
         
   
   
@@ -649,7 +648,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-05-autorenumgebung/" class="md-nav__link">
+      <a href="../../../kap-05-autorenumgebung/" class="md-nav__link">
         
   
   
@@ -738,7 +737,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-06-systemarchitektur/" class="md-nav__link">
+      <a href="../../../kap-06-systemarchitektur/" class="md-nav__link">
         
   
   
@@ -766,7 +765,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-07-wirkmodelle/" class="md-nav__link">
+      <a href="../../../kap-07-wirkmodelle/" class="md-nav__link">
         
   
   
@@ -794,7 +793,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-08-verbindung/" class="md-nav__link">
+      <a href="../../../kap-08-verbindung/" class="md-nav__link">
         
   
   
@@ -822,7 +821,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-09-transparenzbericht/" class="md-nav__link">
+      <a href="../../../kap-09-transparenzbericht/" class="md-nav__link">
         
   
   
@@ -850,7 +849,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-10-perspektivpluralismus/" class="md-nav__link">
+      <a href="../../../kap-10-perspektivpluralismus/" class="md-nav__link">
         
   
   
@@ -939,7 +938,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-11-leser/" class="md-nav__link">
+      <a href="../../../kap-11-leser/" class="md-nav__link">
         
   
   
@@ -967,7 +966,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-12-distribution/" class="md-nav__link">
+      <a href="../../../kap-12-distribution/" class="md-nav__link">
         
   
   
@@ -995,7 +994,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-13-folgeprojekte/" class="md-nav__link">
+      <a href="../../../kap-13-folgeprojekte/" class="md-nav__link">
         
   
   
@@ -1023,7 +1022,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-14-technologie/" class="md-nav__link">
+      <a href="../../../kap-14-technologie/" class="md-nav__link">
         
   
   
@@ -1051,7 +1050,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-15-roadmap/" class="md-nav__link">
+      <a href="../../../kap-15-roadmap/" class="md-nav__link">
         
   
   
@@ -1079,7 +1078,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-16-relevanz/" class="md-nav__link">
+      <a href="../../../kap-16-relevanz/" class="md-nav__link">
         
   
   
@@ -1107,7 +1106,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-17-schluss/" class="md-nav__link">
+      <a href="../../../kap-17-schluss/" class="md-nav__link">
         
   
   
@@ -1135,7 +1134,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-18-wissenschaft/" class="md-nav__link">
+      <a href="../../../kap-18-wissenschaft/" class="md-nav__link">
         
   
   
@@ -1224,7 +1223,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-19-umsetzung/" class="md-nav__link">
+      <a href="../../../kap-19-umsetzung/" class="md-nav__link">
         
   
   
@@ -1252,7 +1251,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-20-literaten-workflow/" class="md-nav__link">
+      <a href="../../../kap-20-literaten-workflow/" class="md-nav__link">
         
   
   
@@ -1280,7 +1279,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-21-wirkmodell-workflow/" class="md-nav__link">
+      <a href="../../../kap-21-wirkmodell-workflow/" class="md-nav__link">
         
   
   
@@ -1308,7 +1307,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-22-leser-workflow/" class="md-nav__link">
+      <a href="../../../kap-22-leser-workflow/" class="md-nav__link">
         
   
   
@@ -1336,7 +1335,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-23-community/" class="md-nav__link">
+      <a href="../../../kap-23-community/" class="md-nav__link">
         
   
   
@@ -1364,7 +1363,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../kap-24-datenmodell/" class="md-nav__link">
+      <a href="../../../kap-24-datenmodell/" class="md-nav__link">
         
   
   
@@ -1399,7 +1398,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../developer-guide/" class="md-nav__link">
+      <a href="../../../developer-guide/" class="md-nav__link">
         
   
   
@@ -1480,7 +1479,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../appendix-a/" class="md-nav__link">
+      <a href="../../../appendix-a/" class="md-nav__link">
         
   
   
@@ -1562,7 +1561,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../adr/0001-detector-quality-testing/" class="md-nav__link">
+      <a href="../../../adr/0001-detector-quality-testing/" class="md-nav__link">
         
   
   
@@ -1590,7 +1589,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../adr/0002-test-data-object-mother/" class="md-nav__link">
+      <a href="../../../adr/0002-test-data-object-mother/" class="md-nav__link">
         
   
   
@@ -1651,7 +1650,7 @@
 
 
   
-    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/method/enactment/skills/anchor.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/ThorstenDittmar/klartext/edit/main/docs/method/enactment/anchor-profile.md" title="Seite editieren" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1659,182 +1658,133 @@
   
 
 
-<h1 id="anchor-session-safeguard">Anchor — Session Safeguard<a class="headerlink" href="#anchor-session-safeguard" title="Permanent link">&para;</a></h1>
-<p>Deine Aufgabe: die aktuelle Session systematisch durchgehen, <strong>bevor der Kontext verloren geht</strong> —
-durch <code>/clear</code> (Generationswechsel, verwirft), <code>/compact</code> (fasst zusammen) oder Session-Ende. Ziel:
-nichts Wichtiges verlieren — Entscheidungen, Begründungen, mündliche Anweisungen, offene TODOs, der
-aktuelle Arbeitsstand. Der Name <strong>anchor</strong>: das flüchtige Chat-Wissen am festen Grund (Platte)
-verankern; bei einem Restart zusätzlich einen Anker werfen, an dem die Nachfolge-Session wieder anlegt.</p>
+<h1 id="anchor-profil-klartext-endeavour">Anchor-Profil — klartext (Endeavour)<a class="headerlink" href="#anchor-profil-klartext-endeavour" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Dieser Skill ist der generische Kernel — er kennt KEINE projekt- oder rollen-spezifischen Pfade.</strong>
-Alles Konkrete zieht er aus <strong>deklarierten Anchor-Profilen</strong> (siehe „Profil-Auflösung"). Steht etwas
-Projekt-Spezifisches fest verdrahtet hier drin, ist es ein Bug — melden, nicht befolgen.</p>
-<p><strong>klartext-Enactment:</strong> die konkreten Homes liegen in <code>docs/method/enactment/anchor-profile.md</code>
-(Endeavour) + <code>agents/&lt;rolle&gt;/anchor-profile.md</code> (Rolle; Domain-Experten teilen
-<code>docs/method/enactment/anchor-profile.domain-agent.md</code>). Das jeweilige <code>agents/&lt;rolle&gt;/claude.md</code>
-zeigt auf beide. Dieser Repo-Skill ist die SoT, die <code>klartext skills sync</code> nach <code>~/.claude/skills/</code>
-spiegelt — er bleibt generisch, damit der Sync kein Cross-Projekt-Leck zurückbringt.</p>
+<p><strong>Was das ist.</strong> Das <strong>Endeavour-Anchor-Profil</strong> für klartext: die konkrete Tailoring-Schicht, aus der
+der generische <code>anchor</code>-Skill (<code>docs/method/enactment/skills/anchor.md</code>) seine projekt-spezifischen Homes
+zieht. Der Skill kennt KEINE Pfade — sie stehen hier. Gilt für <strong>alle Rollen</strong>; rollen-spezifische
+Ergänzungen/Überschreibungen stehen im jeweiligen <code>agents/&lt;rolle&gt;/anchor-profile.md</code>.
+<strong>Owner:</strong> OE · <strong>Essence type:</strong> Work Product (klartext-Enactment der anchor-Practice).
+<strong>Sprache:</strong> Deutsch (wie der Skill + die Agent-Hoheitswissen-Dateien, die es bedient); die vier
+Feldnamen halten die Skill-Vertrags-Begriffe (<code>storage map</code> · <code>handoff routing</code> · <code>seed mechanism</code> ·
+<code>reading list</code>).</p>
 </blockquote>
-<h2 id="voraussetzungen-anchor-fallt-nicht-vom-himmel-bindungen">Voraussetzungen — anchor fällt nicht vom Himmel (Bindungen)<a class="headerlink" href="#voraussetzungen-anchor-fallt-nicht-vom-himmel-bindungen" title="Permanent link">&para;</a></h2>
-<p>Anchor ist eine <strong>Library-Practice mit Außenbindungen</strong>, die gelten müssen, damit das Ritual <em>wirkt</em>:
-- <strong><code>enabled-by</code> Runtime-Functionalities:</strong> <code>/clear</code> (der einzige verlustfreie Pfad) und <code>/compact</code>.
-  Sie kommen von der Umgebung (Claude-Runtime), sind versionsabhängig — driftet ihre Semantik, bricht
-  die Wirksamkeitsannahme.
-- <strong>baut auf der Session-Scan-Mechanik auf</strong> (dem Durchsuchen des Verlaufs nach Entscheidungen/
-  Begründungen/TODOs). Fehlt sie, fehlt der Motor.
-- <strong>liest ein Anchor-Profil</strong>, wenn vorhanden (siehe nächster Abschnitt) — ohne eines arbeitet es mit
-  Fallback (universelle Invarianten + Rückfrage).</p>
-<h2 id="profil-auflosung-zuerst-wie-der-kernel-projekt-rollen-spezifisch-wird">Profil-Auflösung (ZUERST) — wie der Kernel projekt-/rollen-spezifisch wird<a class="headerlink" href="#profil-auflosung-zuerst-wie-der-kernel-projekt-rollen-spezifisch-wird" title="Permanent link">&para;</a></h2>
-<p>Das Ritual ist endeavour-agnostisch; jede konkrete Festlegung kommt — wenn deklariert — aus zwei
-Tailoring-Schichten:</p>
-<ol>
-<li><strong>Endeavour + Rolle bestimmen</strong> — aus dem Arbeitsverzeichnis / dem geladenen <code>CLAUDE.md</code> dieser Session.</li>
-<li><strong>Die deklarierten Anchor-Profile lesen</strong> (das <code>CLAUDE.md</code> zeigt darauf — <em>Zeiger, nicht Wiederholung</em>):
-   ein <strong>Endeavour-Profil</strong> (gilt für alle Rollen) und ein <strong>Role-Profil</strong> (gilt für die aktive Rolle).</li>
-<li><strong>Ein Profil deklariert vier Dinge:</strong></li>
-<li><strong><code>storage map</code></strong> — wohin welche Wissensart gesichert wird (eigenes Wissen, je Inhaltstyp).</li>
-<li><strong><code>handoff routing</code></strong> — wie Wissen, das einem <em>anderen</em> Akteur gehört, das Vorhaben verlässt.</li>
-<li><strong><code>seed mechanism</code></strong> — wie eine Nachfolge-Session geseedet wird (nur Restart).</li>
-<li><strong><code>reading list</code></strong> — was bei jedem Sessionstart neu zu lesen ist.</li>
-<li><strong>Kein Profil deklariert / keins vorhanden → FALLBACK:</strong> <strong>frag den User</strong>, wohin gesichert werden soll,
-   und arbeite mit den universellen Invarianten unten. <strong>Niemals</strong> projekt-spezifische Pfade <em>raten</em> — das
-   ist genau der False-Persistence-Fehler (gegen nicht-existente Dateien „sichern"). Ein Nicht-Essence-
-   Projekt ohne Profil ist legitim; der Fallback fängt es ab.</li>
-</ol>
-<h2 id="modus-bestimmen-danach">Modus bestimmen (danach)<a class="headerlink" href="#modus-bestimmen-danach" title="Permanent link">&para;</a></h2>
-<p>Kläre — fragen, wenn unklar: ist das ein <strong>Restart</strong> oder ein <strong>Checkpoint</strong>?</p>
-<ul>
-<li><strong>Restart</strong> (Generationswechsel): als Nächstes kommt <code>/clear</code>, eine Nachfolge-Session übernimmt.
-  → alle Schritte <strong>inklusive Successor-Seed</strong> (Schritt 4.6).</li>
-<li><strong>Checkpoint</strong> (mid-session): du sicherst nur zwischendurch und arbeitest danach weiter.
-  → Successor-Seed <strong>überspringen</strong> (sonst landen veraltete Handoff-Notizen im Postfach).</li>
-</ul>
-<h2 id="was-einen-kontext-reset-uberlebt">Was einen Kontext-Reset überlebt<a class="headerlink" href="#was-einen-kontext-reset-uberlebt" title="Permanent link">&para;</a></h2>
-<p><strong>Generisch-invariant</strong> (gilt in jedem Vorhaben): <code>CLAUDE.md</code> · Code/Kommentare/Docstrings · Git-Commits ·
-GitHub-Issues + TODOs im Code · Skill-Dateien · Memory-Dateien unter <code>~/.claude/</code>.</p>
-<p><strong>Profil-spezifisch:</strong> die <code>storage map</code> aus dem Endeavour-/Role-Profil. Diese benennt das Profil — nicht
-dieser Skill. Ohne Profil: nur die Invarianten + Rückfrage.</p>
-<p><strong>Was verloren gehen kann:</strong> Alles, was nur im Gesprächsverlauf steht. <code>/clear</code> <em>verwirft</em> es ersatzlos,
-<code>/compact</code> <em>fasst es zusammen</em> (lückenhaft, False-Persistence-Risiko).</p>
-<h2 id="schritt-1-konversation-scannen">Schritt 1 — Konversation scannen<a class="headerlink" href="#schritt-1-konversation-scannen" title="Permanent link">&para;</a></h2>
-<p>Lies die gesamte bisherige Konversation. Sammle Kandidaten je Kategorie:
-1. <strong>Architektur-Entscheidungen</strong> · 2. <strong>Regeländerungen</strong> (noch nicht durabel) · 3. <strong>Begründungen (Warum)</strong> ·
-4. <strong>Mündliche Anweisungen</strong> · 5. <strong>Offene TODOs / nächste Schritte</strong> · 6. <strong>Arbeitsstand</strong> (fertig / in
-Arbeit / blockiert) · 7. <strong>Geparkte Befunde</strong> ohne dauerhaftes Zuhause.
-Sei großzügig — lieber einen Punkt zu viel als einen übersehen.</p>
-<h2 id="schritt-15-routing-befund-check">Schritt 1.5 — Routing-/Befund-Check<a class="headerlink" href="#schritt-15-routing-befund-check" title="Permanent link">&para;</a></h2>
-<p><strong>Trigger:</strong> nur wenn es echt offene Delegationen / ausgehende Befunde gibt — sonst explizit überspringen.
-Durchsuche nach Wissen, das <strong>einem anderen Akteur</strong> gehört (Briefings, Delegationen, Bitten an den User
-mit Erwartung an einen anderen Akteur, Befunde außerhalb der eigenen Domäne). Prüfen, ob schon erledigt
-(Zieldatei / explizite Bestätigung). Nicht erledigt → über den <strong>im Profil deklarierten <code>handoff routing</code></strong>
-weiterreichen (durabler Inbox, falls vorhanden; sonst Briefing an den menschlichen Relay). Welcher
-Mechanismus gilt, sagt das Profil — nicht dieser Skill.</p>
-<h2 id="schritt-2-persistenzcheck">Schritt 2 — Persistenzcheck<a class="headerlink" href="#schritt-2-persistenzcheck" title="Permanent link">&para;</a></h2>
-<p>Für jeden Punkt: bereits sicher gespeichert (in einer <code>storage map</code>-Home, einem Code-Kommentar, einer
-Commit-Message, einem Issue, einer Memory-Datei)? Als <strong>bereits gesichert</strong> / <strong>noch nicht gesichert</strong> markieren.</p>
-<h2 id="schritt-25-wissens-routing">Schritt 2.5 — Wissens-Routing<a class="headerlink" href="#schritt-25-wissens-routing" title="Permanent link">&para;</a></h2>
-<p>Zwei Fragen — beide zählen: <strong>1. Woher kommt das Wissen</strong> (meine Domäne)? <strong>2. Wer hat fachliche Autorität</strong>
-darüber? Frage 2 = Expertise/Autorität, nicht Datei-Eigentum. Nennt sie einen anderen Akteur → mindestens
-Grenzwissen.</p>
+<hr />
+<h2 id="storage-map-wohin-welche-wissensart-gesichert-wird"><code>storage map</code> — wohin welche Wissensart gesichert wird<a class="headerlink" href="#storage-map-wohin-welche-wissensart-gesichert-wird" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th>Typ</th>
-<th>Beschreibung</th>
-<th>Konsequenz</th>
+<th>Wissensart</th>
+<th>Home</th>
+<th>Owner / Hinweis</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Eigenwissen</strong></td>
-<td>gehört in meine Domäne</td>
-<td>→ Schritt 3 speichern</td>
+<td>Eigenes Hoheitswissen (Muster, Regeln, Heuristiken der Rolle)</td>
+<td><code>agents/&lt;rolle&gt;/claude.md</code></td>
+<td>die Rolle selbst</td>
 </tr>
 <tr>
-<td><strong>Fremdwissen</strong></td>
-<td>gehört ganz einem anderen Akteur</td>
-<td>→ Briefing über <code>handoff routing</code></td>
+<td>Entscheidung + Begründung zur Arbeitsweise</td>
+<td><code>docs/method/enactment/continuous-improvement.md</code></td>
+<td><strong>OE</strong> (ohne Write-Access: Briefing an OE)</td>
 </tr>
 <tr>
-<td><strong>Grenzwissen</strong></td>
-<td>betrifft zwei Akteure</td>
-<td>→ je ein Briefing</td>
+<td>Verbesserungs-Kandidat</td>
+<td>Improvement-Register in <code>docs/method/enactment/continuous-improvement.md</code> §3 (Zustand <em>Identified</em>)</td>
+<td><strong>OE</strong></td>
 </tr>
 <tr>
-<td><strong>Organisationswissen</strong></td>
-<td>Struktur/Zusammenarbeit</td>
-<td>→ Briefing an den zuständigen Akteur</td>
+<td>Prozess-/WoW-Learning</td>
+<td><code>docs/method/enactment/learnings/</code></td>
+<td>allgemein; QA-Learnings → <code>docs/superpowers/qa-learnings/</code> (QA)</td>
+</tr>
+<tr>
+<td>Neues/geändertes Methoden-Element (Practice/Pattern)</td>
+<td>L3-Karte <code>docs/method/library/practices/</code> (bzw. <code>patterns/</code>) + L2-Enactment <code>docs/method/enactment/practices/</code> + Element-Register <code>docs/method/enactment/method.md</code> — <strong>im selben Schritt</strong></td>
+<td><strong>nur OE</strong>; andere: Briefing an OE</td>
+</tr>
+<tr>
+<td>Begriff (generisch)</td>
+<td><code>docs/method/library/semat-glossary.md</code> (L3)</td>
+<td><strong>OE</strong></td>
+</tr>
+<tr>
+<td>Begriff (klartext-spezifisch)</td>
+<td><code>docs/method/enactment/semat-glossary-klartext.md</code> (L2)</td>
+<td><strong>OE</strong></td>
+</tr>
+<tr>
+<td>Architektur-Entscheidung</td>
+<td><code>docs/adr/NNNN-&lt;titel&gt;.md</code> (Status <code>Proposed</code>)</td>
+<td><strong>System Architect</strong></td>
+</tr>
+<tr>
+<td>Geparkter Befund (Kategorie 7)</td>
+<td>benanntes Verwahr-Depot mit Freigabe-/Löschbedingung (Memory-Park-Pattern)</td>
+<td>Park-Owner</td>
+</tr>
+<tr>
+<td>Provenienz einer externen Referenz</td>
+<td><code>assets-local/README.md</code></td>
+<td>Finder</td>
+</tr>
+<tr>
+<td>Cross-Session-Fakt / persistentes Gedächtnis</td>
+<td>Memory-Datei unter <code>~/.claude/klartext-team-memory/</code> (+ Zeile in <code>MEMORY.md</code>)</td>
+<td>je Memory besessen</td>
+</tr>
+<tr>
+<td>Sonstiges Durables</td>
+<td><code>CLAUDE.md</code> (Root, SA), Code-Kommentar/Docstring, Commit-Message, GitHub-Issue</td>
+<td>je Owner</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Der Relay ist ein Mensch oder ein deklarierter durabler Inbox — kein Agent schreibt direkt in die Dateien
-eines anderen Akteurs.</strong> Welcher konkret gilt, sagt das Profil.</p>
-<h2 id="schritt-3-mit-dem-user-durchgehen">Schritt 3 — Mit dem User durchgehen<a class="headerlink" href="#schritt-3-mit-dem-user-durchgehen" title="Permanent link">&para;</a></h2>
-<p>Befunde klar und strukturiert präsentieren, in der Sprache des Users. Erst bestätigen, was schon gesichert
-ist und wo. Dann <strong>Block A — Eigenwissen</strong> (je Punkt: sichern? in welche <code>storage map</code>-Home? <strong>Schreibrechte
-vorher prüfen</strong> — sonst Briefing an den Owner) und <strong>Block B — Briefings</strong> (zeigen, fragen: weiterleiten /
-anpassen / überspringen). <strong>Niemals ohne Bestätigung weiterleiten, niemals auto-speichern.</strong> Im Zweifel
-<strong>lieber zu viel fragen</strong>.</p>
-<h2 id="schritt-4-bestatigte-punkte-speichern-artefakt-verifikation">Schritt 4 — Bestätigte Punkte speichern + Artefakt-Verifikation<a class="headerlink" href="#schritt-4-bestatigte-punkte-speichern-artefakt-verifikation" title="Permanent link">&para;</a></h2>
-<p>Nach Bestätigung speichern (Edit/Write / Bash für Commits). In bestehende Dateien einfügen — nie überschreiben,
-nie duplizieren.</p>
-<p><strong>Pflicht-Abschluss — Artefakt-Verifikation (False-Persistence-Schutz):</strong> nach ALLEN Speicherungen
-<code>git status</code> / <code>git diff --stat</code> (bzw. <code>ls -la</code> außerhalb des Repos) ausführen und die tatsächlich geänderten
-Dateien gegen die beabsichtigten abgleichen. <strong>Der eigenen Erinnerung oder einer Session-Summary wird NICHT
-geglaubt — nur dem Artefakt.</strong> (Beleg: kompaktierte Summaries behaupteten mehrfach Schreibvorgänge, die nie
-stattfanden — „False Persistence".)</p>
-<h2 id="schritt-46-successor-seed-nur-im-restart-modus">Schritt 4.6 — Successor-Seed (NUR im Restart-Modus)<a class="headerlink" href="#schritt-46-successor-seed-nur-im-restart-modus" title="Permanent link">&para;</a></h2>
-<p><strong>Überspringen, wenn Checkpoint.</strong> Im Restart: eine Handoff-Notiz über den <strong>im Profil deklarierten
-<code>seed mechanism</code></strong> ablegen (Self-Message-Inbox ↔ Reentry-Memory + Checkpoint-Datei — je nach Profil; ohne
-Profil: den User fragen, wie geseedet werden soll). Das <code>CLAUDE.md</code> lädt die Identität, der Seed liefert den
-<em>Stand</em>. Inhalt (mechanismus-unabhängig):
-- <strong>Stand:</strong> erledigt / in Arbeit / blockiert (mit PR-/Branch-/Commit-Bezügen)
-- <strong>Offene Fäden:</strong> nächste Schritte, geparkte Befunde, wartende Briefings
-- <strong>Wake-Prompt:</strong> eine konkrete erste Anweisung — eine frische Session handelt nicht von selbst, bevor der
-  User die erste Nachricht gibt.</p>
-<p><strong>Artefakt-Verifikation auch hier:</strong> das Seed-Artefakt existiert und ist nicht leer — der Seed ist die
-Verlust-Versicherung, er darf nicht selbst dem False-Persistence-Bug zum Opfer fallen.</p>
-<h2 id="schritt-5-kurze-zusammenfassung">Schritt 5 — Kurze Zusammenfassung<a class="headerlink" href="#schritt-5-kurze-zusammenfassung" title="Permanent link">&para;</a></h2>
-<p>Wie viele Punkte gefunden · was war schon gesichert · was neu gesichert · was bewusst übersprungen ·
-(Restart) ob der Successor-Seed liegt und verifiziert ist.</p>
-<h2 id="schritt-6-prozess-verbesserungen">Schritt 6 — Prozess-Verbesserungen<a class="headerlink" href="#schritt-6-prozess-verbesserungen" title="Permanent link">&para;</a></h2>
-<p>Nur, wenn in der Session etwas Relevantes passiert ist — kein Pflicht-Protokoll. Jeder Kandidat wird über
-den <strong>im Profil deklarierten Verbesserungs-Kanal</strong> festgehalten (Register / Parkplatz / Issue), nicht als
-loses TODO.</p>
+<p><strong>Schreibrechte vorher prüfen</strong> (laut <code>start.sh</code>/Domäne). Kein Home wählen, auf das die Session nicht
+schreiben darf — stattdessen Briefing an den Owner über <code>handoff routing</code>.</p>
+<h2 id="handoff-routing-wie-wissen-das-vorhaben-verlasst-an-einen-anderen-akteur"><code>handoff routing</code> — wie Wissen das Vorhaben verlässt (an einen anderen Akteur)<a class="headerlink" href="#handoff-routing-wie-wissen-das-vorhaben-verlasst-an-einen-anderen-akteur" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Durabler Inbox (der Boden):</strong> <code>bash scripts/inbox.sh send &lt;to&gt; &lt;from&gt; "&lt;betreff&gt;"</code> (Body auf stdin).
+  „<strong>Inbox is the floor, app is the doorbell</strong>" — alles Aktionsrelevante MUSS in den Inbox; die App-DM ist
+  nur die Klingel, nie der Kanal für Inhalt (Kanal-Politik #108).</li>
+<li><strong>Empfänger ist der GATEKEEPER, nicht nur der Build-Owner:</strong> Gate-/Approval-Requests an OE; Owner-Slug
+  beim Senden prüfen.</li>
+<li><strong>Delegations-Tracking:</strong> offene Delegationen direkt in <code>docs/superpowers/plans/PENDING.md</code>, Abschnitt
+  „## Offene Delegationen", als Tabellenzeile. Das ist die <strong>einzige Ausnahme</strong> vom „User/Inbox als Kanal"-
+  Prinzip — Tracking, nicht Domain-Wissen.</li>
+<li><strong>Kein Agent schreibt direkt in die <code>claude.md</code> / Memory / Profile eines anderen Akteurs</strong> — Briefing über
+  den Inbox an den Owner, der Owner zieht selbst nach.</li>
+</ul>
+<h2 id="seed-mechanism-wie-die-nachfolge-session-geseedet-wird-nur-restart"><code>seed mechanism</code> — wie die Nachfolge-Session geseedet wird (nur Restart)<a class="headerlink" href="#seed-mechanism-wie-die-nachfolge-session-geseedet-wird-nur-restart" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Self-Message in den eigenen Inbox:</strong>
+  <code>bash scripts/inbox.sh send &lt;self&gt; &lt;self&gt; "Successor-Seed: &lt;kurzer Betreff&gt;"</code> (Body auf stdin).</li>
+<li><strong>Inhalt:</strong> Stand (erledigt/in Arbeit/blockiert, mit PR-/Branch-/Commit-Bezügen) · offene Fäden ·
+  <strong>Wake-Prompt</strong> (eine konkrete erste Anweisung; eine frische Session handelt nicht von selbst).</li>
+<li><strong>Verifikation:</strong> <code>bash scripts/inbox.sh unread &lt;self&gt;</code> zeigt ≥1 — der Seed darf nicht selbst dem
+  False-Persistence-Bug zum Opfer fallen.</li>
+</ul>
+<h2 id="reading-list-was-bei-jedem-sessionstart-neu-zu-lesen-ist"><code>reading list</code> — was bei jedem Sessionstart neu zu lesen ist<a class="headerlink" href="#reading-list-was-bei-jedem-sessionstart-neu-zu-lesen-ist" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong><code>reading list</code> vollständig?</strong> Fiel auf, dass ein Dokument <strong>von Anfang an hätte gelesen werden müssen</strong>
-   (Wissen, das fehlte und nachgeladen werden musste)? → in die <code>reading list</code> des <strong>betroffenen Profils</strong>
-   eintragen (Endeavour-Profil, wenn es alle Rollen betrifft; Role-Profil, wenn rollen-spezifisch). So liest
-   die nächste Session es ohne Nachfrage.</li>
-<li><strong>Neue Skill-Kandidaten?</strong> wiederholte Abfolge, die ein Skill wäre? → beschreiben, der User entscheidet.</li>
-<li><strong>Bestehende Skills veraltet?</strong> Hat ein Skill (auch <code>anchor</code>) nicht geholfen / Falsches vorgegeben? →
-   fixen oder über den Verbesserungs-Kanal festhalten.</li>
-<li><strong>Profil aktuell?</strong> Änderte sich, <em>wo</em> Wissen hingehört oder <em>wie</em> geseedet wird? → betroffenes Profil
-   aktualisieren (sofern Schreibrecht; sonst Briefing an den Owner).</li>
-<li><strong>GitHub Issues / ADRs vollständig?</strong> TODO ohne Issue? implizit gelöstes Issue offen? Architektur-
-   entscheidung, die ein ADR verdient? → anlegen/schließen, wenn der User zustimmt.</li>
+<li><code>CLAUDE.md</code> (Root) + <code>agents/&lt;rolle&gt;/claude.md</code> (Hoheitswissen) — lädt die Runtime/der SessionStart-Hook.</li>
+<li><strong>Method-Set:</strong> <code>docs/method/library/{semat-definition,semat-glossary,alpha-states}.md</code> (L3) +
+   <code>docs/method/enactment/{continuous-improvement,method,semat-glossary-klartext}.md</code> (L2).</li>
+<li><strong>A-jour vor Arbeit:</strong> <code>klartext converge</code> (bzw. <code>git rebase origin/main</code>) — Aktualität ist ein
+   Zeitstempel, der verfällt; vor dem Bewerten frisch gemergten Materials erneut convergen.</li>
+<li><strong>Postfach:</strong> <code>bash scripts/inbox.sh read &lt;rolle&gt;</code>.</li>
 </ol>
 <hr />
-<p><strong>Abschluss:</strong> erst nach allen Schritten sagen, dass alles gesichert <strong>und verifiziert</strong> ist. Dann der nächste
-Schritt je Modus:
-- <strong>Restart:</strong> <em>„Alles gesichert und verifiziert, Successor-Seed liegt. Du kannst jetzt <code>/clear</code> ausführen —
-  verlustfreier Generationswechsel: <code>/clear</code> verwirft sauber, die Nachfolge bootet aus <code>CLAUDE.md</code> + liest
-  den Seed."</em>
-- <strong>Checkpoint:</strong> <em>„Alles gesichert und verifiziert. Du kannst weiterarbeiten."</em></p>
-<p><strong><code>/clear</code> und <code>/compact</code> NIE selbst ausführen</strong> — warten, bis der User es explizit auslöst.</p>
-<p><strong><code>/clear</code> ist <code>/compact</code> vorzuziehen:</strong> <code>/clear</code> <em>verwirft</em> (zwingt dazu, dass vorher wirklich alles
-persistiert wurde — genau dieses Ritual), <code>/compact</code> <em>fasst zusammen</em> (lückenhaft, False-Persistence-Risiko).
-Der Skript hieß früher <code>pre-compact</code>; umbenannt zu <strong>anchor</strong>, weil der Name an einen Befehl gebunden war,
-der nicht mehr der bevorzugte Weg ist — <code>anchor</code> benennt das Wesen (Wissen verankern), nicht den Befehl.</p>
+<p><em>Rollen-spezifische Ergänzungen: <code>agents/&lt;rolle&gt;/anchor-profile.md</code> (OE/QA/Hannibal/DevOps eigene; die
+Domain-Experten teilen <code>docs/method/enactment/anchor-profile.domain-agent.md</code>). Ein Role-Profil
+</em><em>überschreibt/ergänzt</em><em> nur die Felder, in denen seine Homes von diesem Endeavour-Profil abweichen.</em></p>
 
 
 
 
 
 
-
-  
-  
 
 
 
@@ -1884,10 +1834,10 @@ der nicht mehr der bevorzugte Weg ist — <code>anchor</code> benennt das Wesen 
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.path", "navigation.top", "toc.integrate", "search.highlight", "search.suggest", "content.code.copy", "content.action.edit"], "search": "../../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "In Zwischenablage kopiert", "clipboard.copy": "In Zwischenablage kopieren", "search.result.more.one": "1 weiteres Suchergebnis auf dieser Seite", "search.result.more.other": "# weitere Suchergebnisse auf dieser Seite", "search.result.none": "Keine Suchergebnisse", "search.result.one": "1 Suchergebnis", "search.result.other": "# Suchergebnisse", "search.result.placeholder": "Suchbegriff eingeben", "search.result.term.missing": "Es fehlt", "select.version": "Version ausw\u00e4hlen"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.path", "navigation.top", "toc.integrate", "search.highlight", "search.suggest", "content.code.copy", "content.action.edit"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "In Zwischenablage kopiert", "clipboard.copy": "In Zwischenablage kopieren", "search.result.more.one": "1 weiteres Suchergebnis auf dieser Seite", "search.result.more.other": "# weitere Suchergebnisse auf dieser Seite", "search.result.none": "Keine Suchergebnisse", "search.result.one": "1 Suchergebnis", "search.result.other": "# Suchergebnisse", "search.result.placeholder": "Suchbegriff eingeben", "search.result.term.missing": "Es fehlt", "select.version": "Version ausw\u00e4hlen"}, "version": null}</script>
     
     
-      <script src="../../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>
