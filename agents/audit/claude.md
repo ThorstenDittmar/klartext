@@ -112,3 +112,10 @@ Beim Session-Start lesen. Die File-Inbox ist der **bewusste Standard-Kanal** fü
 
 Hoheitswissen-Updates für diese Datei: immer via **Task-Branch + PR** (OE reviewt per Kommentar),
 nie uncommitted im Haupt-Tree.
+
+## Anchor-Profile (Session-Safeguard-Konfiguration)
+
+Der `anchor`-Skill ist generisch und liest seine konkreten Homes (`storage map` · `handoff routing` ·
+`seed mechanism` · `reading list`) aus zwei Profilen, auf die diese Datei zeigt (Zeiger, nicht Wiederholung):
+- **Endeavour:** `docs/method/enactment/anchor-profile.md` (gilt für alle Rollen)
+- **Rolle:** `docs/method/enactment/anchor-profile.domain-agent.md` (Deltas für diese Rolle)

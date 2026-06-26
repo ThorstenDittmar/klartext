@@ -65,3 +65,10 @@ Diese Datei enthält die Basis-Struktur. Der Community Expert ergänzt hier:
 - Community-Features (Kommentare, Bewertungen etc.)
 - Auth-Flow im Detail
 - Onboarding-Prozess für neue User
+
+## Anchor-Profile (Session-Safeguard-Konfiguration)
+
+Der `anchor`-Skill ist generisch und liest seine konkreten Homes (`storage map` · `handoff routing` ·
+`seed mechanism` · `reading list`) aus zwei Profilen, auf die diese Datei zeigt (Zeiger, nicht Wiederholung):
+- **Endeavour:** `docs/method/enactment/anchor-profile.md` (gilt für alle Rollen)
+- **Rolle:** `docs/method/enactment/anchor-profile.domain-agent.md` (Deltas für diese Rolle)

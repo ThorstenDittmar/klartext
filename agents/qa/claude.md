@@ -185,3 +185,10 @@ Bekannte Abweichungen zwischen diesem claude.md und der Realität — nicht selb
 
 2. **`frontend-testing.md`** liegt nur auf `salvage/h01-working-tree` (nicht auf `main`). Nach dem
    Salvage-Teardown hier eintragen, sobald die Datei auf `main` verfügbar ist.
+
+## Anchor-Profile (Session-Safeguard-Konfiguration)
+
+Der `anchor`-Skill ist generisch und liest seine konkreten Homes (`storage map` · `handoff routing` ·
+`seed mechanism` · `reading list`) aus zwei Profilen, auf die diese Datei zeigt (Zeiger, nicht Wiederholung):
+- **Endeavour:** `docs/method/enactment/anchor-profile.md` (gilt für alle Rollen)
+- **Rolle:** `agents/qa/anchor-profile.md` (Deltas für diese Rolle)

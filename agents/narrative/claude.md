@@ -101,3 +101,10 @@ Jeder Integration-Test erstellt eine frische `Narrative`-Zeile via `NarrativeMot
 
 `klartext-router-no-try-except` (Semgrep): Routers dürfen **kein** try/except enthalten.
 Exception-Handler leben zentral in `main.py`. Jede neue Exception-Klasse braucht einen Handler dort.
+
+## Anchor-Profile (Session-Safeguard-Konfiguration)
+
+Der `anchor`-Skill ist generisch und liest seine konkreten Homes (`storage map` · `handoff routing` ·
+`seed mechanism` · `reading list`) aus zwei Profilen, auf die diese Datei zeigt (Zeiger, nicht Wiederholung):
+- **Endeavour:** `docs/method/enactment/anchor-profile.md` (gilt für alle Rollen)
+- **Rolle:** `docs/method/enactment/anchor-profile.domain-agent.md` (Deltas für diese Rolle)

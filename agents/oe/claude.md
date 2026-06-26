@@ -202,3 +202,10 @@ OE trägt hier ein wenn sich das System weiterentwickelt:
 - Abgrenzungsfragen die gelöst wurden
 - Retros über Reibungspunkte zwischen Agents
 - Entschiedene Änderungen am Onboarding-Prozess
+
+## Anchor-Profile (Session-Safeguard-Konfiguration)
+
+Der `anchor`-Skill ist generisch und liest seine konkreten Homes (`storage map` · `handoff routing` ·
+`seed mechanism` · `reading list`) aus zwei Profilen, auf die diese Datei zeigt (Zeiger, nicht Wiederholung):
+- **Endeavour:** `docs/method/enactment/anchor-profile.md` (gilt für alle Rollen)
+- **Rolle:** `agents/oe/anchor-profile.md` (Deltas für diese Rolle)
